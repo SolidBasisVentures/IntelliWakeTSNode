@@ -1,4 +1,5 @@
 import pkg from './package.json'
+import typescript from 'rollup-plugin-typescript2'
 
 export default {
     input: [
@@ -12,6 +13,6 @@ export default {
 	        // format: 'esm'
         }
     ],
-    plugins: [],
+    plugins: [typescript({ objectHashIgnoreUnknownHack: false })],
     external: []
 }

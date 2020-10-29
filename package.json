@@ -1,11 +1,12 @@
 {
-  "name": "@denjpeters/intelliwakereact",
-  "version": "1.0.0",
+  "name": "@solidbasisventures/intelliwaketsnode",
+  "version": "1.0.1",
   "description": "NPM package for IntelliWake Node Components",
   "main": "dist/main.js",
   "types": "dist/main.d.ts",
   "scripts": {
     "BuildAndPublish": "rollup -c && npm version patch --no-git-tag-version && npm publish",
+    "Build": "rollup -c",
     "start": "rollup -c -w",
     "yarninstall": "yarn install && yarn upgrade @solidbasisventures/intelliwaketsfoundation",
     "test": "node ./src/test.ts"
@@ -37,6 +38,7 @@
     "rollup-plugin-scss": "^2.5.0",
     "rollup-plugin-terser": "^5.3.0",
     "rollup-plugin-typescript2": "^0.27.1",
+    "ts-node": "^9.0.0",
     "typescript": "^3.9.3"
   },
   "dependencies": {}
