@@ -1,5 +1,5 @@
-import {IsOn} from '../../Functions'
 import {PGEnum} from './PGEnum'
+import {IsOn} from '@solidbasisventures/intelliwaketsfoundation'
 
 export class PGColumn {
 	public column_name = ''

@@ -34,3 +34,6 @@ yarn-error.log*
 # Idea
 .idea/workspace.xml
 .idea/tasks.xml
+
+# npm
+.npmrc
