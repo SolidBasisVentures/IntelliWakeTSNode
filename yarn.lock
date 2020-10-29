@@ -33,9 +33,9 @@
     picomatch "^2.2.2"
 
 "@solidbasisventures/intelliwaketsfoundation@^1.0.7":
-  version "1.0.15"
-  resolved "https://registry.yarnpkg.com/@solidbasisventures/intelliwaketsfoundation/-/intelliwaketsfoundation-1.0.15.tgz#9bcc38f716747e37a4d57b548134e9871690a3c4"
-  integrity sha512-w174yEqR997QivsxLdCOBmrcueL9dLkIp5WG8V69e6Q577RXCHyAxLiRHiuxBgGg3dacV0fye5xq881QGwGtWg==
+  version "1.0.16"
+  resolved "https://registry.yarnpkg.com/@solidbasisventures/intelliwaketsfoundation/-/intelliwaketsfoundation-1.0.16.tgz#5f2e8679e4e7f1a9fe5c8975383dfffdc1ca4fef"
+  integrity sha512-v9l20D1kz8E/Ewgk5P9NKMaz82g8vZw/oXJhr2E8efKlDXMZoSkf0VnH1+c8D8sQ4IUQXQHndAWmF49FTP+5mQ==
 
 "@types/deep-equal@^1.0.1":
   version "1.0.1"

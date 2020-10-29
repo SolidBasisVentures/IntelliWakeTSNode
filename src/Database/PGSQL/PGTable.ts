@@ -2,7 +2,7 @@ import {PGColumn} from './PGColumn'
 import {PGIndex} from './PGIndex'
 import {PGForeignKey} from './PGForeignKey'
 import moment from 'moment'
-import {IsOn} from '../../Functions'
+import {IsOn} from '@solidbasisventures/intelliwaketsfoundation'
 
 const TS_EOL = '\r\n'
 

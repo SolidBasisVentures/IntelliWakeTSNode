@@ -1,4 +1,4 @@
-import {ToSnakeCase} from '../../Functions'
+import {ToSnakeCase} from '@solidbasisventures/intelliwaketsfoundation'
 
 export class PGEnum {
 	public enumName = ''

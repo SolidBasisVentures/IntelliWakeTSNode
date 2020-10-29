@@ -1,6 +1,6 @@
-import {IsOn} from "../../Functions";
 import {MyTable} from "./MyTable";
 import {ColumnDefinition} from "../ColumnDefinition";
+import {IsOn} from '@solidbasisventures/intelliwaketsfoundation'
 
 export class MyColumn extends ColumnDefinition {
 	public isPK = false;

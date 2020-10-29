@@ -5,9 +5,9 @@
   "main": "dist/main.js",
   "types": "dist/main.d.ts",
   "scripts": {
-    "build": "rollup -c",
+    "BuildAndPublish": "rollup -c && npm version patch --no-git-tag-version && npm publish",
     "start": "rollup -c -w",
-    "yarninstall": "yarn install",
+    "yarninstall": "yarn install && yarn upgrade @solidbasisventures/intelliwaketsfoundation",
     "test": "node ./src/test.ts"
   },
   "files": [

@@ -25,6 +25,7 @@ export class MyIndex {
 		return 'idx_' + myTable.name + '_' + this.columns.join('_');
 	}
 
+	// @ts-ignore
 	public ddlDefinition(myTable: MyTable, altering: boolean): string {
 		let ddl = '';
 

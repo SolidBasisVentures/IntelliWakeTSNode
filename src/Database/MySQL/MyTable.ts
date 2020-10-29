@@ -2,9 +2,9 @@ import {MyColumn} from "./MyColumn";
 import {MyIndex} from "./MyIndex";
 import {MyForeignKey} from "./MyForeignKey";
 import moment from "moment";
-import {IsOn} from "../../Functions";
 import * as path from "path";
 import fs from "fs";
+import {IsOn} from '@solidbasisventures/intelliwaketsfoundation'
 
 const TS_EOL = '\r\n';
 
