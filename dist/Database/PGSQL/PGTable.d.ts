@@ -1,0 +1,33 @@
+import { PGColumn } from './PGColumn';
+import { PGIndex } from './PGIndex';
+import { PGForeignKey } from './PGForeignKey';
+export declare class PGTable {
+    name: string;
+    description: string;
+    check: string | string[] | null;
+    inherits: string[];
+    columns: PGColumn[];
+    indexes: PGIndex[];
+    foreignKeys: PGForeignKey[];
+    constructor(instanceData?: PGTable);
+    protected deserialize(instanceData: PGTable): void;
+    indexOfColumn(columnName: string): number;
+    indexesOfForeignKeyByColumn(columnName: string): number[];
+    getForeignKeysByColumn(columnName: string): PGForeignKey[];
+    removeForeignKeysByColumn(columnName: string): void;
+    removeIndexsByColumn(columnName: string): void;
+    addForeignKey(myForeignKey: PGForeignKey): void;
+    getColumn(columnName: string): PGColumn | null;
+    removeColumn(columnName: string): void;
+    addColumn(pgColumn: PGColumn): void;
+    reOrderColumns(): void;
+    addIndex(myIndex: PGIndex): void;
+    tableHeaderText(forTableText: string): string;
+    tsText(): string;
+    tsTextTable(): string;
+    ddlPrimaryKey(): string | null;
+    ddlCreateTableText(createForeignKeys: boolean, createIndexes: boolean): string;
+    ddlCreateIndexes(): string;
+    ddlCreateForeignKeysText(): string;
+    static CleanComment(comment: string): string;
+}

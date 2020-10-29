@@ -1,12 +1,11 @@
 {
   "name": "@solidbasisventures/intelliwaketsnode",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "NPM package for IntelliWake Node Components",
   "main": "dist/main.js",
   "types": "dist/main.d.ts",
   "scripts": {
     "BuildAndPublish": "rollup -c && npm version patch --no-git-tag-version && npm publish",
-    "Build": "rollup -c",
     "start": "rollup -c -w",
     "yarninstall": "yarn install && yarn upgrade @solidbasisventures/intelliwaketsfoundation",
     "test": "node ./src/test.ts"
