@@ -6,7 +6,7 @@
   "types": "dist/main.d.ts",
   "scripts": {
     "BuildAndPublish": "rollup -c && npm version patch --no-git-tag-version && npm publish",
-    "YarnInstall": "yarn install && yarn add @solidbasisventures/intelliwaketsfoundation --force -W"
+    "YarnInstall": "yarn add @solidbasisventures/intelliwaketsfoundation --force -W && yarn install"
   },
   "files": [
     "dist"
