@@ -4,7 +4,7 @@ import {PGForeignKey} from './PGForeignKey'
 import moment from 'moment'
 import {IsOn} from '@solidbasisventures/intelliwaketsfoundation'
 
-const TS_EOL = '\r\n'
+const TS_EOL = '\n' // was \r\n
 
 export class PGTable {
 	public name = ''
