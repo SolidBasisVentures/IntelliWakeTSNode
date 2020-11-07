@@ -422,7 +422,7 @@ var PGForeignKey = /** @class */ (function () {
     return PGForeignKey;
 }());
 
-var TS_EOL = '\r\n';
+var TS_EOL = '\n'; // was \r\n
 var PGTable = /** @class */ (function () {
     function PGTable(instanceData) {
         this.name = '';
