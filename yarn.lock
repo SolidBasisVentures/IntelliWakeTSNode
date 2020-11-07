@@ -32,10 +32,10 @@
     estree-walker "^1.0.1"
     picomatch "^2.2.2"
 
-"@solidbasisventures/intelliwaketsfoundation@^2.0.17":
-  version "2.0.17"
-  resolved "https://registry.yarnpkg.com/@solidbasisventures/intelliwaketsfoundation/-/intelliwaketsfoundation-2.0.17.tgz#0d34b4862acd1689ba0d2d052e3d0f10380c7d0c"
-  integrity sha512-Ih8Wj0vyeM757D4KFfgMTlkIm5q3LcM4I9dkyLDVQMd8is/uHlDBVhvMjsCpuDcFaffeG45VAKf1Q2EzYFyeFw==
+"@solidbasisventures/intelliwaketsfoundation@^2.0.18":
+  version "2.0.18"
+  resolved "https://registry.yarnpkg.com/@solidbasisventures/intelliwaketsfoundation/-/intelliwaketsfoundation-2.0.18.tgz#14f5ea73e42b55f2b6ffbe5a1b0a3ebe8c19cc54"
+  integrity sha512-W6c+QK/GiKX3CiXTLHGkndqByaXZUsE9I24MBoWIfEHwVPB/0QaXBKtxp9bNddY3XQCKkOdYsPudVez5HRmS7g==
 
 "@types/estree@0.0.39":
   version "0.0.39"

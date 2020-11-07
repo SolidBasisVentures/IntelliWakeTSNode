@@ -166,7 +166,7 @@ export class PGTable {
 		let text = this.tableHeaderText('Table Manager for')
 		if (this.inherits.length > 0) {
 			for (const inherit of this.inherits) {
-				text += `import {I${inherit}, initial_${inherit}} from "./I${inherit}";${TS_EOL}`
+				text += `import {I${inherit}, initial_${inherit}} from "./I${inherit}"${TS_EOL}`
 			}
 		}
 
@@ -195,7 +195,7 @@ export class PGTable {
 		let addComment = ''
 		for (const myColumn of this.columns) {
 			if (addComma) {
-				text += ',' + addComment + TS_EOL
+				text += '' + addComment + TS_EOL // Removed comment
 			}
 			text += '\t'
 			text += myColumn.column_name
@@ -280,19 +280,19 @@ export class PGTable {
 			addComma = true
 		}
 		text += addComment + TS_EOL
-		text += '};' + TS_EOL
+		text += '}' + TS_EOL // Removed semi
 
 		return text
 	}
 
 	public tsTextTable(): string {
 		let text = this.tableHeaderText('Table Class for')
-		text += `import {initial_${this.name}, I${this.name}} from "@Common/Tables/I${this.name}";` + TS_EOL
-		text += `import {TTables} from "../Database/Tables";` + TS_EOL
-		text += `import {TConnection} from "../Database/pgsqlConnection";` + TS_EOL
-		text += `import {_CTable} from "./_CTable";` + TS_EOL
+		text += `import {initial_${this.name}, I${this.name}} from "@Common/Tables/I${this.name}"` + TS_EOL
+		text += `import {TTables} from "../Database/Tables"` + TS_EOL
+		text += `import {TConnection} from "../Database/pgsqlConnection"` + TS_EOL
+		text += `import {_CTable} from "./_CTable"` + TS_EOL
 		for (const inherit of this.inherits) {
-			text += `import {_C${inherit}} from "./_C${inherit}";` + TS_EOL
+			text += `import {_C${inherit}} from "./_C${inherit}"` + TS_EOL
 		}
 		text += TS_EOL
 		text += `export class C${this.name} extends _CTable<I${this.name}>`
@@ -300,12 +300,12 @@ export class PGTable {
 			text += `, C${this.inherits.join(', C')}`
 		}
 		text += ` {` + TS_EOL
-		text += `\tpublic readonly table: TTables;` + TS_EOL
+		text += `\tpublic readonly table: TTables` + TS_EOL
 		text += TS_EOL
 		text += `\tconstructor(connection: TConnection, initialValues?: I${this.name} | any) {` + TS_EOL
-		text += `\t\tsuper(connection, initialValues, {...initial_${this.name}});` + TS_EOL
+		text += `\t\tsuper(connection, initialValues, {...initial_${this.name}})` + TS_EOL
 		text += TS_EOL
-		text += `\t\tthis.table = '${this.name}';` + TS_EOL
+		text += `\t\tthis.table = '${this.name}'` + TS_EOL
 		text += `\t}` + TS_EOL
 		text += `}` + TS_EOL
 
