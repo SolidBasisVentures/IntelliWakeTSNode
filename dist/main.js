@@ -555,7 +555,7 @@ var PGTable = /** @class */ (function () {
         if (this.inherits.length > 0) {
             for (var _i = 0, _e = this.inherits; _i < _e.length; _i++) {
                 var inherit = _e[_i];
-                text += "import {I" + inherit + ", initial_" + inherit + "} from \"./I" + inherit + "\";" + TS_EOL;
+                text += "import {I" + inherit + ", initial_" + inherit + "} from \"./I" + inherit + "\"" + TS_EOL;
             }
         }
         var enums = Array.from(new Set(this.columns
@@ -578,7 +578,7 @@ var PGTable = /** @class */ (function () {
         for (var _g = 0, _h = this.columns; _g < _h.length; _g++) {
             var myColumn = _h[_g];
             if (addComma) {
-                text += ',' + addComment + TS_EOL;
+                text += '' + addComment + TS_EOL; // Removed comment
             }
             text += '\t';
             text += myColumn.column_name;
@@ -677,18 +677,18 @@ var PGTable = /** @class */ (function () {
             addComma = true;
         }
         text += addComment + TS_EOL;
-        text += '};' + TS_EOL;
+        text += '}' + TS_EOL; // Removed semi
         return text;
     };
     PGTable.prototype.tsTextTable = function () {
         var text = this.tableHeaderText('Table Class for');
-        text += "import {initial_" + this.name + ", I" + this.name + "} from \"@Common/Tables/I" + this.name + "\";" + TS_EOL;
-        text += "import {TTables} from \"../Database/Tables\";" + TS_EOL;
-        text += "import {TConnection} from \"../Database/pgsqlConnection\";" + TS_EOL;
-        text += "import {_CTable} from \"./_CTable\";" + TS_EOL;
+        text += "import {initial_" + this.name + ", I" + this.name + "} from \"@Common/Tables/I" + this.name + "\"" + TS_EOL;
+        text += "import {TTables} from \"../Database/Tables\"" + TS_EOL;
+        text += "import {TConnection} from \"../Database/pgsqlConnection\"" + TS_EOL;
+        text += "import {_CTable} from \"./_CTable\"" + TS_EOL;
         for (var _i = 0, _a = this.inherits; _i < _a.length; _i++) {
             var inherit = _a[_i];
-            text += "import {_C" + inherit + "} from \"./_C" + inherit + "\";" + TS_EOL;
+            text += "import {_C" + inherit + "} from \"./_C" + inherit + "\"" + TS_EOL;
         }
         text += TS_EOL;
         text += "export class C" + this.name + " extends _CTable<I" + this.name + ">";
@@ -696,12 +696,12 @@ var PGTable = /** @class */ (function () {
             text += ", C" + this.inherits.join(', C');
         }
         text += " {" + TS_EOL;
-        text += "\tpublic readonly table: TTables;" + TS_EOL;
+        text += "\tpublic readonly table: TTables" + TS_EOL;
         text += TS_EOL;
         text += "\tconstructor(connection: TConnection, initialValues?: I" + this.name + " | any) {" + TS_EOL;
-        text += "\t\tsuper(connection, initialValues, {...initial_" + this.name + "});" + TS_EOL;
+        text += "\t\tsuper(connection, initialValues, {...initial_" + this.name + "})" + TS_EOL;
         text += TS_EOL;
-        text += "\t\tthis.table = '" + this.name + "';" + TS_EOL;
+        text += "\t\tthis.table = '" + this.name + "'" + TS_EOL;
         text += "\t}" + TS_EOL;
         text += "}" + TS_EOL;
         return text;
