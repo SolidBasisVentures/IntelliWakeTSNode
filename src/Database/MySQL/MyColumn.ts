@@ -1,5 +1,5 @@
 import {MyTable} from './MyTable'
-import {ColumnDefinition} from '../ColumnDefinition'
+import {ColumnDefinition} from './ColumnDefinition'
 import {IsOn} from '@solidbasisventures/intelliwaketsfoundation'
 
 export class MyColumn extends ColumnDefinition {
@@ -32,8 +32,7 @@ export class MyColumn extends ColumnDefinition {
 //		}
 	}
 	
-	// @ts-ignore
-	public ddlDefinition(myTable: MyTable, prevMyColumn: MyColumn | null, altering: boolean): string {
+	public ddlDefinition(myTable: MyTable, _prevMyColumn: MyColumn | null, _altering: boolean): string {
 		let ddl = '`' + this.COLUMN_NAME + '` '
 		ddl += this.DATA_TYPE
 		
