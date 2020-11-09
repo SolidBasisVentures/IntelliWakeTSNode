@@ -1,9 +1,10 @@
-import { MyTable } from "./MyTable";
+import { MyTable } from './MyTable';
 export declare class MyForeignKey {
     columnNames: string[];
     primaryTable: string;
     primaryColumns: string[];
     isUnique: boolean;
+    keyName: string;
     onDelete: string;
     onUpdate: string;
     constructor(instanceData?: MyForeignKey);
