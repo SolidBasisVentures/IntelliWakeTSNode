@@ -1,6 +1,9 @@
 import { Connection } from "mysql"
 import {MyTable} from './MyTable'
 import {MyColumn} from './MyColumn'
+import {MyForeignKey} from './MyForeignKey'
+import {MyIndex} from './MyIndex'
+import {IsOn} from '@solidbasisventures/intelliwaketsfoundation'
 
 export namespace MySQL {
 	
@@ -62,18 +65,86 @@ export namespace MySQL {
 		})
 	}
 	
+	export const TableFKs = async (connection: Connection, table: string): Promise<MyForeignKey[]> => {
+		return await new Promise((resolve) => {
+			connection.query(`SELECT TABLE_NAME,COLUMN_NAME,CONSTRAINT_NAME, REFERENCED_TABLE_NAME,REFERENCED_COLUMN_NAME
+				FROM INFORMATION_SCHEMA.KEY_COLUMN_USAGE
+				WHERE REFERENCED_TABLE_SCHEMA = '${process.env.MYSQLDATABASE}'
+				  AND TABLE_NAME = '${table}'`, (error , results, _fields) => {
+				if (error) throw error
+				
+				let myForeignKeys: MyForeignKey[] = []
+				
+				for (const result of results) {
+					const prevFK = myForeignKeys.find(fk => fk.keyName === result.CONSTRAINT_NAME)
+					
+					if (!!prevFK) {
+						prevFK.columnNames = [...prevFK.columnNames, result.COLUMN_NAME]
+						prevFK.primaryColumns = [...prevFK.primaryColumns, result.REFERENCED_COLUMN_NAME]
+					} else {
+						const myForeignKey = new MyForeignKey()
+						
+						myForeignKey.keyName = result.CONSTRAINT_NAME
+						myForeignKey.columnNames = [result.COLUMN_NAME]
+						myForeignKey.primaryTable = result.REFERENCED_TABLE_NAME
+						myForeignKey.primaryColumns = [result.REFERENCED_COLUMN_NAME]
+						
+						myForeignKeys.push(myForeignKey)
+					}
+				}
+				
+				resolve(myForeignKeys)
+			})
+		})
+	}
+	
+	export const TableIndexes = async (connection: Connection, table: string): Promise<MyIndex[]> => {
+		return await new Promise((resolve) => {
+			connection.query(`SELECT INDEX_NAME, COLUMN_NAME, NON_UNIQUE
+				FROM INFORMATION_SCHEMA.STATISTICS
+				WHERE TABLE_SCHEMA = '${process.env.MYSQLDATABASE}'
+					AND TABLE_NAME = '${table}'
+				ORDER BY INDEX_NAME`, (error , results, _fields) => {
+				if (error) throw error
+				
+				let myIndexes: MyIndex[] = []
+				
+				for (const result of results) {
+					const prevIndex = myIndexes.find(idx => idx.indexName === result.INDEX_NAME)
+					
+					if (!!prevIndex) {
+						prevIndex.columns = [...prevIndex.columns, result.COLUMN_NAME]
+					} else {
+						const myIndex = new MyIndex()
+						
+						myIndex.indexName = result.INDEX_NAME
+						myIndex.columns = [result.COLUMN_NAME]
+						myIndex.isUnique = !IsOn(result.NON_UNIQUE)
+						
+						myIndexes.push(myIndex)
+					}
+				}
+				
+				resolve(myIndexes)
+			})
+		})
+	}
+	
 	export const GetMyTable = async (connection: Connection, table: string): Promise<MyTable> => {
 		const myTable = new MyTable()
 		
 		myTable.name = table
 		
 		const columns = await TableColumns(connection, table)
-		
 		for (const column of columns) {
 			const myColumn = new MyColumn(column as any)
 			
 			myTable.columns.push(myColumn)
 		}
+		
+		myTable.foreignKeys = await TableFKs(connection, table)
+		
+		myTable.indexes = await TableIndexes(connection, table)
 		
 		return myTable
 	}

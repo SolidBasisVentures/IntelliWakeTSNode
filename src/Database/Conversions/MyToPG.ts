@@ -4,6 +4,10 @@ import {MyColumn} from '../MySQL/MyColumn'
 import {PGColumn} from '../PGSQL/PGColumn'
 import {IsOn} from '@solidbasisventures/intelliwaketsfoundation'
 import {ColumnDefinition} from '../ColumnDefinition'
+import {MyForeignKey} from '../MySQL/MyForeignKey'
+import {PGForeignKey} from '../PGSQL/PGForeignKey'
+import {MyIndex} from '../MySQL/MyIndex'
+import {PGIndex} from '../PGSQL/PGIndex'
 
 export namespace MyToPG {
 	export const GetPGTable = (myTable: MyTable): PGTable => {
@@ -15,6 +19,18 @@ export namespace MyToPG {
 			const pgColumn = GetPGColumn(myColumn)
 			
 			pgTable.columns.push(pgColumn)
+		}
+		
+		for (const myForeignKey of myTable.foreignKeys) {
+			const pgForeignKey = GetPGForeignKey(myForeignKey)
+			
+			pgTable.foreignKeys.push(pgForeignKey)
+		}
+		
+		for (const myIndex of myTable.indexes) {
+			const pgIndex = GetPGIndex(myIndex)
+			
+			pgTable.indexes.push(pgIndex)
 		}
 		
 		return pgTable
@@ -39,6 +55,25 @@ export namespace MyToPG {
 		pgColumn.column_comment = myColumn.COLUMN_COMMENT ?? ''
 		
 		return pgColumn
+	}
+	
+	export const GetPGForeignKey = (myForeignKey: MyForeignKey): PGForeignKey => {
+		const pgForeignKey = new PGForeignKey()
+		
+		pgForeignKey.columnNames = myForeignKey.columnNames.map(col => col.toLowerCase())
+		pgForeignKey.primaryTable = myForeignKey.primaryTable.toLowerCase()
+		pgForeignKey.primaryColumns = myForeignKey.primaryColumns.map(col => col.toLowerCase())
+		
+		return pgForeignKey
+	}
+	
+	export const GetPGIndex = (myIndex: MyIndex): PGIndex => {
+		const pgIndex = new PGIndex()
+		
+		pgIndex.columns = myIndex.columns.map(col => col.toLowerCase())
+		pgIndex.isUnique = myIndex.isUnique
+		
+		return pgIndex
 	}
 	
 	export const UDTNameFromDataType = (columnName: string): string => {

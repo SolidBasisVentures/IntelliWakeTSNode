@@ -24,14 +24,14 @@ const processConsole = async () => {
 	
 	const tables = await MySQL.Tables(connection)
 	
-	const table = tables[0]
+	const table = tables.find(tab => tab === 'qv_sheet')
 	
 	if (table) {
 		const myTable = await MySQL.GetMyTable(connection, table)
 		
 		const pgTable = MyToPG.GetPGTable(myTable)
 		
-		console.log(pgTable)
+		console.log(pgTable.name)
 		
 		// console.log(myTable.columns.filter(col => col.COLUMN_NAME === 'id'))
 		
