@@ -39,6 +39,8 @@ export class PGColumn {
 	static readonly TYPE_TIMESTAMP = 'timestamp'
 	static readonly TYPE_TIMESTAMPTZ = 'timestampz'
 	
+	static readonly TYPE_BYTEA = 'bytea'
+	
 	static readonly TYPE_UUID = 'uuid'
 	
 	static readonly TYPES_ALL = [

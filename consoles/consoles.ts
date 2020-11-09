@@ -1,5 +1,6 @@
 import mysql from 'mysql'
 import {MySQL} from '../src/Database/MySQL/MySQL'
+import {MyToPG} from '../src/Database/Conversions/MyToPG'
 
 require('source-map-support').install()
 
@@ -21,7 +22,21 @@ const processConsole = async () => {
 // 	console.log('The solution is: ', [...results])
 // })
 	
-	console.log(await MySQL.Tables(connection))
+	const tables = await MySQL.Tables(connection)
+	
+	const table = tables[0]
+	
+	if (table) {
+		const myTable = await MySQL.GetMyTable(connection, table)
+		
+		const pgTable = MyToPG.GetPGTable(myTable)
+		
+		console.log(pgTable)
+		
+		// console.log(myTable.columns.filter(col => col.COLUMN_NAME === 'id'))
+		
+		// console.log(pgTable.columns.filter(col => col.column_name === 'id'))
+	}
 	
 	connection.end()
 }

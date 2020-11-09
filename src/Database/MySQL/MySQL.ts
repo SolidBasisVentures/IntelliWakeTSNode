@@ -1,4 +1,6 @@
 import { Connection } from "mysql"
+import {MyTable} from './MyTable'
+import {MyColumn} from './MyColumn'
 
 export namespace MySQL {
 	
@@ -45,6 +47,35 @@ export namespace MySQL {
 				resolve(((((results ?? [])[0] ?? {}) as any)['count'] ?? 0) > 0)
 			})
 		})
+	}
+	
+	export const TableColumns = async (connection: Connection, table: string): Promise<string[]> => {
+		return await new Promise((resolve) => {
+			connection.query(`SELECT *
+                      FROM information_schema.COLUMNS
+                      WHERE TABLE_SCHEMA = '${process.env.MYSQLDATABASE}'
+                        AND TABLE_NAME = '${table}'
+                        ORDER BY ORDINAL_POSITION`, (error , results, _fields) => {
+				if (error) throw error
+				resolve([...(results as any[] ?? [])])
+			})
+		})
+	}
+	
+	export const GetMyTable = async (connection: Connection, table: string): Promise<MyTable> => {
+		const myTable = new MyTable()
+		
+		myTable.name = table
+		
+		const columns = await TableColumns(connection, table)
+		
+		for (const column of columns) {
+			const myColumn = new MyColumn(column as any)
+			
+			myTable.columns.push(myColumn)
+		}
+		
+		return myTable
 	}
 
 	// export const TriggerExists = async (connection: TConnection, trigger: string): Promise<boolean> => {
