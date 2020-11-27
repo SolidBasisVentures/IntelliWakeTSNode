@@ -1,12 +1,12 @@
 {
   "name": "@solidbasisventures/intelliwaketsnode",
-  "version": "2.0.17",
+  "version": "2.0.18",
   "description": "NPM package for IntelliWake Node Components",
   "main": "dist/main.js",
   "types": "dist/main.d.ts",
   "scripts": {
     "BuildAndPublish": "rollup -c && npm version patch --no-git-tag-version && npm publish",
-    "YarnInstall": "yarn add @solidbasisventures/intelliwaketsfoundation --force -W && yarn install",
+    "YarnInstall": "yarn install && yarn add -D @solidbasisventures/intelliwaketsfoundation --force -W",
     "Test": "jest",
     "TSNode": "ts-node --script-mode consoles/consoles.ts",
     "TSNodeDev": "ts-node-dev --script-mode --respawn --transpile-only consoles/consoles.ts"
@@ -22,7 +22,7 @@
   },
   "peerDependencies": {},
   "devDependencies": {
-    "@solidbasisventures/intelliwaketsfoundation": "^2.0.18",
+    "@solidbasisventures/intelliwaketsfoundation": "^2.0.35",
     "@types/jest": "^26.0.15",
     "@types/mysql": "^2.15.15",
     "@types/node": "^14.0.5",
