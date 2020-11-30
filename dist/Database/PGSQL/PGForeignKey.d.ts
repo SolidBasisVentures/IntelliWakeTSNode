@@ -8,6 +8,6 @@ export declare class PGForeignKey {
     onUpdate: string;
     constructor(instanceData?: PGForeignKey);
     private deserialize;
-    fkName(myTable: PGTable): string;
-    ddlConstraintDefinition(myTable: PGTable): string;
+    fkName(pgTable: PGTable): string;
+    ddlConstraintDefinition(pgTable: PGTable): string;
 }

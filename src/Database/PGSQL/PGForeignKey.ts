@@ -25,17 +25,17 @@ export class PGForeignKey {
 		}
 	}
 
-	public fkName(myTable: PGTable) {
-		return myTable.name + '_' + this.columnNames.join('_') + '_fkey'
+	public fkName(pgTable: PGTable) {
+		return pgTable.name + '_' + this.columnNames.join('_') + '_fkey'
 	}
 
-	public ddlConstraintDefinition(myTable: PGTable): string {
+	public ddlConstraintDefinition(pgTable: PGTable): string {
 		return `
 		DO $$
 		BEGIN
-			IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = '${this.fkName(myTable)}') THEN
-				ALTER TABLE "${myTable.name}"
-					ADD CONSTRAINT "${this.fkName(myTable)}"
+			IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = '${this.fkName(pgTable)}') THEN
+				ALTER TABLE "${pgTable.name}"
+					ADD CONSTRAINT "${this.fkName(pgTable)}"
 					FOREIGN KEY ("${this.columnNames.join('","')}") REFERENCES "${this.primaryTable}"("${this.primaryColumns.join(
 			'","'
 		)}") DEFERRABLE INITIALLY DEFERRED;

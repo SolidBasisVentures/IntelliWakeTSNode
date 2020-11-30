@@ -16,12 +16,12 @@ export declare class PGTable {
     getForeignKeysByColumn(columnName: string): PGForeignKey[];
     removeForeignKeysByColumn(columnName: string): void;
     removeIndexsByColumn(columnName: string): void;
-    addForeignKey(myForeignKey: PGForeignKey): void;
+    addForeignKey(pgForeignKey: PGForeignKey): void;
     getColumn(columnName: string): PGColumn | null;
     removeColumn(columnName: string): void;
     addColumn(pgColumn: PGColumn): void;
     reOrderColumns(): void;
-    addIndex(myIndex: PGIndex): void;
+    addIndex(pgIndex: PGIndex): void;
     tableHeaderText(forTableText: string): string;
     tsText(): string;
     tsTextTable(): string;

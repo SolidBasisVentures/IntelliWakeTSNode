@@ -262,9 +262,9 @@ var PGIndex = /** @class */ (function () {
             }
         }
     };
-    PGIndex.prototype.name = function (myTable) {
+    PGIndex.prototype.name = function (pgTable) {
         return ('idx_' +
-            myTable.name +
+            pgTable.name +
             '_' +
             this.columns
                 .map(function (column) {
@@ -278,15 +278,15 @@ var PGIndex = /** @class */ (function () {
             })
                 .join('_'));
     };
-    PGIndex.prototype.ddlDefinition = function (myTable) {
+    PGIndex.prototype.ddlDefinition = function (pgTable) {
         var ddl = 'CREATE ';
         if (this.isUnique) {
             ddl += 'UNIQUE ';
         }
         ddl += 'INDEX ';
-        ddl += "\"" + this.name(myTable) + "\" ";
+        ddl += "\"" + this.name(pgTable) + "\" ";
         ddl += 'ON ';
-        ddl += "\"" + myTable.name + "\" ";
+        ddl += "\"" + pgTable.name + "\" ";
         ddl += 'USING btree ';
         ddl += '(' + this.columns.join(',') + ');';
         return ddl;
@@ -315,11 +315,11 @@ var PGForeignKey = /** @class */ (function () {
             }
         }
     };
-    PGForeignKey.prototype.fkName = function (myTable) {
-        return myTable.name + '_' + this.columnNames.join('_') + '_fkey';
+    PGForeignKey.prototype.fkName = function (pgTable) {
+        return pgTable.name + '_' + this.columnNames.join('_') + '_fkey';
     };
-    PGForeignKey.prototype.ddlConstraintDefinition = function (myTable) {
-        return "\n\t\tDO $$\n\t\tBEGIN\n\t\t\tIF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = '" + this.fkName(myTable) + "') THEN\n\t\t\t\tALTER TABLE \"" + myTable.name + "\"\n\t\t\t\t\tADD CONSTRAINT \"" + this.fkName(myTable) + "\"\n\t\t\t\t\tFOREIGN KEY (\"" + this.columnNames.join('","') + "\") REFERENCES \"" + this.primaryTable + "\"(\"" + this.primaryColumns.join('","') + "\") DEFERRABLE INITIALLY DEFERRED;\n\t\t\tEND IF;\n\t\tEND;\n\t\t$$;"; // was INITIALLY IMMEDIATE
+    PGForeignKey.prototype.ddlConstraintDefinition = function (pgTable) {
+        return "\n\t\tDO $$\n\t\tBEGIN\n\t\t\tIF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = '" + this.fkName(pgTable) + "') THEN\n\t\t\t\tALTER TABLE \"" + pgTable.name + "\"\n\t\t\t\t\tADD CONSTRAINT \"" + this.fkName(pgTable) + "\"\n\t\t\t\t\tFOREIGN KEY (\"" + this.columnNames.join('","') + "\") REFERENCES \"" + this.primaryTable + "\"(\"" + this.primaryColumns.join('","') + "\") DEFERRABLE INITIALLY DEFERRED;\n\t\t\tEND IF;\n\t\tEND;\n\t\t$$;"; // was INITIALLY IMMEDIATE
     };
     return PGForeignKey;
 }());
@@ -396,8 +396,8 @@ var PGTable = /** @class */ (function () {
     PGTable.prototype.removeIndexsByColumn = function (columnName) {
         this.indexes = this.indexes.filter(function (index) { return !index.columns.includes(columnName); });
     };
-    PGTable.prototype.addForeignKey = function (myForeignKey) {
-        this.foreignKeys.push(myForeignKey);
+    PGTable.prototype.addForeignKey = function (pgForeignKey) {
+        this.foreignKeys.push(pgForeignKey);
     };
     PGTable.prototype.getColumn = function (columnName) {
         var _a;
@@ -433,8 +433,8 @@ var PGTable = /** @class */ (function () {
             this.columns[i].ordinal_position = position;
         }
     };
-    PGTable.prototype.addIndex = function (myIndex) {
-        this.indexes.push(myIndex);
+    PGTable.prototype.addIndex = function (pgIndex) {
+        this.indexes.push(pgIndex);
     };
     PGTable.prototype.tableHeaderText = function (forTableText) {
         var text = '/**' + TS_EOL;
@@ -478,22 +478,22 @@ var PGTable = /** @class */ (function () {
         var addComma = false;
         var addComment = '';
         for (var _g = 0, _h = this.columns; _g < _h.length; _g++) {
-            var myColumn = _h[_g];
+            var pgColumn = _h[_g];
             if (addComma) {
                 text += '' + addComment + TS_EOL; // Removed comment
             }
             text += '\t';
-            text += myColumn.column_name;
+            text += pgColumn.column_name;
             text += ': ';
-            text += myColumn.jsType();
-            if (myColumn.array_dimensions.length > 0) {
-                text += "[" + myColumn.array_dimensions.map(function () { return ''; }).join('],[') + "]";
+            text += pgColumn.jsType();
+            if (pgColumn.array_dimensions.length > 0) {
+                text += "[" + pgColumn.array_dimensions.map(function () { return ''; }).join('],[') + "]";
             }
-            if (intelliwaketsfoundation.IsOn((_a = myColumn.is_nullable) !== null && _a !== void 0 ? _a : 'YES')) {
+            if (intelliwaketsfoundation.IsOn((_a = pgColumn.is_nullable) !== null && _a !== void 0 ? _a : 'YES')) {
                 text += ' | null';
             }
-            if (!!myColumn.column_comment) {
-                addComment = ' // ' + PGTable.CleanComment(myColumn.column_comment);
+            if (!!pgColumn.column_comment) {
+                addComment = ' // ' + PGTable.CleanComment(pgColumn.column_comment);
             }
             else {
                 addComment = '';
@@ -510,61 +510,61 @@ var PGTable = /** @class */ (function () {
             text += "\t...initial_" + this.inherits.join("," + TS_EOL + "\t...initial_") + "," + TS_EOL;
         }
         for (var _j = 0, _k = this.columns; _j < _k.length; _j++) {
-            var myColumn = _k[_j];
+            var pgColumn = _k[_j];
             if (addComma) {
                 text += ',' + TS_EOL;
             }
             text += '\t';
-            text += myColumn.column_name;
+            text += pgColumn.column_name;
             text += ': ';
-            if (myColumn.array_dimensions.length > 0) {
-                if (intelliwaketsfoundation.IsOn(myColumn.is_nullable)) {
+            if (pgColumn.array_dimensions.length > 0) {
+                if (intelliwaketsfoundation.IsOn(pgColumn.is_nullable)) {
                     text += 'null';
                 }
                 else {
-                    text += "[" + myColumn.array_dimensions.map(function () { return ''; }).join('],[') + "]";
+                    text += "[" + pgColumn.array_dimensions.map(function () { return ''; }).join('],[') + "]";
                 }
             }
             else {
-                if (!myColumn.blobType()) {
-                    if (intelliwaketsfoundation.IsOn(myColumn.is_identity) && myColumn.isAutoIncrement) {
+                if (!pgColumn.blobType()) {
+                    if (intelliwaketsfoundation.IsOn(pgColumn.is_identity) && pgColumn.isAutoIncrement) {
                         text += '0';
                     }
-                    else if (myColumn.booleanType()) {
-                        if (intelliwaketsfoundation.IsOn(myColumn.is_nullable)) {
+                    else if (pgColumn.booleanType()) {
+                        if (intelliwaketsfoundation.IsOn(pgColumn.is_nullable)) {
                             text += 'null';
                         }
                         else {
-                            text += intelliwaketsfoundation.IsOn(myColumn.column_default) ? 'true' : 'false';
+                            text += intelliwaketsfoundation.IsOn(pgColumn.column_default) ? 'true' : 'false';
                         }
                     }
-                    else if (!!myColumn.column_default ||
-                        (typeof myColumn.udt_name !== 'string' && !!myColumn.udt_name.defaultValue)) {
-                        if (myColumn.dateType()) {
+                    else if (!!pgColumn.column_default ||
+                        (typeof pgColumn.udt_name !== 'string' && !!pgColumn.udt_name.defaultValue)) {
+                        if (pgColumn.dateType()) {
                             text += "''";
                         }
-                        else if (myColumn.integerFloatType() || myColumn.dateType()) {
-                            text += myColumn.column_default;
+                        else if (pgColumn.integerFloatType() || pgColumn.dateType()) {
+                            text += pgColumn.column_default;
                         }
-                        else if (typeof myColumn.udt_name !== 'string') {
+                        else if (typeof pgColumn.udt_name !== 'string') {
                             text +=
-                                "'" + ((_c = (_b = myColumn.column_default) !== null && _b !== void 0 ? _b : myColumn.udt_name.defaultValue) !== null && _c !== void 0 ? _c : '') + "' as " + myColumn.jsType();
+                                "'" + ((_c = (_b = pgColumn.column_default) !== null && _b !== void 0 ? _b : pgColumn.udt_name.defaultValue) !== null && _c !== void 0 ? _c : '') + "' as " + pgColumn.jsType();
                         }
                         else {
-                            text += "'" + ((_d = myColumn.column_default) !== null && _d !== void 0 ? _d : '') + "'";
+                            text += "'" + ((_d = pgColumn.column_default) !== null && _d !== void 0 ? _d : '') + "'";
                         }
                     }
-                    else if (intelliwaketsfoundation.IsOn(myColumn.is_nullable)) {
+                    else if (intelliwaketsfoundation.IsOn(pgColumn.is_nullable)) {
                         text += 'null';
                     }
                     else {
-                        if (myColumn.booleanType()) {
+                        if (pgColumn.booleanType()) {
                             text += 'true';
                         }
-                        else if (myColumn.integerFloatType()) {
+                        else if (pgColumn.integerFloatType()) {
                             text += '0';
                         }
-                        else if (myColumn.dateType()) {
+                        else if (pgColumn.dateType()) {
                             text += "''";
                         }
                         else {
@@ -634,12 +634,12 @@ var PGTable = /** @class */ (function () {
         ddl += "CREATE TABLE " + this.name + " (" + TS_EOL;
         var prevColumn = null;
         for (var _i = 0, _a = this.columns; _i < _a.length; _i++) {
-            var myColumn = _a[_i];
+            var pgColumn = _a[_i];
             if (prevColumn !== null) {
                 ddl += ',' + TS_EOL;
             }
-            ddl += '\t' + myColumn.ddlDefinition();
-            prevColumn = myColumn;
+            ddl += '\t' + pgColumn.ddlDefinition();
+            prevColumn = pgColumn;
         }
         var pk = this.ddlPrimaryKey();
         if (!!pk) {

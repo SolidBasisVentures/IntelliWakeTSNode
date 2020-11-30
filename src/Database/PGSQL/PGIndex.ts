@@ -22,10 +22,10 @@ export class PGIndex {
 		}
 	}
 
-	public name(myTable: PGTable): string {
+	public name(pgTable: PGTable): string {
 		return (
 			'idx_' +
-			myTable.name +
+			pgTable.name +
 			'_' +
 			this.columns
 				.map((column) =>
@@ -41,16 +41,16 @@ export class PGIndex {
 		)
 	}
 
-	public ddlDefinition(myTable: PGTable): string {
+	public ddlDefinition(pgTable: PGTable): string {
 		let ddl = 'CREATE '
 
 		if (this.isUnique) {
 			ddl += 'UNIQUE '
 		}
 		ddl += 'INDEX '
-		ddl += `"${this.name(myTable)}" `
+		ddl += `"${this.name(pgTable)}" `
 		ddl += 'ON '
-		ddl += `"${myTable.name}" `
+		ddl += `"${pgTable.name}" `
 		ddl += 'USING btree '
 		ddl += '(' + this.columns.join(',') + ');'
 

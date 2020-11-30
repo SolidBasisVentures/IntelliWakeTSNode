@@ -6,6 +6,6 @@ export declare class PGIndex {
     using: string;
     constructor(instanceData?: PGIndex);
     private deserialize;
-    name(myTable: PGTable): string;
-    ddlDefinition(myTable: PGTable): string;
+    name(pgTable: PGTable): string;
+    ddlDefinition(pgTable: PGTable): string;
 }

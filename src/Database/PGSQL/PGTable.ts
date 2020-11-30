@@ -90,8 +90,8 @@ export class PGTable {
 		this.indexes = this.indexes.filter((index) => !index.columns.includes(columnName))
 	}
 
-	public addForeignKey(myForeignKey: PGForeignKey) {
-		this.foreignKeys.push(myForeignKey)
+	public addForeignKey(pgForeignKey: PGForeignKey) {
+		this.foreignKeys.push(pgForeignKey)
 	}
 
 	public getColumn(columnName: string): PGColumn | null {
@@ -141,8 +141,8 @@ export class PGTable {
 		}
 	}
 
-	public addIndex(myIndex: PGIndex) {
-		this.indexes.push(myIndex)
+	public addIndex(pgIndex: PGIndex) {
+		this.indexes.push(pgIndex)
 	}
 
 	public tableHeaderText(forTableText: string): string {
@@ -193,22 +193,22 @@ export class PGTable {
 		text += ` {` + TS_EOL
 		let addComma = false
 		let addComment = ''
-		for (const myColumn of this.columns) {
+		for (const pgColumn of this.columns) {
 			if (addComma) {
 				text += '' + addComment + TS_EOL // Removed comment
 			}
 			text += '\t'
-			text += myColumn.column_name
+			text += pgColumn.column_name
 			text += ': '
-			text += myColumn.jsType()
-			if (myColumn.array_dimensions.length > 0) {
-				text += `[${myColumn.array_dimensions.map(() => '').join('],[')}]`
+			text += pgColumn.jsType()
+			if (pgColumn.array_dimensions.length > 0) {
+				text += `[${pgColumn.array_dimensions.map(() => '').join('],[')}]`
 			}
-			if (IsOn(myColumn.is_nullable ?? 'YES')) {
+			if (IsOn(pgColumn.is_nullable ?? 'YES')) {
 				text += ' | null'
 			}
-			if (!!myColumn.column_comment) {
-				addComment = ' // ' + PGTable.CleanComment(myColumn.column_comment)
+			if (!!pgColumn.column_comment) {
+				addComment = ' // ' + PGTable.CleanComment(pgColumn.column_comment)
 			} else {
 				addComment = ''
 			}
@@ -223,51 +223,51 @@ export class PGTable {
 		if (this.inherits.length > 0) {
 			text += `\t...initial_${this.inherits.join(`,${TS_EOL}\t...initial_`)},${TS_EOL}`
 		}
-		for (const myColumn of this.columns) {
+		for (const pgColumn of this.columns) {
 			if (addComma) {
 				text += ',' + TS_EOL
 			}
 			text += '\t'
-			text += myColumn.column_name
+			text += pgColumn.column_name
 			text += ': '
-			if (myColumn.array_dimensions.length > 0) {
-				if (IsOn(myColumn.is_nullable)) {
+			if (pgColumn.array_dimensions.length > 0) {
+				if (IsOn(pgColumn.is_nullable)) {
 					text += 'null'
 				} else {
-					text += `[${myColumn.array_dimensions.map(() => '').join('],[')}]`
+					text += `[${pgColumn.array_dimensions.map(() => '').join('],[')}]`
 				}
 			} else {
-				if (!myColumn.blobType()) {
-					if (IsOn(myColumn.is_identity) && myColumn.isAutoIncrement) {
+				if (!pgColumn.blobType()) {
+					if (IsOn(pgColumn.is_identity) && pgColumn.isAutoIncrement) {
 						text += '0'
-					} else if (myColumn.booleanType()) {
-						if (IsOn(myColumn.is_nullable)) {
+					} else if (pgColumn.booleanType()) {
+						if (IsOn(pgColumn.is_nullable)) {
 							text += 'null'
 						} else {
-							text += IsOn(myColumn.column_default) ? 'true' : 'false'
+							text += IsOn(pgColumn.column_default) ? 'true' : 'false'
 						}
 					} else if (
-						!!myColumn.column_default ||
-						(typeof myColumn.udt_name !== 'string' && !!myColumn.udt_name.defaultValue)
+						!!pgColumn.column_default ||
+						(typeof pgColumn.udt_name !== 'string' && !!pgColumn.udt_name.defaultValue)
 					) {
-						if (myColumn.dateType()) {
+						if (pgColumn.dateType()) {
 							text += "''"
-						} else if (myColumn.integerFloatType() || myColumn.dateType()) {
-							text += myColumn.column_default
-						} else if (typeof myColumn.udt_name !== 'string') {
+						} else if (pgColumn.integerFloatType() || pgColumn.dateType()) {
+							text += pgColumn.column_default
+						} else if (typeof pgColumn.udt_name !== 'string') {
 							text +=
-								"'" + (myColumn.column_default ?? myColumn.udt_name.defaultValue ?? '') + "' as " + myColumn.jsType()
+								"'" + (pgColumn.column_default ?? pgColumn.udt_name.defaultValue ?? '') + "' as " + pgColumn.jsType()
 						} else {
-							text += "'" + (myColumn.column_default ?? '') + "'"
+							text += "'" + (pgColumn.column_default ?? '') + "'"
 						}
-					} else if (IsOn(myColumn.is_nullable)) {
+					} else if (IsOn(pgColumn.is_nullable)) {
 						text += 'null'
 					} else {
-						if (myColumn.booleanType()) {
+						if (pgColumn.booleanType()) {
 							text += 'true'
-						} else if (myColumn.integerFloatType()) {
+						} else if (pgColumn.integerFloatType()) {
 							text += '0'
-						} else if (myColumn.dateType()) {
+						} else if (pgColumn.dateType()) {
 							text += "''"
 						} else {
 							text += "''"
@@ -344,14 +344,14 @@ export class PGTable {
 		ddl += `CREATE TABLE ${this.name} (` + TS_EOL
 
 		let prevColumn: PGColumn | null = null
-		for (const myColumn of this.columns) {
+		for (const pgColumn of this.columns) {
 			if (prevColumn !== null) {
 				ddl += ',' + TS_EOL
 			}
 
-			ddl += '\t' + myColumn.ddlDefinition()
+			ddl += '\t' + pgColumn.ddlDefinition()
 
-			prevColumn = myColumn
+			prevColumn = pgColumn
 		}
 		const pk = this.ddlPrimaryKey()
 		if (!!pk) {
