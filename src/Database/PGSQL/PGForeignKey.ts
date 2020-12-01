@@ -26,7 +26,7 @@ export class PGForeignKey {
 	}
 
 	public fkName(pgTable: PGTable) {
-		return pgTable.name + '_' + this.columnNames.map(column => column.substr(-10)).join('_') + '_fkey'
+		return pgTable.name + '_' + this.columnNames.map(column => column.substr(-20)).join('_') + '_fkey'
 	}
 
 	public ddlConstraintDefinition(pgTable: PGTable): string {
