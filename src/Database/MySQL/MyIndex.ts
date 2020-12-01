@@ -23,7 +23,7 @@ export class MyIndex {
 	}
 	
 	public name(myTable: MyTable): string {
-		return 'idx_' + myTable.name + '_' + this.columns.join('_')
+		return 'idx_' + myTable.name.substr(0, -15) + '_' + this.columns.map(column => column.substr(0, -15)).join('_')
 	}
 	
 	// @ts-ignore
