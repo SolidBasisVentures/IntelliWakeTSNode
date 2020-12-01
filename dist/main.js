@@ -1112,7 +1112,7 @@ var MyForeignKey = /** @class */ (function () {
         }
     };
     MyForeignKey.prototype.fkName = function (myTable, prefix) {
-        return prefix + '_' + myTable.name + '_' + this.columnNames.join('_');
+        return prefix + '_' + myTable.name.substr(0, -10) + '_' + this.columnNames.map(function (column) { return column.substr(0, -10); }).join('_');
     };
     MyForeignKey.prototype.ddlKeyDefinition = function (myTable, altering) {
         var ddl = '';
@@ -1164,7 +1164,7 @@ var MyIndex = /** @class */ (function () {
         }
     };
     MyIndex.prototype.name = function (myTable) {
-        return 'idx_' + myTable.name + '_' + this.columns.join('_');
+        return 'idx_' + myTable.name.substr(0, -15) + '_' + this.columns.map(function (column) { return column.substr(0, -15); }).join('_');
     };
     // @ts-ignore
     MyIndex.prototype.ddlDefinition = function (myTable, _altering) {
