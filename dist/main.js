@@ -266,7 +266,7 @@ var PGIndex = /** @class */ (function () {
     };
     PGIndex.prototype.name = function (pgTable) {
         return ('idx_' +
-            pgTable.name.substr(-20) +
+            pgTable.name.substr(-25) +
             '_' +
             this.columns
                 .map(function (column) {
@@ -276,7 +276,7 @@ var PGIndex = /** @class */ (function () {
                     .replace(' NULLS', '')
                     .replace(' FIRST', '')
                     .replace(' LAST', '')
-                    .trim().substr(-20);
+                    .trim().substr(-25);
             })
                 .join('_'));
     };
@@ -318,7 +318,7 @@ var PGForeignKey = /** @class */ (function () {
         }
     };
     PGForeignKey.prototype.fkName = function (pgTable) {
-        return pgTable.name + '_' + this.columnNames.map(function (column) { return column.substr(-20); }).join('_') + '_fkey';
+        return pgTable.name + '_' + this.columnNames.map(function (column) { return column.substr(-25); }).join('_') + '_fkey';
     };
     PGForeignKey.prototype.ddlConstraintDefinition = function (pgTable) {
         return "\n\t\tDO $$\n\t\tBEGIN\n\t\t\tIF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = '" + this.fkName(pgTable) + "') THEN\n\t\t\t\tALTER TABLE \"" + pgTable.name + "\"\n\t\t\t\t\tADD CONSTRAINT \"" + this.fkName(pgTable) + "\"\n\t\t\t\t\tFOREIGN KEY (\"" + this.columnNames.join('","') + "\") REFERENCES \"" + this.primaryTable + "\"(\"" + this.primaryColumns.join('","') + "\") DEFERRABLE INITIALLY DEFERRED;\n\t\t\tEND IF;\n\t\tEND;\n\t\t$$;"; // was INITIALLY IMMEDIATE
@@ -1112,7 +1112,7 @@ var MyForeignKey = /** @class */ (function () {
         }
     };
     MyForeignKey.prototype.fkName = function (myTable, prefix) {
-        return prefix + '_' + myTable.name.substr(-20) + '_' + this.columnNames.map(function (column) { return column.substr(0, -10); }).join('_');
+        return prefix + '_' + myTable.name.substr(-25) + '_' + this.columnNames.map(function (column) { return column.substr(0, -10); }).join('_');
     };
     MyForeignKey.prototype.ddlKeyDefinition = function (myTable, altering) {
         var ddl = '';
@@ -1164,7 +1164,7 @@ var MyIndex = /** @class */ (function () {
         }
     };
     MyIndex.prototype.name = function (myTable) {
-        return 'idx_' + myTable.name.substr(-15) + '_' + this.columns.map(function (column) { return column.substr(0, -15); }).join('_');
+        return 'idx_' + myTable.name.substr(-25) + '_' + this.columns.map(function (column) { return column.substr(0, -25); }).join('_');
     };
     // @ts-ignore
     MyIndex.prototype.ddlDefinition = function (myTable, _altering) {
