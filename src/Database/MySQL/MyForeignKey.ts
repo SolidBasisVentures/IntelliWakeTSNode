@@ -27,7 +27,7 @@ export class MyForeignKey {
 	}
 	
 	public fkName(myTable: MyTable, prefix: string) {
-		return prefix + '_' + myTable.name.substr(0, -10) + '_' + this.columnNames.map(column => column.substr(0, -10)).join('_')
+		return prefix + '_' + myTable.name.substr(-10) + '_' + this.columnNames.map(column => column.substr(0, -10)).join('_')
 	}
 	
 	public ddlKeyDefinition(myTable: MyTable, altering: boolean): string {
