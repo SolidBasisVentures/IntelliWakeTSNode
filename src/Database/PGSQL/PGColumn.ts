@@ -128,7 +128,7 @@ export class PGColumn {
 		const keys = Object.keys(this)
 		
 		for (const key of keys) {
-			if (instanceData.hasOwnProperty(key)) {
+			if (instanceData.hasOwnProperty(key) && typeof(instanceData as any) !== 'function') {
 				;(this as any)[key] = (instanceData as any)[key]
 			}
 		}
