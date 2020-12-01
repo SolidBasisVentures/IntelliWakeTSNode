@@ -266,7 +266,7 @@ var PGIndex = /** @class */ (function () {
     };
     PGIndex.prototype.name = function (pgTable) {
         return ('idx_' +
-            pgTable.name +
+            pgTable.name.substr(0, -10) +
             '_' +
             this.columns
                 .map(function (column) {
@@ -276,7 +276,7 @@ var PGIndex = /** @class */ (function () {
                     .replace(' NULLS', '')
                     .replace(' FIRST', '')
                     .replace(' LAST', '')
-                    .trim();
+                    .trim().substr(0, -10);
             })
                 .join('_'));
     };
@@ -318,7 +318,7 @@ var PGForeignKey = /** @class */ (function () {
         }
     };
     PGForeignKey.prototype.fkName = function (pgTable) {
-        return pgTable.name + '_' + this.columnNames.join('_') + '_fkey';
+        return pgTable.name + '_' + this.columnNames.map(function (column) { return column.substr(0, -10); }).join('_') + '_fkey';
     };
     PGForeignKey.prototype.ddlConstraintDefinition = function (pgTable) {
         return "\n\t\tDO $$\n\t\tBEGIN\n\t\t\tIF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = '" + this.fkName(pgTable) + "') THEN\n\t\t\t\tALTER TABLE \"" + pgTable.name + "\"\n\t\t\t\t\tADD CONSTRAINT \"" + this.fkName(pgTable) + "\"\n\t\t\t\t\tFOREIGN KEY (\"" + this.columnNames.join('","') + "\") REFERENCES \"" + this.primaryTable + "\"(\"" + this.primaryColumns.join('","') + "\") DEFERRABLE INITIALLY DEFERRED;\n\t\t\tEND IF;\n\t\tEND;\n\t\t$$;"; // was INITIALLY IMMEDIATE

@@ -25,7 +25,7 @@ export class PGIndex {
 	public name(pgTable: PGTable): string {
 		return (
 			'idx_' +
-			pgTable.name +
+			pgTable.name.substr(0, -10) +
 			'_' +
 			this.columns
 				.map((column) =>
@@ -35,7 +35,7 @@ export class PGIndex {
 						.replace(' NULLS', '')
 						.replace(' FIRST', '')
 						.replace(' LAST', '')
-						.trim()
+						.trim().substr(0, -10)
 				)
 				.join('_')
 		)
