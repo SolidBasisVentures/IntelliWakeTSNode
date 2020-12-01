@@ -2,7 +2,7 @@ import { PGEnum } from './PGEnum';
 export declare class PGColumn {
     column_name: string;
     ordinal_position: number;
-    column_default: string | number | boolean | null;
+    column_default: string | number | boolean | null | undefined;
     is_nullable: 'YES' | 'NO';
     udt_name: string | PGEnum;
     character_maximum_length: number | null;
