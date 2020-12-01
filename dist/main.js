@@ -54,22 +54,22 @@ var PGColumn = /** @class */ (function () {
             return typeof _this.udt_name !== 'string';
         };
         this.integerType = function () {
-            return typeof _this.udt_name === 'string' && [PGColumn.TYPE_SMALLINT, PGColumn.TYPE_INTEGER, PGColumn.TYPE_BIGINT].includes(_this.udt_name.toLowerCase());
+            return (typeof _this.udt_name === 'string') && [PGColumn.TYPE_SMALLINT, PGColumn.TYPE_INTEGER, PGColumn.TYPE_BIGINT].includes(_this.udt_name.toLowerCase());
         };
         this.floatType = function () {
-            return typeof _this.udt_name === 'string' && [PGColumn.TYPE_NUMERIC, PGColumn.TYPE_FLOAT8].includes(_this.udt_name.toLowerCase());
+            return (typeof _this.udt_name === 'string') && [PGColumn.TYPE_NUMERIC, PGColumn.TYPE_FLOAT8].includes(_this.udt_name.toLowerCase());
         };
         this.integerFloatType = function () {
             return _this.integerType() || _this.floatType();
         };
         this.booleanType = function () {
-            return typeof _this.udt_name === 'string' && [PGColumn.TYPE_BOOLEAN].includes(_this.udt_name.toLowerCase());
+            return (typeof _this.udt_name === 'string') && [PGColumn.TYPE_BOOLEAN].includes(_this.udt_name.toLowerCase());
         };
         this.generalStringType = function () {
-            return typeof _this.udt_name !== 'string' || [PGColumn.TYPE_VARCHAR].includes(_this.udt_name.toLowerCase());
+            return (typeof _this.udt_name !== 'string') || [PGColumn.TYPE_VARCHAR].includes(_this.udt_name.toLowerCase());
         };
         this.dateType = function () {
-            return typeof _this.udt_name === 'string' && [
+            return (typeof _this.udt_name === 'string') && [
                 PGColumn.TYPE_DATE,
                 PGColumn.TYPE_TIME,
                 PGColumn.TYPE_TIMETZ,
@@ -78,7 +78,7 @@ var PGColumn = /** @class */ (function () {
             ].includes(_this.udt_name.toLowerCase());
         };
         this.blobType = function () {
-            return typeof _this.udt_name === 'string' && [PGColumn.TYPE_TEXT].includes(_this.udt_name.toLowerCase());
+            return (typeof _this.udt_name === 'string') && [PGColumn.TYPE_TEXT].includes(_this.udt_name.toLowerCase());
         };
         this.otherType = function () {
             return (!_this.integerFloatType && !_this.booleanType && !_this.dateType() && !_this.generalStringType() && !_this.blobType());
@@ -106,7 +106,7 @@ var PGColumn = /** @class */ (function () {
     PGColumn.prototype.ddlDefinition = function () {
         var _a, _b, _c, _d;
         var ddl = '"' + this.column_name + '" ';
-        ddl += typeof this.udt_name === 'string' ? this.udt_name : this.udt_name.columnName;
+        ddl += (typeof this.udt_name === 'string') ? this.udt_name : this.udt_name.columnName;
         if (this.array_dimensions.length > 0) {
             ddl += "[" + this.array_dimensions
                 .map(function (array_dimension) { return (!!array_dimension ? array_dimension.toString() : ''); })
@@ -125,7 +125,7 @@ var PGColumn = /** @class */ (function () {
                 }
             }
             else if (this.generalStringType()) {
-                if (!this.blobType() && typeof this.udt_name === 'string') {
+                if (!this.blobType() && (typeof this.udt_name === 'string')) {
                     ddl += '(' + ((_a = this.character_maximum_length) !== null && _a !== void 0 ? _a : 255) + ') ';
                 }
                 else {
@@ -144,7 +144,7 @@ var PGColumn = /** @class */ (function () {
                 ddl += "DEFAULT " + ((_b = this.column_default) !== null && _b !== void 0 ? _b : 'NULL') + " ";
             }
             else {
-                ddl += "DEFAULT " + ((_c = this.column_default) !== null && _c !== void 0 ? _c : (typeof this.udt_name === 'string' ? '\'{}\'' : (_d = this.udt_name.defaultValue) !== null && _d !== void 0 ? _d : '\'{}')) + " ";
+                ddl += "DEFAULT " + ((_c = this.column_default) !== null && _c !== void 0 ? _c : ((typeof this.udt_name === 'string') ? '\'{}\'' : (_d = this.udt_name.defaultValue) !== null && _d !== void 0 ? _d : '\'{}')) + " ";
             }
         }
         else {
@@ -167,7 +167,7 @@ var PGColumn = /** @class */ (function () {
                         ddl += "DEFAULT " + (intelliwaketsfoundation.IsOn(this.column_default) ? 'true' : 'false') + " ";
                     }
                 }
-                else if (!this.column_default && typeof this.udt_name !== 'string' && !!this.udt_name.defaultValue) {
+                else if (!this.column_default && (typeof this.udt_name !== 'string') && !!this.udt_name.defaultValue) {
                     ddl += "DEFAULT '" + this.udt_name.defaultValue + "' ";
                 }
                 else {

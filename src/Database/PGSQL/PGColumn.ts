@@ -79,11 +79,11 @@ export class PGColumn {
 	}
 	
 	public integerType = (): boolean => {
-		return typeof this.udt_name === 'string' && [PGColumn.TYPE_SMALLINT, PGColumn.TYPE_INTEGER, PGColumn.TYPE_BIGINT].includes(this.udt_name.toLowerCase())
+		return (typeof this.udt_name === 'string') && [PGColumn.TYPE_SMALLINT, PGColumn.TYPE_INTEGER, PGColumn.TYPE_BIGINT].includes(this.udt_name.toLowerCase())
 	}
 	
 	public floatType = (): boolean => {
-		return typeof this.udt_name === 'string' && [PGColumn.TYPE_NUMERIC, PGColumn.TYPE_FLOAT8].includes(this.udt_name.toLowerCase())
+		return (typeof this.udt_name === 'string') && [PGColumn.TYPE_NUMERIC, PGColumn.TYPE_FLOAT8].includes(this.udt_name.toLowerCase())
 	}
 	
 	public integerFloatType = (): boolean => {
@@ -91,15 +91,15 @@ export class PGColumn {
 	}
 	
 	public booleanType = (): boolean => {
-		return typeof this.udt_name === 'string' && [PGColumn.TYPE_BOOLEAN].includes(this.udt_name.toLowerCase())
+		return (typeof this.udt_name === 'string') && [PGColumn.TYPE_BOOLEAN].includes(this.udt_name.toLowerCase())
 	}
 	
 	public generalStringType = (): boolean => {
-		return typeof this.udt_name !== 'string' || [PGColumn.TYPE_VARCHAR].includes(this.udt_name.toLowerCase())
+		return (typeof this.udt_name !== 'string') || [PGColumn.TYPE_VARCHAR].includes(this.udt_name.toLowerCase())
 	}
 	
 	public dateType = (): boolean => {
-		return typeof this.udt_name === 'string' && [
+		return (typeof this.udt_name === 'string') && [
 			PGColumn.TYPE_DATE,
 			PGColumn.TYPE_TIME,
 			PGColumn.TYPE_TIMETZ,
@@ -109,7 +109,7 @@ export class PGColumn {
 	}
 	
 	public blobType = (): boolean => {
-		return typeof this.udt_name === 'string' && [PGColumn.TYPE_TEXT].includes(this.udt_name.toLowerCase())
+		return (typeof this.udt_name === 'string') && [PGColumn.TYPE_TEXT].includes(this.udt_name.toLowerCase())
 	}
 	
 	public otherType = (): boolean => {
@@ -145,7 +145,7 @@ export class PGColumn {
 	public ddlDefinition(): string {
 		let ddl = '"' + this.column_name + '" '
 		
-		ddl += typeof this.udt_name === 'string' ? this.udt_name : this.udt_name.columnName
+		ddl += (typeof this.udt_name === 'string') ? this.udt_name : this.udt_name.columnName
 		
 		if (this.array_dimensions.length > 0) {
 			ddl += `[${this.array_dimensions
@@ -161,7 +161,7 @@ export class PGColumn {
 					ddl += ' '
 				}
 			} else if (this.generalStringType()) {
-				if (!this.blobType() && typeof this.udt_name === 'string') {
+				if (!this.blobType() && (typeof this.udt_name === 'string')) {
 					ddl += '(' + (this.character_maximum_length ?? 255) + ') '
 				} else {
 					ddl += ' '
@@ -179,7 +179,7 @@ export class PGColumn {
 			if (IsOn(this.is_nullable)) {
 				ddl += `DEFAULT ${this.column_default ?? 'NULL'} `
 			} else {
-				ddl += `DEFAULT ${this.column_default ?? (typeof this.udt_name === 'string' ? '\'{}\'' : this.udt_name.defaultValue ?? '\'{}')} `
+				ddl += `DEFAULT ${this.column_default ?? ((typeof this.udt_name === 'string') ? '\'{}\'' : this.udt_name.defaultValue ?? '\'{}')} `
 			}
 		} else {
 			if (!this.blobType()) {
@@ -197,7 +197,7 @@ export class PGColumn {
 					} else {
 						ddl += `DEFAULT ${IsOn(this.column_default) ? 'true' : 'false'} `
 					}
-				} else if (!this.column_default && typeof this.udt_name !== 'string' && !!this.udt_name.defaultValue) {
+				} else if (!this.column_default && (typeof this.udt_name !== 'string') && !!this.udt_name.defaultValue) {
 					ddl += `DEFAULT '${this.udt_name.defaultValue}' `
 				} else {
 					if (!!this.column_default) {
