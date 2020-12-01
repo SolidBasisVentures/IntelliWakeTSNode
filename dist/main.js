@@ -104,7 +104,7 @@ var PGColumn = /** @class */ (function () {
         //		}
     };
     PGColumn.prototype.ddlDefinition = function () {
-        var _a, _b, _c, _d;
+        var _a, _b, _c, _d, _e;
         var ddl = '"' + this.column_name + '" ';
         ddl += (typeof this.udt_name === 'string') ? this.udt_name : this.udt_name.columnName;
         if (this.array_dimensions.length > 0) {
@@ -114,7 +114,7 @@ var PGColumn = /** @class */ (function () {
         }
         else {
             if (this.floatType() && this.udt_name !== PGColumn.TYPE_FLOAT8) {
-                ddl += '(' + this.numeric_precision + ',' + this.numeric_scale + ') ';
+                ddl += '(' + this.numeric_precision + ',' + ((_a = this.numeric_scale) !== null && _a !== void 0 ? _a : 0) + ') ';
             }
             else if (this.dateType()) {
                 if (!!this.datetime_precision) {
@@ -126,7 +126,7 @@ var PGColumn = /** @class */ (function () {
             }
             else if (this.generalStringType()) {
                 if (!this.blobType() && (typeof this.udt_name === 'string')) {
-                    ddl += '(' + ((_a = this.character_maximum_length) !== null && _a !== void 0 ? _a : 255) + ') ';
+                    ddl += '(' + ((_b = this.character_maximum_length) !== null && _b !== void 0 ? _b : 255) + ') ';
                 }
                 else {
                     ddl += ' ';
@@ -142,10 +142,10 @@ var PGColumn = /** @class */ (function () {
         if (this.column_default !== undefined) {
             if (this.array_dimensions.length > 0) {
                 if (intelliwaketsfoundation.IsOn(this.is_nullable)) {
-                    ddl += "DEFAULT " + ((_b = this.column_default) !== null && _b !== void 0 ? _b : 'NULL') + " ";
+                    ddl += "DEFAULT " + ((_c = this.column_default) !== null && _c !== void 0 ? _c : 'NULL') + " ";
                 }
                 else {
-                    ddl += "DEFAULT " + ((_c = this.column_default) !== null && _c !== void 0 ? _c : ((typeof this.udt_name === 'string') ? '\'{}\'' : (_d = this.udt_name.defaultValue) !== null && _d !== void 0 ? _d : '\'{}')) + " ";
+                    ddl += "DEFAULT " + ((_d = this.column_default) !== null && _d !== void 0 ? _d : ((typeof this.udt_name === 'string') ? '\'{}\'' : (_e = this.udt_name.defaultValue) !== null && _e !== void 0 ? _e : '\'{}')) + " ";
                 }
             }
             else {

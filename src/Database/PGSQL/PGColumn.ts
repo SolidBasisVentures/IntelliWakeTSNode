@@ -153,7 +153,7 @@ export class PGColumn {
 				.join('],[')}] `
 		} else {
 			if (this.floatType() && this.udt_name !== PGColumn.TYPE_FLOAT8) {
-				ddl += '(' + this.numeric_precision + ',' + this.numeric_scale + ') '
+				ddl += '(' + this.numeric_precision + ',' + (this.numeric_scale ?? 0) + ') '
 			} else if (this.dateType()) {
 				if (!!this.datetime_precision) {
 					ddl += '(' + this.datetime_precision + ') '
