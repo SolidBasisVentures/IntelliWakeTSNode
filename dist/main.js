@@ -12,6 +12,81 @@ function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'defau
 var moment__default = /*#__PURE__*/_interopDefaultLegacy(moment);
 var fs__default = /*#__PURE__*/_interopDefaultLegacy(fs);
 
+/*! *****************************************************************************
+Copyright (c) Microsoft Corporation.
+
+Permission to use, copy, modify, and/or distribute this software for any
+purpose with or without fee is hereby granted.
+
+THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH
+REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY
+AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT,
+INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM
+LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR
+OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
+PERFORMANCE OF THIS SOFTWARE.
+***************************************************************************** */
+/* global Reflect, Promise */
+
+var extendStatics = function(d, b) {
+    extendStatics = Object.setPrototypeOf ||
+        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+        function (d, b) { for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p]; };
+    return extendStatics(d, b);
+};
+
+function __extends(d, b) {
+    extendStatics(d, b);
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+}
+
+function __awaiter(thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+}
+
+function __generator(thisArg, body) {
+    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
+    return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
+    function verb(n) { return function (v) { return step([n, v]); }; }
+    function step(op) {
+        if (f) throw new TypeError("Generator is already executing.");
+        while (_) try {
+            if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
+            if (y = 0, t) op = [op[0] & 2, t.value];
+            switch (op[0]) {
+                case 0: case 1: t = op; break;
+                case 4: _.label++; return { value: op[1], done: false };
+                case 5: _.label++; y = op[1]; op = [0]; continue;
+                case 7: op = _.ops.pop(); _.trys.pop(); continue;
+                default:
+                    if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) { _ = 0; continue; }
+                    if (op[0] === 3 && (!t || (op[1] > t[0] && op[1] < t[3]))) { _.label = op[1]; break; }
+                    if (op[0] === 6 && _.label < t[1]) { _.label = t[1]; t = op; break; }
+                    if (t && _.label < t[2]) { _.label = t[2]; _.ops.push(op); break; }
+                    if (t[2]) _.ops.pop();
+                    _.trys.pop(); continue;
+            }
+            op = body.call(thisArg, _);
+        } catch (e) { op = [6, e]; y = 0; } finally { f = t = 0; }
+        if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
+    }
+}
+
+function __spreadArrays() {
+    for (var s = 0, i = 0, il = arguments.length; i < il; i++) s += arguments[i].length;
+    for (var r = Array(s), k = 0, i = 0; i < il; i++)
+        for (var a = arguments[i], j = 0, jl = a.length; j < jl; j++, k++)
+            r[k] = a[j];
+    return r;
+}
+
 var PGColumn = /** @class */ (function () {
     function PGColumn(instanceData) {
         var _this = this;
@@ -245,6 +320,138 @@ var PGColumn = /** @class */ (function () {
     return PGColumn;
 }());
 
+var ColumnDefinition = /** @class */ (function () {
+    function ColumnDefinition() {
+        var _this = this;
+        this.COLUMN_NAME = "";
+        this.ORDINAL_POSITION = 0;
+        this.COLUMN_DEFAULT = null;
+        this.IS_NULLABLE = "YES";
+        this.DATA_TYPE = "";
+        this.CHARACTER_MAXIMUM_LENGTH = null;
+        this.CHARACTER_OCTET_LENGTH = null;
+        this.NUMERIC_PRECISION = null;
+        this.NUMERIC_SCALE = null;
+        this.DATETIME_PRECISION = null;
+        this.COLUMN_TYPE = null; // Full definition (e.g. varchar(55))
+        this.COLUMN_KEY = null; // PRI
+        this.EXTRA = null; // on update CURRENT_TIMESTAMP(3) OR auto_increment
+        this.COLUMN_COMMENT = null;
+        this.CHARACTER_SET_NAME = null;
+        this.COLLATION_NAME = null;
+        this.jsType = function () {
+            if (_this.booleanType()) {
+                return 'boolean';
+            }
+            else if (_this.integerFloatType()) {
+                return 'number';
+            }
+            else if (_this.booleanType()) {
+                return 'boolean';
+            }
+            else {
+                return 'string'; // Date or String
+            }
+        };
+        this.integerType = function () {
+            return [ColumnDefinition.TYPE_TINYINT, ColumnDefinition.TYPE_SMALLINT, ColumnDefinition.TYPE_MEDIUMINT, ColumnDefinition.TYPE_INT, ColumnDefinition.TYPE_BIGINT, ColumnDefinition.TYPE_BIT, ColumnDefinition.TYPE_YEAR].includes(_this.DATA_TYPE.toUpperCase());
+        };
+        this.tinyintType = function () {
+            return [ColumnDefinition.TYPE_TINYINT].includes(_this.DATA_TYPE.toUpperCase());
+        };
+        this.floatType = function () {
+            return [ColumnDefinition.TYPE_DECIMAL, ColumnDefinition.TYPE_NUMERIC, ColumnDefinition.TYPE_FLOAT, ColumnDefinition.TYPE_DOUBLE].includes(_this.DATA_TYPE.toUpperCase());
+        };
+        this.integerFloatType = function () {
+            return _this.integerType() || _this.floatType();
+        };
+        this.booleanType = function () {
+            return [ColumnDefinition.TYPE_BIT].includes(_this.DATA_TYPE.toUpperCase());
+        };
+        this.dateType = function () {
+            return [ColumnDefinition.TYPE_DATE, ColumnDefinition.TYPE_TIME, ColumnDefinition.TYPE_DATETIME, ColumnDefinition.TYPE_TIMESTAMP].includes(_this.DATA_TYPE.toUpperCase());
+        };
+        this.generalStringType = function () {
+            return !_this.integerFloatType() && !_this.booleanType();
+        };
+        this.blobType = function () {
+            return [ColumnDefinition.TYPE_TINYTEXT, ColumnDefinition.TYPE_TEXT, ColumnDefinition.TYPE_MEDIUMTEXT, ColumnDefinition.TYPE_LONGTEXT, ColumnDefinition.TYPE_TINYBLOB, ColumnDefinition.TYPE_BLOB, ColumnDefinition.TYPE_MEDIUMBLOB, ColumnDefinition.TYPE_LONGBLOB].includes(_this.DATA_TYPE.toUpperCase());
+        };
+        this.otherType = function () {
+            return [ColumnDefinition.TYPE_GEOMETRY, ColumnDefinition.TYPE_POINT, ColumnDefinition.TYPE_LINESTRING, ColumnDefinition.TYPE_POLYGON, ColumnDefinition.TYPE_GEOMETRYCOLLECTION, ColumnDefinition.TYPE_MULTILINESTRING, ColumnDefinition.TYPE_MULTIPOINT, ColumnDefinition.TYPE_MULTIPOLYGON].includes(_this.DATA_TYPE.toUpperCase());
+        };
+    }
+    ColumnDefinition.TYPE_TINYINT = 'TINYINT';
+    ColumnDefinition.TYPE_SMALLINT = 'SMALLINT';
+    ColumnDefinition.TYPE_MEDIUMINT = 'MEDIUMINT';
+    ColumnDefinition.TYPE_INT = 'INT';
+    ColumnDefinition.TYPE_BIGINT = 'BIGINT';
+    ColumnDefinition.TYPE_DECIMAL = 'DECIMAL';
+    ColumnDefinition.TYPE_NUMERIC = 'NUMERIC';
+    ColumnDefinition.TYPE_FLOAT = 'FLOAT';
+    ColumnDefinition.TYPE_DOUBLE = 'DOUBLE';
+    ColumnDefinition.TYPE_BIT = 'BIT';
+    ColumnDefinition.TYPE_CHAR = 'CHAR';
+    ColumnDefinition.TYPE_VARCHAR = 'VARCHAR';
+    ColumnDefinition.TYPE_BINARY = 'BINARY';
+    ColumnDefinition.TYPE_VARBINARY = 'VARBINARY';
+    ColumnDefinition.TYPE_TINYBLOB = 'TINYBLOB';
+    ColumnDefinition.TYPE_BLOB = 'BLOB';
+    ColumnDefinition.TYPE_MEDIUMBLOB = 'MEDIUMBLOB';
+    ColumnDefinition.TYPE_LONGBLOB = 'LONGBLOB';
+    ColumnDefinition.TYPE_TINYTEXT = 'TINYTEXT';
+    ColumnDefinition.TYPE_TEXT = 'TEXT';
+    ColumnDefinition.TYPE_MEDIUMTEXT = 'MEDIUMTEXT';
+    ColumnDefinition.TYPE_LONGTEXT = 'LONGTEXT';
+    ColumnDefinition.TYPE_ENUM = 'ENUM';
+    ColumnDefinition.TYPE_SET = 'SET';
+    ColumnDefinition.TYPE_DATE = 'DATE';
+    ColumnDefinition.TYPE_TIME = 'TIME';
+    ColumnDefinition.TYPE_DATETIME = 'DATETIME';
+    ColumnDefinition.TYPE_TIMESTAMP = 'TIMESTAMP';
+    ColumnDefinition.TYPE_YEAR = 'YEAR';
+    ColumnDefinition.TYPE_GEOMETRY = 'GEOMETRY';
+    ColumnDefinition.TYPE_POINT = 'POINT';
+    ColumnDefinition.TYPE_LINESTRING = 'LINESTRING';
+    ColumnDefinition.TYPE_POLYGON = 'POLYGON';
+    ColumnDefinition.TYPE_GEOMETRYCOLLECTION = 'GEOMETRYCOLLECTION';
+    ColumnDefinition.TYPE_MULTILINESTRING = 'MULTILINESTRING';
+    ColumnDefinition.TYPE_MULTIPOINT = 'MULTIPOINT';
+    ColumnDefinition.TYPE_MULTIPOLYGON = 'MULTIPOLYGON';
+    ColumnDefinition.TYPE_JSON = 'JSON';
+    return ColumnDefinition;
+}());
+
+var PGForeignKey = /** @class */ (function () {
+    function PGForeignKey(instanceData) {
+        this.columnNames = [];
+        this.primaryTable = '';
+        this.primaryColumns = [];
+        this.isUnique = false;
+        this.onDelete = 'RESTRICT';
+        this.onUpdate = 'RESTRICT';
+        if (instanceData) {
+            this.deserialize(instanceData);
+        }
+    }
+    PGForeignKey.prototype.deserialize = function (instanceData) {
+        var keys = Object.keys(this);
+        for (var _i = 0, keys_1 = keys; _i < keys_1.length; _i++) {
+            var key = keys_1[_i];
+            if (instanceData.hasOwnProperty(key)) {
+                this[key] = instanceData[key];
+            }
+        }
+    };
+    PGForeignKey.prototype.fkName = function (pgTable) {
+        return pgTable.name + '_' + this.columnNames.map(function (column) { return column.substr(-25); }).join('_') + '_fkey';
+    };
+    PGForeignKey.prototype.ddlConstraintDefinition = function (pgTable) {
+        return "\n\t\tDO $$\n\t\tBEGIN\n\t\t\tIF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = '" + this.fkName(pgTable) + "') THEN\n\t\t\t\tALTER TABLE \"" + pgTable.name + "\"\n\t\t\t\t\tADD CONSTRAINT \"" + this.fkName(pgTable) + "\"\n\t\t\t\t\tFOREIGN KEY (\"" + this.columnNames.join('","') + "\") REFERENCES \"" + this.primaryTable + "\"(\"" + this.primaryColumns.join('","') + "\") DEFERRABLE INITIALLY DEFERRED;\n\t\t\tEND IF;\n\t\tEND;\n\t\t$$;"; // was INITIALLY IMMEDIATE
+    };
+    return PGForeignKey;
+}());
+
 var PGIndex = /** @class */ (function () {
     function PGIndex(instanceData) {
         this.columns = [];
@@ -294,36 +501,6 @@ var PGIndex = /** @class */ (function () {
         return ddl;
     };
     return PGIndex;
-}());
-
-var PGForeignKey = /** @class */ (function () {
-    function PGForeignKey(instanceData) {
-        this.columnNames = [];
-        this.primaryTable = '';
-        this.primaryColumns = [];
-        this.isUnique = false;
-        this.onDelete = 'RESTRICT';
-        this.onUpdate = 'RESTRICT';
-        if (instanceData) {
-            this.deserialize(instanceData);
-        }
-    }
-    PGForeignKey.prototype.deserialize = function (instanceData) {
-        var keys = Object.keys(this);
-        for (var _i = 0, keys_1 = keys; _i < keys_1.length; _i++) {
-            var key = keys_1[_i];
-            if (instanceData.hasOwnProperty(key)) {
-                this[key] = instanceData[key];
-            }
-        }
-    };
-    PGForeignKey.prototype.fkName = function (pgTable) {
-        return pgTable.name + '_' + this.columnNames.map(function (column) { return column.substr(-25); }).join('_') + '_fkey';
-    };
-    PGForeignKey.prototype.ddlConstraintDefinition = function (pgTable) {
-        return "\n\t\tDO $$\n\t\tBEGIN\n\t\t\tIF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = '" + this.fkName(pgTable) + "') THEN\n\t\t\t\tALTER TABLE \"" + pgTable.name + "\"\n\t\t\t\t\tADD CONSTRAINT \"" + this.fkName(pgTable) + "\"\n\t\t\t\t\tFOREIGN KEY (\"" + this.columnNames.join('","') + "\") REFERENCES \"" + this.primaryTable + "\"(\"" + this.primaryColumns.join('","') + "\") DEFERRABLE INITIALLY DEFERRED;\n\t\t\tEND IF;\n\t\tEND;\n\t\t$$;"; // was INITIALLY IMMEDIATE
-    };
-    return PGForeignKey;
 }());
 
 var TS_EOL = '\n'; // was \r\n
@@ -693,111 +870,18 @@ var PGTable = /** @class */ (function () {
     return PGTable;
 }());
 
-var ColumnDefinition = /** @class */ (function () {
-    function ColumnDefinition() {
-        var _this = this;
-        this.COLUMN_NAME = "";
-        this.ORDINAL_POSITION = 0;
-        this.COLUMN_DEFAULT = null;
-        this.IS_NULLABLE = "YES";
-        this.DATA_TYPE = "";
-        this.CHARACTER_MAXIMUM_LENGTH = null;
-        this.CHARACTER_OCTET_LENGTH = null;
-        this.NUMERIC_PRECISION = null;
-        this.NUMERIC_SCALE = null;
-        this.DATETIME_PRECISION = null;
-        this.COLUMN_TYPE = null; // Full definition (e.g. varchar(55))
-        this.COLUMN_KEY = null; // PRI
-        this.EXTRA = null; // on update CURRENT_TIMESTAMP(3) OR auto_increment
-        this.COLUMN_COMMENT = null;
-        this.CHARACTER_SET_NAME = null;
-        this.COLLATION_NAME = null;
-        this.jsType = function () {
-            if (_this.booleanType()) {
-                return 'boolean';
-            }
-            else if (_this.integerFloatType()) {
-                return 'number';
-            }
-            else if (_this.booleanType()) {
-                return 'boolean';
-            }
-            else {
-                return 'string'; // Date or String
-            }
-        };
-        this.integerType = function () {
-            return [ColumnDefinition.TYPE_TINYINT, ColumnDefinition.TYPE_SMALLINT, ColumnDefinition.TYPE_MEDIUMINT, ColumnDefinition.TYPE_INT, ColumnDefinition.TYPE_BIGINT, ColumnDefinition.TYPE_BIT, ColumnDefinition.TYPE_YEAR].includes(_this.DATA_TYPE.toUpperCase());
-        };
-        this.tinyintType = function () {
-            return [ColumnDefinition.TYPE_TINYINT].includes(_this.DATA_TYPE.toUpperCase());
-        };
-        this.floatType = function () {
-            return [ColumnDefinition.TYPE_DECIMAL, ColumnDefinition.TYPE_NUMERIC, ColumnDefinition.TYPE_FLOAT, ColumnDefinition.TYPE_DOUBLE].includes(_this.DATA_TYPE.toUpperCase());
-        };
-        this.integerFloatType = function () {
-            return _this.integerType() || _this.floatType();
-        };
-        this.booleanType = function () {
-            return [ColumnDefinition.TYPE_BIT].includes(_this.DATA_TYPE.toUpperCase());
-        };
-        this.dateType = function () {
-            return [ColumnDefinition.TYPE_DATE, ColumnDefinition.TYPE_TIME, ColumnDefinition.TYPE_DATETIME, ColumnDefinition.TYPE_TIMESTAMP].includes(_this.DATA_TYPE.toUpperCase());
-        };
-        this.generalStringType = function () {
-            return !_this.integerFloatType() && !_this.booleanType();
-        };
-        this.blobType = function () {
-            return [ColumnDefinition.TYPE_TINYTEXT, ColumnDefinition.TYPE_TEXT, ColumnDefinition.TYPE_MEDIUMTEXT, ColumnDefinition.TYPE_LONGTEXT, ColumnDefinition.TYPE_TINYBLOB, ColumnDefinition.TYPE_BLOB, ColumnDefinition.TYPE_MEDIUMBLOB, ColumnDefinition.TYPE_LONGBLOB].includes(_this.DATA_TYPE.toUpperCase());
-        };
-        this.otherType = function () {
-            return [ColumnDefinition.TYPE_GEOMETRY, ColumnDefinition.TYPE_POINT, ColumnDefinition.TYPE_LINESTRING, ColumnDefinition.TYPE_POLYGON, ColumnDefinition.TYPE_GEOMETRYCOLLECTION, ColumnDefinition.TYPE_MULTILINESTRING, ColumnDefinition.TYPE_MULTIPOINT, ColumnDefinition.TYPE_MULTIPOLYGON].includes(_this.DATA_TYPE.toUpperCase());
-        };
+var PGTableMy = /** @class */ (function (_super) {
+    __extends(PGTableMy, _super);
+    function PGTableMy(instanceData, myTable) {
+        var _this = _super.call(this, instanceData) || this;
+        _this.myTable = myTable;
+        return _this;
     }
-    ColumnDefinition.TYPE_TINYINT = 'TINYINT';
-    ColumnDefinition.TYPE_SMALLINT = 'SMALLINT';
-    ColumnDefinition.TYPE_MEDIUMINT = 'MEDIUMINT';
-    ColumnDefinition.TYPE_INT = 'INT';
-    ColumnDefinition.TYPE_BIGINT = 'BIGINT';
-    ColumnDefinition.TYPE_DECIMAL = 'DECIMAL';
-    ColumnDefinition.TYPE_NUMERIC = 'NUMERIC';
-    ColumnDefinition.TYPE_FLOAT = 'FLOAT';
-    ColumnDefinition.TYPE_DOUBLE = 'DOUBLE';
-    ColumnDefinition.TYPE_BIT = 'BIT';
-    ColumnDefinition.TYPE_CHAR = 'CHAR';
-    ColumnDefinition.TYPE_VARCHAR = 'VARCHAR';
-    ColumnDefinition.TYPE_BINARY = 'BINARY';
-    ColumnDefinition.TYPE_VARBINARY = 'VARBINARY';
-    ColumnDefinition.TYPE_TINYBLOB = 'TINYBLOB';
-    ColumnDefinition.TYPE_BLOB = 'BLOB';
-    ColumnDefinition.TYPE_MEDIUMBLOB = 'MEDIUMBLOB';
-    ColumnDefinition.TYPE_LONGBLOB = 'LONGBLOB';
-    ColumnDefinition.TYPE_TINYTEXT = 'TINYTEXT';
-    ColumnDefinition.TYPE_TEXT = 'TEXT';
-    ColumnDefinition.TYPE_MEDIUMTEXT = 'MEDIUMTEXT';
-    ColumnDefinition.TYPE_LONGTEXT = 'LONGTEXT';
-    ColumnDefinition.TYPE_ENUM = 'ENUM';
-    ColumnDefinition.TYPE_SET = 'SET';
-    ColumnDefinition.TYPE_DATE = 'DATE';
-    ColumnDefinition.TYPE_TIME = 'TIME';
-    ColumnDefinition.TYPE_DATETIME = 'DATETIME';
-    ColumnDefinition.TYPE_TIMESTAMP = 'TIMESTAMP';
-    ColumnDefinition.TYPE_YEAR = 'YEAR';
-    ColumnDefinition.TYPE_GEOMETRY = 'GEOMETRY';
-    ColumnDefinition.TYPE_POINT = 'POINT';
-    ColumnDefinition.TYPE_LINESTRING = 'LINESTRING';
-    ColumnDefinition.TYPE_POLYGON = 'POLYGON';
-    ColumnDefinition.TYPE_GEOMETRYCOLLECTION = 'GEOMETRYCOLLECTION';
-    ColumnDefinition.TYPE_MULTILINESTRING = 'MULTILINESTRING';
-    ColumnDefinition.TYPE_MULTIPOINT = 'MULTIPOINT';
-    ColumnDefinition.TYPE_MULTIPOLYGON = 'MULTIPOLYGON';
-    ColumnDefinition.TYPE_JSON = 'JSON';
-    return ColumnDefinition;
-}());
-
+    return PGTableMy;
+}(PGTable));
 (function (MyToPG) {
     MyToPG.GetPGTable = function (myTable) {
-        var pgTable = new PGTable();
+        var pgTable = new PGTableMy();
         pgTable.name = myTable.name.toLowerCase();
         for (var _i = 0, _a = myTable.columns; _i < _a.length; _i++) {
             var myColumn = _a[_i];
@@ -814,6 +898,7 @@ var ColumnDefinition = /** @class */ (function () {
             var pgIndex = MyToPG.GetPGIndex(myIndex);
             pgTable.indexes.push(pgIndex);
         }
+        pgTable.myTable = myTable;
         return pgTable;
     };
     MyToPG.GetPGColumn = function (myColumn) {
@@ -871,81 +956,6 @@ var ColumnDefinition = /** @class */ (function () {
         }
     };
 })(exports.MyToPG || (exports.MyToPG = {}));
-
-/*! *****************************************************************************
-Copyright (c) Microsoft Corporation.
-
-Permission to use, copy, modify, and/or distribute this software for any
-purpose with or without fee is hereby granted.
-
-THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH
-REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY
-AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT,
-INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM
-LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR
-OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
-PERFORMANCE OF THIS SOFTWARE.
-***************************************************************************** */
-/* global Reflect, Promise */
-
-var extendStatics = function(d, b) {
-    extendStatics = Object.setPrototypeOf ||
-        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-        function (d, b) { for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p]; };
-    return extendStatics(d, b);
-};
-
-function __extends(d, b) {
-    extendStatics(d, b);
-    function __() { this.constructor = d; }
-    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-}
-
-function __awaiter(thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-}
-
-function __generator(thisArg, body) {
-    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
-    return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
-    function verb(n) { return function (v) { return step([n, v]); }; }
-    function step(op) {
-        if (f) throw new TypeError("Generator is already executing.");
-        while (_) try {
-            if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
-            if (y = 0, t) op = [op[0] & 2, t.value];
-            switch (op[0]) {
-                case 0: case 1: t = op; break;
-                case 4: _.label++; return { value: op[1], done: false };
-                case 5: _.label++; y = op[1]; op = [0]; continue;
-                case 7: op = _.ops.pop(); _.trys.pop(); continue;
-                default:
-                    if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) { _ = 0; continue; }
-                    if (op[0] === 3 && (!t || (op[1] > t[0] && op[1] < t[3]))) { _.label = op[1]; break; }
-                    if (op[0] === 6 && _.label < t[1]) { _.label = t[1]; t = op; break; }
-                    if (t && _.label < t[2]) { _.label = t[2]; _.ops.push(op); break; }
-                    if (t[2]) _.ops.pop();
-                    _.trys.pop(); continue;
-            }
-            op = body.call(thisArg, _);
-        } catch (e) { op = [6, e]; y = 0; } finally { f = t = 0; }
-        if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
-    }
-}
-
-function __spreadArrays() {
-    for (var s = 0, i = 0, il = arguments.length; i < il; i++) s += arguments[i].length;
-    for (var r = Array(s), k = 0, i = 0; i < il; i++)
-        for (var a = arguments[i], j = 0, jl = a.length; j < jl; j++, k++)
-            r[k] = a[j];
-    return r;
-}
 
 var MyColumn = /** @class */ (function (_super) {
     __extends(MyColumn, _super);
@@ -2412,4 +2422,5 @@ exports.PGForeignKey = PGForeignKey;
 exports.PGIndex = PGIndex;
 exports.PGParams = PGParams;
 exports.PGTable = PGTable;
+exports.PGTableMy = PGTableMy;
 exports.PGWhereSearchClause = PGWhereSearchClause;

@@ -1,5 +1,4 @@
 import {MyTable} from '../MySQL/MyTable'
-import {PGTable} from '../PGSQL/PGTable'
 import {MyColumn} from '../MySQL/MyColumn'
 import {PGColumn} from '../PGSQL/PGColumn'
 import {IsOn} from '@solidbasisventures/intelliwaketsfoundation'
@@ -8,10 +7,21 @@ import {MyForeignKey} from '../MySQL/MyForeignKey'
 import {PGForeignKey} from '../PGSQL/PGForeignKey'
 import {MyIndex} from '../MySQL/MyIndex'
 import {PGIndex} from '../PGSQL/PGIndex'
+import { PGTable } from '../PGSQL/PGTable'
+
+export class PGTableMy extends PGTable {
+	myTable?: MyTable
+	
+	constructor(instanceData?: PGTable, myTable?: MyTable) {
+		super(instanceData)
+		
+		this.myTable = myTable
+	}
+}
 
 export namespace MyToPG {
-	export const GetPGTable = (myTable: MyTable): PGTable => {
-		const pgTable = new PGTable()
+	export const GetPGTable = (myTable: MyTable): PGTableMy => {
+		const pgTable = new PGTableMy()
 		
 		pgTable.name = myTable.name.toLowerCase()
 		
@@ -32,6 +42,8 @@ export namespace MyToPG {
 			
 			pgTable.indexes.push(pgIndex)
 		}
+		
+		pgTable.myTable = myTable
 		
 		return pgTable
 	}
