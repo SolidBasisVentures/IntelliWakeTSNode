@@ -25,6 +25,7 @@ export class PGColumn {
 	static readonly TYPE_BOOLEAN = 'boolean'
 	static readonly TYPE_NUMERIC = 'numeric'
 	static readonly TYPE_FLOAT8 = 'float8'
+	static readonly TYPE_POINT = 'point'
 	
 	static readonly TYPE_SMALLINT = 'smallint'
 	static readonly TYPE_INTEGER = 'integer'
@@ -47,6 +48,7 @@ export class PGColumn {
 		PGColumn.TYPE_BOOLEAN,
 		PGColumn.TYPE_NUMERIC,
 		PGColumn.TYPE_FLOAT8,
+		PGColumn.TYPE_POINT,
 		PGColumn.TYPE_SMALLINT,
 		PGColumn.TYPE_INTEGER,
 		PGColumn.TYPE_BIGINT,
@@ -67,8 +69,8 @@ export class PGColumn {
 			return 'boolean'
 		} else if (this.integerFloatType()) {
 			return 'number'
-		} else if (this.booleanType()) {
-			return 'boolean'
+		} else if (this.udt_name === PGColumn.TYPE_POINT) {
+			return '[number, number]'
 		} else {
 			return 'string' // Date or String or Enum
 		}
@@ -152,22 +154,24 @@ export class PGColumn {
 				.map((array_dimension) => (!!array_dimension ? array_dimension.toString() : ''))
 				.join('],[')}] `
 		} else {
-			if (this.floatType() && this.udt_name !== PGColumn.TYPE_FLOAT8) {
-				ddl += '(' + this.numeric_precision + ',' + (this.numeric_scale ?? 0) + ') '
-			} else if (this.dateType()) {
-				if (!!this.datetime_precision) {
-					ddl += '(' + this.datetime_precision + ') '
+			if (this.udt_name !== PGColumn.TYPE_POINT) {
+				if (this.floatType() && this.udt_name !== PGColumn.TYPE_FLOAT8) {
+					ddl += '(' + this.numeric_precision + ',' + (this.numeric_scale ?? 0) + ') '
+				} else if (this.dateType()) {
+					if (!!this.datetime_precision) {
+						ddl += '(' + this.datetime_precision + ') '
+					} else {
+						ddl += ' '
+					}
+				} else if (this.generalStringType()) {
+					if (!this.blobType() && (typeof this.udt_name === 'string')) {
+						ddl += '(' + (this.character_maximum_length ?? 255) + ') '
+					} else {
+						ddl += ' '
+					}
 				} else {
 					ddl += ' '
 				}
-			} else if (this.generalStringType()) {
-				if (!this.blobType() && (typeof this.udt_name === 'string')) {
-					ddl += '(' + (this.character_maximum_length ?? 255) + ') '
-				} else {
-					ddl += ' '
-				}
-			} else {
-				ddl += ' '
 			}
 		}
 		

@@ -118,8 +118,8 @@ var PGColumn = /** @class */ (function () {
             else if (_this.integerFloatType()) {
                 return 'number';
             }
-            else if (_this.booleanType()) {
-                return 'boolean';
+            else if (_this.udt_name === PGColumn.TYPE_POINT) {
+                return '[number, number]';
             }
             else {
                 return 'string'; // Date or String or Enum
@@ -188,27 +188,29 @@ var PGColumn = /** @class */ (function () {
                 .join('],[') + "] ";
         }
         else {
-            if (this.floatType() && this.udt_name !== PGColumn.TYPE_FLOAT8) {
-                ddl += '(' + this.numeric_precision + ',' + ((_a = this.numeric_scale) !== null && _a !== void 0 ? _a : 0) + ') ';
-            }
-            else if (this.dateType()) {
-                if (!!this.datetime_precision) {
-                    ddl += '(' + this.datetime_precision + ') ';
+            if (this.udt_name !== PGColumn.TYPE_POINT) {
+                if (this.floatType() && this.udt_name !== PGColumn.TYPE_FLOAT8) {
+                    ddl += '(' + this.numeric_precision + ',' + ((_a = this.numeric_scale) !== null && _a !== void 0 ? _a : 0) + ') ';
+                }
+                else if (this.dateType()) {
+                    if (!!this.datetime_precision) {
+                        ddl += '(' + this.datetime_precision + ') ';
+                    }
+                    else {
+                        ddl += ' ';
+                    }
+                }
+                else if (this.generalStringType()) {
+                    if (!this.blobType() && (typeof this.udt_name === 'string')) {
+                        ddl += '(' + ((_b = this.character_maximum_length) !== null && _b !== void 0 ? _b : 255) + ') ';
+                    }
+                    else {
+                        ddl += ' ';
+                    }
                 }
                 else {
                     ddl += ' ';
                 }
-            }
-            else if (this.generalStringType()) {
-                if (!this.blobType() && (typeof this.udt_name === 'string')) {
-                    ddl += '(' + ((_b = this.character_maximum_length) !== null && _b !== void 0 ? _b : 255) + ') ';
-                }
-                else {
-                    ddl += ' ';
-                }
-            }
-            else {
-                ddl += ' ';
             }
         }
         if (!intelliwaketsfoundation.IsOn(this.is_nullable)) {
@@ -289,6 +291,7 @@ var PGColumn = /** @class */ (function () {
     PGColumn.TYPE_BOOLEAN = 'boolean';
     PGColumn.TYPE_NUMERIC = 'numeric';
     PGColumn.TYPE_FLOAT8 = 'float8';
+    PGColumn.TYPE_POINT = 'point';
     PGColumn.TYPE_SMALLINT = 'smallint';
     PGColumn.TYPE_INTEGER = 'integer';
     PGColumn.TYPE_BIGINT = 'bigint';
@@ -305,6 +308,7 @@ var PGColumn = /** @class */ (function () {
         PGColumn.TYPE_BOOLEAN,
         PGColumn.TYPE_NUMERIC,
         PGColumn.TYPE_FLOAT8,
+        PGColumn.TYPE_POINT,
         PGColumn.TYPE_SMALLINT,
         PGColumn.TYPE_INTEGER,
         PGColumn.TYPE_BIGINT,

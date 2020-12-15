@@ -21,6 +21,7 @@ export declare class PGColumn {
     static readonly TYPE_BOOLEAN = "boolean";
     static readonly TYPE_NUMERIC = "numeric";
     static readonly TYPE_FLOAT8 = "float8";
+    static readonly TYPE_POINT = "point";
     static readonly TYPE_SMALLINT = "smallint";
     static readonly TYPE_INTEGER = "integer";
     static readonly TYPE_BIGINT = "bigint";
