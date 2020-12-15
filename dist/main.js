@@ -212,6 +212,9 @@ var PGColumn = /** @class */ (function () {
                     ddl += ' ';
                 }
             }
+            else {
+                ddl += ' ';
+            }
         }
         if (!intelliwaketsfoundation.IsOn(this.is_nullable)) {
             ddl += 'NOT NULL ';

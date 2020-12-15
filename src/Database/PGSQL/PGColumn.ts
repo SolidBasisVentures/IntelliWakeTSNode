@@ -172,6 +172,8 @@ export class PGColumn {
 				} else {
 					ddl += ' '
 				}
+			} else {
+				ddl += ' '
 			}
 		}
 		
