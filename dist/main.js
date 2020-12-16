@@ -2402,6 +2402,13 @@ var PGParams = /** @class */ (function () {
             return field + " = " + this.add(value);
         }
     };
+    PGParams.prototype.replaceSQLWithValues = function (sql) {
+        var returnSQL = sql;
+        for (var i = this.values.length; i > 0; i--) {
+            returnSQL = intelliwaketsfoundation.ReplaceAll("$" + i, typeof this.values[i - 1] === 'string' ? "'" + this.values[i - 1] + "'" : this.values[i - 1], returnSQL);
+        }
+        return returnSQL;
+    };
     return PGParams;
 }());
 
