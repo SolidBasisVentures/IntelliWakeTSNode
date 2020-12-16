@@ -2383,9 +2383,13 @@ var PGParams = /** @class */ (function () {
         this.values = [];
     }
     PGParams.prototype.add = function (value) {
+        var idx = this.values.indexOf(value);
+        if (idx >= 0) {
+            return "$" + (idx + 1);
+        }
         this.lastPosition++;
         this.values.push(value);
-        return '$' + this.lastPosition;
+        return "$" + this.lastPosition;
     };
     PGParams.prototype.addLike = function (value) {
         return this.add("%" + value + "%");

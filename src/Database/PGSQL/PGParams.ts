@@ -8,11 +8,17 @@ export class PGParams {
 	}
 
 	public add(value: any): string {
+		const idx = this.values.indexOf(value)
+		
+		if (idx >= 0) {
+			return `$${idx + 1}`
+		}
+		
 		this.lastPosition++
 
 		this.values.push(value)
 
-		return '$' + this.lastPosition
+		return `$${this.lastPosition}`
 	}
 
 	public addLike(value: string): string {
