@@ -5,4 +5,5 @@ export declare class PGParams {
     add(value: any): string;
     addLike(value: string): string;
     addEqualNullable(field: string, value: any): string;
+    replaceSQLWithValues(sql: string): string;
 }

@@ -10,11 +10,11 @@ export class PGParams {
 	}
 
 	public add(value: any): string {
-		const idx = this.values.indexOf(value)
-		
-		if (idx >= 0) {
-			return `$${idx + 1}`
-		}
+		// const idx = this.values.indexOf(value)
+		//
+		// if (idx >= 0) {
+		// 	return `$${idx + 1}`
+		// }
 		
 		this.lastPosition++
 
