@@ -695,6 +695,7 @@ var PGTable = /** @class */ (function () {
             if (intelliwaketsfoundation.IsOn((_a = pgColumn.is_nullable) !== null && _a !== void 0 ? _a : 'YES')) {
                 text += ' | null';
             }
+            text += TS_EOL;
         }
         text += '}' + TS_EOL;
         text += TS_EOL;

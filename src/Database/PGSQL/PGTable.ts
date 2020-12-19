@@ -212,6 +212,7 @@ export class PGTable {
 			if (IsOn(pgColumn.is_nullable ?? 'YES')) {
 				text += ' | null'
 			}
+			text += TS_EOL
 		}
 		text += '}' + TS_EOL
 		text += TS_EOL
