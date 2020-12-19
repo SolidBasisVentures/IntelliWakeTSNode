@@ -218,7 +218,7 @@ var PGColumn = /** @class */ (function () {
             }
         }
         if (!!this.generatedAlwaysAs) {
-            ddl += "GENERATED ALWAYS AS " + this.generatedAlwaysAs + " STORED ";
+            ddl += "GENERATED ALWAYS AS " + PGColumn.CleanComment(this.generatedAlwaysAs) + " STORED ";
         }
         else {
             if (!intelliwaketsfoundation.IsOn(this.is_nullable)) {
@@ -296,6 +296,12 @@ var PGColumn = /** @class */ (function () {
             }
         }
         return ddl.trim();
+    };
+    PGColumn.CleanComment = function (comment) {
+        if (!comment) {
+            return comment;
+        }
+        return comment.replace(/[\n\r]/g, ' ');
     };
     PGColumn.TYPE_BOOLEAN = 'boolean';
     PGColumn.TYPE_NUMERIC = 'numeric';

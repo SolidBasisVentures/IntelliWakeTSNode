@@ -50,4 +50,5 @@ export declare class PGColumn {
     private deserialize;
     clean(): void;
     ddlDefinition(): string;
+    static CleanComment(comment: string): string;
 }

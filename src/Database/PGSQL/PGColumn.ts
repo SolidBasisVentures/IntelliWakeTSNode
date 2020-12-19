@@ -179,7 +179,7 @@ export class PGColumn {
 		}
 		
 		if (!!this.generatedAlwaysAs) {
-			ddl += `GENERATED ALWAYS AS ${this.generatedAlwaysAs} STORED `
+			ddl += `GENERATED ALWAYS AS ${PGColumn.CleanComment(this.generatedAlwaysAs)} STORED `
 		} else {
 			if (!IsOn(this.is_nullable)) {
 				ddl += 'NOT NULL '
@@ -246,5 +246,13 @@ export class PGColumn {
 		}
 		
 		return ddl.trim()
+	}
+	
+	public static CleanComment(comment: string): string {
+		if (!comment) {
+			return comment
+		}
+		
+		return comment.replace(/[\n\r]/g, ' ')
 	}
 }
