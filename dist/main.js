@@ -675,16 +675,16 @@ var PGTable = /** @class */ (function () {
         text += " {" + TS_EOL;
         for (var _g = 0, _h = this.columns; _g < _h.length; _g++) {
             var pgColumn = _h[_g];
-            if (!!pgColumn.column_comment || !!pgColumn.generatedAlwaysAs) {
+            // if (!!pgColumn.column_comment || !!pgColumn.generatedAlwaysAs) {
+            if (!!pgColumn.column_comment) {
                 text += "\t/** ";
-                if (!!pgColumn.column_comment) {
-                    text += PGTable.CleanComment(pgColumn.column_comment) + " ";
-                }
-                if (!!pgColumn.generatedAlwaysAs) {
-                    text += "GENERATED AS: " + PGTable.CleanComment(pgColumn.generatedAlwaysAs) + " ";
-                }
+                text += PGTable.CleanComment(pgColumn.column_comment) + " ";
                 text += "*/" + TS_EOL;
             }
+            // if (!!pgColumn.generatedAlwaysAs) {
+            // 	text += `GENERATED AS: ${PGTable.CleanComment(pgColumn.generatedAlwaysAs)} `
+            // }
+            // }
             text += '\t';
             text += pgColumn.column_name;
             text += ': ';
