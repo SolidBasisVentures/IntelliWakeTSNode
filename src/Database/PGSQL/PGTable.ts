@@ -10,24 +10,24 @@ export class PGTable {
 	public name = ''
 	public description = ''
 	public check: string | string[] | null = null
-
+	
 	public inherits: string[] = []
-
+	
 	public columns: PGColumn[] = []
-
+	
 	public indexes: PGIndex[] = []
-
+	
 	public foreignKeys: PGForeignKey[] = []
-
+	
 	constructor(instanceData?: PGTable) {
 		if (instanceData) {
 			this.deserialize(instanceData)
 		}
 	}
-
+	
 	protected deserialize(instanceData: PGTable) {
 		const keys = Object.keys(this)
-
+		
 		for (const key of keys) {
 			if (instanceData.hasOwnProperty(key)) {
 				switch (key) {
@@ -53,98 +53,98 @@ export class PGTable {
 			}
 		}
 	}
-
+	
 	public indexOfColumn(columnName: string): number {
 		return this.columns.findIndex((column) => column.column_name === columnName)
 	}
-
+	
 	public indexesOfForeignKeyByColumn(columnName: string): number[] {
 		let indexes: number[] = []
-
+		
 		for (let i = 0; i < this.foreignKeys.length; i++) {
 			if (this.foreignKeys[i].columnNames.includes(columnName)) {
 				indexes.push(i)
 			}
 		}
-
+		
 		return indexes
 	}
-
+	
 	public getForeignKeysByColumn(columnName: string): PGForeignKey[] {
 		let fks: PGForeignKey[] = []
-
+		
 		const indexes = this.indexesOfForeignKeyByColumn(columnName)
-
+		
 		for (const index of indexes) {
 			fks.push(this.foreignKeys[index])
 		}
-
+		
 		return fks
 	}
-
+	
 	public removeForeignKeysByColumn(columnName: string) {
 		this.foreignKeys = this.foreignKeys.filter((foreignKey) => !foreignKey.columnNames.includes(columnName))
 	}
-
+	
 	public removeIndexsByColumn(columnName: string) {
 		this.indexes = this.indexes.filter((index) => !index.columns.includes(columnName))
 	}
-
+	
 	public addForeignKey(pgForeignKey: PGForeignKey) {
 		this.foreignKeys.push(pgForeignKey)
 	}
-
+	
 	public getColumn(columnName: string): PGColumn | null {
 		return this.columns.find((column) => column.column_name === columnName) ?? null
 	}
-
+	
 	public removeColumn(columnName: string) {
 		const column = this.getColumn(columnName)
-
+		
 		if (!!column) {
 			this.removeForeignKeysByColumn(columnName)
-
+			
 			this.columns.filter((column) => column.column_name !== columnName)
-
+			
 			this.reOrderColumns()
 		}
 	}
-
+	
 	public addColumn(pgColumn: PGColumn) {
 		const pgColumnToAdd = new PGColumn(pgColumn)
-
+		
 		if (!pgColumnToAdd.ordinal_position) {
 			pgColumnToAdd.ordinal_position = 999999
 		}
-
+		
 		this.columns = this.columns.filter((column) => column.column_name !== pgColumnToAdd.column_name)
-
+		
 		for (let i = 0; i < this.columns.length; i++) {
 			if (this.columns[i].ordinal_position >= pgColumnToAdd.ordinal_position) {
 				this.columns[i].ordinal_position++
 			}
 		}
-
+		
 		this.columns.push(pgColumnToAdd)
-
+		
 		this.reOrderColumns()
 	}
-
+	
 	public reOrderColumns() {
 		this.columns = this.columns.sort((a, b) => a.ordinal_position - b.ordinal_position)
-
+		
 		let position = 0
-
+		
 		for (let i = 0; i < this.columns.length; i++) {
 			position++
 			this.columns[i].ordinal_position = position
 		}
 	}
-
+	
 	public addIndex(pgIndex: PGIndex) {
 		this.indexes.push(pgIndex)
 	}
-
+	
 	public tableHeaderText(forTableText: string): string {
 		let text = '/**' + TS_EOL
 		text += ' * Automatically generated: ' + moment().format('Y-MM-DD HH:mm:ss') + TS_EOL
@@ -158,10 +158,10 @@ export class PGTable {
 		}
 		text += ' */' + TS_EOL
 		text += TS_EOL
-
+		
 		return text
 	}
-
+	
 	public tsText(): string {
 		let text = this.tableHeaderText('Table Manager for')
 		if (this.inherits.length > 0) {
@@ -169,7 +169,7 @@ export class PGTable {
 				text += `import {I${inherit}, initial_${inherit}} from "./I${inherit}"${TS_EOL}`
 			}
 		}
-
+		
 		const enums = Array.from(
 			new Set(
 				this.columns
@@ -177,25 +177,30 @@ export class PGTable {
 					.filter((enumName) => !!enumName)
 			)
 		)
-
+		
 		if (enums.length > 0) {
 			for (const enumItem of enums) {
 				text += `import {${enumItem}} from "../Enums/${enumItem}"${TS_EOL}`
 			}
-
+			
 			text += TS_EOL
 		}
-
+		
 		text += `export interface I${this.name}`
 		if (this.inherits.length > 0) {
 			text += ` extends I${this.inherits.join(', I')}`
 		}
 		text += ` {` + TS_EOL
-		let addComma = false
-		let addComment = ''
 		for (const pgColumn of this.columns) {
-			if (addComma) {
-				text += '' + addComment + TS_EOL // Removed comment
+			if (!!pgColumn.column_comment || !!pgColumn.generatedAlwaysAs) {
+				text += `\t/** `
+				if (!!pgColumn.column_comment) {
+					text += `${PGTable.CleanComment(pgColumn.column_comment)} `
+				}
+				if (!!pgColumn.generatedAlwaysAs) {
+					text += `GENERATED AS: ${PGTable.CleanComment(pgColumn.generatedAlwaysAs)} `
+				}
+				text += `*/${TS_EOL}`
 			}
 			text += '\t'
 			text += pgColumn.column_name
@@ -207,19 +212,11 @@ export class PGTable {
 			if (IsOn(pgColumn.is_nullable ?? 'YES')) {
 				text += ' | null'
 			}
-			if (!!pgColumn.column_comment) {
-				addComment = ' // ' + PGTable.CleanComment(pgColumn.column_comment)
-			} else {
-				addComment = ''
-			}
-			addComma = true
 		}
-		text += addComment + TS_EOL
 		text += '}' + TS_EOL
 		text += TS_EOL
 		text += `export const initial_${this.name}: I${this.name} = {` + TS_EOL
-		addComma = false
-		addComment = ''
+		let addComma = false
 		if (this.inherits.length > 0) {
 			text += `\t...initial_${this.inherits.join(`,${TS_EOL}\t...initial_`)},${TS_EOL}`
 		}
@@ -251,14 +248,14 @@ export class PGTable {
 						(typeof pgColumn.udt_name !== 'string' && !!pgColumn.udt_name.defaultValue)
 					) {
 						if (pgColumn.dateType()) {
-							text += "''"
+							text += '\'\''
 						} else if (pgColumn.integerFloatType() || pgColumn.dateType()) {
 							text += pgColumn.column_default
 						} else if (typeof pgColumn.udt_name !== 'string') {
 							text +=
-								"'" + (pgColumn.column_default ?? pgColumn.udt_name.defaultValue ?? '') + "' as " + pgColumn.jsType()
+								'\'' + (pgColumn.column_default ?? pgColumn.udt_name.defaultValue ?? '') + '\' as ' + pgColumn.jsType()
 						} else {
-							text += "'" + (pgColumn.column_default ?? '') + "'"
+							text += '\'' + (pgColumn.column_default ?? '') + '\''
 						}
 					} else if (IsOn(pgColumn.is_nullable)) {
 						text += 'null'
@@ -268,23 +265,22 @@ export class PGTable {
 						} else if (pgColumn.integerFloatType()) {
 							text += '0'
 						} else if (pgColumn.dateType()) {
-							text += "''"
+							text += '\'\''
 						} else {
-							text += "''"
+							text += '\'\''
 						}
 					}
 				} else {
-					text += "''"
+					text += '\'\''
 				}
 			}
 			addComma = true
 		}
-		text += addComment + TS_EOL
-		text += '}' + TS_EOL // Removed semi
-
+		text += TS_EOL + '}' + TS_EOL // Removed semi
+		
 		return text
 	}
-
+	
 	public tsTextTable(): string {
 		let text = this.tableHeaderText('Table Class for')
 		text += `import {initial_${this.name}, I${this.name}} from "@Common/Tables/I${this.name}"` + TS_EOL
@@ -308,15 +304,15 @@ export class PGTable {
 		text += `\t\tthis.table = '${this.name}'` + TS_EOL
 		text += `\t}` + TS_EOL
 		text += `}` + TS_EOL
-
+		
 		return text
 	}
-
+	
 	public ddlPrimaryKey(): string | null {
 		let found = false
-
+		
 		let ddl = `PRIMARY KEY ("`
-
+		
 		for (const column of this.columns) {
 			if (IsOn(column.is_identity)) {
 				if (found) {
@@ -326,91 +322,91 @@ export class PGTable {
 				found = true
 			}
 		}
-
+		
 		if (found) {
 			ddl += `")`
-
+			
 			return ddl
 		}
-
+		
 		return null
 	}
-
+	
 	public ddlCreateTableText(createForeignKeys: boolean, createIndexes: boolean): string {
 		let ddl = ''
-
+		
 		/** @noinspection SqlResolve */
 		ddl += `DROP TABLE IF EXISTS ${this.name} CASCADE;` + TS_EOL
 		ddl += `CREATE TABLE ${this.name} (` + TS_EOL
-
+		
 		let prevColumn: PGColumn | null = null
 		for (const pgColumn of this.columns) {
 			if (prevColumn !== null) {
 				ddl += ',' + TS_EOL
 			}
-
+			
 			ddl += '\t' + pgColumn.ddlDefinition()
-
+			
 			prevColumn = pgColumn
 		}
 		const pk = this.ddlPrimaryKey()
 		if (!!pk) {
 			ddl += ',' + TS_EOL + '\t' + pk
 		}
-
+		
 		if (!!this.check) {
 			const checkItems = (typeof this.check === 'string' ? [this.check] : this.check).filter((item) => !!item)
-
+			
 			for (const checkItem of checkItems) {
 				ddl += `,${TS_EOL}\tCHECK (${checkItem})`
 			}
 		}
-
+		
 		ddl += TS_EOL
 		ddl += ')'
-
+		
 		if (this.inherits.length > 0) {
 			ddl += TS_EOL + `INHERITS (${this.inherits.join(',')})`
 		}
-
+		
 		ddl += ';'
-
+		
 		if (createIndexes) {
 			ddl += this.ddlCreateIndexes()
 		}
-
+		
 		if (createForeignKeys) {
 			ddl += this.ddlCreateForeignKeysText()
 		}
-
+		
 		return ddl
 	}
-
+	
 	public ddlCreateIndexes(): string {
 		let ddl = ''
-
+		
 		for (const index of this.indexes) {
 			ddl += TS_EOL + index.ddlDefinition(this)
 		}
-
+		
 		return ddl
 	}
-
+	
 	public ddlCreateForeignKeysText(): string {
 		let ddl = ''
-
+		
 		for (const foreignKey of this.foreignKeys) {
 			ddl += foreignKey.ddlConstraintDefinition(this) + TS_EOL
 		}
-
+		
 		return ddl
 	}
-
+	
 	public static CleanComment(comment: string): string {
 		if (!comment) {
 			return comment
 		}
-
+		
 		return comment.replace(/[\n\r]/g, ' ')
 	}
 }

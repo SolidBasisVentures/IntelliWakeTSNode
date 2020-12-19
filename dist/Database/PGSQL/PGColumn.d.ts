@@ -16,6 +16,7 @@ export declare class PGColumn {
     array_dimensions: (number | null)[];
     check: string | null;
     checkStringValues: string[];
+    generatedAlwaysAs: string | null;
     column_comment: string;
     isAutoIncrement: boolean;
     static readonly TYPE_BOOLEAN = "boolean";
