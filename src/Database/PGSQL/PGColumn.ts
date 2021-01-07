@@ -212,7 +212,7 @@ export class PGColumn {
 							ddl += `DEFAULT '${this.udt_name.defaultValue}' `
 						} else {
 							if (!!this.column_default) {
-								if (this.integerFloatType() || this.dateType()) {
+								if (this.integerFloatType() || this.dateType() || (this.column_default ?? '').toString().includes('::')) {
 									ddl += `DEFAULT ${this.column_default} `
 								} else {
 									ddl += `DEFAULT '${this.column_default}' `
