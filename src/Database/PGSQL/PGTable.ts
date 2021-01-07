@@ -253,6 +253,8 @@ export class PGTable {
 					) {
 						if (pgColumn.dateType()) {
 							text += '\'\''
+						} else if ((pgColumn.column_default ?? '').toString().includes('::')) {
+							text += pgColumn.column_default ?? ''
 						} else if (pgColumn.integerFloatType() || pgColumn.dateType()) {
 							text += pgColumn.column_default
 						} else if (typeof pgColumn.udt_name !== 'string') {
