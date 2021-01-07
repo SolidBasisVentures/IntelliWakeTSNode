@@ -446,7 +446,6 @@ var PGForeignKey = /** @class */ (function () {
         this.columnNames = [];
         this.primaryTable = '';
         this.primaryColumns = [];
-        this.isUnique = false;
         this.onDelete = 'RESTRICT';
         this.onUpdate = 'RESTRICT';
         if (instanceData) {

@@ -4,7 +4,6 @@ export class PGForeignKey {
 	public columnNames: string[] = []
 	public primaryTable = ''
 	public primaryColumns: string[] = []
-	public isUnique = false
 
 	public onDelete = 'RESTRICT'
 	public onUpdate = 'RESTRICT'
