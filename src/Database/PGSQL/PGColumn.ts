@@ -186,7 +186,7 @@ export class PGColumn {
 			}
 			
 			if ((this.column_default !== undefined && this.column_default !== null) || this.is_identity || this.isAutoIncrement) {
-				if (!(this.dateType() && (this.column_default ?? '').toString().toUpperCase().includes('NULL'))) {
+				if (!(this.dateType() && (!this.column_default || (this.column_default ?? '').toString().toUpperCase().includes('NULL')))) {
 					if (this.array_dimensions.length > 0) {
 						if (IsOn(this.is_nullable)) {
 							ddl += `DEFAULT ${this.column_default ?? 'NULL'} `
