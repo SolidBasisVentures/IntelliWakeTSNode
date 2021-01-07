@@ -503,6 +503,8 @@ var PGIndex = /** @class */ (function () {
                     .replace(' NULLS', '')
                     .replace(' FIRST', '')
                     .replace(' LAST', '')
+                    .replace('(', '_')
+                    .replace(')', '_')
                     .trim().substr(-25);
             })
                 .join('_'));
