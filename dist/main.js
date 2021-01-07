@@ -130,7 +130,7 @@ var PGColumn = /** @class */ (function () {
             return typeof _this.udt_name !== 'string';
         };
         this.integerType = function () {
-            return (typeof _this.udt_name === 'string') && [PGColumn.TYPE_SMALLINT, PGColumn.TYPE_INTEGER, PGColumn.TYPE_BIGINT].includes(_this.udt_name.toLowerCase());
+            return (typeof _this.udt_name === 'string') && (_this.udt_name.toLowerCase().startsWith('int') || [PGColumn.TYPE_SMALLINT, PGColumn.TYPE_INTEGER, PGColumn.TYPE_BIGINT].includes(_this.udt_name.toLowerCase()));
         };
         this.floatType = function () {
             return (typeof _this.udt_name === 'string') && [PGColumn.TYPE_NUMERIC, PGColumn.TYPE_FLOAT8].includes(_this.udt_name.toLowerCase());

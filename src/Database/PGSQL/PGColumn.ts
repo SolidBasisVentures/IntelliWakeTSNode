@@ -82,7 +82,7 @@ export class PGColumn {
 	}
 	
 	public integerType = (): boolean => {
-		return (typeof this.udt_name === 'string') && [PGColumn.TYPE_SMALLINT, PGColumn.TYPE_INTEGER, PGColumn.TYPE_BIGINT].includes(this.udt_name.toLowerCase())
+		return (typeof this.udt_name === 'string') && (this.udt_name.toLowerCase().startsWith('int') || [PGColumn.TYPE_SMALLINT, PGColumn.TYPE_INTEGER, PGColumn.TYPE_BIGINT].includes(this.udt_name.toLowerCase()))
 	}
 	
 	public floatType = (): boolean => {
