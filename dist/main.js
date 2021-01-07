@@ -224,7 +224,7 @@ var PGColumn = /** @class */ (function () {
             if (!intelliwaketsfoundation.IsOn(this.is_nullable)) {
                 ddl += 'NOT NULL ';
             }
-            if (this.column_default !== undefined && this.column_default !== null /* && !(this.column_default ?? '').toString().toUpperCase().startsWith('NULL') */) {
+            if ((this.column_default !== undefined && this.column_default !== null) || this.is_identity || this.isAutoIncrement /* && !(this.column_default ?? '').toString().toUpperCase().startsWith('NULL') */) {
                 if (this.array_dimensions.length > 0) {
                     if (intelliwaketsfoundation.IsOn(this.is_nullable)) {
                         ddl += "DEFAULT " + ((_c = this.column_default) !== null && _c !== void 0 ? _c : 'NULL') + " ";
