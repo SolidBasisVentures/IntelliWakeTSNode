@@ -180,7 +180,7 @@ var PGColumn = /** @class */ (function () {
         //		}
     };
     PGColumn.prototype.ddlDefinition = function () {
-        var _a, _b, _c, _d, _e, _f, _g;
+        var _a, _b, _c, _d, _e, _f;
         var ddl = '"' + this.column_name + '" ';
         ddl += (typeof this.udt_name === 'string') ? this.udt_name : this.udt_name.columnName;
         if (this.array_dimensions.length > 0) {
@@ -224,13 +224,13 @@ var PGColumn = /** @class */ (function () {
             if (!intelliwaketsfoundation.IsOn(this.is_nullable)) {
                 ddl += 'NOT NULL ';
             }
-            if (this.column_default !== undefined && !((_c = this.column_default) !== null && _c !== void 0 ? _c : '').toString().toUpperCase().startsWith('NULL')) {
+            if (this.column_default !== undefined && this.column_default !== null /* && !(this.column_default ?? '').toString().toUpperCase().startsWith('NULL') */) {
                 if (this.array_dimensions.length > 0) {
                     if (intelliwaketsfoundation.IsOn(this.is_nullable)) {
-                        ddl += "DEFAULT " + ((_d = this.column_default) !== null && _d !== void 0 ? _d : 'NULL') + " ";
+                        ddl += "DEFAULT " + ((_c = this.column_default) !== null && _c !== void 0 ? _c : 'NULL') + " ";
                     }
                     else {
-                        ddl += "DEFAULT " + ((_e = this.column_default) !== null && _e !== void 0 ? _e : ((typeof this.udt_name === 'string') ? '\'{}\'' : (_f = this.udt_name.defaultValue) !== null && _f !== void 0 ? _f : '\'{}')) + " ";
+                        ddl += "DEFAULT " + ((_d = this.column_default) !== null && _d !== void 0 ? _d : ((typeof this.udt_name === 'string') ? '\'{}\'' : (_e = this.udt_name.defaultValue) !== null && _e !== void 0 ? _e : '\'{}')) + " ";
                     }
                 }
                 else {
@@ -258,7 +258,7 @@ var PGColumn = /** @class */ (function () {
                         }
                         else {
                             if (!!this.column_default) {
-                                if (this.integerFloatType() || this.dateType() || ((_g = this.column_default) !== null && _g !== void 0 ? _g : '').toString().includes('::')) {
+                                if (this.integerFloatType() || this.dateType() || ((_f = this.column_default) !== null && _f !== void 0 ? _f : '').toString().includes('::')) {
                                     ddl += "DEFAULT " + this.column_default + " ";
                                 }
                                 else {

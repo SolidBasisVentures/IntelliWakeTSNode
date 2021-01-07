@@ -185,7 +185,7 @@ export class PGColumn {
 				ddl += 'NOT NULL '
 			}
 			
-			if (this.column_default !== undefined && !(this.column_default ?? '').toString().toUpperCase().startsWith('NULL')) {
+			if (this.column_default !== undefined && this.column_default !== null/* && !(this.column_default ?? '').toString().toUpperCase().startsWith('NULL') */) {
 				if (this.array_dimensions.length > 0) {
 					if (IsOn(this.is_nullable)) {
 						ddl += `DEFAULT ${this.column_default ?? 'NULL'} `
