@@ -225,7 +225,7 @@ var PGColumn = /** @class */ (function () {
                 ddl += 'NOT NULL ';
             }
             if ((this.column_default !== undefined && this.column_default !== null) || this.is_identity || this.isAutoIncrement) {
-                if (!(this.dateType() && ((_c = this.column_default) !== null && _c !== void 0 ? _c : '').toString().toUpperCase().startsWith('NULL'))) {
+                if (!(this.dateType() && ((_c = this.column_default) !== null && _c !== void 0 ? _c : '').toString().toUpperCase().includes('NULL'))) {
                     if (this.array_dimensions.length > 0) {
                         if (intelliwaketsfoundation.IsOn(this.is_nullable)) {
                             ddl += "DEFAULT " + ((_d = this.column_default) !== null && _d !== void 0 ? _d : 'NULL') + " ";
