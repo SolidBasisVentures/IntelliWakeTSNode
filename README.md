@@ -47,11 +47,3 @@ This is the directory where all of the code package code goes.
 When rollup runs, all of the generated files are dumped in here. It can be very helpful to delete these if many changes are made; otherwise, extra files may continue to be present. 
 
 #### Locally link files
-
-### This App
-
-In terminal, run; npm link
-
-### Consuming App
-
-In terminal, run: npm link @denjpeters/intelliwakereact

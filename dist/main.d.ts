@@ -1,3 +1,4 @@
+export * from './Functions';
 export * from './Database/Conversions/MyToPG';
 export * from './Database/MySQL/ColumnDefinition';
 export * from './Database/MySQL/MyColumn';

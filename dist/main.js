@@ -2,6 +2,7 @@
 
 Object.defineProperty(exports, '__esModule', { value: true });
 
+var readline = require('readline');
 var intelliwaketsfoundation = require('@solidbasisventures/intelliwaketsfoundation');
 var moment = require('moment');
 var path = require('path');
@@ -9,6 +10,7 @@ var fs = require('fs');
 
 function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e : { 'default': e }; }
 
+var readline__default = /*#__PURE__*/_interopDefaultLegacy(readline);
 var moment__default = /*#__PURE__*/_interopDefaultLegacy(moment);
 var fs__default = /*#__PURE__*/_interopDefaultLegacy(fs);
 
@@ -86,6 +88,38 @@ function __spreadArrays() {
             r[k] = a[j];
     return r;
 }
+
+var KeyboardLine = function (question) { return __awaiter(void 0, void 0, void 0, function () {
+    var rl;
+    return __generator(this, function (_a) {
+        rl = readline__default['default'].createInterface({
+            input: process.stdin,
+            output: process.stdout
+        });
+        return [2 /*return*/, new Promise(function (resolve) {
+                return rl.question(question + " ", function (answer) {
+                    resolve(answer);
+                    rl.close();
+                });
+            })];
+    });
+}); };
+var KeyboardKey = function (question) { return __awaiter(void 0, void 0, void 0, function () {
+    return __generator(this, function (_a) {
+        return [2 /*return*/, new Promise(function (resolve) {
+                if (!!question)
+                    console.log(question);
+                process.stdin.setRawMode(true);
+                process.stdin.resume();
+                process.stdin.setEncoding('utf8');
+                process.stdin.on('data', function (key) {
+                    if (key === '\u0003')
+                        process.exit();
+                    resolve(key);
+                });
+            })];
+    });
+}); };
 
 var PGColumn = /** @class */ (function () {
     function PGColumn(instanceData) {
@@ -2445,6 +2479,8 @@ var PGWhereSearchClause = function (search, params, fields, startWithAnd) {
 };
 
 exports.ColumnDefinition = ColumnDefinition;
+exports.KeyboardKey = KeyboardKey;
+exports.KeyboardLine = KeyboardLine;
 exports.MyColumn = MyColumn;
 exports.MyForeignKey = MyForeignKey;
 exports.MyIndex = MyIndex;
