@@ -1,8 +1,6 @@
 import { PGColumn } from './PGColumn';
 import { PGIndex } from './PGIndex';
 import { PGForeignKey } from './PGForeignKey';
-import { Client, Pool, PoolClient } from 'pg';
-export declare type TConnection = Pool | PoolClient | Client;
 export declare class PGTable {
     name: string;
     description: string;

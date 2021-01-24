@@ -3,11 +3,8 @@ import {PGIndex} from './PGIndex'
 import {PGForeignKey} from './PGForeignKey'
 import moment from 'moment'
 import {IsOn} from '@solidbasisventures/intelliwaketsfoundation'
-import {Client, Pool, PoolClient} from 'pg'
 
 const TS_EOL = '\n' // was \r\n
-
-export type TConnection = Pool | PoolClient | Client
 
 export class PGTable {
 	public name = ''
