@@ -1,4 +1,3 @@
-
 import {PGSQL, TConnection} from './PGSQL'
 
 export class PGFunc {
@@ -31,9 +30,12 @@ export class PGFunc {
 		return null
 	}
 	
+	public ddlDefinition() { return this.definition}
+	
+	
 	public async writeToDB(connection: TConnection) {
 		if (!!this.name && !!this.definition) {
-			return PGSQL.Execute(connection, this.definition)
+			return PGSQL.Execute(connection, this.ddlDefinition())
 		}
 		
 		return null

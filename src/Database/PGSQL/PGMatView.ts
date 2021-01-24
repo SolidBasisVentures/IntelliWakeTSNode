@@ -31,9 +31,11 @@ export class PGMatView {
 		return null
 	}
 	
+	public ddlDefinition() { return `CREATE MATERIALIZED VIEW ${this.name} AS ${this.definition}`}
+	
 	public async writeToDB(connection: TConnection) {
 		if (!!this.name && !!this.definition) {
-			return await PGSQL.Execute(connection, `CREATE MATERIALIZED VIEW ${this.name} AS ${this.definition}`)
+			return await PGSQL.Execute(connection, this.ddlDefinition())
 		}
 		
 		return null

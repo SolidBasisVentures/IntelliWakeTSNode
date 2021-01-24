@@ -1,4 +1,3 @@
-
 import {PGSQL, TConnection} from './PGSQL'
 
 export class PGView {
@@ -31,9 +30,11 @@ export class PGView {
 		return null
 	}
 	
+	public ddlDefinition() { return `CREATE OR REPLACE VIEW ${this.name} AS ${this.definition}`}
+	
 	public async writeToDB(connection: TConnection) {
 		if (!!this.name && !!this.definition) {
-			return PGSQL.Execute(connection, `CREATE OR REPLACE VIEW ${this.name} AS ${this.definition}`)
+			return PGSQL.Execute(connection, this.ddlDefinition())
 		}
 		
 		return null
