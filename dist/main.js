@@ -514,7 +514,7 @@ var PGIndex = /** @class */ (function () {
         if (this.isUnique) {
             ddl += 'UNIQUE ';
         }
-        ddl += 'INDEX ';
+        ddl += 'INDEX IF NOT EXISTS ';
         ddl += "\"" + this.name(pgTable) + "\" ";
         ddl += 'ON ';
         ddl += "\"" + pgTable.name + "\" ";
