@@ -1,7 +1,7 @@
 import {KeyboardKey, KeyboardLine} from '../src/Functions'
 
 const processScript = async() => {
-	const val = await KeyboardKey('True or False?', ['t', 'f'])
+	const val = await KeyboardKey('True or False?', (key) => key === 't')
 	console.log('Answer:', val)
 	
 	const valLine = await KeyboardLine('Question?')

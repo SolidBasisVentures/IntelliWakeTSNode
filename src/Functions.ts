@@ -17,7 +17,7 @@ export const KeyboardLine = async (question: string, validAnswers?: string[]): P
 	)
 }
 
-export const KeyboardKey = async (question?: string, validKeys?: string[]): Promise<string> => {
+export const KeyboardKey = async (question?: string, validKeys?: string[] | ((key: string) => boolean)): Promise<string> => {
 	return new Promise(resolve => {
 		if (!!question) console.log(question)
 		
@@ -28,7 +28,7 @@ export const KeyboardKey = async (question?: string, validKeys?: string[]): Prom
 		const getData = (key: any) => {
 			if (key === '\u0003') process.exit()
 			
-			if (!validKeys || validKeys.includes(key)) {
+			if (!validKeys || (Array.isArray(validKeys) ? validKeys.includes(key) : validKeys(key))) {
 				process.stdin.setRawMode(false)
 				process.stdin.pause()
 				process.stdin.removeListener('data', getData)

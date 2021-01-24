@@ -117,7 +117,7 @@ var KeyboardKey = function (question, validKeys) { return __awaiter(void 0, void
                 var getData = function (key) {
                     if (key === '\u0003')
                         process.exit();
-                    if (!validKeys || validKeys.includes(key)) {
+                    if (!validKeys || (Array.isArray(validKeys) ? validKeys.includes(key) : validKeys(key))) {
                         process.stdin.setRawMode(false);
                         process.stdin.pause();
                         process.stdin.removeListener('data', getData);
