@@ -89,7 +89,7 @@ function __spreadArrays() {
     return r;
 }
 
-var KeyboardLine = function (question) { return __awaiter(void 0, void 0, void 0, function () {
+var KeyboardLine = function (question, validAnswers) { return __awaiter(void 0, void 0, void 0, function () {
     var rl;
     return __generator(this, function (_a) {
         rl = readline__default['default'].createInterface({
@@ -98,13 +98,15 @@ var KeyboardLine = function (question) { return __awaiter(void 0, void 0, void 0
         });
         return [2 /*return*/, new Promise(function (resolve) {
                 return rl.question(question + " ", function (answer) {
-                    resolve(answer);
-                    rl.close();
+                    if (!validAnswers || validAnswers.includes(answer)) {
+                        resolve(answer);
+                        rl.close();
+                    }
                 });
             })];
     });
 }); };
-var KeyboardKey = function (question) { return __awaiter(void 0, void 0, void 0, function () {
+var KeyboardKey = function (question, validKeys) { return __awaiter(void 0, void 0, void 0, function () {
     return __generator(this, function (_a) {
         return [2 /*return*/, new Promise(function (resolve) {
                 if (!!question)
@@ -112,11 +114,17 @@ var KeyboardKey = function (question) { return __awaiter(void 0, void 0, void 0,
                 process.stdin.setRawMode(true);
                 process.stdin.resume();
                 process.stdin.setEncoding('utf8');
-                process.stdin.on('data', function (key) {
+                var getData = function (key) {
                     if (key === '\u0003')
                         process.exit();
-                    resolve(key);
-                });
+                    if (!validKeys || validKeys.includes(key)) {
+                        process.stdin.setRawMode(false);
+                        process.stdin.pause();
+                        process.stdin.removeListener('data', getData);
+                        resolve(key);
+                    }
+                };
+                process.stdin.on('data', getData);
             })];
     });
 }); };
