@@ -7,12 +7,14 @@ var intelliwaketsfoundation = require('@solidbasisventures/intelliwaketsfoundati
 var moment = require('moment');
 var path = require('path');
 var fs = require('fs');
+var QueryStream = require('pg-query-stream');
 
 function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e : { 'default': e }; }
 
 var readline__default = /*#__PURE__*/_interopDefaultLegacy(readline);
 var moment__default = /*#__PURE__*/_interopDefaultLegacy(moment);
 var fs__default = /*#__PURE__*/_interopDefaultLegacy(fs);
+var QueryStream__default = /*#__PURE__*/_interopDefaultLegacy(QueryStream);
 
 /*! *****************************************************************************
 Copyright (c) Microsoft Corporation.
@@ -42,6 +44,17 @@ function __extends(d, b) {
     function __() { this.constructor = d; }
     d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 }
+
+var __assign = function() {
+    __assign = Object.assign || function __assign(t) {
+        for (var s, i = 1, n = arguments.length; i < n; i++) {
+            s = arguments[i];
+            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+        }
+        return t;
+    };
+    return __assign.apply(this, arguments);
+};
 
 function __awaiter(thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
@@ -2400,39 +2413,6 @@ var MyTable = /** @class */ (function () {
     // }
 })(exports.MySQL || (exports.MySQL = {}));
 
-var PGEnum = /** @class */ (function () {
-    function PGEnum(instanceData) {
-        this.enumName = '';
-        this.values = [];
-        if (instanceData) {
-            this.deserialize(instanceData);
-        }
-    }
-    PGEnum.prototype.deserialize = function (instanceData) {
-        var keys = Object.keys(this);
-        for (var _i = 0, keys_1 = keys; _i < keys_1.length; _i++) {
-            var key = keys_1[_i];
-            if (instanceData.hasOwnProperty(key)) {
-                this[key] = instanceData[key];
-            }
-        }
-    };
-    Object.defineProperty(PGEnum.prototype, "columnName", {
-        get: function () {
-            return intelliwaketsfoundation.ToSnakeCase(this.enumName);
-        },
-        enumerable: false,
-        configurable: true
-    });
-    PGEnum.prototype.ddlRemove = function () {
-        return "DROP TYPE IF EXISTS " + this.columnName + " CASCADE ";
-    };
-    PGEnum.prototype.ddlDefinition = function () {
-        return "CREATE TYPE " + this.columnName + " AS ENUM ('" + this.values.join("','") + "')";
-    };
-    return PGEnum;
-}());
-
 var PGParams = /** @class */ (function () {
     function PGParams() {
         this.lastPosition = 0;
@@ -2469,6 +2449,905 @@ var PGParams = /** @class */ (function () {
     return PGParams;
 }());
 
+var PGEnum = /** @class */ (function () {
+    function PGEnum(instanceData) {
+        this.enumName = '';
+        this.values = [];
+        if (instanceData) {
+            this.deserialize(instanceData);
+        }
+    }
+    PGEnum.prototype.deserialize = function (instanceData) {
+        var keys = Object.keys(this);
+        for (var _i = 0, keys_1 = keys; _i < keys_1.length; _i++) {
+            var key = keys_1[_i];
+            if (instanceData.hasOwnProperty(key)) {
+                this[key] = instanceData[key];
+            }
+        }
+    };
+    Object.defineProperty(PGEnum.prototype, "columnName", {
+        get: function () {
+            return intelliwaketsfoundation.ToSnakeCase(this.enumName);
+        },
+        enumerable: false,
+        configurable: true
+    });
+    PGEnum.prototype.ddlRemove = function () {
+        return "DROP TYPE IF EXISTS " + this.columnName + " CASCADE ";
+    };
+    PGEnum.prototype.ddlDefinition = function () {
+        return "CREATE TYPE " + this.columnName + " AS ENUM ('" + this.values.join("','") + "')";
+    };
+    return PGEnum;
+}());
+
+(function (PGSQL) {
+    var _this = this;
+    PGSQL.query = function (connection, sql, values) { return __awaiter(_this, void 0, void 0, function () {
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0: return [4 /*yield*/, new Promise(function (resolve, reject) {
+                        // const stackTrace = new Error().stack
+                        connection
+                            .query(sql, values)
+                            .then(function (res) {
+                            resolve({ rows: res.rows, fields: res.fields, rowCount: res.rowCount });
+                        })
+                            .catch(function (err) {
+                            // console.log('------------ SQL')
+                            // console.log(sql)
+                            // console.log(values)
+                            // console.log(err)
+                            // console.log(stackTrace)
+                            // throw 'SQL Error'
+                            reject(err.message + "\n" + sql + "\n" + JSON.stringify(values !== null && values !== void 0 ? values : {}));
+                        });
+                    })];
+                case 1: return [2 /*return*/, _a.sent()];
+            }
+        });
+    }); };
+    PGSQL.timeout = function (ms) { return __awaiter(_this, void 0, void 0, function () {
+        return __generator(this, function (_a) {
+            return [2 /*return*/, new Promise(function (resolve) {
+                    setTimeout(resolve, ms);
+                })];
+        });
+    }); };
+    PGSQL.PGQueryValuesStream = function (connection, sql, values, row) { return __awaiter(_this, void 0, void 0, function () {
+        var _this = this;
+        return __generator(this, function (_a) {
+            return [2 /*return*/, new Promise(function (resolve, reject) { return __awaiter(_this, void 0, void 0, function () {
+                    var actualRow, actualValues, loadCount, processedCount, query, stream;
+                    var _this = this;
+                    return __generator(this, function (_a) {
+                        if (!!row) {
+                            actualRow = row;
+                            actualValues = values;
+                        }
+                        else {
+                            actualRow = values;
+                            values = [];
+                        }
+                        loadCount = 0;
+                        processedCount = 0;
+                        query = new QueryStream__default['default'](sql, actualValues);
+                        stream = connection.query(query);
+                        stream.on('data', function (row) { return __awaiter(_this, void 0, void 0, function () {
+                            var paused;
+                            return __generator(this, function (_a) {
+                                switch (_a.label) {
+                                    case 0:
+                                        loadCount++;
+                                        paused = false;
+                                        if (loadCount > processedCount + 100) {
+                                            stream.pause();
+                                            paused = true;
+                                        }
+                                        return [4 /*yield*/, actualRow(row)];
+                                    case 1:
+                                        _a.sent();
+                                        processedCount++;
+                                        if (paused) {
+                                            stream.resume();
+                                        }
+                                        return [2 /*return*/];
+                                }
+                            });
+                        }); });
+                        stream.on('error', function (err) {
+                            reject(err);
+                        });
+                        stream.on('end', function () { return __awaiter(_this, void 0, void 0, function () {
+                            return __generator(this, function (_a) {
+                                switch (_a.label) {
+                                    case 0: return [4 /*yield*/, PGSQL.timeout(100)];
+                                    case 1:
+                                        _a.sent();
+                                        _a.label = 2;
+                                    case 2:
+                                        if (!(processedCount < loadCount)) return [3 /*break*/, 4];
+                                        return [4 /*yield*/, PGSQL.timeout(100)];
+                                    case 3:
+                                        _a.sent();
+                                        return [3 /*break*/, 2];
+                                    case 4:
+                                        resolve();
+                                        return [2 /*return*/];
+                                }
+                            });
+                        }); });
+                        return [2 /*return*/];
+                    });
+                }); })];
+        });
+    }); };
+    PGSQL.PGQueryStream = function (connection, sql, row) { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
+        return [2 /*return*/, PGSQL.PGQueryValuesStream(connection, sql, [], row)];
+    }); }); };
+    PGSQL.TableRowCount = function (connection, table) { return __awaiter(_this, void 0, void 0, function () {
+        var data;
+        var _a, _b, _c;
+        return __generator(this, function (_d) {
+            switch (_d.label) {
+                case 0: return [4 /*yield*/, PGSQL.query(connection, "SELECT count(*) AS count FROM " + table, undefined)];
+                case 1:
+                    data = _d.sent();
+                    return [2 /*return*/, (_c = ((_b = ((_a = data.rows) !== null && _a !== void 0 ? _a : [])[0]) !== null && _b !== void 0 ? _b : {})['count']) !== null && _c !== void 0 ? _c : 0];
+            }
+        });
+    }); };
+    PGSQL.TableExists = function (connection, table) { return __awaiter(_this, void 0, void 0, function () {
+        var sql, data;
+        var _a, _b, _c;
+        return __generator(this, function (_d) {
+            switch (_d.label) {
+                case 0:
+                    sql = "SELECT count(*) AS count\n                      FROM information_schema.tables\n                      WHERE table_schema = 'public'\n                        AND table_name = '" + table + "'";
+                    return [4 /*yield*/, PGSQL.query(connection, sql, undefined)];
+                case 1:
+                    data = _d.sent();
+                    return [2 /*return*/, ((_c = ((_b = ((_a = data.rows) !== null && _a !== void 0 ? _a : [])[0]) !== null && _b !== void 0 ? _b : {})['count']) !== null && _c !== void 0 ? _c : 0) > 0];
+            }
+        });
+    }); };
+    PGSQL.TableColumnExists = function (connection, table, column) { return __awaiter(_this, void 0, void 0, function () {
+        var sql, data;
+        var _a, _b, _c;
+        return __generator(this, function (_d) {
+            switch (_d.label) {
+                case 0:
+                    sql = "SELECT count(*) AS count\n                      FROM information_schema.COLUMNS\n                      WHERE table_schema = 'public'\n                        AND table_name = '" + table + "'\n                        AND column_name = '" + column + "'";
+                    return [4 /*yield*/, PGSQL.query(connection, sql, undefined)];
+                case 1:
+                    data = _d.sent();
+                    return [2 /*return*/, ((_c = ((_b = ((_a = data.rows) !== null && _a !== void 0 ? _a : [])[0]) !== null && _b !== void 0 ? _b : {})['count']) !== null && _c !== void 0 ? _c : 0) > 0];
+            }
+        });
+    }); };
+    PGSQL.TriggerExists = function (connection, trigger) { return __awaiter(_this, void 0, void 0, function () {
+        var sql, data;
+        var _a, _b, _c;
+        return __generator(this, function (_d) {
+            switch (_d.label) {
+                case 0:
+                    sql = "SELECT count(*) AS count\n                      FROM information_schema.triggers\n                      WHERE trigger_schema = 'public'\n                        AND trigger_name = '" + trigger + "'";
+                    return [4 /*yield*/, PGSQL.query(connection, sql, undefined)];
+                case 1:
+                    data = _d.sent();
+                    return [2 /*return*/, ((_c = ((_b = ((_a = data.rows) !== null && _a !== void 0 ? _a : [])[0]) !== null && _b !== void 0 ? _b : {})['count']) !== null && _c !== void 0 ? _c : 0) > 0];
+            }
+        });
+    }); };
+    PGSQL.TableResetIncrement = function (connection, table, column, toID) { return __awaiter(_this, void 0, void 0, function () {
+        return __generator(this, function (_a) {
+            if (!!toID) {
+                return [2 /*return*/, PGSQL.Execute(connection, "SELECT setval(pg_get_serial_sequence('" + table + "', '" + column + "'), " + toID + ");\n\t\t\t")];
+            }
+            else {
+                return [2 /*return*/, PGSQL.Execute(connection, "SELECT setval(pg_get_serial_sequence('" + table + "', '" + column + "'), max(" + column + ")) FROM " + table + ";\n\t\t\t")];
+            }
+        });
+    }); };
+    PGSQL.ConstraintExists = function (connection, constraint) { return __awaiter(_this, void 0, void 0, function () {
+        var sql, data;
+        var _a, _b, _c;
+        return __generator(this, function (_d) {
+            switch (_d.label) {
+                case 0:
+                    sql = "\n\t\t\t\tSELECT count(*) AS count\n                      FROM information_schema.table_constraints\n                      WHERE constraint_schema = 'public'\n                        AND constraint_name = '" + constraint + "'";
+                    return [4 /*yield*/, PGSQL.query(connection, sql, undefined)];
+                case 1:
+                    data = _d.sent();
+                    return [2 /*return*/, ((_c = ((_b = ((_a = data.rows) !== null && _a !== void 0 ? _a : [])[0]) !== null && _b !== void 0 ? _b : {})['count']) !== null && _c !== void 0 ? _c : 0) > 0];
+            }
+        });
+    }); };
+    PGSQL.FKConstraints = function (connection) { return __awaiter(_this, void 0, void 0, function () {
+        var sql;
+        return __generator(this, function (_a) {
+            sql = "\n        SELECT table_name, constraint_name\n        FROM information_schema.table_constraints\n        WHERE constraint_schema = 'public'\n          AND constraint_type = 'FOREIGN KEY'";
+            return [2 /*return*/, PGSQL.FetchMany(connection, sql)];
+        });
+    }); };
+    PGSQL.Functions = function (connection) { return __awaiter(_this, void 0, void 0, function () {
+        var sql;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    sql = "\n        SELECT routines.routine_name\n        FROM information_schema.routines\n        WHERE routines.specific_schema = 'public'\n          AND routine_type = 'FUNCTION'\n        ORDER BY routines.routine_name";
+                    return [4 /*yield*/, PGSQL.FetchArray(connection, sql)];
+                case 1: return [2 /*return*/, (_a.sent()).filter(function (func) { return func.startsWith('transcom'); })];
+            }
+        });
+    }); };
+    PGSQL.IndexExists = function (connection, tablename, indexName) { return __awaiter(_this, void 0, void 0, function () {
+        var sql, data;
+        var _a, _b, _c;
+        return __generator(this, function (_d) {
+            switch (_d.label) {
+                case 0:
+                    sql = "SELECT count(*) AS count\n                      FROM pg_indexes\n                      WHERE schemaname = 'public'\n                        AND tablename = '" + tablename + "'\n                        AND indexname = '" + indexName + "'";
+                    return [4 /*yield*/, PGSQL.query(connection, sql, undefined)];
+                case 1:
+                    data = _d.sent();
+                    return [2 /*return*/, ((_c = ((_b = ((_a = data.rows) !== null && _a !== void 0 ? _a : [])[0]) !== null && _b !== void 0 ? _b : {})['count']) !== null && _c !== void 0 ? _c : 0) > 0];
+            }
+        });
+    }); };
+    PGSQL.GetByID = function (connection, table, id) { return __awaiter(_this, void 0, void 0, function () {
+        var sql, data;
+        var _a, _b;
+        return __generator(this, function (_c) {
+            switch (_c.label) {
+                case 0:
+                    if (!!id) return [3 /*break*/, 1];
+                    return [2 /*return*/, Promise.resolve(null)];
+                case 1:
+                    sql = "SELECT * FROM " + table + " WHERE id = $1";
+                    return [4 /*yield*/, PGSQL.query(connection, sql, [id])];
+                case 2:
+                    data = _c.sent();
+                    return [2 /*return*/, !!((_a = data.rows) !== null && _a !== void 0 ? _a : [])[0] ? __assign({}, ((_b = data.rows) !== null && _b !== void 0 ? _b : [])[0]) : null];
+            }
+        });
+    }); };
+    PGSQL.GetCountSQL = function (connection, sql, values) { return __awaiter(_this, void 0, void 0, function () {
+        var data, value;
+        var _a, _b;
+        return __generator(this, function (_c) {
+            switch (_c.label) {
+                case 0: return [4 /*yield*/, PGSQL.query(connection, sql, values)];
+                case 1:
+                    data = _c.sent();
+                    value = ((_b = ((_a = data.rows) !== null && _a !== void 0 ? _a : [])[0]) !== null && _b !== void 0 ? _b : {})['count'];
+                    return [2 /*return*/, isNaN(value) ? 0 : parseInt(value)];
+            }
+        });
+    }); };
+    PGSQL.FetchOne = function (connection, sql, values) { return __awaiter(_this, void 0, void 0, function () {
+        var data;
+        var _a, _b;
+        return __generator(this, function (_c) {
+            switch (_c.label) {
+                case 0: return [4 /*yield*/, PGSQL.query(connection, sql, values)];
+                case 1:
+                    data = _c.sent();
+                    return [2 /*return*/, !!((_a = data.rows) !== null && _a !== void 0 ? _a : [])[0] ? __assign({}, ((_b = data.rows) !== null && _b !== void 0 ? _b : [])[0]) : null];
+            }
+        });
+    }); };
+    PGSQL.FetchMany = function (connection, sql, values) { return __awaiter(_this, void 0, void 0, function () {
+        var data;
+        var _a;
+        return __generator(this, function (_b) {
+            switch (_b.label) {
+                case 0: return [4 /*yield*/, PGSQL.query(connection, sql, values)];
+                case 1:
+                    data = _b.sent();
+                    return [2 /*return*/, (_a = data.rows) !== null && _a !== void 0 ? _a : []];
+            }
+        });
+    }); };
+    PGSQL.FetchArray = function (connection, sql, values) { return __awaiter(_this, void 0, void 0, function () {
+        var data;
+        var _a;
+        return __generator(this, function (_b) {
+            switch (_b.label) {
+                case 0: return [4 /*yield*/, PGSQL.query(connection, sql, values)];
+                case 1:
+                    data = _b.sent();
+                    return [2 /*return*/, ((_a = data.rows) !== null && _a !== void 0 ? _a : []).map(function (row) { return row[Object.keys(row)[0]]; })];
+            }
+        });
+    }); };
+    PGSQL.InsertAndGetReturning = function (connection, table, values) { return __awaiter(_this, void 0, void 0, function () {
+        var newValues, params, sql, results;
+        var _a;
+        return __generator(this, function (_b) {
+            switch (_b.label) {
+                case 0:
+                    newValues = __assign({}, values);
+                    if (!newValues.id) {
+                        delete newValues.id;
+                        // delete newValues.added_date;
+                        // delete newValues.modified_date;
+                    }
+                    params = new PGParams();
+                    sql = "\n\t\t\t\tINSERT INTO " + table + "\n\t\t\t\t    (\"" + Object.keys(newValues).join('","') + "\")\n\t\t\t\t    VALUES\n\t\t\t\t    (" + Object.values(newValues)
+                        .map(function (value) { return params.add(value); })
+                        .join(',') + ")\n\t\t\t\t    RETURNING *";
+                    return [4 /*yield*/, PGSQL.query(connection, sql, params.values)];
+                case 1:
+                    results = _b.sent();
+                    return [2 /*return*/, ((_a = results.rows) !== null && _a !== void 0 ? _a : [])[0]];
+            }
+        });
+    }); };
+    PGSQL.InsertBulk = function (connection, table, values) { return __awaiter(_this, void 0, void 0, function () {
+        var params, sql;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    params = new PGParams();
+                    sql = "\n\t\t\t\tINSERT INTO " + table + "\n\t\t\t\t    (\"" + Object.keys(values).join('","') + "\")\n\t\t\t\t    VALUES\n\t\t\t\t    (" + Object.values(values)
+                        .map(function (value) { return params.add(value); })
+                        .join(',') + ")";
+                    return [4 /*yield*/, PGSQL.query(connection, sql, params.values)];
+                case 1:
+                    _a.sent();
+                    return [2 /*return*/];
+            }
+        });
+    }); };
+    PGSQL.UpdateAndGetReturning = function (connection, table, whereValues, updateValues) { return __awaiter(_this, void 0, void 0, function () {
+        var params, sql, data;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    params = new PGParams();
+                    sql = "UPDATE " + table + " SET " + PGSQL.BuildSetComponents(updateValues, params) + " WHERE " + PGSQL.BuildWhereComponents(whereValues, params) + " RETURNING *";
+                    return [4 /*yield*/, PGSQL.query(connection, sql, params.values)
+                        // @ts-ignore
+                    ];
+                case 1:
+                    data = _a.sent();
+                    // @ts-ignore
+                    return [2 /*return*/, data.rows[0]];
+            }
+        });
+    }); };
+    PGSQL.BuildWhereComponents = function (whereValues, params) {
+        return Object.keys(whereValues)
+            .map(function (key) { return "\"" + key + "\"=" + params.add(whereValues[key]); })
+            .join(' AND ');
+    };
+    PGSQL.BuildSetComponents = function (setValues, params) {
+        return Object.keys(setValues)
+            .map(function (key) { return "\"" + key + "\"=" + params.add(setValues[key]); })
+            .join(',');
+    };
+    PGSQL.Save = function (connection, table, values) { return __awaiter(_this, void 0, void 0, function () {
+        var whereValues;
+        return __generator(this, function (_a) {
+            if (!values.id) {
+                return [2 /*return*/, PGSQL.InsertAndGetReturning(connection, table, values)];
+            }
+            else {
+                whereValues = { id: values.id };
+                return [2 /*return*/, PGSQL.UpdateAndGetReturning(connection, table, whereValues, values)];
+            }
+        });
+    }); };
+    PGSQL.Delete = function (connection, table, whereValues) { return __awaiter(_this, void 0, void 0, function () {
+        var params, sql;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    params = new PGParams();
+                    sql = "DELETE FROM " + table + " WHERE " + PGSQL.BuildWhereComponents(whereValues, params);
+                    return [4 /*yield*/, PGSQL.query(connection, sql, params.values)];
+                case 1:
+                    _a.sent();
+                    return [2 /*return*/];
+            }
+        });
+    }); };
+    PGSQL.ExecuteRaw = function (connection, sql) { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
+        return [2 /*return*/, PGSQL.query(connection, sql, undefined)];
+    }); }); };
+    PGSQL.Execute = function (connection, sql, values) { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
+        return [2 /*return*/, PGSQL.query(connection, sql, values)];
+    }); }); };
+    PGSQL.TruncateAllTables = function (connection, exceptions) {
+        if (exceptions === void 0) { exceptions = []; }
+        return __awaiter(_this, void 0, void 0, function () {
+            var tables, _i, tables_1, table;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, PGSQL.TablesArray(connection)];
+                    case 1:
+                        tables = _a.sent();
+                        return [4 /*yield*/, PGSQL.Execute(connection, 'SET CONSTRAINTS ALL DEFERRED', undefined)];
+                    case 2:
+                        _a.sent();
+                        _i = 0, tables_1 = tables;
+                        _a.label = 3;
+                    case 3:
+                        if (!(_i < tables_1.length)) return [3 /*break*/, 6];
+                        table = tables_1[_i];
+                        if (!exceptions.includes(table)) return [3 /*break*/, 5];
+                        return [4 /*yield*/, PGSQL.Execute(connection, "TRUNCATE TABLE " + table, undefined)];
+                    case 4:
+                        _a.sent();
+                        _a.label = 5;
+                    case 5:
+                        _i++;
+                        return [3 /*break*/, 3];
+                    case 6: return [2 /*return*/, true];
+                }
+            });
+        });
+    };
+    PGSQL.TruncateTables = function (connection, tables) { return __awaiter(_this, void 0, void 0, function () {
+        var _i, tables_2, table;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    _i = 0, tables_2 = tables;
+                    _a.label = 1;
+                case 1:
+                    if (!(_i < tables_2.length)) return [3 /*break*/, 4];
+                    table = tables_2[_i];
+                    return [4 /*yield*/, PGSQL.Execute(connection, "TRUNCATE TABLE " + table)];
+                case 2:
+                    _a.sent();
+                    _a.label = 3;
+                case 3:
+                    _i++;
+                    return [3 /*break*/, 1];
+                case 4: return [2 /*return*/];
+            }
+        });
+    }); };
+    PGSQL.TablesArray = function (connection) { return __awaiter(_this, void 0, void 0, function () {
+        return __generator(this, function (_a) {
+            return [2 /*return*/, PGSQL.FetchArray(connection, "\n          SELECT table_name\n          FROM information_schema.tables\n          WHERE table_schema = 'public'\n            AND table_type = 'BASE TABLE'")];
+        });
+    }); };
+    PGSQL.ViewsArray = function (connection) { return __awaiter(_this, void 0, void 0, function () {
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0: return [4 /*yield*/, PGSQL.FetchArray(connection, "\n          SELECT table_name\n          FROM information_schema.tables\n          WHERE table_schema = 'public'\n            AND table_type = 'VIEW'")];
+                case 1: return [2 /*return*/, _a.sent()];
+            }
+        });
+    }); };
+    PGSQL.ViewsMatArray = function (connection) { return __awaiter(_this, void 0, void 0, function () {
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0: return [4 /*yield*/, PGSQL.FetchArray(connection, "\n          SELECT matviewname\n          FROM pg_matviews\n          WHERE schemaname = 'public'")];
+                case 1: return [2 /*return*/, _a.sent()];
+            }
+        });
+    }); };
+    PGSQL.TypesArray = function (connection) { return __awaiter(_this, void 0, void 0, function () {
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0: return [4 /*yield*/, PGSQL.FetchArray(connection, "\n          SELECT typname\n          FROM pg_type\n          WHERE typcategory = 'E'\n          ORDER BY typname")];
+                case 1: return [2 /*return*/, _a.sent()];
+            }
+        });
+    }); };
+    PGSQL.FunctionsArray = function (connection) { return __awaiter(_this, void 0, void 0, function () {
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0: return [4 /*yield*/, PGSQL.FetchArray(connection, "\n          SELECT f.proname\n          FROM pg_catalog.pg_proc f\n                   INNER JOIN pg_catalog.pg_namespace n ON (f.pronamespace = n.oid)\n          WHERE n.nspname = 'public' and f.proname ilike 'func_%'")];
+                case 1: return [2 /*return*/, _a.sent()];
+            }
+        });
+    }); };
+    PGSQL.FunctionsOIDArray = function (connection) { return __awaiter(_this, void 0, void 0, function () {
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0: return [4 /*yield*/, PGSQL.FetchArray(connection, "\n          SELECT f.oid\n          FROM pg_catalog.pg_proc f\n                   INNER JOIN pg_catalog.pg_namespace n ON (f.pronamespace = n.oid)\n          WHERE n.nspname = 'public' and f.proname ilike 'func_%'")];
+                case 1: return [2 /*return*/, _a.sent()];
+            }
+        });
+    }); };
+    PGSQL.ExtensionsArray = function (connection) { return __awaiter(_this, void 0, void 0, function () {
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0: return [4 /*yield*/, PGSQL.FetchArray(connection, "\n          SELECT extname\n          FROM pg_extension\n          WHERE extname != 'plpgsql'")];
+                case 1: return [2 /*return*/, _a.sent()];
+            }
+        });
+    }); };
+    PGSQL.TableData = function (connection, table) { return __awaiter(_this, void 0, void 0, function () {
+        return __generator(this, function (_a) {
+            return [2 /*return*/, PGSQL.FetchOne(connection, "\n          SELECT *\n          FROM information_schema.tables\n          WHERE table_schema = 'public'\n            AND table_type = 'BASE TABLE'\n            AND table_name = $1", [table])];
+        });
+    }); };
+    PGSQL.TableColumnsData = function (connection, table) { return __awaiter(_this, void 0, void 0, function () {
+        return __generator(this, function (_a) {
+            return [2 /*return*/, PGSQL.FetchMany(connection, "\n          SELECT *\n          FROM information_schema.columns\n          WHERE table_schema = 'public'\n            AND table_name = $1\n          ORDER BY ordinal_position", [table])];
+        });
+    }); };
+    PGSQL.TableFKsData = function (connection, table) { return __awaiter(_this, void 0, void 0, function () {
+        return __generator(this, function (_a) {
+            return [2 /*return*/, PGSQL.FetchMany(connection, "\n          SELECT tc.table_schema,\n                 tc.constraint_name,\n                 tc.table_name,\n                 MAX(tc.enforced),\n                 JSON_AGG(kcu.column_name) AS \"columnNames\",\n                 MAX(ccu.table_schema)     AS foreign_table_schema,\n                 MAX(ccu.table_name)       AS \"primaryTable\",\n                 JSON_AGG(ccu.column_name) AS \"primaryColumns\"\n          FROM information_schema.table_constraints AS tc\n                   JOIN information_schema.key_column_usage AS kcu\n                        ON tc.constraint_name = kcu.constraint_name\n                            AND tc.table_schema = kcu.table_schema\n                   JOIN information_schema.constraint_column_usage AS ccu\n                        ON ccu.constraint_name = tc.constraint_name\n                            AND ccu.table_schema = tc.table_schema\n          WHERE tc.table_schema = 'public'\n            AND tc.constraint_type = 'FOREIGN KEY'\n            AND tc.table_name = $1\n          GROUP BY tc.table_schema,\n                   tc.constraint_name,\n                   tc.table_name", [table])];
+        });
+    }); };
+    PGSQL.TableIndexesData = function (connection, table) { return __awaiter(_this, void 0, void 0, function () {
+        return __generator(this, function (_a) {
+            return [2 /*return*/, PGSQL.FetchMany(connection, "\n          SELECT *\n          FROM pg_indexes\n          WHERE schemaname = 'public'\n            AND tablename = $1\n            AND (indexname NOT ILIKE '%_pkey'\n              OR indexdef ILIKE '%(%,%)%')", [table])];
+        });
+    }); };
+    PGSQL.ViewData = function (connection, view) { return __awaiter(_this, void 0, void 0, function () {
+        var _a, _b;
+        return __generator(this, function (_c) {
+            switch (_c.label) {
+                case 0: return [4 /*yield*/, PGSQL.FetchOne(connection, "\n          select pg_get_viewdef($1, true) as viewd", [view])];
+                case 1: return [2 /*return*/, ((_b = (_a = (_c.sent())) === null || _a === void 0 ? void 0 : _a.viewd) !== null && _b !== void 0 ? _b : null)];
+            }
+        });
+    }); };
+    PGSQL.ViewsMatData = function (connection, viewMat) { return __awaiter(_this, void 0, void 0, function () {
+        var _a, _b;
+        return __generator(this, function (_c) {
+            switch (_c.label) {
+                case 0: return [4 /*yield*/, PGSQL.FetchOne(connection, "\n          select pg_get_viewdef($1, true) as viewd", [viewMat])];
+                case 1: return [2 /*return*/, ((_b = (_a = (_c.sent())) === null || _a === void 0 ? void 0 : _a.viewd) !== null && _b !== void 0 ? _b : null)];
+            }
+        });
+    }); };
+    PGSQL.FunctionData = function (connection, func) { return __awaiter(_this, void 0, void 0, function () {
+        var _a, _b;
+        return __generator(this, function (_c) {
+            switch (_c.label) {
+                case 0: return [4 /*yield*/, PGSQL.FetchOne(connection, "\n          select pg_get_functiondef($1) as viewd", [func])];
+                case 1: return [2 /*return*/, ((_b = (_a = (_c.sent())) === null || _a === void 0 ? void 0 : _a.viewd) !== null && _b !== void 0 ? _b : null)];
+            }
+        });
+    }); };
+    PGSQL.TypeData = function (connection, type) { return __awaiter(_this, void 0, void 0, function () {
+        return __generator(this, function (_a) {
+            return [2 /*return*/, PGSQL.FetchArray(connection, "\n                SELECT unnest(enum_range(NULL::" + type + "))")];
+        });
+    }); };
+    PGSQL.SortColumnSort = function (sortColumn) {
+        var sort = '';
+        if (!!sortColumn.primarySort) {
+            sort += 'ORDER BY ';
+            if (!sortColumn.primaryAscending) {
+                sort += AltColumn(sortColumn.primarySort) + " DESC";
+            }
+            else {
+                switch (sortColumn.primaryEmptyToBottom) {
+                    case 'string':
+                        sort += "NULLIF(" + sortColumn.primarySort + ", '')";
+                        break;
+                    case 'number':
+                        sort += "NULLIF(" + sortColumn.primarySort + ", 0)";
+                        break;
+                    default:
+                        // null, so do not empty to bottom
+                        sort += "" + AltColumn(sortColumn.primarySort);
+                        break;
+                }
+            }
+            if (!!sortColumn.primaryEmptyToBottom)
+                sort += ' NULLS LAST';
+            if (!!sortColumn.secondarySort) {
+                sort += ', ';
+                if (!sortColumn.secondaryAscending) {
+                    sort += AltColumn(sortColumn.secondarySort) + " DESC";
+                }
+                else {
+                    switch (sortColumn.secondaryEmptyToBottom) {
+                        case 'string':
+                            sort += "NULLIF(" + sortColumn.secondarySort + ", '')";
+                            break;
+                        case 'number':
+                            sort += "NULLIF(" + sortColumn.secondarySort + ", 0)";
+                            break;
+                        default:
+                            // null, so do not empty to bottom
+                            sort += "" + AltColumn(sortColumn.secondarySort);
+                            break;
+                    }
+                }
+                if (!!sortColumn.secondaryEmptyToBottom)
+                    sort += ' NULLS LAST';
+            }
+        }
+        return sort;
+    };
+    var AltColumn = function (column) {
+        if (column === 'appointment_date') {
+            return "concat_ws(' ', appointment_date, appointment_time)";
+        }
+        else {
+            return column;
+        }
+    };
+    PGSQL.CalcOffsetFromPage = function (page, pageSize, totalRecords) {
+        if (totalRecords > 0) {
+            var pages = PGSQL.CalcPageCount(+pageSize, +totalRecords);
+            if (page < 1) {
+                page = 1;
+            }
+            if (page > pages) {
+                page = pages;
+            }
+            return (page - 1) * pageSize;
+        }
+        else {
+            // noinspection JSUnusedAssignment
+            page = 1;
+            return 0;
+        }
+    };
+    PGSQL.CalcPageCount = function (pageSize, totalRecords) {
+        if (totalRecords > 0) {
+            return Math.floor((totalRecords + (pageSize - 1)) / pageSize);
+        }
+        else {
+            return 0;
+        }
+    };
+    PGSQL.ResetIDs = function (connection) { return __awaiter(_this, void 0, void 0, function () {
+        var tables, _i, tables_3, table;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0: return [4 /*yield*/, PGSQL.TablesArray(connection)];
+                case 1:
+                    tables = _a.sent();
+                    _i = 0, tables_3 = tables;
+                    _a.label = 2;
+                case 2:
+                    if (!(_i < tables_3.length)) return [3 /*break*/, 6];
+                    table = tables_3[_i];
+                    return [4 /*yield*/, PGSQL.TableColumnExists(connection, table, 'id')];
+                case 3:
+                    if (!_a.sent()) return [3 /*break*/, 5];
+                    return [4 /*yield*/, PGSQL.TableResetIncrement(connection, table, 'id')];
+                case 4:
+                    _a.sent();
+                    _a.label = 5;
+                case 5:
+                    _i++;
+                    return [3 /*break*/, 2];
+                case 6: return [2 /*return*/];
+            }
+        });
+    }); };
+    PGSQL.GetTypes = function (connection) { return __awaiter(_this, void 0, void 0, function () {
+        var enumItems, enums, _i, enumItems_1, enumItem, _a, _b, _c;
+        var _d;
+        return __generator(this, function (_e) {
+            switch (_e.label) {
+                case 0: return [4 /*yield*/, PGSQL.TypesArray(connection)];
+                case 1:
+                    enumItems = _e.sent();
+                    enums = [];
+                    _i = 0, enumItems_1 = enumItems;
+                    _e.label = 2;
+                case 2:
+                    if (!(_i < enumItems_1.length)) return [3 /*break*/, 5];
+                    enumItem = enumItems_1[_i];
+                    _b = (_a = enums).push;
+                    _c = PGEnum.bind;
+                    _d = {
+                        enumName: enumItem
+                    };
+                    return [4 /*yield*/, PGSQL.TypeData(connection, enumItem)];
+                case 3:
+                    _b.apply(_a, [new (_c.apply(PGEnum, [void 0, (_d.values = _e.sent(),
+                                _d.defaultValue = undefined,
+                                _d)]))()]);
+                    _e.label = 4;
+                case 4:
+                    _i++;
+                    return [3 /*break*/, 2];
+                case 5: return [2 /*return*/, enums];
+            }
+        });
+    }); };
+    PGSQL.GetPGTable = function (connection, table) { return __awaiter(_this, void 0, void 0, function () {
+        var pgTable, columns, _i, columns_1, column, pgColumn, fks, _a, fks_1, fk, pgForeignKey, indexes, _b, indexes_1, index, indexDef, pgIndex;
+        return __generator(this, function (_c) {
+            switch (_c.label) {
+                case 0:
+                    pgTable = new PGTable();
+                    pgTable.name = table;
+                    return [4 /*yield*/, PGSQL.TableColumnsData(connection, table)];
+                case 1:
+                    columns = _c.sent();
+                    for (_i = 0, columns_1 = columns; _i < columns_1.length; _i++) {
+                        column = columns_1[_i];
+                        pgColumn = new PGColumn(__assign(__assign({}, column), { isAutoIncrement: intelliwaketsfoundation.IsOn(column.identity_increment), udt_name: column.udt_name.toString().startsWith('_') ? column.udt_name.toString().substr(1) : column.udt_name, array_dimensions: column.udt_name.toString().startsWith('_') ? [null] : [] }));
+                        pgTable.columns.push(pgColumn);
+                    }
+                    return [4 /*yield*/, PGSQL.TableFKsData(connection, table)];
+                case 2:
+                    fks = _c.sent();
+                    for (_a = 0, fks_1 = fks; _a < fks_1.length; _a++) {
+                        fk = fks_1[_a];
+                        pgForeignKey = new PGForeignKey({
+                            columnNames: fk.columnNames,
+                            primaryTable: fk.primaryTable,
+                            primaryColumns: fk.primaryColumns
+                        });
+                        pgTable.foreignKeys.push(pgForeignKey);
+                    }
+                    return [4 /*yield*/, PGSQL.TableIndexesData(connection, table)];
+                case 3:
+                    indexes = _c.sent();
+                    for (_b = 0, indexes_1 = indexes; _b < indexes_1.length; _b++) {
+                        index = indexes_1[_b];
+                        indexDef = index.indexdef;
+                        pgIndex = new PGIndex({
+                            columns: indexDef
+                                .substring(indexDef.indexOf('(') + 1, indexDef.length - 1)
+                                .split(',')
+                                .map(function (idx) { return idx.trim(); })
+                                .filter(function (idx) { return !!idx; }),
+                            isUnique: index.indexdef.includes(' UNIQUE ')
+                        });
+                        pgTable.indexes.push(pgIndex);
+                    }
+                    return [2 /*return*/, pgTable];
+            }
+        });
+    }); };
+})(exports.PGSQL || (exports.PGSQL = {}));
+
+var PGView = /** @class */ (function () {
+    function PGView(instanceData) {
+        this.name = '';
+        this.definition = '';
+        if (instanceData) {
+            this.deserialize(instanceData);
+        }
+    }
+    PGView.prototype.deserialize = function (instanceData) {
+        var keys = Object.keys(this);
+        for (var _i = 0, keys_1 = keys; _i < keys_1.length; _i++) {
+            var key = keys_1[_i];
+            if (instanceData.hasOwnProperty(key)) {
+                this[key] = instanceData[key];
+            }
+        }
+    };
+    PGView.GetFromDB = function (connection, name) {
+        return __awaiter(this, void 0, void 0, function () {
+            var definition;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, exports.PGSQL.ViewData(connection, name)];
+                    case 1:
+                        definition = _a.sent();
+                        if (!!definition) {
+                            return [2 /*return*/, new PGView({ name: name, definition: definition })];
+                        }
+                        return [2 /*return*/, null];
+                }
+            });
+        });
+    };
+    PGView.prototype.ddlDefinition = function () { return "CREATE OR REPLACE VIEW " + this.name + " AS " + this.definition; };
+    PGView.prototype.writeToDB = function (connection) {
+        return __awaiter(this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                if (!!this.name && !!this.definition) {
+                    return [2 /*return*/, exports.PGSQL.Execute(connection, this.ddlDefinition())];
+                }
+                return [2 /*return*/, null];
+            });
+        });
+    };
+    return PGView;
+}());
+
+var PGMatView = /** @class */ (function () {
+    function PGMatView(instanceData) {
+        this.name = '';
+        this.definition = '';
+        if (instanceData) {
+            this.deserialize(instanceData);
+        }
+    }
+    PGMatView.prototype.deserialize = function (instanceData) {
+        var keys = Object.keys(this);
+        for (var _i = 0, keys_1 = keys; _i < keys_1.length; _i++) {
+            var key = keys_1[_i];
+            if (instanceData.hasOwnProperty(key)) {
+                this[key] = instanceData[key];
+            }
+        }
+    };
+    PGMatView.GetFromDB = function (connection, name) {
+        return __awaiter(this, void 0, void 0, function () {
+            var definition;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, exports.PGSQL.ViewsMatData(connection, name)];
+                    case 1:
+                        definition = _a.sent();
+                        if (!!definition) {
+                            return [2 /*return*/, new PGMatView({ name: name, definition: definition })];
+                        }
+                        return [2 /*return*/, null];
+                }
+            });
+        });
+    };
+    PGMatView.prototype.ddlDefinition = function () { return "CREATE MATERIALIZED VIEW " + this.name + " AS " + this.definition; };
+    PGMatView.prototype.writeToDB = function (connection) {
+        return __awaiter(this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        if (!(!!this.name && !!this.definition)) return [3 /*break*/, 2];
+                        return [4 /*yield*/, exports.PGSQL.Execute(connection, this.ddlDefinition())];
+                    case 1: return [2 /*return*/, _a.sent()];
+                    case 2: return [2 /*return*/, null];
+                }
+            });
+        });
+    };
+    return PGMatView;
+}());
+
+var PGFunc = /** @class */ (function () {
+    function PGFunc(instanceData) {
+        this.name = '';
+        this.definition = '';
+        if (instanceData) {
+            this.deserialize(instanceData);
+        }
+    }
+    PGFunc.prototype.deserialize = function (instanceData) {
+        var keys = Object.keys(this);
+        for (var _i = 0, keys_1 = keys; _i < keys_1.length; _i++) {
+            var key = keys_1[_i];
+            if (instanceData.hasOwnProperty(key)) {
+                this[key] = instanceData[key];
+            }
+        }
+    };
+    PGFunc.GetFromDB = function (connection, name) {
+        return __awaiter(this, void 0, void 0, function () {
+            var definition;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, exports.PGSQL.ViewData(connection, name)];
+                    case 1:
+                        definition = _a.sent();
+                        if (!!definition) {
+                            return [2 /*return*/, new PGFunc({ name: name, definition: definition })];
+                        }
+                        return [2 /*return*/, null];
+                }
+            });
+        });
+    };
+    PGFunc.prototype.ddlDefinition = function () { return this.definition; };
+    PGFunc.prototype.writeToDB = function (connection) {
+        return __awaiter(this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                if (!!this.name && !!this.definition) {
+                    return [2 /*return*/, exports.PGSQL.Execute(connection, this.ddlDefinition())];
+                }
+                return [2 /*return*/, null];
+            });
+        });
+    };
+    return PGFunc;
+}());
+
 var PGWhereSearchClause = function (search, params, fields, startWithAnd) {
     if (startWithAnd === void 0) { startWithAnd = true; }
     var where = '';
@@ -2496,8 +3375,11 @@ exports.MyTable = MyTable;
 exports.PGColumn = PGColumn;
 exports.PGEnum = PGEnum;
 exports.PGForeignKey = PGForeignKey;
+exports.PGFunc = PGFunc;
 exports.PGIndex = PGIndex;
+exports.PGMatView = PGMatView;
 exports.PGParams = PGParams;
 exports.PGTable = PGTable;
 exports.PGTableMy = PGTableMy;
+exports.PGView = PGView;
 exports.PGWhereSearchClause = PGWhereSearchClause;
