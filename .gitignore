@@ -36,4 +36,4 @@ yarn-error.log*
 .idea/tasks.xml
 
 # npm
-.npmrc
+other.npmrc_old

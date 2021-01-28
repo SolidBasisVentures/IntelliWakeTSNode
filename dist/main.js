@@ -2678,7 +2678,7 @@ var PGEnum = /** @class */ (function () {
                 case 0:
                     sql = "\n        SELECT routines.routine_name\n        FROM information_schema.routines\n        WHERE routines.specific_schema = 'public'\n          AND routine_type = 'FUNCTION'\n        ORDER BY routines.routine_name";
                     return [4 /*yield*/, PGSQL.FetchArray(connection, sql)];
-                case 1: return [2 /*return*/, (_a.sent()).filter(function (func) { return func.startsWith('transcom'); })];
+                case 1: return [2 /*return*/, (_a.sent()).filter(function (func) { return func.startsWith('func_'); })];
             }
         });
     }); };
