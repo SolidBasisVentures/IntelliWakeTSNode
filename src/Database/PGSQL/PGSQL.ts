@@ -187,7 +187,7 @@ export namespace PGSQL {
           AND routine_type = 'FUNCTION'
         ORDER BY routines.routine_name`
 		
-		return (await PGSQL.FetchArray<string>(connection, sql)).filter(func => func.startsWith('transcom'))
+		return (await PGSQL.FetchArray<string>(connection, sql)).filter(func => func.startsWith('func_'))
 	}
 	
 	export const IndexExists = async (
