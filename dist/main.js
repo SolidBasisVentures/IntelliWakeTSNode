@@ -235,7 +235,7 @@ var PGColumn = /** @class */ (function () {
         //		}
     };
     PGColumn.prototype.ddlDefinition = function () {
-        var _a, _b, _c, _d, _e, _f, _g;
+        var _a, _b, _c, _d, _e, _f, _g, _h;
         var ddl = '"' + this.column_name + '" ';
         ddl += (typeof this.udt_name === 'string') ? this.udt_name : this.udt_name.columnName;
         if (this.array_dimensions.length > 0) {
@@ -314,7 +314,7 @@ var PGColumn = /** @class */ (function () {
                             }
                             else {
                                 if (!!this.column_default) {
-                                    if (this.integerFloatType() || this.dateType() || ((_g = this.column_default) !== null && _g !== void 0 ? _g : '').toString().includes('::')) {
+                                    if (this.integerFloatType() || this.dateType() || ((_g = this.column_default) !== null && _g !== void 0 ? _g : '').toString().includes('::') || ((_h = this.column_default) !== null && _h !== void 0 ? _h : '').toString().includes('()')) {
                                         ddl += "DEFAULT " + this.column_default + " ";
                                     }
                                     else {
