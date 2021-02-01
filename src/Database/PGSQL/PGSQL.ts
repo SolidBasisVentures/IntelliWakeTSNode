@@ -26,7 +26,7 @@ export namespace PGSQL {
 			console.log(err.message)
 			console.log(sql)
 			console.log(values)
-			throw new Error(err)
+			throw err
 		}
 		
 		// return await new Promise((resolve, reject) => {
