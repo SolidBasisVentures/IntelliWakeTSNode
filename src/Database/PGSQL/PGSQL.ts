@@ -19,7 +19,15 @@ export namespace PGSQL {
 	export type TQueryResults<T> = {rows?: Array<T>; fields?: FieldDef[]; rowCount?: number}
 	
 	export const query = async <T>(connection: TConnection, sql: string, values?: any): Promise<TQueryResults<T>> => {
-		return connection.query(sql, values)
+		try {
+			return connection.query(sql, values)
+		} catch (err) {
+			console.log('------------ SQL')
+			console.log(err.message)
+			console.log(sql)
+			console.log(values)
+			throw new Error(err)
+		}
 		
 		// return await new Promise((resolve, reject) => {
 		// 	// const stackTrace = new Error().stack
@@ -405,7 +413,8 @@ export namespace PGSQL {
           SELECT f.proname
           FROM pg_catalog.pg_proc f
                    INNER JOIN pg_catalog.pg_namespace n ON (f.pronamespace = n.oid)
-          WHERE n.nspname = 'public' and f.proname ilike 'func_%'`
+          WHERE n.nspname = 'public'
+            AND f.proname ILIKE 'func_%'`
 		)
 	}
 	
@@ -416,7 +425,8 @@ export namespace PGSQL {
           SELECT f.oid
           FROM pg_catalog.pg_proc f
                    INNER JOIN pg_catalog.pg_namespace n ON (f.pronamespace = n.oid)
-          WHERE n.nspname = 'public' and f.proname ilike 'func_%'`
+          WHERE n.nspname = 'public'
+            AND f.proname ILIKE 'func_%'`
 		)
 	}
 	
