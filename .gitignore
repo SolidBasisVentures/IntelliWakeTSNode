@@ -37,3 +37,4 @@ yarn-error.log*
 
 # npm
 other.npmrc_old
+.npmrc

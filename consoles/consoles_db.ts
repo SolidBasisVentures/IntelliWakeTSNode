@@ -6,13 +6,13 @@ require('source-map-support').install()
 
 process.env.MYSQLDATABASE = 'qvsheets-app-local'
 
-const processConsole = async () => {
+const processConsole = async (host: string, user: string, password: string, schema: string, port: number) => {
 	let connection = mysql.createConnection({
-		host: 'localhost',
-		user: 'admin',
-		password: '123',
-		database: process.env.MYSQLDATABASE,
-		port: 33061
+		host: host,
+		user: user,
+		password: password,
+		database: schema,
+		port: port
 	})
 	
 	connection.connect()
@@ -22,12 +22,12 @@ const processConsole = async () => {
 // 	console.log('The solution is: ', [...results])
 // })
 	
-	const tables = await MySQL.Tables(connection)
+	const tables = await MySQL.Tables(connection, schema)
 	
 	const table = tables.find(tab => tab === 'qv_sheet')
 	
 	if (table) {
-		const myTable = await MySQL.GetMyTable(connection, table)
+		const myTable = await MySQL.GetMyTable(connection, schema, table)
 		
 		const pgTable = MyToPG.GetPGTable(myTable)
 		
@@ -41,7 +41,4 @@ const processConsole = async () => {
 	connection.end()
 }
 
-processConsole()
-	.then(() => {
-		console.log('Done')
-	})
+

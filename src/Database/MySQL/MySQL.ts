@@ -16,11 +16,11 @@ export namespace MySQL {
 		})
 	}
 	
-	export const TableExists = async (connection: Connection, table: string): Promise<boolean> => {
+	export const TableExists = async (connection: Connection, schema: string, table: string): Promise<boolean> => {
 		return await new Promise((resolve) => {
 			connection.query(`SELECT COUNT(*) AS count
                       FROM information_schema.tables
-                      WHERE TABLE_SCHEMA = '${process.env.MYSQLDATABASE}'
+                      WHERE TABLE_SCHEMA = '${schema}'
                         AND TABLE_NAME = '${table}'`, (error , results, _fields) => {
 				if (error) throw error
 				resolve(((((results ?? [])[0] ?? {}) as any)['count'] ?? 0) > 0)
@@ -28,22 +28,22 @@ export namespace MySQL {
 		})
 	}
 	
-	export const Tables = async (connection: Connection): Promise<string[]> => {
+	export const Tables = async (connection: Connection, schema: string): Promise<string[]> => {
 		return await new Promise((resolve) => {
 			connection.query(`SELECT TABLE_NAME
                       FROM information_schema.tables
-                      WHERE TABLE_SCHEMA = '${process.env.MYSQLDATABASE}'`, (error , results, _fields) => {
+                      WHERE TABLE_SCHEMA = '${schema}'`, (error , results, _fields) => {
 				if (error) throw error
 				resolve((results as any[] ?? []).map((result: any) => result.TABLE_NAME as string).sort((a, b) => a.localeCompare(b)))
 			})
 		})
 	}
 	
-	export const TableColumnExists = async (connection: Connection, table: string, column: string): Promise<boolean> => {
+	export const TableColumnExists = async (connection: Connection, schema: string, table: string, column: string): Promise<boolean> => {
 		return await new Promise((resolve) => {
 			connection.query(`SELECT COUNT(*) AS count
                       FROM information_schema.COLUMNS
-                      WHERE TABLE_SCHEMA = '${process.env.MYSQLDATABASE}'
+                      WHERE TABLE_SCHEMA = '${schema}'
                         AND TABLE_NAME = '${table}'
                         AND COLUMN_NAME = '${column}'`, (error , results, _fields) => {
 				if (error) throw error
@@ -52,11 +52,11 @@ export namespace MySQL {
 		})
 	}
 	
-	export const TableColumns = async (connection: Connection, table: string): Promise<string[]> => {
+	export const TableColumns = async (connection: Connection, schema: string, table: string): Promise<string[]> => {
 		return await new Promise((resolve) => {
 			connection.query(`SELECT *
                       FROM information_schema.COLUMNS
-                      WHERE TABLE_SCHEMA = '${process.env.MYSQLDATABASE}'
+                      WHERE TABLE_SCHEMA = '${schema}'
                         AND TABLE_NAME = '${table}'
                         ORDER BY ORDINAL_POSITION`, (error , results, _fields) => {
 				if (error) throw error
@@ -65,11 +65,11 @@ export namespace MySQL {
 		})
 	}
 	
-	export const TableFKs = async (connection: Connection, table: string): Promise<MyForeignKey[]> => {
+	export const TableFKs = async (connection: Connection, schema: string, table: string): Promise<MyForeignKey[]> => {
 		return await new Promise((resolve) => {
 			connection.query(`SELECT TABLE_NAME,COLUMN_NAME,CONSTRAINT_NAME, REFERENCED_TABLE_NAME,REFERENCED_COLUMN_NAME
 				FROM INFORMATION_SCHEMA.KEY_COLUMN_USAGE
-				WHERE REFERENCED_TABLE_SCHEMA = '${process.env.MYSQLDATABASE}'
+				WHERE REFERENCED_TABLE_SCHEMA = '${schema}'
 				  AND TABLE_NAME = '${table}'`, (error , results, _fields) => {
 				if (error) throw error
 				
@@ -98,11 +98,11 @@ export namespace MySQL {
 		})
 	}
 	
-	export const TableIndexes = async (connection: Connection, table: string): Promise<MyIndex[]> => {
+	export const TableIndexes = async (connection: Connection, schema: string, table: string): Promise<MyIndex[]> => {
 		return await new Promise((resolve) => {
 			connection.query(`SELECT INDEX_NAME, COLUMN_NAME, NON_UNIQUE
 				FROM INFORMATION_SCHEMA.STATISTICS
-				WHERE TABLE_SCHEMA = '${process.env.MYSQLDATABASE}'
+				WHERE TABLE_SCHEMA = '${schema}'
 					AND TABLE_NAME = '${table}'
 				ORDER BY INDEX_NAME`, (error , results, _fields) => {
 				if (error) throw error
@@ -130,21 +130,21 @@ export namespace MySQL {
 		})
 	}
 	
-	export const GetMyTable = async (connection: Connection, table: string): Promise<MyTable> => {
+	export const GetMyTable = async (connection: Connection, schema: string, table: string): Promise<MyTable> => {
 		const myTable = new MyTable()
 		
 		myTable.name = table
 		
-		const columns = await TableColumns(connection, table)
+		const columns = await TableColumns(connection, schema, table)
 		for (const column of columns) {
 			const myColumn = new MyColumn(column as any)
 			
 			myTable.columns.push(myColumn)
 		}
 		
-		myTable.foreignKeys = await TableFKs(connection, table)
+		myTable.foreignKeys = await TableFKs(connection, schema, table)
 		
-		myTable.indexes = await TableIndexes(connection, table)
+		myTable.indexes = await TableIndexes(connection, schema, table)
 		
 		return myTable
 	}
@@ -154,7 +154,7 @@ export namespace MySQL {
 	// 		const sql = `SELECT COUNT(*) AS count
   //                     FROM information_schema.triggers
   //                     WHERE trigger_schema = 'public'
-  //                       AND trigger_catalog = '${process.env.MYSQLDATABASE}'
+  //                       AND trigger_catalog = '${schema}'
   //                       AND trigger_name = '${trigger}'`
 	// 		query(connection, sql, undefined)
 	// 			.then((data) => {
@@ -191,7 +191,7 @@ export namespace MySQL {
 	// 			SELECT COUNT(*) AS count
   //                     FROM information_schema.table_constraints
   //                     WHERE constraint_schema = 'public'
-  //                       AND constraint_catalog = '${process.env.MYSQLDATABASE}'
+  //                       AND constraint_catalog = '${schema}'
   //                       AND constraint_name = '${constraint}'`
 	// 		query(connection, sql, undefined)
 	// 			.then((data) => {
@@ -214,7 +214,7 @@ export namespace MySQL {
 	// 		SELECT table_name, constraint_name
   //                     FROM information_schema.table_constraints
   //                     WHERE constraint_schema = 'public'
-  //                       AND constraint_catalog = '${process.env.MYSQLDATABASE}'
+  //                       AND constraint_catalog = '${schema}'
   //                       AND constraint_type = 'FOREIGN KEY'`
 	//
 	// 	return await SQL.FetchMany<IConstraints>(connection, sql)
@@ -226,7 +226,7 @@ export namespace MySQL {
 	// 			  FROM information_schema.routines
 	// 			  WHERE routines.specific_schema='public'
 	// 			  AND routine_type='FUNCTION'
-	// 			  AND routine_catalog='${process.env.MYSQLDATABASE}'
+	// 			  AND routine_catalog='${schema}'
 	// 			  ORDER BY routines.routine_name`
 	//
 	// 	return (await SQL.FetchArray<string>(connection, sql)).filter((func) => func.startsWith('transcom'))
@@ -524,7 +524,7 @@ export namespace MySQL {
 	// 			  FROM information_schema.tables
 	// 			  WHERE table_schema = 'public'
 	// 			    AND table_type = 'BASE TABLE'
-	// 				AND table_catalog = '${process.env.MYSQLDATABASE}'`
+	// 				AND table_catalog = '${schema}'`
 	// 	)
 	// }
 	//
@@ -537,7 +537,7 @@ export namespace MySQL {
 	// 			  FROM information_schema.tables
 	// 			  WHERE table_schema = 'public'
 	// 			    AND table_type = 'VIEW'
-	// 				AND table_catalog = '${process.env.MYSQLDATABASE}'`
+	// 				AND table_catalog = '${schema}'`
 	// 		)
 	// 	).filter((vw) => vw.startsWith('transcom'))
 	// }
