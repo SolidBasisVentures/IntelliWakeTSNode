@@ -2485,18 +2485,22 @@ var PGEnum = /** @class */ (function () {
 (function (PGSQL) {
     var _this = this;
     PGSQL.query = function (connection, sql, values) { return __awaiter(_this, void 0, void 0, function () {
+        var err_1;
         return __generator(this, function (_a) {
-            try {
-                return [2 /*return*/, connection.query(sql, values)];
+            switch (_a.label) {
+                case 0:
+                    _a.trys.push([0, 2, , 3]);
+                    return [4 /*yield*/, connection.query(sql, values)];
+                case 1: return [2 /*return*/, _a.sent()];
+                case 2:
+                    err_1 = _a.sent();
+                    console.log('------------ SQL Query');
+                    console.log(err_1.message);
+                    console.log(sql);
+                    console.log(values);
+                    throw err_1;
+                case 3: return [2 /*return*/];
             }
-            catch (err) {
-                console.log('------------ SQL Query');
-                console.log(err.message);
-                console.log(sql);
-                console.log(values);
-                throw err;
-            }
-            return [2 /*return*/];
         });
     }); };
     PGSQL.timeout = function (ms) { return __awaiter(_this, void 0, void 0, function () {
@@ -2849,18 +2853,22 @@ var PGEnum = /** @class */ (function () {
         return [2 /*return*/, PGSQL.Execute(connection, sql)];
     }); }); };
     PGSQL.Execute = function (connection, sql, values) { return __awaiter(_this, void 0, void 0, function () {
+        var err_2;
         return __generator(this, function (_a) {
-            try {
-                return [2 /*return*/, PGSQL.query(connection, sql, values)];
+            switch (_a.label) {
+                case 0:
+                    _a.trys.push([0, 2, , 3]);
+                    return [4 /*yield*/, connection.query(sql, values)];
+                case 1: return [2 /*return*/, _a.sent()];
+                case 2:
+                    err_2 = _a.sent();
+                    console.log('------------ SQL Execute');
+                    console.log(err_2.message);
+                    console.log(sql);
+                    console.log(values);
+                    throw err_2;
+                case 3: return [2 /*return*/];
             }
-            catch (err) {
-                console.log('------------ SQL Execute');
-                console.log(err.message);
-                console.log(sql);
-                console.log(values);
-                throw err;
-            }
-            return [2 /*return*/];
         });
     }); };
     PGSQL.TruncateAllTables = function (connection, exceptions) {

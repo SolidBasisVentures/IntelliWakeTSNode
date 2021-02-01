@@ -22,7 +22,7 @@ export declare namespace PGSQL {
     const TableExists: (connection: TConnection, table: string) => Promise<boolean>;
     const TableColumnExists: (connection: TConnection, table: string, column: string) => Promise<boolean>;
     const TriggerExists: (connection: TConnection, trigger: string) => Promise<boolean>;
-    const TableResetIncrement: (connection: TConnection, table: string, column: string, toID?: number | undefined) => Promise<TQueryResults<unknown>>;
+    const TableResetIncrement: (connection: TConnection, table: string, column: string, toID?: number | undefined) => Promise<import("pg").QueryResult<any>>;
     const ConstraintExists: (connection: TConnection, constraint: string) => Promise<boolean>;
     interface IConstraints {
         table_name: string;
@@ -43,8 +43,8 @@ export declare namespace PGSQL {
     const BuildSetComponents: (setValues: any, params: PGParams) => string;
     const Save: (connection: TConnection, table: string, values: any) => Promise<any | null>;
     const Delete: (connection: TConnection, table: string, whereValues: any) => Promise<void>;
-    const ExecuteRaw: (connection: TConnection, sql: string) => Promise<TQueryResults<unknown>>;
-    const Execute: (connection: TConnection, sql: string, values?: any) => Promise<TQueryResults<unknown>>;
+    const ExecuteRaw: (connection: TConnection, sql: string) => Promise<import("pg").QueryResult<any>>;
+    const Execute: (connection: TConnection, sql: string, values?: any) => Promise<import("pg").QueryResult<any>>;
     const TruncateAllTables: (connection: TConnection, exceptions?: string[]) => Promise<boolean>;
     const TruncateTables: (connection: TConnection, tables: string[]) => Promise<void>;
     const TablesArray: (connection: TConnection) => Promise<string[]>;

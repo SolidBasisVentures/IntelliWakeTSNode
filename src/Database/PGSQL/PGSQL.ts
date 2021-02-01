@@ -20,7 +20,7 @@ export namespace PGSQL {
 	
 	export const query = async <T>(connection: TConnection, sql: string, values?: any): Promise<TQueryResults<T>> => {
 		try {
-			return connection.query(sql, values)
+			return await connection.query(sql, values)
 		} catch (err) {
 			console.log('------------ SQL Query')
 			console.log(err.message)
@@ -343,7 +343,7 @@ export namespace PGSQL {
 	
 	export const Execute = async (connection: TConnection, sql: string, values?: any) => {
 		try {
-			return query(connection, sql, values)
+			return await connection.query(sql, values)
 		} catch(err) {
 			console.log('------------ SQL Execute')
 			console.log(err.message)
