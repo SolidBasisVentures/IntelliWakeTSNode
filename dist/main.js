@@ -2490,7 +2490,7 @@ var PGEnum = /** @class */ (function () {
                 return [2 /*return*/, connection.query(sql, values)];
             }
             catch (err) {
-                console.log('------------ SQL');
+                console.log('------------ SQL Query');
                 console.log(err.message);
                 console.log(sql);
                 console.log(values);
@@ -2846,11 +2846,23 @@ var PGEnum = /** @class */ (function () {
         });
     }); };
     PGSQL.ExecuteRaw = function (connection, sql) { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
-        return [2 /*return*/, PGSQL.query(connection, sql, undefined)];
+        return [2 /*return*/, PGSQL.Execute(connection, sql)];
     }); }); };
-    PGSQL.Execute = function (connection, sql, values) { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
-        return [2 /*return*/, PGSQL.query(connection, sql, values)];
-    }); }); };
+    PGSQL.Execute = function (connection, sql, values) { return __awaiter(_this, void 0, void 0, function () {
+        return __generator(this, function (_a) {
+            try {
+                return [2 /*return*/, PGSQL.query(connection, sql, values)];
+            }
+            catch (err) {
+                console.log('------------ SQL Execute');
+                console.log(err.message);
+                console.log(sql);
+                console.log(values);
+                throw err;
+            }
+            return [2 /*return*/];
+        });
+    }); };
     PGSQL.TruncateAllTables = function (connection, exceptions) {
         if (exceptions === void 0) { exceptions = []; }
         return __awaiter(_this, void 0, void 0, function () {

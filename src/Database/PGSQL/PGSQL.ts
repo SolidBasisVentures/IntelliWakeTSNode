@@ -22,7 +22,7 @@ export namespace PGSQL {
 		try {
 			return connection.query(sql, values)
 		} catch (err) {
-			console.log('------------ SQL')
+			console.log('------------ SQL Query')
 			console.log(err.message)
 			console.log(sql)
 			console.log(values)
@@ -339,9 +339,19 @@ export namespace PGSQL {
 		await query(connection, sql, params.values)
 	}
 	
-	export const ExecuteRaw = async (connection: TConnection, sql: string) => query(connection, sql, undefined)
+	export const ExecuteRaw = async (connection: TConnection, sql: string) => Execute(connection, sql)
 	
-	export const Execute = async (connection: TConnection, sql: string, values?: any) => query(connection, sql, values)
+	export const Execute = async (connection: TConnection, sql: string, values?: any) => {
+		try {
+			return query(connection, sql, values)
+		} catch(err) {
+			console.log('------------ SQL Execute')
+			console.log(err.message)
+			console.log(sql)
+			console.log(values)
+			throw err
+		}
+	}
 	
 	export const TruncateAllTables = async (connection: TConnection, exceptions: string[] = []) => {
 		let tables = await TablesArray(connection)
