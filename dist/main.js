@@ -2486,26 +2486,17 @@ var PGEnum = /** @class */ (function () {
     var _this = this;
     PGSQL.query = function (connection, sql, values) { return __awaiter(_this, void 0, void 0, function () {
         return __generator(this, function (_a) {
-            return [2 /*return*/, connection.query(sql, values)
-                // return await new Promise((resolve, reject) => {
-                // 	// const stackTrace = new Error().stack
-                // 	const res = await connection.query(sql, values)
-                // 	connection
-                // 		.query(sql, values)
-                // 		.then(res => {
-                // 			resolve({rows: res.rows, fields: res.fields, rowCount: res.rowCount})
-                // 		})
-                // 		.catch(err => {
-                // 			// console.log('------------ SQL')
-                // 			// console.log(sql)
-                // 			// console.log(values)
-                // 			// console.log(err)
-                // 			// console.log(stackTrace)
-                // 			// throw 'SQL Error'
-                // 			reject(`${err.message}\n${sql}\n${JSON.stringify(values ?? {})}`)
-                // 		})
-                // })
-            ];
+            try {
+                return [2 /*return*/, connection.query(sql, values)];
+            }
+            catch (err) {
+                console.log('------------ SQL');
+                console.log(err.message);
+                console.log(sql);
+                console.log(values);
+                throw err;
+            }
+            return [2 /*return*/];
         });
     }); };
     PGSQL.timeout = function (ms) { return __awaiter(_this, void 0, void 0, function () {
@@ -2943,7 +2934,7 @@ var PGEnum = /** @class */ (function () {
     PGSQL.FunctionsArray = function (connection) { return __awaiter(_this, void 0, void 0, function () {
         return __generator(this, function (_a) {
             switch (_a.label) {
-                case 0: return [4 /*yield*/, PGSQL.FetchArray(connection, "\n          SELECT f.proname\n          FROM pg_catalog.pg_proc f\n                   INNER JOIN pg_catalog.pg_namespace n ON (f.pronamespace = n.oid)\n          WHERE n.nspname = 'public' and f.proname ilike 'func_%'")];
+                case 0: return [4 /*yield*/, PGSQL.FetchArray(connection, "\n          SELECT f.proname\n          FROM pg_catalog.pg_proc f\n                   INNER JOIN pg_catalog.pg_namespace n ON (f.pronamespace = n.oid)\n          WHERE n.nspname = 'public'\n            AND f.proname ILIKE 'func_%'")];
                 case 1: return [2 /*return*/, _a.sent()];
             }
         });
@@ -2951,7 +2942,7 @@ var PGEnum = /** @class */ (function () {
     PGSQL.FunctionsOIDArray = function (connection) { return __awaiter(_this, void 0, void 0, function () {
         return __generator(this, function (_a) {
             switch (_a.label) {
-                case 0: return [4 /*yield*/, PGSQL.FetchArray(connection, "\n          SELECT f.oid\n          FROM pg_catalog.pg_proc f\n                   INNER JOIN pg_catalog.pg_namespace n ON (f.pronamespace = n.oid)\n          WHERE n.nspname = 'public' and f.proname ilike 'func_%'")];
+                case 0: return [4 /*yield*/, PGSQL.FetchArray(connection, "\n          SELECT f.oid\n          FROM pg_catalog.pg_proc f\n                   INNER JOIN pg_catalog.pg_namespace n ON (f.pronamespace = n.oid)\n          WHERE n.nspname = 'public'\n            AND f.proname ILIKE 'func_%'")];
                 case 1: return [2 /*return*/, _a.sent()];
             }
         });
