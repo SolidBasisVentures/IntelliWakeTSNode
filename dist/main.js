@@ -2486,26 +2486,26 @@ var PGEnum = /** @class */ (function () {
     var _this = this;
     PGSQL.query = function (connection, sql, values) { return __awaiter(_this, void 0, void 0, function () {
         return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0: return [4 /*yield*/, new Promise(function (resolve, reject) {
-                        // const stackTrace = new Error().stack
-                        connection
-                            .query(sql, values)
-                            .then(function (res) {
-                            resolve({ rows: res.rows, fields: res.fields, rowCount: res.rowCount });
-                        })
-                            .catch(function (err) {
-                            // console.log('------------ SQL')
-                            // console.log(sql)
-                            // console.log(values)
-                            // console.log(err)
-                            // console.log(stackTrace)
-                            // throw 'SQL Error'
-                            reject(err.message + "\n" + sql + "\n" + JSON.stringify(values !== null && values !== void 0 ? values : {}));
-                        });
-                    })];
-                case 1: return [2 /*return*/, _a.sent()];
-            }
+            return [2 /*return*/, connection.query(sql, values)
+                // return await new Promise((resolve, reject) => {
+                // 	// const stackTrace = new Error().stack
+                // 	const res = await connection.query(sql, values)
+                // 	connection
+                // 		.query(sql, values)
+                // 		.then(res => {
+                // 			resolve({rows: res.rows, fields: res.fields, rowCount: res.rowCount})
+                // 		})
+                // 		.catch(err => {
+                // 			// console.log('------------ SQL')
+                // 			// console.log(sql)
+                // 			// console.log(values)
+                // 			// console.log(err)
+                // 			// console.log(stackTrace)
+                // 			// throw 'SQL Error'
+                // 			reject(`${err.message}\n${sql}\n${JSON.stringify(values ?? {})}`)
+                // 		})
+                // })
+            ];
         });
     }); };
     PGSQL.timeout = function (ms) { return __awaiter(_this, void 0, void 0, function () {

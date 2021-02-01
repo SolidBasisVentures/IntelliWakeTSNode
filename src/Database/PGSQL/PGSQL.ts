@@ -19,23 +19,26 @@ export namespace PGSQL {
 	export type TQueryResults<T> = {rows?: Array<T>; fields?: FieldDef[]; rowCount?: number}
 	
 	export const query = async <T>(connection: TConnection, sql: string, values?: any): Promise<TQueryResults<T>> => {
-		return await new Promise((resolve, reject) => {
-			// const stackTrace = new Error().stack
-			connection
-				.query(sql, values)
-				.then(res => {
-					resolve({rows: res.rows, fields: res.fields, rowCount: res.rowCount})
-				})
-				.catch(err => {
-					// console.log('------------ SQL')
-					// console.log(sql)
-					// console.log(values)
-					// console.log(err)
-					// console.log(stackTrace)
-					// throw 'SQL Error'
-					reject(`${err.message}\n${sql}\n${JSON.stringify(values ?? {})}`)
-				})
-		})
+		return connection.query(sql, values)
+		
+		// return await new Promise((resolve, reject) => {
+		// 	// const stackTrace = new Error().stack
+		// 	const res = await connection.query(sql, values)
+		// 	connection
+		// 		.query(sql, values)
+		// 		.then(res => {
+		// 			resolve({rows: res.rows, fields: res.fields, rowCount: res.rowCount})
+		// 		})
+		// 		.catch(err => {
+		// 			// console.log('------------ SQL')
+		// 			// console.log(sql)
+		// 			// console.log(values)
+		// 			// console.log(err)
+		// 			// console.log(stackTrace)
+		// 			// throw 'SQL Error'
+		// 			reject(`${err.message}\n${sql}\n${JSON.stringify(values ?? {})}`)
+		// 		})
+		// })
 	}
 	
 	export const timeout = async (ms: number) => {
