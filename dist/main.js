@@ -1775,11 +1775,11 @@ var MyTable = /** @class */ (function () {
             }
         });
     }); };
-    MySQL.TableExists = function (connection, schema, table) { return __awaiter(_this, void 0, void 0, function () {
+    MySQL.TableExists = function (connection, table) { return __awaiter(_this, void 0, void 0, function () {
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0: return [4 /*yield*/, new Promise(function (resolve) {
-                        connection.query("SELECT COUNT(*) AS count\n                      FROM information_schema.tables\n                      WHERE TABLE_SCHEMA = '" + schema + "'\n                        AND TABLE_NAME = '" + table + "'", function (error, results, _fields) {
+                        connection.query("SELECT COUNT(*) AS count\n                      FROM information_schema.tables\n                      WHERE TABLE_SCHEMA = '" + connection.config.database + "'\n                        AND TABLE_NAME = '" + table + "'", function (error, results, _fields) {
                             var _a, _b;
                             if (error)
                                 throw error;
@@ -1790,11 +1790,11 @@ var MyTable = /** @class */ (function () {
             }
         });
     }); };
-    MySQL.Tables = function (connection, schema) { return __awaiter(_this, void 0, void 0, function () {
+    MySQL.Tables = function (connection) { return __awaiter(_this, void 0, void 0, function () {
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0: return [4 /*yield*/, new Promise(function (resolve) {
-                        connection.query("SELECT TABLE_NAME\n                      FROM information_schema.tables\n                      WHERE TABLE_SCHEMA = '" + schema + "'", function (error, results, _fields) {
+                        connection.query("SELECT TABLE_NAME\n                      FROM information_schema.tables\n                      WHERE TABLE_SCHEMA = '" + connection.config.database + "'", function (error, results, _fields) {
                             var _a;
                             if (error)
                                 throw error;
@@ -1805,11 +1805,11 @@ var MyTable = /** @class */ (function () {
             }
         });
     }); };
-    MySQL.TableColumnExists = function (connection, schema, table, column) { return __awaiter(_this, void 0, void 0, function () {
+    MySQL.TableColumnExists = function (connection, table, column) { return __awaiter(_this, void 0, void 0, function () {
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0: return [4 /*yield*/, new Promise(function (resolve) {
-                        connection.query("SELECT COUNT(*) AS count\n                      FROM information_schema.COLUMNS\n                      WHERE TABLE_SCHEMA = '" + schema + "'\n                        AND TABLE_NAME = '" + table + "'\n                        AND COLUMN_NAME = '" + column + "'", function (error, results, _fields) {
+                        connection.query("SELECT COUNT(*) AS count\n                      FROM information_schema.COLUMNS\n                      WHERE TABLE_SCHEMA = '" + connection.config.database + "'\n                        AND TABLE_NAME = '" + table + "'\n                        AND COLUMN_NAME = '" + column + "'", function (error, results, _fields) {
                             var _a, _b;
                             if (error)
                                 throw error;
@@ -1820,11 +1820,11 @@ var MyTable = /** @class */ (function () {
             }
         });
     }); };
-    MySQL.TableColumns = function (connection, schema, table) { return __awaiter(_this, void 0, void 0, function () {
+    MySQL.TableColumns = function (connection, table) { return __awaiter(_this, void 0, void 0, function () {
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0: return [4 /*yield*/, new Promise(function (resolve) {
-                        connection.query("SELECT *\n                      FROM information_schema.COLUMNS\n                      WHERE TABLE_SCHEMA = '" + schema + "'\n                        AND TABLE_NAME = '" + table + "'\n                        ORDER BY ORDINAL_POSITION", function (error, results, _fields) {
+                        connection.query("SELECT *\n                      FROM information_schema.COLUMNS\n                      WHERE TABLE_SCHEMA = '" + connection.config.database + "'\n                        AND TABLE_NAME = '" + table + "'\n                        ORDER BY ORDINAL_POSITION", function (error, results, _fields) {
                             var _a;
                             if (error)
                                 throw error;
@@ -1835,11 +1835,11 @@ var MyTable = /** @class */ (function () {
             }
         });
     }); };
-    MySQL.TableFKs = function (connection, schema, table) { return __awaiter(_this, void 0, void 0, function () {
+    MySQL.TableFKs = function (connection, table) { return __awaiter(_this, void 0, void 0, function () {
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0: return [4 /*yield*/, new Promise(function (resolve) {
-                        connection.query("SELECT TABLE_NAME,COLUMN_NAME,CONSTRAINT_NAME, REFERENCED_TABLE_NAME,REFERENCED_COLUMN_NAME\n\t\t\t\tFROM INFORMATION_SCHEMA.KEY_COLUMN_USAGE\n\t\t\t\tWHERE REFERENCED_TABLE_SCHEMA = '" + schema + "'\n\t\t\t\t  AND TABLE_NAME = '" + table + "'", function (error, results, _fields) {
+                        connection.query("SELECT TABLE_NAME,COLUMN_NAME,CONSTRAINT_NAME, REFERENCED_TABLE_NAME,REFERENCED_COLUMN_NAME\n\t\t\t\tFROM INFORMATION_SCHEMA.KEY_COLUMN_USAGE\n\t\t\t\tWHERE REFERENCED_TABLE_SCHEMA = '" + connection.config.database + "'\n\t\t\t\t  AND TABLE_NAME = '" + table + "'", function (error, results, _fields) {
                             if (error)
                                 throw error;
                             var myForeignKeys = [];
@@ -1869,11 +1869,11 @@ var MyTable = /** @class */ (function () {
             }
         });
     }); };
-    MySQL.TableIndexes = function (connection, schema, table) { return __awaiter(_this, void 0, void 0, function () {
+    MySQL.TableIndexes = function (connection, table) { return __awaiter(_this, void 0, void 0, function () {
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0: return [4 /*yield*/, new Promise(function (resolve) {
-                        connection.query("SELECT INDEX_NAME, COLUMN_NAME, NON_UNIQUE\n\t\t\t\tFROM INFORMATION_SCHEMA.STATISTICS\n\t\t\t\tWHERE TABLE_SCHEMA = '" + schema + "'\n\t\t\t\t\tAND TABLE_NAME = '" + table + "'\n\t\t\t\tORDER BY INDEX_NAME", function (error, results, _fields) {
+                        connection.query("SELECT INDEX_NAME, COLUMN_NAME, NON_UNIQUE\n\t\t\t\tFROM INFORMATION_SCHEMA.STATISTICS\n\t\t\t\tWHERE TABLE_SCHEMA = '" + connection.config.database + "'\n\t\t\t\t\tAND TABLE_NAME = '" + table + "'\n\t\t\t\tORDER BY INDEX_NAME", function (error, results, _fields) {
                             if (error)
                                 throw error;
                             var myIndexes = [];
@@ -1901,14 +1901,14 @@ var MyTable = /** @class */ (function () {
             }
         });
     }); };
-    MySQL.GetMyTable = function (connection, schema, table) { return __awaiter(_this, void 0, void 0, function () {
+    MySQL.GetMyTable = function (connection, table) { return __awaiter(_this, void 0, void 0, function () {
         var myTable, columns, _i, columns_1, column, myColumn, _a, _b;
         return __generator(this, function (_c) {
             switch (_c.label) {
                 case 0:
                     myTable = new MyTable();
                     myTable.name = table;
-                    return [4 /*yield*/, MySQL.TableColumns(connection, schema, table)];
+                    return [4 /*yield*/, MySQL.TableColumns(connection, table)];
                 case 1:
                     columns = _c.sent();
                     for (_i = 0, columns_1 = columns; _i < columns_1.length; _i++) {
@@ -1917,11 +1917,11 @@ var MyTable = /** @class */ (function () {
                         myTable.columns.push(myColumn);
                     }
                     _a = myTable;
-                    return [4 /*yield*/, MySQL.TableFKs(connection, schema, table)];
+                    return [4 /*yield*/, MySQL.TableFKs(connection, table)];
                 case 2:
                     _a.foreignKeys = _c.sent();
                     _b = myTable;
-                    return [4 /*yield*/, MySQL.TableIndexes(connection, schema, table)];
+                    return [4 /*yield*/, MySQL.TableIndexes(connection, table)];
                 case 3:
                     _b.indexes = _c.sent();
                     return [2 /*return*/, myTable];
@@ -1933,7 +1933,7 @@ var MyTable = /** @class */ (function () {
     // 		const sql = `SELECT COUNT(*) AS count
     //                     FROM information_schema.triggers
     //                     WHERE trigger_schema = 'public'
-    //                       AND trigger_catalog = '${schema}'
+    //                       AND trigger_catalog = '${connection.config.database}'
     //                       AND trigger_name = '${trigger}'`
     // 		query(connection, sql, undefined)
     // 			.then((data) => {
@@ -1970,7 +1970,7 @@ var MyTable = /** @class */ (function () {
     // 			SELECT COUNT(*) AS count
     //                     FROM information_schema.table_constraints
     //                     WHERE constraint_schema = 'public'
-    //                       AND constraint_catalog = '${schema}'
+    //                       AND constraint_catalog = '${connection.config.database}'
     //                       AND constraint_name = '${constraint}'`
     // 		query(connection, sql, undefined)
     // 			.then((data) => {
@@ -1993,7 +1993,7 @@ var MyTable = /** @class */ (function () {
     // 		SELECT table_name, constraint_name
     //                     FROM information_schema.table_constraints
     //                     WHERE constraint_schema = 'public'
-    //                       AND constraint_catalog = '${schema}'
+    //                       AND constraint_catalog = '${connection.config.database}'
     //                       AND constraint_type = 'FOREIGN KEY'`
     //
     // 	return await SQL.FetchMany<IConstraints>(connection, sql)
@@ -2005,7 +2005,7 @@ var MyTable = /** @class */ (function () {
     // 			  FROM information_schema.routines
     // 			  WHERE routines.specific_schema='public'
     // 			  AND routine_type='FUNCTION'
-    // 			  AND routine_catalog='${schema}'
+    // 			  AND routine_catalog='${connection.config.database}'
     // 			  ORDER BY routines.routine_name`
     //
     // 	return (await SQL.FetchArray<string>(connection, sql)).filter((func) => func.startsWith('transcom'))
@@ -2303,7 +2303,7 @@ var MyTable = /** @class */ (function () {
     // 			  FROM information_schema.tables
     // 			  WHERE table_schema = 'public'
     // 			    AND table_type = 'BASE TABLE'
-    // 				AND table_catalog = '${schema}'`
+    // 				AND table_catalog = '${connection.config.database}'`
     // 	)
     // }
     //
@@ -2316,7 +2316,7 @@ var MyTable = /** @class */ (function () {
     // 			  FROM information_schema.tables
     // 			  WHERE table_schema = 'public'
     // 			    AND table_type = 'VIEW'
-    // 				AND table_catalog = '${schema}'`
+    // 				AND table_catalog = '${connection.config.database}'`
     // 		)
     // 	).filter((vw) => vw.startsWith('transcom'))
     // }

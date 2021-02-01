@@ -4,11 +4,11 @@ import { MyForeignKey } from './MyForeignKey';
 import { MyIndex } from './MyIndex';
 export declare namespace MySQL {
     const TableRowCount: (connection: Connection, table: string) => Promise<number>;
-    const TableExists: (connection: Connection, schema: string, table: string) => Promise<boolean>;
-    const Tables: (connection: Connection, schema: string) => Promise<string[]>;
-    const TableColumnExists: (connection: Connection, schema: string, table: string, column: string) => Promise<boolean>;
-    const TableColumns: (connection: Connection, schema: string, table: string) => Promise<string[]>;
-    const TableFKs: (connection: Connection, schema: string, table: string) => Promise<MyForeignKey[]>;
-    const TableIndexes: (connection: Connection, schema: string, table: string) => Promise<MyIndex[]>;
-    const GetMyTable: (connection: Connection, schema: string, table: string) => Promise<MyTable>;
+    const TableExists: (connection: Connection, table: string) => Promise<boolean>;
+    const Tables: (connection: Connection) => Promise<string[]>;
+    const TableColumnExists: (connection: Connection, table: string, column: string) => Promise<boolean>;
+    const TableColumns: (connection: Connection, table: string) => Promise<string[]>;
+    const TableFKs: (connection: Connection, table: string) => Promise<MyForeignKey[]>;
+    const TableIndexes: (connection: Connection, table: string) => Promise<MyIndex[]>;
+    const GetMyTable: (connection: Connection, table: string) => Promise<MyTable>;
 }

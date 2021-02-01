@@ -22,12 +22,12 @@ const processConsole = async (host: string, user: string, password: string, sche
 // 	console.log('The solution is: ', [...results])
 // })
 	
-	const tables = await MySQL.Tables(connection, schema)
+	const tables = await MySQL.Tables(connection)
 	
 	const table = tables.find(tab => tab === 'qv_sheet')
 	
 	if (table) {
-		const myTable = await MySQL.GetMyTable(connection, schema, table)
+		const myTable = await MySQL.GetMyTable(connection, schema)
 		
 		const pgTable = MyToPG.GetPGTable(myTable)
 		
