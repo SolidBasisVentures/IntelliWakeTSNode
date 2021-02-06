@@ -23,7 +23,7 @@ export class PGColumn {
 	public column_comment: string = ''
 	public isAutoIncrement = true
 	
-	static readonly TYPE_BOOLEAN = 'boolean'
+	static readonly TYPE_BOOLEAN = 'bool' // Changed from boolean
 	static readonly TYPE_NUMERIC = 'numeric'
 	static readonly TYPE_FLOAT8 = 'float8'
 	static readonly TYPE_POINT = 'point'

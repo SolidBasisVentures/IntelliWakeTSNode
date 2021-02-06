@@ -360,7 +360,7 @@ var PGColumn = /** @class */ (function () {
         }
         return comment.replace(/[\n\r]/g, ' ');
     };
-    PGColumn.TYPE_BOOLEAN = 'boolean';
+    PGColumn.TYPE_BOOLEAN = 'bool'; // Changed from boolean
     PGColumn.TYPE_NUMERIC = 'numeric';
     PGColumn.TYPE_FLOAT8 = 'float8';
     PGColumn.TYPE_POINT = 'point';
