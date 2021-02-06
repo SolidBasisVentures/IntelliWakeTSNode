@@ -3168,23 +3168,23 @@ var PGEnum = /** @class */ (function () {
     }); };
     PGSQL.GetPGTable = function (connection, table) { return __awaiter(_this, void 0, void 0, function () {
         var pgTable, columns, _i, columns_1, column, pgColumn, fks, _a, fks_1, fk, pgForeignKey, indexes, _b, indexes_1, index, indexDef, pgIndex;
-        var _c;
-        return __generator(this, function (_d) {
-            switch (_d.label) {
+        var _c, _d;
+        return __generator(this, function (_e) {
+            switch (_e.label) {
                 case 0:
                     pgTable = new PGTable();
                     pgTable.name = table;
                     return [4 /*yield*/, PGSQL.TableColumnsData(connection, table)];
                 case 1:
-                    columns = _d.sent();
+                    columns = _e.sent();
                     for (_i = 0, columns_1 = columns; _i < columns_1.length; _i++) {
                         column = columns_1[_i];
-                        pgColumn = new PGColumn(__assign(__assign({}, column), { isAutoIncrement: intelliwaketsfoundation.IsOn(column.identity_increment), udt_name: column.udt_name.toString().startsWith('_') ? column.udt_name.toString().substr(1) : column.udt_name, array_dimensions: column.udt_name.toString().startsWith('_') ? [null] : [], column_default: ((_c = column.column_default) !== null && _c !== void 0 ? _c : '').toString().startsWith("'NULL'") ? null : column.column_default }));
+                        pgColumn = new PGColumn(__assign(__assign({}, column), { isAutoIncrement: intelliwaketsfoundation.IsOn(column.identity_increment), udt_name: column.udt_name.toString().startsWith('_') ? column.udt_name.toString().substr(1) : column.udt_name, array_dimensions: column.udt_name.toString().startsWith('_') ? [null] : [], column_default: ((_c = column.column_default) !== null && _c !== void 0 ? _c : '').toString().startsWith("'NULL'") ? null : ((_d = column.column_default) !== null && _d !== void 0 ? _d : '').toString().startsWith("''::") ? '' : column.column_default }));
                         pgTable.columns.push(pgColumn);
                     }
                     return [4 /*yield*/, PGSQL.TableFKsData(connection, table)];
                 case 2:
-                    fks = _d.sent();
+                    fks = _e.sent();
                     for (_a = 0, fks_1 = fks; _a < fks_1.length; _a++) {
                         fk = fks_1[_a];
                         pgForeignKey = new PGForeignKey({
@@ -3196,7 +3196,7 @@ var PGEnum = /** @class */ (function () {
                     }
                     return [4 /*yield*/, PGSQL.TableIndexesData(connection, table)];
                 case 3:
-                    indexes = _d.sent();
+                    indexes = _e.sent();
                     for (_b = 0, indexes_1 = indexes; _b < indexes_1.length; _b++) {
                         index = indexes_1[_b];
                         indexDef = index.indexdef;

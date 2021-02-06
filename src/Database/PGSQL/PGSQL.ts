@@ -692,7 +692,7 @@ export namespace PGSQL {
 				isAutoIncrement: IsOn(column.identity_increment),
 				udt_name: column.udt_name.toString().startsWith('_') ? column.udt_name.toString().substr(1) : column.udt_name,
 				array_dimensions: column.udt_name.toString().startsWith('_') ? [null] : [],
-				column_default: (column.column_default ?? '').toString().startsWith("'NULL'") ? null : column.column_default
+				column_default: (column.column_default ?? '').toString().startsWith("'NULL'") ? null : (column.column_default ?? '').toString().startsWith("''::") ? '' : column.column_default
 			})
 			
 			pgTable.columns.push(pgColumn)
