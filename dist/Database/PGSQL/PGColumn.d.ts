@@ -19,7 +19,7 @@ export declare class PGColumn {
     generatedAlwaysAs: string | null;
     column_comment: string;
     isAutoIncrement: boolean;
-    static readonly TYPE_BOOLEAN = "boolean";
+    static readonly TYPE_BOOLEAN = "bool";
     static readonly TYPE_NUMERIC = "numeric";
     static readonly TYPE_FLOAT8 = "float8";
     static readonly TYPE_POINT = "point";
