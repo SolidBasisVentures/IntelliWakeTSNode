@@ -580,6 +580,49 @@ var PGIndex = /** @class */ (function () {
     return PGIndex;
 }());
 
+var PGEnum = /** @class */ (function () {
+    function PGEnum(instanceData) {
+        this.enumName = '';
+        this.values = [];
+        if (instanceData) {
+            this.deserialize(instanceData);
+        }
+    }
+    PGEnum.prototype.deserialize = function (instanceData) {
+        var keys = Object.keys(this);
+        for (var _i = 0, keys_1 = keys; _i < keys_1.length; _i++) {
+            var key = keys_1[_i];
+            if (instanceData.hasOwnProperty(key)) {
+                this[key] = instanceData[key];
+            }
+        }
+    };
+    Object.defineProperty(PGEnum.prototype, "columnName", {
+        get: function () {
+            return intelliwaketsfoundation.ToSnakeCase(this.enumName);
+        },
+        enumerable: false,
+        configurable: true
+    });
+    Object.defineProperty(PGEnum.prototype, "typeName", {
+        get: function () {
+            return this.enumName;
+        },
+        enumerable: false,
+        configurable: true
+    });
+    PGEnum.TypeName = function (columnName) {
+        return intelliwaketsfoundation.ToPascalCase(columnName);
+    };
+    PGEnum.prototype.ddlRemove = function () {
+        return "DROP TYPE IF EXISTS " + this.columnName + " CASCADE ";
+    };
+    PGEnum.prototype.ddlDefinition = function () {
+        return "CREATE TYPE " + this.columnName + " AS ENUM ('" + this.values.join('\',\'') + "')";
+    };
+    return PGEnum;
+}());
+
 var TS_EOL = '\n'; // was \r\n
 var PGTable = /** @class */ (function () {
     function PGTable(instanceData) {
@@ -708,11 +751,11 @@ var PGTable = /** @class */ (function () {
         return text;
     };
     PGTable.prototype.tsText = function () {
-        var _a, _b, _c, _d, _e, _f, _g;
+        var _a, _b, _c, _d, _e, _f;
         var text = this.tableHeaderText('Table Manager for');
         if (this.inherits.length > 0) {
-            for (var _i = 0, _h = this.inherits; _i < _h.length; _i++) {
-                var inherit = _h[_i];
+            for (var _i = 0, _g = this.inherits; _i < _g.length; _i++) {
+                var inherit = _g[_i];
                 text += "import {I" + inherit + ", initial_" + inherit + "} from \"./I" + inherit + "\"" + TS_EOL;
             }
         }
@@ -720,8 +763,8 @@ var PGTable = /** @class */ (function () {
             .map(function (column) { return (typeof column.udt_name !== 'string' ? column.udt_name.enumName : ''); })
             .filter(function (enumName) { return !!enumName; })));
         if (enums.length > 0) {
-            for (var _j = 0, enums_1 = enums; _j < enums_1.length; _j++) {
-                var enumItem = enums_1[_j];
+            for (var _h = 0, enums_1 = enums; _h < enums_1.length; _h++) {
+                var enumItem = enums_1[_h];
                 text += "import {" + enumItem + "} from \"../Enums/" + enumItem + "\"" + TS_EOL;
             }
             text += TS_EOL;
@@ -731,8 +774,8 @@ var PGTable = /** @class */ (function () {
             text += " extends I" + this.inherits.join(', I');
         }
         text += " {" + TS_EOL;
-        for (var _k = 0, _l = this.columns; _k < _l.length; _k++) {
-            var pgColumn = _l[_k];
+        for (var _j = 0, _k = this.columns; _j < _k.length; _j++) {
+            var pgColumn = _k[_j];
             // if (!!pgColumn.column_comment || !!pgColumn.generatedAlwaysAs) {
             if (!!pgColumn.column_comment) {
                 text += "\t/** ";
@@ -762,8 +805,8 @@ var PGTable = /** @class */ (function () {
         if (this.inherits.length > 0) {
             text += "\t...initial_" + this.inherits.join("," + TS_EOL + "\t...initial_") + "," + TS_EOL;
         }
-        for (var _m = 0, _o = this.columns; _m < _o.length; _m++) {
-            var pgColumn = _o[_m];
+        for (var _l = 0, _m = this.columns; _l < _m.length; _l++) {
+            var pgColumn = _m[_l];
             if (addComma) {
                 text += ',' + TS_EOL;
             }
@@ -803,11 +846,19 @@ var PGTable = /** @class */ (function () {
                             text +=
                                 '\'' + ((_c = (_b = pgColumn.column_default) !== null && _b !== void 0 ? _b : pgColumn.udt_name.defaultValue) !== null && _c !== void 0 ? _c : '') + '\' as ' + pgColumn.jsType();
                         }
-                        else if (((_d = pgColumn.column_default) !== null && _d !== void 0 ? _d : '').toString().includes('::')) {
-                            text += '\'' + ((_e = pgColumn.column_default) !== null && _e !== void 0 ? _e : '').toString().substring(0, ((_f = pgColumn.column_default) !== null && _f !== void 0 ? _f : '').toString().indexOf('::') - 1) + '\'';
+                        else if (!!pgColumn.column_default && pgColumn.column_default.toString().includes('::')) {
+                            if (pgColumn.udt_name.startsWith('e_')) {
+                                var colDefault = pgColumn.column_default.toString();
+                                text += colDefault.substr(1, colDefault.indexOf('::') - 1);
+                                text += ' as ';
+                                text += PGEnum.TypeName(pgColumn.udt_name);
+                            }
+                            else {
+                                text += '\'' + intelliwaketsfoundation.ReplaceAll("'", '', ((_d = pgColumn.column_default) !== null && _d !== void 0 ? _d : '').toString().substring(0, ((_e = pgColumn.column_default) !== null && _e !== void 0 ? _e : '').toString().indexOf('::') - 1)) + '\'';
+                            }
                         }
                         else {
-                            text += '\'' + ((_g = pgColumn.column_default) !== null && _g !== void 0 ? _g : '') + '\'';
+                            text += '\'' + ((_f = pgColumn.column_default) !== null && _f !== void 0 ? _f : '') + '\'';
                         }
                     }
                     else if (intelliwaketsfoundation.IsOn(pgColumn.is_nullable)) {
@@ -2447,39 +2498,6 @@ var PGParams = /** @class */ (function () {
         return returnSQL;
     };
     return PGParams;
-}());
-
-var PGEnum = /** @class */ (function () {
-    function PGEnum(instanceData) {
-        this.enumName = '';
-        this.values = [];
-        if (instanceData) {
-            this.deserialize(instanceData);
-        }
-    }
-    PGEnum.prototype.deserialize = function (instanceData) {
-        var keys = Object.keys(this);
-        for (var _i = 0, keys_1 = keys; _i < keys_1.length; _i++) {
-            var key = keys_1[_i];
-            if (instanceData.hasOwnProperty(key)) {
-                this[key] = instanceData[key];
-            }
-        }
-    };
-    Object.defineProperty(PGEnum.prototype, "columnName", {
-        get: function () {
-            return intelliwaketsfoundation.ToSnakeCase(this.enumName);
-        },
-        enumerable: false,
-        configurable: true
-    });
-    PGEnum.prototype.ddlRemove = function () {
-        return "DROP TYPE IF EXISTS " + this.columnName + " CASCADE ";
-    };
-    PGEnum.prototype.ddlDefinition = function () {
-        return "CREATE TYPE " + this.columnName + " AS ENUM ('" + this.values.join("','") + "')";
-    };
-    return PGEnum;
 }());
 
 (function (PGSQL) {

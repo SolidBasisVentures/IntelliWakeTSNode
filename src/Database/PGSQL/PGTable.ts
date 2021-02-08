@@ -2,7 +2,7 @@ import {PGColumn} from './PGColumn'
 import {PGIndex} from './PGIndex'
 import {PGForeignKey} from './PGForeignKey'
 import moment from 'moment'
-import {IsOn} from '@solidbasisventures/intelliwaketsfoundation'
+import {IsOn, ReplaceAll} from '@solidbasisventures/intelliwaketsfoundation'
 import {PGEnum} from './PGEnum'
 
 const TS_EOL = '\n' // was \r\n
@@ -256,13 +256,15 @@ export class PGTable {
 						} else if (typeof pgColumn.udt_name !== 'string') {
 							text +=
 								'\'' + (pgColumn.column_default ?? pgColumn.udt_name.defaultValue ?? '') + '\' as ' + pgColumn.jsType()
-						} else if (pgColumn.udt_name.startsWith('e_') && !!pgColumn.column_default) {
-							const colDefault = pgColumn.column_default.toString()
-							text += colDefault.substr(1, colDefault.indexOf('::') - 1)
-							text += ' as '
-							text += PGEnum.TypeName(pgColumn.udt_name)
-						} else if ((pgColumn.column_default ?? '').toString().includes('::')) {
-							text += '\'' + (pgColumn.column_default ?? '').toString().substring(0, (pgColumn.column_default ?? '').toString().indexOf('::') - 1) + '\''
+						} else if (!!pgColumn.column_default && pgColumn.column_default.toString().includes('::')) {
+							if (pgColumn.udt_name.startsWith('e_')) {
+								const colDefault = pgColumn.column_default.toString()
+								text += colDefault.substr(1, colDefault.indexOf('::') - 1)
+								text += ' as '
+								text += PGEnum.TypeName(pgColumn.udt_name)
+							} else {
+								text += '\'' + ReplaceAll("'", '', (pgColumn.column_default ?? '').toString().substring(0, (pgColumn.column_default ?? '').toString().indexOf('::') - 1)) + '\''
+							}
 						} else {
 							text += '\'' + (pgColumn.column_default ?? '') + '\''
 						}
