@@ -269,7 +269,7 @@ export class PGTable {
 								// text += ' as '
 								// text += PGEnum.TypeName(pgColumn.udt_name)
 							} else {
-								text += '\'' + (pgColumn.column_default ?? '').toString().substring(0, (pgColumn.column_default ?? '').toString().indexOf('::') - 2) + '\''
+								text += '\'' + (pgColumn.column_default ?? '').toString().substring(1, (pgColumn.column_default ?? '').toString().indexOf('::') - 2) + '\''
 							}
 						} else {
 							text += '\'' + (pgColumn.column_default ?? '') + '\''
