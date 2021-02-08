@@ -72,6 +72,8 @@ export class PGColumn {
 			return 'number'
 		} else if (this.udt_name === PGColumn.TYPE_POINT) {
 			return '[number, number]'
+		} else if (this.udt_name.startsWith('e_')) {
+			return PGEnum.TypeName(this.udt_name)
 		} else {
 			return 'string' // Date or String or Enum
 		}

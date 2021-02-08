@@ -142,6 +142,49 @@ var KeyboardKey = function (question, validKeys) { return __awaiter(void 0, void
     });
 }); };
 
+var PGEnum = /** @class */ (function () {
+    function PGEnum(instanceData) {
+        this.enumName = '';
+        this.values = [];
+        if (instanceData) {
+            this.deserialize(instanceData);
+        }
+    }
+    PGEnum.prototype.deserialize = function (instanceData) {
+        var keys = Object.keys(this);
+        for (var _i = 0, keys_1 = keys; _i < keys_1.length; _i++) {
+            var key = keys_1[_i];
+            if (instanceData.hasOwnProperty(key)) {
+                this[key] = instanceData[key];
+            }
+        }
+    };
+    Object.defineProperty(PGEnum.prototype, "columnName", {
+        get: function () {
+            return intelliwaketsfoundation.ToSnakeCase(this.enumName);
+        },
+        enumerable: false,
+        configurable: true
+    });
+    Object.defineProperty(PGEnum.prototype, "typeName", {
+        get: function () {
+            return this.enumName;
+        },
+        enumerable: false,
+        configurable: true
+    });
+    PGEnum.TypeName = function (columnName) {
+        return intelliwaketsfoundation.ToPascalCase(columnName);
+    };
+    PGEnum.prototype.ddlRemove = function () {
+        return "DROP TYPE IF EXISTS " + this.columnName + " CASCADE ";
+    };
+    PGEnum.prototype.ddlDefinition = function () {
+        return "CREATE TYPE " + this.columnName + " AS ENUM ('" + this.values.join('\',\'') + "')";
+    };
+    return PGEnum;
+}());
+
 var PGColumn = /** @class */ (function () {
     function PGColumn(instanceData) {
         var _this = this;
@@ -176,6 +219,9 @@ var PGColumn = /** @class */ (function () {
             }
             else if (_this.udt_name === PGColumn.TYPE_POINT) {
                 return '[number, number]';
+            }
+            else if (_this.udt_name.startsWith('e_')) {
+                return PGEnum.TypeName(_this.udt_name);
             }
             else {
                 return 'string'; // Date or String or Enum
@@ -578,49 +624,6 @@ var PGIndex = /** @class */ (function () {
         return ddl;
     };
     return PGIndex;
-}());
-
-var PGEnum = /** @class */ (function () {
-    function PGEnum(instanceData) {
-        this.enumName = '';
-        this.values = [];
-        if (instanceData) {
-            this.deserialize(instanceData);
-        }
-    }
-    PGEnum.prototype.deserialize = function (instanceData) {
-        var keys = Object.keys(this);
-        for (var _i = 0, keys_1 = keys; _i < keys_1.length; _i++) {
-            var key = keys_1[_i];
-            if (instanceData.hasOwnProperty(key)) {
-                this[key] = instanceData[key];
-            }
-        }
-    };
-    Object.defineProperty(PGEnum.prototype, "columnName", {
-        get: function () {
-            return intelliwaketsfoundation.ToSnakeCase(this.enumName);
-        },
-        enumerable: false,
-        configurable: true
-    });
-    Object.defineProperty(PGEnum.prototype, "typeName", {
-        get: function () {
-            return this.enumName;
-        },
-        enumerable: false,
-        configurable: true
-    });
-    PGEnum.TypeName = function (columnName) {
-        return intelliwaketsfoundation.ToPascalCase(columnName);
-    };
-    PGEnum.prototype.ddlRemove = function () {
-        return "DROP TYPE IF EXISTS " + this.columnName + " CASCADE ";
-    };
-    PGEnum.prototype.ddlDefinition = function () {
-        return "CREATE TYPE " + this.columnName + " AS ENUM ('" + this.values.join('\',\'') + "')";
-    };
-    return PGEnum;
 }());
 
 var TS_EOL = '\n'; // was \r\n
