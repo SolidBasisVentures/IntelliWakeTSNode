@@ -854,8 +854,8 @@ var PGTable = /** @class */ (function () {
                                 text += PGEnum.TypeName(pgColumn.udt_name);
                                 text += '.';
                                 text += colDefault.substr(1, colDefault.indexOf('::') - 2);
-                                text += ' as ';
-                                text += PGEnum.TypeName(pgColumn.udt_name);
+                                // text += ' as '
+                                // text += PGEnum.TypeName(pgColumn.udt_name)
                             }
                             else {
                                 text += '\'' + ((_d = pgColumn.column_default) !== null && _d !== void 0 ? _d : '').toString().substring(0, ((_e = pgColumn.column_default) !== null && _e !== void 0 ? _e : '').toString().indexOf('::') - 2) + '\'';

@@ -266,8 +266,8 @@ export class PGTable {
 								text += PGEnum.TypeName(pgColumn.udt_name)
 								text += '.'
 								text += colDefault.substr(1, colDefault.indexOf('::') - 2)
-								text += ' as '
-								text += PGEnum.TypeName(pgColumn.udt_name)
+								// text += ' as '
+								// text += PGEnum.TypeName(pgColumn.udt_name)
 							} else {
 								text += '\'' + (pgColumn.column_default ?? '').toString().substring(0, (pgColumn.column_default ?? '').toString().indexOf('::') - 2) + '\''
 							}
