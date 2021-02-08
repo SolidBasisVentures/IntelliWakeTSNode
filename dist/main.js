@@ -851,6 +851,8 @@ var PGTable = /** @class */ (function () {
                         else if (!!pgColumn.column_default && pgColumn.column_default.toString().includes('::')) {
                             if (pgColumn.udt_name.startsWith('e_')) {
                                 var colDefault = pgColumn.column_default.toString();
+                                text += PGEnum.TypeName(pgColumn.udt_name);
+                                text += '.';
                                 text += colDefault.substr(1, colDefault.indexOf('::') - 2);
                                 text += ' as ';
                                 text += PGEnum.TypeName(pgColumn.udt_name);
