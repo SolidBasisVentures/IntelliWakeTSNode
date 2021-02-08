@@ -2,7 +2,7 @@ import {PGColumn} from './PGColumn'
 import {PGIndex} from './PGIndex'
 import {PGForeignKey} from './PGForeignKey'
 import moment from 'moment'
-import {IsOn, ReplaceAll} from '@solidbasisventures/intelliwaketsfoundation'
+import {IsOn} from '@solidbasisventures/intelliwaketsfoundation'
 import {PGEnum} from './PGEnum'
 
 const TS_EOL = '\n' // was \r\n
@@ -173,9 +173,13 @@ export class PGTable {
 		
 		const enums = Array.from(
 			new Set(
-				this.columns
+				[...this.columns
 					.map((column) => (typeof column.udt_name !== 'string' ? column.udt_name.enumName : ''))
-					.filter((enumName) => !!enumName)
+					.filter((enumName) => !!enumName),
+				 ...this.columns
+					 .map((column) => (typeof column.udt_name === 'string' && column.udt_name.startsWith('e_') ? PGEnum.TypeName(column.udt_name) : ''))
+					 .filter((enumName) => !!enumName)
+				 ]
 			)
 		)
 		
@@ -259,11 +263,11 @@ export class PGTable {
 						} else if (!!pgColumn.column_default && pgColumn.column_default.toString().includes('::')) {
 							if (pgColumn.udt_name.startsWith('e_')) {
 								const colDefault = pgColumn.column_default.toString()
-								text += colDefault.substr(1, colDefault.indexOf('::') - 1)
+								text += colDefault.substr(1, colDefault.indexOf('::') - 2)
 								text += ' as '
 								text += PGEnum.TypeName(pgColumn.udt_name)
 							} else {
-								text += '\'' + ReplaceAll("'", '', (pgColumn.column_default ?? '').toString().substring(0, (pgColumn.column_default ?? '').toString().indexOf('::') - 1)) + '\''
+								text += '\'' + (pgColumn.column_default ?? '').toString().substring(0, (pgColumn.column_default ?? '').toString().indexOf('::') - 2) + '\''
 							}
 						} else {
 							text += '\'' + (pgColumn.column_default ?? '') + '\''

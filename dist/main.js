@@ -759,9 +759,11 @@ var PGTable = /** @class */ (function () {
                 text += "import {I" + inherit + ", initial_" + inherit + "} from \"./I" + inherit + "\"" + TS_EOL;
             }
         }
-        var enums = Array.from(new Set(this.columns
+        var enums = Array.from(new Set(__spreadArrays(this.columns
             .map(function (column) { return (typeof column.udt_name !== 'string' ? column.udt_name.enumName : ''); })
-            .filter(function (enumName) { return !!enumName; })));
+            .filter(function (enumName) { return !!enumName; }), this.columns
+            .map(function (column) { return (typeof column.udt_name === 'string' && column.udt_name.startsWith('e_') ? PGEnum.TypeName(column.udt_name) : ''); })
+            .filter(function (enumName) { return !!enumName; }))));
         if (enums.length > 0) {
             for (var _h = 0, enums_1 = enums; _h < enums_1.length; _h++) {
                 var enumItem = enums_1[_h];
@@ -849,12 +851,12 @@ var PGTable = /** @class */ (function () {
                         else if (!!pgColumn.column_default && pgColumn.column_default.toString().includes('::')) {
                             if (pgColumn.udt_name.startsWith('e_')) {
                                 var colDefault = pgColumn.column_default.toString();
-                                text += colDefault.substr(1, colDefault.indexOf('::') - 1);
+                                text += colDefault.substr(1, colDefault.indexOf('::') - 2);
                                 text += ' as ';
                                 text += PGEnum.TypeName(pgColumn.udt_name);
                             }
                             else {
-                                text += '\'' + intelliwaketsfoundation.ReplaceAll("'", '', ((_d = pgColumn.column_default) !== null && _d !== void 0 ? _d : '').toString().substring(0, ((_e = pgColumn.column_default) !== null && _e !== void 0 ? _e : '').toString().indexOf('::') - 1)) + '\'';
+                                text += '\'' + ((_d = pgColumn.column_default) !== null && _d !== void 0 ? _d : '').toString().substring(0, ((_e = pgColumn.column_default) !== null && _e !== void 0 ? _e : '').toString().indexOf('::') - 2) + '\'';
                             }
                         }
                         else {
