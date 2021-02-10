@@ -861,7 +861,7 @@ var PGTable = /** @class */ (function () {
                                 // text += PGEnum.TypeName(pgColumn.udt_name)
                             }
                             else {
-                                text += '\'' + ((_d = pgColumn.column_default) !== null && _d !== void 0 ? _d : '').toString().substring(1, ((_e = pgColumn.column_default) !== null && _e !== void 0 ? _e : '').toString().indexOf('::') - 2) + '\'';
+                                text += '\'' + ((_d = pgColumn.column_default) !== null && _d !== void 0 ? _d : '').toString().substring(1, ((_e = pgColumn.column_default) !== null && _e !== void 0 ? _e : '').toString().indexOf('::') - 1) + '\'';
                             }
                         }
                         else {
