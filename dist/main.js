@@ -142,6 +142,31 @@ var KeyboardKey = function (question, validKeys) { return __awaiter(void 0, void
     });
 }); };
 
+var PaginatorInitializeReturnFromRequest = function (paginatorRequest) { return ({
+    page: paginatorRequest.page < 1 ? 1 : paginatorRequest.page,
+    pageCount: 1,
+    rowCount: 0,
+    countPerPage: paginatorRequest.countPerPage,
+    currentOffset: 1,
+    rows: []
+}); };
+var PaginatorApplyRowCount = function (paginatorReturn, rowCount) {
+    paginatorReturn.rowCount = 0;
+    if (rowCount > 0) {
+        paginatorReturn.pageCount = Math.floor((rowCount + (paginatorReturn.countPerPage - 1)) / paginatorReturn.countPerPage);
+        if (paginatorReturn.page < 1)
+            paginatorReturn.page = 1;
+        if (paginatorReturn.page > paginatorReturn.pageCount)
+            paginatorReturn.page = paginatorReturn.pageCount;
+        paginatorReturn.currentOffset = (paginatorReturn.page - 1) * paginatorReturn.pageCount;
+    }
+    else {
+        paginatorReturn.pageCount = 0;
+        paginatorReturn.currentOffset = 0;
+        paginatorReturn.page = 1;
+    }
+};
+
 var PGEnum = /** @class */ (function () {
     function PGEnum(instanceData) {
         this.enumName = '';
@@ -3420,3 +3445,5 @@ exports.PGTable = PGTable;
 exports.PGTableMy = PGTableMy;
 exports.PGView = PGView;
 exports.PGWhereSearchClause = PGWhereSearchClause;
+exports.PaginatorApplyRowCount = PaginatorApplyRowCount;
+exports.PaginatorInitializeReturnFromRequest = PaginatorInitializeReturnFromRequest;
