@@ -142,7 +142,7 @@ var KeyboardKey = function (question, validKeys) { return __awaiter(void 0, void
     });
 }); };
 
-var PaginatorInitializeReturnFromRequest = function (paginatorRequest) { return ({
+var PaginatorInitializeResponseFromRequest = function (paginatorRequest) { return ({
     page: paginatorRequest.page < 1 ? 1 : paginatorRequest.page,
     pageCount: 1,
     rowCount: 0,
@@ -150,20 +150,20 @@ var PaginatorInitializeReturnFromRequest = function (paginatorRequest) { return 
     currentOffset: 1,
     rows: []
 }); };
-var PaginatorApplyRowCount = function (paginatorReturn, rowCount) {
-    paginatorReturn.rowCount = 0;
+var PaginatorApplyRowCount = function (paginatorResponse, rowCount) {
+    paginatorResponse.rowCount = 0;
     if (rowCount > 0) {
-        paginatorReturn.pageCount = Math.floor((rowCount + (paginatorReturn.countPerPage - 1)) / paginatorReturn.countPerPage);
-        if (paginatorReturn.page < 1)
-            paginatorReturn.page = 1;
-        if (paginatorReturn.page > paginatorReturn.pageCount)
-            paginatorReturn.page = paginatorReturn.pageCount;
-        paginatorReturn.currentOffset = (paginatorReturn.page - 1) * paginatorReturn.pageCount;
+        paginatorResponse.pageCount = Math.floor((rowCount + (paginatorResponse.countPerPage - 1)) / paginatorResponse.countPerPage);
+        if (paginatorResponse.page < 1)
+            paginatorResponse.page = 1;
+        if (paginatorResponse.page > paginatorResponse.pageCount)
+            paginatorResponse.page = paginatorResponse.pageCount;
+        paginatorResponse.currentOffset = (paginatorResponse.page - 1) * paginatorResponse.pageCount;
     }
     else {
-        paginatorReturn.pageCount = 0;
-        paginatorReturn.currentOffset = 0;
-        paginatorReturn.page = 1;
+        paginatorResponse.pageCount = 0;
+        paginatorResponse.currentOffset = 0;
+        paginatorResponse.page = 1;
     }
 };
 
@@ -3446,4 +3446,4 @@ exports.PGTableMy = PGTableMy;
 exports.PGView = PGView;
 exports.PGWhereSearchClause = PGWhereSearchClause;
 exports.PaginatorApplyRowCount = PaginatorApplyRowCount;
-exports.PaginatorInitializeReturnFromRequest = PaginatorInitializeReturnFromRequest;
+exports.PaginatorInitializeResponseFromRequest = PaginatorInitializeResponseFromRequest;

@@ -1,6 +1,6 @@
-import {IPaginatorRequest, IPaginatorReturn} from '@solidbasisventures/intelliwaketsfoundation'
+import {IPaginatorRequest, IPaginatorResponse} from '@solidbasisventures/intelliwaketsfoundation'
 
-export const PaginatorInitializeReturnFromRequest = <T = any>(paginatorRequest: IPaginatorRequest): IPaginatorReturn<T> => ({
+export const PaginatorInitializeResponseFromRequest = <T = any>(paginatorRequest: IPaginatorRequest): IPaginatorResponse<T> => ({
 	page: paginatorRequest.page < 1 ? 1 : paginatorRequest.page,
 	pageCount: 1,
 	rowCount: 0,
@@ -9,19 +9,19 @@ export const PaginatorInitializeReturnFromRequest = <T = any>(paginatorRequest: 
 	rows: []
 })
 
-export const PaginatorApplyRowCount = (paginatorReturn: IPaginatorReturn, rowCount: number) => {
-	paginatorReturn.rowCount = 0
+export const PaginatorApplyRowCount = (paginatorResponse: IPaginatorResponse, rowCount: number) => {
+	paginatorResponse.rowCount = 0
 	
 	if (rowCount > 0) {
-		paginatorReturn.pageCount = Math.floor((rowCount + (paginatorReturn.countPerPage - 1)) / paginatorReturn.countPerPage)
+		paginatorResponse.pageCount = Math.floor((rowCount + (paginatorResponse.countPerPage - 1)) / paginatorResponse.countPerPage)
 		
-		if (paginatorReturn.page < 1) paginatorReturn.page = 1
-		if (paginatorReturn.page > paginatorReturn.pageCount) paginatorReturn.page = paginatorReturn.pageCount
+		if (paginatorResponse.page < 1) paginatorResponse.page = 1
+		if (paginatorResponse.page > paginatorResponse.pageCount) paginatorResponse.page = paginatorResponse.pageCount
 		
-		paginatorReturn.currentOffset = (paginatorReturn.page - 1) * paginatorReturn.pageCount
+		paginatorResponse.currentOffset = (paginatorResponse.page - 1) * paginatorResponse.pageCount
 	} else {
-		paginatorReturn.pageCount = 0
-		paginatorReturn.currentOffset = 0
-		paginatorReturn.page = 1
+		paginatorResponse.pageCount = 0
+		paginatorResponse.currentOffset = 0
+		paginatorResponse.page = 1
 	}
 }
