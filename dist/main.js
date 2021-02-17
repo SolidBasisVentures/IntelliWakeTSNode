@@ -2758,6 +2758,9 @@ var PGParams = /** @class */ (function () {
             }
         });
     }); };
+    /**
+     * Returns a number from the sql who's only column returned is "count"
+     */
     PGSQL.GetCountSQL = function (connection, sql, values) { return __awaiter(_this, void 0, void 0, function () {
         var data, value;
         var _a, _b;

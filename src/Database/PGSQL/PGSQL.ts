@@ -227,6 +227,9 @@ export namespace PGSQL {
 		}
 	}
 	
+	/**
+	 * Returns a number from the sql who's only column returned is "count"
+	 */
 	export const GetCountSQL = async (connection: TConnection, sql: string, values?: any): Promise<number> => {
 		const data = await query(connection, sql, values)
 		

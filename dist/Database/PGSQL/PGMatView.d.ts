@@ -1,4 +1,4 @@
-import { PGSQL, TConnection } from './PGSQL';
+import { TConnection } from './PGSQL';
 export declare class PGMatView {
     name: string;
     definition: string;
@@ -6,5 +6,5 @@ export declare class PGMatView {
     protected deserialize(instanceData: any): void;
     static GetFromDB(connection: TConnection, name: string): Promise<PGMatView | null>;
     ddlDefinition(): string;
-    writeToDB(connection: TConnection): Promise<PGSQL.TQueryResults<unknown> | null>;
+    writeToDB(connection: TConnection): Promise<import("pg").QueryResult<any> | null>;
 }

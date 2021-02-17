@@ -32,6 +32,9 @@ export declare namespace PGSQL {
     const Functions: (connection: TConnection) => Promise<string[]>;
     const IndexExists: (connection: TConnection, tablename: string, indexName: string) => Promise<boolean>;
     const GetByID: <T>(connection: TConnection, table: string, id: number | null) => Promise<T | null>;
+    /**
+     * Returns a number from the sql who's only column returned is "count"
+     */
     const GetCountSQL: (connection: TConnection, sql: string, values?: any) => Promise<number>;
     const FetchOne: <T>(connection: TConnection, sql: string, values?: any) => Promise<T | null>;
     const FetchMany: <T>(connection: TConnection, sql: string, values?: any) => Promise<T[]>;
