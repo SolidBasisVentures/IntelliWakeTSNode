@@ -619,7 +619,7 @@ export namespace PGSQL {
 		return sort
 	}
 
-	export const PaginatorSortColumns = (paginatorRequest: IPaginatorRequest): string => SortColumnSort(paginatorRequest.sortColumns)
+	export const PaginatorOrderBy = (paginatorRequest: IPaginatorRequest): string => SortColumnSort(paginatorRequest.sortColumns)
 	
 	export const LimitOffset = (limit: number, offset: number): string => ` LIMIT ${limit} OFFSET ${offset} `
 

@@ -3128,7 +3128,7 @@ var PGParams = /** @class */ (function () {
         }
         return sort;
     };
-    PGSQL.PaginatorSortColumns = function (paginatorRequest) { return PGSQL.SortColumnSort(paginatorRequest.sortColumns); };
+    PGSQL.PaginatorOrderBy = function (paginatorRequest) { return PGSQL.SortColumnSort(paginatorRequest.sortColumns); };
     PGSQL.LimitOffset = function (limit, offset) { return " LIMIT " + limit + " OFFSET " + offset + " "; };
     PGSQL.PaginatorLimitOffset = function (paginatorResponse) { return PGSQL.LimitOffset(paginatorResponse.countPerPage, paginatorResponse.currentOffset); };
     var AltColumn = function (column) {

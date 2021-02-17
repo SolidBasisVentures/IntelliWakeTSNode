@@ -66,7 +66,7 @@ export declare namespace PGSQL {
     const FunctionData: (connection: TConnection, func: string) => Promise<any>;
     const TypeData: (connection: TConnection, type: string) => Promise<string[]>;
     const SortColumnSort: (sortColumn: ISortColumn) => string;
-    const PaginatorSortColumns: (paginatorRequest: IPaginatorRequest) => string;
+    const PaginatorOrderBy: (paginatorRequest: IPaginatorRequest) => string;
     const LimitOffset: (limit: number, offset: number) => string;
     const PaginatorLimitOffset: (paginatorResponse: IPaginatorResponse) => string;
     const CalcOffsetFromPage: (page: number, pageSize: number, totalRecords: number) => number;
