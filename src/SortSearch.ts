@@ -10,7 +10,7 @@ export const PaginatorInitializeResponseFromRequest = <T = any>(paginatorRequest
 })
 
 export const PaginatorApplyRowCount = (paginatorResponse: IPaginatorResponse, rowCount: number) => {
-	paginatorResponse.rowCount = 0
+	paginatorResponse.rowCount = rowCount
 	
 	if (rowCount > 0) {
 		paginatorResponse.pageCount = Math.floor((rowCount + (paginatorResponse.countPerPage - 1)) / paginatorResponse.countPerPage)

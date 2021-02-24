@@ -151,7 +151,7 @@ var PaginatorInitializeResponseFromRequest = function (paginatorRequest) { retur
     rows: []
 }); };
 var PaginatorApplyRowCount = function (paginatorResponse, rowCount) {
-    paginatorResponse.rowCount = 0;
+    paginatorResponse.rowCount = rowCount;
     if (rowCount > 0) {
         paginatorResponse.pageCount = Math.floor((rowCount + (paginatorResponse.countPerPage - 1)) / paginatorResponse.countPerPage);
         if (paginatorResponse.page < 1)
