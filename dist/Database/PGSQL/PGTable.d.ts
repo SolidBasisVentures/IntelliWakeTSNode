@@ -9,8 +9,8 @@ export declare class PGTable {
     columns: PGColumn[];
     indexes: PGIndex[];
     foreignKeys: PGForeignKey[];
-    constructor(instanceData?: PGTable);
-    protected deserialize(instanceData: PGTable): void;
+    constructor(instanceData?: Partial<PGTable>);
+    protected deserialize(instanceData: Partial<PGTable>): void;
     indexOfColumn(columnName: string): number;
     indexesOfForeignKeyByColumn(columnName: string): number[];
     getForeignKeysByColumn(columnName: string): PGForeignKey[];

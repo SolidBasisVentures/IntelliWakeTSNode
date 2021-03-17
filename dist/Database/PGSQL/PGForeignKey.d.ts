@@ -5,7 +5,7 @@ export declare class PGForeignKey {
     primaryColumns: string[];
     onDelete: string;
     onUpdate: string;
-    constructor(instanceData?: PGForeignKey);
+    constructor(instanceData?: Partial<PGForeignKey>);
     private deserialize;
     fkName(pgTable: PGTable): string;
     ddlConstraintDefinition(pgTable: PGTable): string;

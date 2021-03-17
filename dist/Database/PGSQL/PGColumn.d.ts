@@ -46,7 +46,7 @@ export declare class PGColumn {
     dateType: () => boolean;
     blobType: () => boolean;
     otherType: () => boolean;
-    constructor(instanceData?: PGColumn);
+    constructor(instanceData?: Partial<PGColumn>);
     private deserialize;
     clean(): void;
     ddlDefinition(): string;

@@ -2,7 +2,7 @@ export declare class PGEnum {
     enumName: string;
     values: string[];
     defaultValue: string | null | undefined;
-    constructor(instanceData?: PGEnum);
+    constructor(instanceData?: Partial<PGEnum>);
     private deserialize;
     get columnName(): string;
     get typeName(): string;

@@ -4,7 +4,7 @@ export declare class PGIndex {
     isUnique: boolean;
     concurrently: boolean;
     using: string;
-    constructor(instanceData?: PGIndex);
+    constructor(instanceData?: Partial<PGIndex>);
     private deserialize;
     name(pgTable: PGTable): string;
     ddlDefinition(pgTable: PGTable): string;
