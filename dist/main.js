@@ -3285,7 +3285,7 @@ var PGView = /** @class */ (function () {
         for (var _i = 0, keys_1 = keys; _i < keys_1.length; _i++) {
             var key = keys_1[_i];
             if (instanceData.hasOwnProperty(key)) {
-                this[key] = instanceData[key];
+                this[key] = (instanceData)[key];
             }
         }
     };

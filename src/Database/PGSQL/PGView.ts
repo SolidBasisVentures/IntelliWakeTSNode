@@ -15,7 +15,7 @@ export class PGView {
 		
 		for (const key of keys) {
 			if (instanceData.hasOwnProperty(key)) {
-				;(this as any)[key] = (instanceData as any)[key]
+				;(this as any)[key] = (instanceData)[key]
 			}
 		}
 	}
