@@ -8,13 +8,13 @@ export class PGForeignKey {
 	public onDelete = 'RESTRICT'
 	public onUpdate = 'RESTRICT'
 
-	constructor(instanceData?: PGForeignKey) {
+	constructor(instanceData?: Partial<PGForeignKey>) {
 		if (instanceData) {
 			this.deserialize(instanceData)
 		}
 	}
 
-	private deserialize(instanceData: PGForeignKey) {
+	private deserialize(instanceData: Partial<PGForeignKey>) {
 		const keys = Object.keys(this)
 
 		for (const key of keys) {

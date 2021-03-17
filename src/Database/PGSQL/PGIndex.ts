@@ -6,13 +6,13 @@ export class PGIndex {
 	public concurrently = false
 	public using = 'BTREE'
 
-	constructor(instanceData?: PGIndex) {
+	constructor(instanceData?: Partial<PGIndex>) {
 		if (instanceData) {
 			this.deserialize(instanceData)
 		}
 	}
 
-	private deserialize(instanceData: PGIndex) {
+	private deserialize(instanceData: Partial<PGIndex>) {
 		const keys = Object.keys(this)
 
 		for (const key of keys) {

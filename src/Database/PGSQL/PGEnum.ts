@@ -5,13 +5,13 @@ export class PGEnum {
 	public values: string[] = []
 	public defaultValue: string | null | undefined
 	
-	constructor(instanceData?: PGEnum) {
+	constructor(instanceData?: Partial<PGEnum>) {
 		if (instanceData) {
 			this.deserialize(instanceData)
 		}
 	}
 	
-	private deserialize(instanceData: PGEnum) {
+	private deserialize(instanceData: Partial<PGEnum>) {
 		const keys = Object.keys(this)
 		
 		for (const key of keys) {

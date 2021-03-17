@@ -20,13 +20,13 @@ export class PGTable {
 	
 	public foreignKeys: PGForeignKey[] = []
 	
-	constructor(instanceData?: PGTable) {
+	constructor(instanceData?: Partial<PGTable>) {
 		if (instanceData) {
 			this.deserialize(instanceData)
 		}
 	}
 	
-	protected deserialize(instanceData: PGTable) {
+	protected deserialize(instanceData: Partial<PGTable>) {
 		const keys = Object.keys(this)
 		
 		for (const key of keys) {

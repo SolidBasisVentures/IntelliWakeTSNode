@@ -123,13 +123,13 @@ export class PGColumn {
 		)
 	}
 	
-	constructor(instanceData?: PGColumn) {
+	constructor(instanceData?: Partial<PGColumn>) {
 		if (instanceData) {
 			this.deserialize(instanceData)
 		}
 	}
 	
-	private deserialize(instanceData: PGColumn) {
+	private deserialize(instanceData: Partial<PGColumn>) {
 		const keys = Object.keys(this)
 		
 		for (const key of keys) {

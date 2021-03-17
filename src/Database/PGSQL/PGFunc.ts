@@ -4,13 +4,13 @@ export class PGFunc {
 	name = ''
 	definition = ''
 	
-	constructor(instanceData?: any) {
+	constructor(instanceData?: Partial<PGFunc>) {
 		if (instanceData) {
 			this.deserialize(instanceData)
 		}
 	}
 	
-	protected deserialize(instanceData: any) {
+	protected deserialize(instanceData: Partial<PGFunc>) {
 		const keys = Object.keys(this)
 		
 		for (const key of keys) {

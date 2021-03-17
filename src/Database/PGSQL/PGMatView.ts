@@ -5,13 +5,13 @@ export class PGMatView {
 	name = ''
 	definition = ''
 	
-	constructor(instanceData?: any) {
+	constructor(instanceData?: Partial<PGMatView>) {
 		if (instanceData) {
 			this.deserialize(instanceData)
 		}
 	}
 	
-	protected deserialize(instanceData: any) {
+	protected deserialize(instanceData: Partial<PGMatView>) {
 		const keys = Object.keys(this)
 		
 		for (const key of keys) {
