@@ -10,15 +10,15 @@ export const PaginatorInitializeResponseFromRequest = <T = any>(paginatorRequest
 })
 
 export const PaginatorApplyRowCount = (paginatorResponse: IPaginatorResponse, rowCount: number) => {
-	paginatorResponse.rowCount = rowCount
+	paginatorResponse.rowCount = +rowCount
 	
-	if (rowCount > 0) {
-		paginatorResponse.pageCount = Math.floor((rowCount + (paginatorResponse.countPerPage - 1)) / paginatorResponse.countPerPage)
+	if (+rowCount > 0) {
+		paginatorResponse.pageCount = Math.floor((+rowCount + (+paginatorResponse.countPerPage - 1)) / +paginatorResponse.countPerPage)
 		
-		if (paginatorResponse.page < 1) paginatorResponse.page = 1
-		if (paginatorResponse.page > paginatorResponse.pageCount) paginatorResponse.page = paginatorResponse.pageCount
+		if (+paginatorResponse.page < 1) paginatorResponse.page = 1
+		if (+paginatorResponse.page > +paginatorResponse.pageCount) paginatorResponse.page = +paginatorResponse.pageCount
 		
-		paginatorResponse.currentOffset = (paginatorResponse.page - 1) * paginatorResponse.pageCount
+		paginatorResponse.currentOffset = (+paginatorResponse.page - 1) * +paginatorResponse.pageCount
 	} else {
 		paginatorResponse.pageCount = 0
 		paginatorResponse.currentOffset = 0
