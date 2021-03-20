@@ -181,11 +181,13 @@ export class PGTable {
 					 .filter((enumName) => !!enumName),
 					...this.columns
 						.map(column => {
-							const regExp = /{([^}]+)}/g;
-							const results = regExp.exec(column?.column_comment ?? '')?.find(() => true) ?? ''
-							const items = results.split(':')
-							if ((items[0] ?? '').toLowerCase().trim() === 'enum') {
-								return (items[1] ?? '').toLowerCase().trim()
+							const regExp = /{([^}]*)}/;
+							const results = regExp.exec(column.column_comment)
+							if (!!results) {
+								const items = results[1].split(':')
+								if ((items[0] ?? '').toLowerCase().trim() === 'enum') {
+									return (items[1] ?? '').trim()
+								}
 							}
 							return ''
 						})

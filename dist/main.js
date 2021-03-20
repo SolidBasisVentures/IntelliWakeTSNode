@@ -793,12 +793,14 @@ var PGTable = /** @class */ (function () {
             .map(function (column) { return (typeof column.udt_name === 'string' && column.udt_name.startsWith('e_') ? PGEnum.TypeName(column.udt_name) : ''); })
             .filter(function (enumName) { return !!enumName; }), this.columns
             .map(function (column) {
-            var _a, _b, _c, _d, _e;
-            var regExp = /{([^}]+)}/g;
-            var results = (_c = (_b = regExp.exec((_a = column === null || column === void 0 ? void 0 : column.column_comment) !== null && _a !== void 0 ? _a : '')) === null || _b === void 0 ? void 0 : _b.find(function () { return true; })) !== null && _c !== void 0 ? _c : '';
-            var items = results.split(':');
-            if (((_d = items[0]) !== null && _d !== void 0 ? _d : '').toLowerCase().trim() === 'enum') {
-                return ((_e = items[1]) !== null && _e !== void 0 ? _e : '').toLowerCase().trim();
+            var _a, _b;
+            var regExp = /{([^}]*)}/;
+            var results = regExp.exec(column.column_comment);
+            if (!!results) {
+                var items = results[1].split(':');
+                if (((_a = items[0]) !== null && _a !== void 0 ? _a : '').toLowerCase().trim() === 'enum') {
+                    return ((_b = items[1]) !== null && _b !== void 0 ? _b : '').trim();
+                }
             }
             return '';
         })
