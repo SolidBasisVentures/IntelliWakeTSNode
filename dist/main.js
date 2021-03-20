@@ -151,14 +151,14 @@ var PaginatorInitializeResponseFromRequest = function (paginatorRequest) { retur
     rows: []
 }); };
 var PaginatorApplyRowCount = function (paginatorResponse, rowCount) {
-    paginatorResponse.rowCount = rowCount;
-    if (rowCount > 0) {
-        paginatorResponse.pageCount = Math.floor((rowCount + (paginatorResponse.countPerPage - 1)) / paginatorResponse.countPerPage);
-        if (paginatorResponse.page < 1)
+    paginatorResponse.rowCount = +rowCount;
+    if (+rowCount > 0) {
+        paginatorResponse.pageCount = Math.floor((+rowCount + (+paginatorResponse.countPerPage - 1)) / +paginatorResponse.countPerPage);
+        if (+paginatorResponse.page < 1)
             paginatorResponse.page = 1;
-        if (paginatorResponse.page > paginatorResponse.pageCount)
-            paginatorResponse.page = paginatorResponse.pageCount;
-        paginatorResponse.currentOffset = (paginatorResponse.page - 1) * paginatorResponse.pageCount;
+        if (+paginatorResponse.page > +paginatorResponse.pageCount)
+            paginatorResponse.page = +paginatorResponse.pageCount;
+        paginatorResponse.currentOffset = (+paginatorResponse.page - 1) * +paginatorResponse.pageCount;
     }
     else {
         paginatorResponse.pageCount = 0;
@@ -965,10 +965,13 @@ var PGTable = /** @class */ (function () {
         }
         return null;
     };
-    PGTable.prototype.ddlCreateTableText = function (createForeignKeys, createIndexes) {
+    PGTable.prototype.ddlCreateTableText = function (createForeignKeys, createIndexes, dropFirst) {
+        if (dropFirst === void 0) { dropFirst = true; }
         var ddl = '';
         /** @noinspection SqlResolve */
-        ddl += "DROP TABLE IF EXISTS " + this.name + " CASCADE;" + TS_EOL;
+        if (dropFirst) {
+            ddl += "DROP TABLE IF EXISTS " + this.name + " CASCADE;" + TS_EOL;
+        }
         ddl += "CREATE TABLE " + this.name + " (" + TS_EOL;
         var prevColumn = null;
         for (var _i = 0, _a = this.columns; _i < _a.length; _i++) {

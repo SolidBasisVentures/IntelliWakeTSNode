@@ -349,11 +349,13 @@ export class PGTable {
 		return null
 	}
 	
-	public ddlCreateTableText(createForeignKeys: boolean, createIndexes: boolean): string {
+	public ddlCreateTableText(createForeignKeys: boolean, createIndexes: boolean, dropFirst = true): string {
 		let ddl = ''
 		
 		/** @noinspection SqlResolve */
-		ddl += `DROP TABLE IF EXISTS ${this.name} CASCADE;` + TS_EOL
+		if (dropFirst) {
+			ddl += `DROP TABLE IF EXISTS ${this.name} CASCADE;` + TS_EOL
+		}
 		ddl += `CREATE TABLE ${this.name} (` + TS_EOL
 		
 		let prevColumn: PGColumn | null = null
