@@ -696,9 +696,6 @@ export namespace PGSQL {
 
 		const columns = await TableColumnsData(connection, table)
 		for (const column of columns) {
-			if (column.name === 'section') {
-				console.log(column)
-			}
 			const pgColumn = new PGColumn({
 				...column,
 				isAutoIncrement: IsOn(column.identity_increment),

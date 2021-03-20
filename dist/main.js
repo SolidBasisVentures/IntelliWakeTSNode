@@ -3247,9 +3247,6 @@ var PGParams = /** @class */ (function () {
                     columns = _f.sent();
                     for (_i = 0, columns_1 = columns; _i < columns_1.length; _i++) {
                         column = columns_1[_i];
-                        if (column.name === 'section') {
-                            console.log(column);
-                        }
                         pgColumn = new PGColumn(__assign(__assign({}, column), { isAutoIncrement: intelliwaketsfoundation.IsOn(column.identity_increment), udt_name: column.udt_name.toString().startsWith('_') ? column.udt_name.toString().substr(1) : column.udt_name, array_dimensions: column.udt_name.toString().startsWith('_') ? [null] : [], column_default: (((_c = column.column_default) !== null && _c !== void 0 ? _c : '').toString().startsWith("'NULL'") || ((_d = column.column_default) !== null && _d !== void 0 ? _d : '').toString().startsWith('NULL::')) ? null : ((_e = column.column_default) !== null && _e !== void 0 ? _e : '').toString().startsWith("''::") ? '' : column.column_default }));
                         pgTable.columns.push(pgColumn);
                     }
