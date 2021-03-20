@@ -198,7 +198,7 @@ export class PGTable {
 		text += ` {` + TS_EOL
 		for (const pgColumn of this.columns) {
 			// if (!!pgColumn.column_comment || !!pgColumn.generatedAlwaysAs) {
-			if (!!pgColumn.column_comment) {
+			if (!!PGTable.CleanComment(pgColumn.column_comment)) {
 				text += `\t/** `
 				text += `${PGTable.CleanComment(pgColumn.column_comment)} `
 				text += `*/${TS_EOL}`
@@ -436,6 +436,6 @@ export class PGTable {
 			return comment
 		}
 		
-		return comment.replace(/[\n\r]/g, ' ')
+		return comment.replace(/[\n\r]/g, ' ').replace(/\{(.+?)\}/g, "").trim()
 	}
 }

@@ -73,5 +73,9 @@ export declare namespace PGSQL {
     const CalcPageCount: (pageSize: number, totalRecords: number) => number;
     const ResetIDs: (connection: TConnection) => Promise<void>;
     const GetTypes: (connection: TConnection) => Promise<PGEnum[]>;
+    const TableColumnComments: (connection: TConnection, table: string) => Promise<{
+        column_name: string;
+        column_comment: string | null;
+    }[]>;
     const GetPGTable: (connection: TConnection, table: string) => Promise<PGTable>;
 }

@@ -807,7 +807,7 @@ var PGTable = /** @class */ (function () {
         for (var _j = 0, _k = this.columns; _j < _k.length; _j++) {
             var pgColumn = _k[_j];
             // if (!!pgColumn.column_comment || !!pgColumn.generatedAlwaysAs) {
-            if (!!pgColumn.column_comment) {
+            if (!!PGTable.CleanComment(pgColumn.column_comment)) {
                 text += "\t/** ";
                 text += PGTable.CleanComment(pgColumn.column_comment) + " ";
                 text += "*/" + TS_EOL;
@@ -1036,7 +1036,7 @@ var PGTable = /** @class */ (function () {
         if (!comment) {
             return comment;
         }
-        return comment.replace(/[\n\r]/g, ' ');
+        return comment.replace(/[\n\r]/g, ' ').replace(/\{(.+?)\}/g, "").trim();
     };
     return PGTable;
 }());
