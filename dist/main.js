@@ -2648,7 +2648,7 @@ var PGParams = /** @class */ (function () {
         var _a, _b, _c;
         return __generator(this, function (_d) {
             switch (_d.label) {
-                case 0: return [4 /*yield*/, PGSQL.query(connection, "SELECT count(*) AS count FROM " + table, undefined)];
+                case 0: return [4 /*yield*/, PGSQL.query(connection, "SELECT COUNT(*) AS count\n                                          FROM " + table, undefined)];
                 case 1:
                     data = _d.sent();
                     return [2 /*return*/, (_c = ((_b = ((_a = data.rows) !== null && _a !== void 0 ? _a : [])[0]) !== null && _b !== void 0 ? _b : {})['count']) !== null && _c !== void 0 ? _c : 0];
@@ -2661,7 +2661,7 @@ var PGParams = /** @class */ (function () {
         return __generator(this, function (_d) {
             switch (_d.label) {
                 case 0:
-                    sql = "SELECT count(*) AS count\n                      FROM information_schema.tables\n                      WHERE table_schema = 'public'\n                        AND table_name = '" + table + "'";
+                    sql = "SELECT COUNT(*) AS count\n                 FROM information_schema.tables\n                 WHERE table_schema = 'public'\n                   AND table_name = '" + table + "'";
                     return [4 /*yield*/, PGSQL.query(connection, sql, undefined)];
                 case 1:
                     data = _d.sent();
@@ -2675,7 +2675,7 @@ var PGParams = /** @class */ (function () {
         return __generator(this, function (_d) {
             switch (_d.label) {
                 case 0:
-                    sql = "SELECT count(*) AS count\n                      FROM information_schema.COLUMNS\n                      WHERE table_schema = 'public'\n                        AND table_name = '" + table + "'\n                        AND column_name = '" + column + "'";
+                    sql = "SELECT COUNT(*) AS count\n                 FROM information_schema.COLUMNS\n                 WHERE table_schema = 'public'\n                   AND table_name = '" + table + "'\n                   AND column_name = '" + column + "'";
                     return [4 /*yield*/, PGSQL.query(connection, sql, undefined)];
                 case 1:
                     data = _d.sent();
@@ -2689,7 +2689,7 @@ var PGParams = /** @class */ (function () {
         return __generator(this, function (_d) {
             switch (_d.label) {
                 case 0:
-                    sql = "SELECT count(*) AS count\n                      FROM information_schema.triggers\n                      WHERE trigger_schema = 'public'\n                        AND trigger_name = '" + trigger + "'";
+                    sql = "SELECT COUNT(*) AS count\n                 FROM information_schema.triggers\n                 WHERE trigger_schema = 'public'\n                   AND trigger_name = '" + trigger + "'";
                     return [4 /*yield*/, PGSQL.query(connection, sql, undefined)];
                 case 1:
                     data = _d.sent();
@@ -2703,7 +2703,7 @@ var PGParams = /** @class */ (function () {
                 return [2 /*return*/, PGSQL.Execute(connection, "SELECT setval(pg_get_serial_sequence('" + table + "', '" + column + "'), " + toID + ");\n\t\t\t")];
             }
             else {
-                return [2 /*return*/, PGSQL.Execute(connection, "SELECT setval(pg_get_serial_sequence('" + table + "', '" + column + "'), max(" + column + ")) FROM " + table + ";\n\t\t\t")];
+                return [2 /*return*/, PGSQL.Execute(connection, "SELECT SETVAL(PG_GET_SERIAL_SEQUENCE('" + table + "', '" + column + "'), MAX(" + column + "))\n         FROM " + table + ";\n\t\t\t\t")];
             }
         });
     }); };
@@ -2713,7 +2713,7 @@ var PGParams = /** @class */ (function () {
         return __generator(this, function (_d) {
             switch (_d.label) {
                 case 0:
-                    sql = "\n\t\t\t\tSELECT count(*) AS count\n                      FROM information_schema.table_constraints\n                      WHERE constraint_schema = 'public'\n                        AND constraint_name = '" + constraint + "'";
+                    sql = "\n        SELECT COUNT(*) AS count\n        FROM information_schema.table_constraints\n        WHERE constraint_schema = 'public'\n          AND constraint_name = '" + constraint + "'";
                     return [4 /*yield*/, PGSQL.query(connection, sql, undefined)];
                 case 1:
                     data = _d.sent();
@@ -2745,7 +2745,7 @@ var PGParams = /** @class */ (function () {
         return __generator(this, function (_d) {
             switch (_d.label) {
                 case 0:
-                    sql = "SELECT count(*) AS count\n                      FROM pg_indexes\n                      WHERE schemaname = 'public'\n                        AND tablename = '" + tablename + "'\n                        AND indexname = '" + indexName + "'";
+                    sql = "SELECT COUNT(*) AS count\n                 FROM pg_indexes\n                 WHERE schemaname = 'public'\n                   AND tablename = '" + tablename + "'\n                   AND indexname = '" + indexName + "'";
                     return [4 /*yield*/, PGSQL.query(connection, sql, undefined)];
                 case 1:
                     data = _d.sent();
@@ -2762,7 +2762,7 @@ var PGParams = /** @class */ (function () {
                     if (!!id) return [3 /*break*/, 1];
                     return [2 /*return*/, Promise.resolve(null)];
                 case 1:
-                    sql = "SELECT * FROM " + table + " WHERE id = $1";
+                    sql = "SELECT *\n                   FROM " + table + "\n                   WHERE id = $1";
                     return [4 /*yield*/, PGSQL.query(connection, sql, [id])];
                 case 2:
                     data = _c.sent();
@@ -2835,9 +2835,9 @@ var PGParams = /** @class */ (function () {
                         // delete newValues.modified_date;
                     }
                     params = new PGParams();
-                    sql = "\n\t\t\t\tINSERT INTO " + table + "\n\t\t\t\t    (\"" + Object.keys(newValues).join('","') + "\")\n\t\t\t\t    VALUES\n\t\t\t\t    (" + Object.values(newValues)
+                    sql = "\n        INSERT INTO " + table + "\n            (\"" + Object.keys(newValues).join('","') + "\")\n        VALUES (" + Object.values(newValues)
                         .map(function (value) { return params.add(value); })
-                        .join(',') + ")\n\t\t\t\t    RETURNING *";
+                        .join(',') + ")\n        RETURNING *";
                     return [4 /*yield*/, PGSQL.query(connection, sql, params.values)];
                 case 1:
                     results = _b.sent();
@@ -2851,7 +2851,7 @@ var PGParams = /** @class */ (function () {
             switch (_a.label) {
                 case 0:
                     params = new PGParams();
-                    sql = "\n\t\t\t\tINSERT INTO " + table + "\n\t\t\t\t    (\"" + Object.keys(values).join('","') + "\")\n\t\t\t\t    VALUES\n\t\t\t\t    (" + Object.values(values)
+                    sql = "\n        INSERT INTO " + table + "\n            (\"" + Object.keys(values).join('","') + "\")\n        VALUES (" + Object.values(values)
                         .map(function (value) { return params.add(value); })
                         .join(',') + ")";
                     return [4 /*yield*/, PGSQL.query(connection, sql, params.values)];
@@ -2867,7 +2867,7 @@ var PGParams = /** @class */ (function () {
             switch (_a.label) {
                 case 0:
                     params = new PGParams();
-                    sql = "UPDATE " + table + " SET " + PGSQL.BuildSetComponents(updateValues, params) + " WHERE " + PGSQL.BuildWhereComponents(whereValues, params) + " RETURNING *";
+                    sql = "UPDATE " + table + "\n                 SET " + PGSQL.BuildSetComponents(updateValues, params) + "\n                 WHERE " + PGSQL.BuildWhereComponents(whereValues, params) + "\n                 RETURNING *";
                     return [4 /*yield*/, PGSQL.query(connection, sql, params.values)
                         // @ts-ignore
                     ];
@@ -2906,7 +2906,7 @@ var PGParams = /** @class */ (function () {
             switch (_a.label) {
                 case 0:
                     params = new PGParams();
-                    sql = "DELETE FROM " + table + " WHERE " + PGSQL.BuildWhereComponents(whereValues, params);
+                    sql = "DELETE\n                 FROM " + table + "\n                 WHERE " + PGSQL.BuildWhereComponents(whereValues, params);
                     return [4 /*yield*/, PGSQL.query(connection, sql, params.values)];
                 case 1:
                     _a.sent();
@@ -3234,25 +3234,36 @@ var PGParams = /** @class */ (function () {
             }
         });
     }); };
+    PGSQL.TableColumnComments = function (connection, table) { return __awaiter(_this, void 0, void 0, function () {
+        return __generator(this, function (_a) {
+            return [2 /*return*/, PGSQL.FetchMany(connection, "\n        SELECT cols.column_name,\n               (\n                   SELECT pg_catalog.COL_DESCRIPTION(c.oid, cols.ordinal_position::INT)\n                   FROM pg_catalog.pg_class c\n                   WHERE c.oid = (SELECT cols.table_name::REGCLASS::OID)\n                     AND c.relname = cols.table_name\n               ) AS column_comment\n\n        FROM information_schema.columns cols\n        WHERE cols.table_schema = 'public'\n          AND cols.table_name = '" + table + "'")];
+        });
+    }); };
     PGSQL.GetPGTable = function (connection, table) { return __awaiter(_this, void 0, void 0, function () {
-        var pgTable, columns, _i, columns_1, column, pgColumn, fks, _a, fks_1, fk, pgForeignKey, indexes, _b, indexes_1, index, indexDef, pgIndex;
-        var _c, _d, _e;
-        return __generator(this, function (_f) {
-            switch (_f.label) {
+        var pgTable, columnComments, columns, _loop_1, _i, columns_1, column, fks, _a, fks_1, fk, pgForeignKey, indexes, _b, indexes_1, index, indexDef, pgIndex;
+        var _c, _d, _e, _f, _g;
+        return __generator(this, function (_h) {
+            switch (_h.label) {
                 case 0:
                     pgTable = new PGTable();
                     pgTable.name = table;
-                    return [4 /*yield*/, PGSQL.TableColumnsData(connection, table)];
+                    return [4 /*yield*/, PGSQL.TableColumnComments(connection, table)];
                 case 1:
-                    columns = _f.sent();
+                    columnComments = _h.sent();
+                    return [4 /*yield*/, PGSQL.TableColumnsData(connection, table)];
+                case 2:
+                    columns = _h.sent();
+                    _loop_1 = function (column) {
+                        var pgColumn = new PGColumn(__assign(__assign({}, column), { isAutoIncrement: intelliwaketsfoundation.IsOn(column.identity_increment), udt_name: column.udt_name.toString().startsWith('_') ? column.udt_name.toString().substr(1) : column.udt_name, array_dimensions: column.udt_name.toString().startsWith('_') ? [null] : [], column_default: (((_c = column.column_default) !== null && _c !== void 0 ? _c : '').toString().startsWith('\'NULL\'') || ((_d = column.column_default) !== null && _d !== void 0 ? _d : '').toString().startsWith('NULL::')) ? null : ((_e = column.column_default) !== null && _e !== void 0 ? _e : '').toString().startsWith('\'\'::') ? '' : column.column_default, column_comment: (_g = (_f = columnComments.find(function (col) { return col.column_name === column.column_name; })) === null || _f === void 0 ? void 0 : _f.column_comment) !== null && _g !== void 0 ? _g : '' }));
+                        pgTable.columns.push(pgColumn);
+                    };
                     for (_i = 0, columns_1 = columns; _i < columns_1.length; _i++) {
                         column = columns_1[_i];
-                        pgColumn = new PGColumn(__assign(__assign({}, column), { isAutoIncrement: intelliwaketsfoundation.IsOn(column.identity_increment), udt_name: column.udt_name.toString().startsWith('_') ? column.udt_name.toString().substr(1) : column.udt_name, array_dimensions: column.udt_name.toString().startsWith('_') ? [null] : [], column_default: (((_c = column.column_default) !== null && _c !== void 0 ? _c : '').toString().startsWith("'NULL'") || ((_d = column.column_default) !== null && _d !== void 0 ? _d : '').toString().startsWith('NULL::')) ? null : ((_e = column.column_default) !== null && _e !== void 0 ? _e : '').toString().startsWith("''::") ? '' : column.column_default }));
-                        pgTable.columns.push(pgColumn);
+                        _loop_1(column);
                     }
                     return [4 /*yield*/, PGSQL.TableFKsData(connection, table)];
-                case 2:
-                    fks = _f.sent();
+                case 3:
+                    fks = _h.sent();
                     for (_a = 0, fks_1 = fks; _a < fks_1.length; _a++) {
                         fk = fks_1[_a];
                         pgForeignKey = new PGForeignKey({
@@ -3263,8 +3274,8 @@ var PGParams = /** @class */ (function () {
                         pgTable.foreignKeys.push(pgForeignKey);
                     }
                     return [4 /*yield*/, PGSQL.TableIndexesData(connection, table)];
-                case 3:
-                    indexes = _f.sent();
+                case 4:
+                    indexes = _h.sent();
                     for (_b = 0, indexes_1 = indexes; _b < indexes_1.length; _b++) {
                         index = indexes_1[_b];
                         indexDef = index.indexdef;

@@ -31,6 +31,15 @@
       <option name="CONSTRAINT_WRAP_3" value="true" />
       <option name="VIEW_INDENT_QUERY" value="true" />
     </H2CodeStyleSettings>
+    <H2CodeStyleSettings version="5">
+      <option name="USE_GENERAL_STYLE" value="false" />
+      <option name="KEYWORD_CASE" value="2" />
+      <option name="TYPE_CASE" value="2" />
+      <option name="CUSTOM_TYPE_CASE" value="2" />
+      <option name="CONSTRAINT_WRAP_2" value="true" />
+      <option name="CONSTRAINT_WRAP_3" value="true" />
+      <option name="VIEW_INDENT_QUERY" value="true" />
+    </H2CodeStyleSettings>
     <HSQLCodeStyleSettings version="5">
       <option name="USE_GENERAL_STYLE" value="false" />
       <option name="KEYWORD_CASE" value="2" />
