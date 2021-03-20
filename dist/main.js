@@ -920,12 +920,21 @@ var PGTable = /** @class */ (function () {
         text += TS_EOL + '}' + TS_EOL; // Removed semi
         return text;
     };
+    /*export class Cprogress_report_test extends _CTable<Iprogress_report_test> {
+    public readonly table: TTables
+
+    constructor(responseContext: ResponseContext, initialValues?: Partial<Iprogress_report_test>) {
+        super(responseContext, initialValues, {...initial_progress_report_test})
+
+        this.table = 'progress_report_test'
+    }
+}*/
     PGTable.prototype.tsTextTable = function () {
         var text = this.tableHeaderText('Table Class for');
-        text += "import {initial_" + this.name + ", I" + this.name + "} from \"@Common/Tables/I" + this.name + "\"" + TS_EOL;
-        text += "import {TTables} from \"../Database/Tables\"" + TS_EOL;
-        text += "import {TConnection} from \"../Database/pgsqlConnection\"" + TS_EOL;
-        text += "import {_CTable} from \"./_CTable\"" + TS_EOL;
+        text += "import {initial_" + this.name + ", I" + this.name + "} from '@Common/Tables/I" + this.name + "'" + TS_EOL;
+        text += "import {TTables} from '../Database/Tables'" + TS_EOL;
+        text += "import {_CTable} from './_CTable'" + TS_EOL;
+        text += "import {ResponseContext} from '../MiddleWare/ResponseContext'" + TS_EOL;
         for (var _i = 0, _a = this.inherits; _i < _a.length; _i++) {
             var inherit = _a[_i];
             text += "import {_C" + inherit + "} from \"./_C" + inherit + "\"" + TS_EOL;
@@ -938,8 +947,8 @@ var PGTable = /** @class */ (function () {
         text += " {" + TS_EOL;
         text += "\tpublic readonly table: TTables" + TS_EOL;
         text += TS_EOL;
-        text += "\tconstructor(connection: TConnection, initialValues?: I" + this.name + " | any) {" + TS_EOL;
-        text += "\t\tsuper(connection, initialValues, {...initial_" + this.name + "})" + TS_EOL;
+        text += "\tconstructor(responseContext: ResponseContext, initialValues?: Partial<I" + this.name + ">) {" + TS_EOL;
+        text += "\t\tsuper(responseContext, initialValues, {...initial_" + this.name + "})" + TS_EOL;
         text += TS_EOL;
         text += "\t\tthis.table = '" + this.name + "'" + TS_EOL;
         text += "\t}" + TS_EOL;
@@ -3238,6 +3247,9 @@ var PGParams = /** @class */ (function () {
                     columns = _f.sent();
                     for (_i = 0, columns_1 = columns; _i < columns_1.length; _i++) {
                         column = columns_1[_i];
+                        if (column.name === 'section') {
+                            console.log(column);
+                        }
                         pgColumn = new PGColumn(__assign(__assign({}, column), { isAutoIncrement: intelliwaketsfoundation.IsOn(column.identity_increment), udt_name: column.udt_name.toString().startsWith('_') ? column.udt_name.toString().substr(1) : column.udt_name, array_dimensions: column.udt_name.toString().startsWith('_') ? [null] : [], column_default: (((_c = column.column_default) !== null && _c !== void 0 ? _c : '').toString().startsWith("'NULL'") || ((_d = column.column_default) !== null && _d !== void 0 ? _d : '').toString().startsWith('NULL::')) ? null : ((_e = column.column_default) !== null && _e !== void 0 ? _e : '').toString().startsWith("''::") ? '' : column.column_default }));
                         pgTable.columns.push(pgColumn);
                     }
