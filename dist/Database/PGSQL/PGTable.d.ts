@@ -26,7 +26,7 @@ export declare class PGTable {
     tsText(): string;
     tsTextTable(): string;
     ddlPrimaryKey(): string | null;
-    ddlCreateTableText(createForeignKeys: boolean, createIndexes: boolean): string;
+    ddlCreateTableText(createForeignKeys: boolean, createIndexes: boolean, dropFirst?: boolean): string;
     ddlCreateIndexes(): string;
     ddlCreateForeignKeysText(): string;
     static CleanComment(comment: string): string;
