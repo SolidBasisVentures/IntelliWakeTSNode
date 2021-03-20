@@ -178,7 +178,18 @@ export class PGTable {
 					.filter((enumName) => !!enumName),
 				 ...this.columns
 					 .map((column) => (typeof column.udt_name === 'string' && column.udt_name.startsWith('e_') ? PGEnum.TypeName(column.udt_name) : ''))
-					 .filter((enumName) => !!enumName)
+					 .filter((enumName) => !!enumName),
+					...this.columns
+						.map(column => {
+							const regExp = /{([^}]+)}/g;
+							const results = regExp.exec(column?.column_comment ?? '')?.find(() => true) ?? ''
+							const items = results.split(':')
+							if ((items[0] ?? '').toLowerCase().trim() === 'enum') {
+								return (items[1] ?? '').toLowerCase().trim()
+							}
+							return ''
+						})
+						.filter(enumName => !!enumName)
 				 ]
 			)
 		)
