@@ -779,11 +779,11 @@ var PGTable = /** @class */ (function () {
         return text;
     };
     PGTable.prototype.tsText = function () {
-        var _a, _b, _c, _d, _e, _f, _g, _h;
+        var _a, _b, _c, _d, _e, _f, _g, _h, _j;
         var text = this.tableHeaderText('Table Manager for');
         if (this.inherits.length > 0) {
-            for (var _i = 0, _j = this.inherits; _i < _j.length; _i++) {
-                var inherit = _j[_i];
+            for (var _i = 0, _k = this.inherits; _i < _k.length; _i++) {
+                var inherit = _k[_i];
                 text += "import {I" + inherit + ", initial_" + inherit + "} from \"./I" + inherit + "\"" + TS_EOL;
             }
         }
@@ -791,13 +791,13 @@ var PGTable = /** @class */ (function () {
             .map(function (column) { return ({ column_name: column.column_name, enum_name: (typeof column.udt_name !== 'string' ? column.udt_name.enumName : '') }); }), this.columns
             .map(function (column) { return ({ column_name: column.column_name, enum_name: (typeof column.udt_name === 'string' && column.udt_name.startsWith('e_') ? PGEnum.TypeName(column.udt_name) : '') }); }), this.columns
             .map(function (column) {
-            var _a, _b;
+            var _a, _b, _c;
             var regExp = /{([^}]*)}/;
             var results = regExp.exec(column.column_comment);
             if (!!results) {
                 var items = results[1].split(':');
                 if (((_a = items[0]) !== null && _a !== void 0 ? _a : '').toLowerCase().trim() === 'enum') {
-                    return { column_name: column.column_name, enum_name: ((_b = items[1]) !== null && _b !== void 0 ? _b : '').trim() };
+                    return { column_name: column.column_name, enum_name: ((_b = items[1]) !== null && _b !== void 0 ? _b : '').trim(), default_value: ((_c = items[2]) !== null && _c !== void 0 ? _c : '').trim() };
                 }
             }
             return { column_name: column.column_name, enum_name: '' };
@@ -837,8 +837,8 @@ var PGTable = /** @class */ (function () {
             }
             text += TS_EOL;
         };
-        for (var _k = 0, _l = this.columns; _k < _l.length; _k++) {
-            var pgColumn = _l[_k];
+        for (var _l = 0, _m = this.columns; _l < _m.length; _l++) {
+            var pgColumn = _m[_l];
             _loop_1(pgColumn);
         }
         text += '}' + TS_EOL;
@@ -848,15 +848,18 @@ var PGTable = /** @class */ (function () {
         if (this.inherits.length > 0) {
             text += "\t...initial_" + this.inherits.join("," + TS_EOL + "\t...initial_") + "," + TS_EOL;
         }
-        for (var _m = 0, _o = this.columns; _m < _o.length; _m++) {
-            var pgColumn = _o[_m];
+        var _loop_2 = function (pgColumn) {
             if (addComma) {
                 text += ',' + TS_EOL;
             }
             text += '\t';
             text += pgColumn.column_name;
             text += ': ';
-            if (pgColumn.array_dimensions.length > 0) {
+            var enumDefault = (_d = enums.find(function (enumItem) { return enumItem.column_name === pgColumn.column_name; })) === null || _d === void 0 ? void 0 : _d.default_value;
+            if (!!enumDefault) {
+                text += enumDefault;
+            }
+            else if (pgColumn.array_dimensions.length > 0) {
                 if (intelliwaketsfoundation.IsOn(pgColumn.is_nullable)) {
                     text += 'null';
                 }
@@ -887,7 +890,7 @@ var PGTable = /** @class */ (function () {
                         }
                         else if (typeof pgColumn.udt_name !== 'string') {
                             text +=
-                                '\'' + ((_e = (_d = pgColumn.column_default) !== null && _d !== void 0 ? _d : pgColumn.udt_name.defaultValue) !== null && _e !== void 0 ? _e : '') + '\' as ' + pgColumn.jsType();
+                                '\'' + ((_f = (_e = pgColumn.column_default) !== null && _e !== void 0 ? _e : pgColumn.udt_name.defaultValue) !== null && _f !== void 0 ? _f : '') + '\' as ' + pgColumn.jsType();
                         }
                         else if (!!pgColumn.column_default && pgColumn.column_default.toString().includes('::')) {
                             if (pgColumn.udt_name.startsWith('e_')) {
@@ -899,11 +902,11 @@ var PGTable = /** @class */ (function () {
                                 // text += PGEnum.TypeName(pgColumn.udt_name)
                             }
                             else {
-                                text += '\'' + ((_f = pgColumn.column_default) !== null && _f !== void 0 ? _f : '').toString().substring(1, ((_g = pgColumn.column_default) !== null && _g !== void 0 ? _g : '').toString().indexOf('::') - 1) + '\'';
+                                text += '\'' + ((_g = pgColumn.column_default) !== null && _g !== void 0 ? _g : '').toString().substring(1, ((_h = pgColumn.column_default) !== null && _h !== void 0 ? _h : '').toString().indexOf('::') - 1) + '\'';
                             }
                         }
                         else {
-                            text += '\'' + ((_h = pgColumn.column_default) !== null && _h !== void 0 ? _h : '') + '\'';
+                            text += '\'' + ((_j = pgColumn.column_default) !== null && _j !== void 0 ? _j : '') + '\'';
                         }
                     }
                     else if (intelliwaketsfoundation.IsOn(pgColumn.is_nullable)) {
@@ -929,6 +932,10 @@ var PGTable = /** @class */ (function () {
                 }
             }
             addComma = true;
+        };
+        for (var _o = 0, _p = this.columns; _o < _p.length; _o++) {
+            var pgColumn = _p[_o];
+            _loop_2(pgColumn);
         }
         text += TS_EOL + '}' + TS_EOL; // Removed semi
         return text;
@@ -1049,6 +1056,7 @@ var PGTable = /** @class */ (function () {
         if (!comment) {
             return comment;
         }
+        // noinspection RegExpRedundantEscape
         return comment.replace(/[\n\r]/g, ' ').replace(/\{(.+?)\}/g, "").trim();
     };
     return PGTable;

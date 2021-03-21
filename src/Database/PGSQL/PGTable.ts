@@ -171,7 +171,7 @@ export class PGTable {
 			}
 		}
 		
-		const enums: {column_name: string, enum_name: string}[] = Array.from(
+		const enums: {column_name: string, enum_name: string, default_value?: string}[] = Array.from(
 			new Set(
 				[...this.columns
 					.map((column) => ({column_name: column.column_name, enum_name: (typeof column.udt_name !== 'string' ? column.udt_name.enumName : '')})),
@@ -184,7 +184,7 @@ export class PGTable {
 							if (!!results) {
 								const items = results[1].split(':')
 								if ((items[0] ?? '').toLowerCase().trim() === 'enum') {
-									return {column_name: column.column_name, enum_name: (items[1] ?? '').trim()}
+									return {column_name: column.column_name, enum_name: (items[1] ?? '').trim(), default_value: (items[2] ?? '').trim()}
 								}
 							}
 							return {column_name: column.column_name, enum_name: ''}
@@ -245,7 +245,10 @@ export class PGTable {
 			text += '\t'
 			text += pgColumn.column_name
 			text += ': '
-			if (pgColumn.array_dimensions.length > 0) {
+			const enumDefault = enums.find(enumItem => enumItem.column_name === pgColumn.column_name)?.default_value
+			if (!!enumDefault) {
+				text += enumDefault
+			} else if (pgColumn.array_dimensions.length > 0) {
 				if (IsOn(pgColumn.is_nullable)) {
 					text += 'null'
 				} else {
