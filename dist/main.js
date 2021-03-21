@@ -779,19 +779,17 @@ var PGTable = /** @class */ (function () {
         return text;
     };
     PGTable.prototype.tsText = function () {
-        var _a, _b, _c, _d, _e, _f;
+        var _a, _b, _c, _d, _e, _f, _g, _h;
         var text = this.tableHeaderText('Table Manager for');
         if (this.inherits.length > 0) {
-            for (var _i = 0, _g = this.inherits; _i < _g.length; _i++) {
-                var inherit = _g[_i];
+            for (var _i = 0, _j = this.inherits; _i < _j.length; _i++) {
+                var inherit = _j[_i];
                 text += "import {I" + inherit + ", initial_" + inherit + "} from \"./I" + inherit + "\"" + TS_EOL;
             }
         }
         var enums = Array.from(new Set(__spreadArrays(this.columns
-            .map(function (column) { return (typeof column.udt_name !== 'string' ? column.udt_name.enumName : ''); })
-            .filter(function (enumName) { return !!enumName; }), this.columns
-            .map(function (column) { return (typeof column.udt_name === 'string' && column.udt_name.startsWith('e_') ? PGEnum.TypeName(column.udt_name) : ''); })
-            .filter(function (enumName) { return !!enumName; }), this.columns
+            .map(function (column) { return ({ column_name: column.column_name, enum_name: (typeof column.udt_name !== 'string' ? column.udt_name.enumName : '') }); }), this.columns
+            .map(function (column) { return ({ column_name: column.column_name, enum_name: (typeof column.udt_name === 'string' && column.udt_name.startsWith('e_') ? PGEnum.TypeName(column.udt_name) : '') }); }), this.columns
             .map(function (column) {
             var _a, _b;
             var regExp = /{([^}]*)}/;
@@ -799,17 +797,16 @@ var PGTable = /** @class */ (function () {
             if (!!results) {
                 var items = results[1].split(':');
                 if (((_a = items[0]) !== null && _a !== void 0 ? _a : '').toLowerCase().trim() === 'enum') {
-                    return ((_b = items[1]) !== null && _b !== void 0 ? _b : '').trim();
+                    return { column_name: column.column_name, enum_name: ((_b = items[1]) !== null && _b !== void 0 ? _b : '').trim() };
                 }
             }
-            return '';
-        })
-            .filter(function (enumName) { return !!enumName; }))));
+            return { column_name: column.column_name, enum_name: '' };
+        })).filter(function (enumName) { return !!enumName.enum_name; })));
+        enums.map(function (enumItem) { return enumItem.enum_name; }).reduce(function (results, enumItem) { return results.includes(enumItem) ? results : __spreadArrays(results, [enumItem]); }, [])
+            .forEach(function (enumItem) {
+            text += "import {" + enumItem + "} from \"../Enums/" + enumItem + "\"" + TS_EOL;
+        });
         if (enums.length > 0) {
-            for (var _h = 0, enums_1 = enums; _h < enums_1.length; _h++) {
-                var enumItem = enums_1[_h];
-                text += "import {" + enumItem + "} from \"../Enums/" + enumItem + "\"" + TS_EOL;
-            }
             text += TS_EOL;
         }
         text += "export interface I" + this.name;
@@ -817,8 +814,7 @@ var PGTable = /** @class */ (function () {
             text += " extends I" + this.inherits.join(', I');
         }
         text += " {" + TS_EOL;
-        for (var _j = 0, _k = this.columns; _j < _k.length; _j++) {
-            var pgColumn = _k[_j];
+        var _loop_1 = function (pgColumn) {
             // if (!!pgColumn.column_comment || !!pgColumn.generatedAlwaysAs) {
             if (!!PGTable.CleanComment(pgColumn.column_comment)) {
                 text += "\t/** ";
@@ -832,14 +828,18 @@ var PGTable = /** @class */ (function () {
             text += '\t';
             text += pgColumn.column_name;
             text += ': ';
-            text += pgColumn.jsType();
+            text += (_b = (_a = enums.find(function (enumItem) { return enumItem.column_name === pgColumn.column_name; })) === null || _a === void 0 ? void 0 : _a.enum_name) !== null && _b !== void 0 ? _b : pgColumn.jsType();
             if (pgColumn.array_dimensions.length > 0) {
                 text += "[" + pgColumn.array_dimensions.map(function () { return ''; }).join('],[') + "]";
             }
-            if (intelliwaketsfoundation.IsOn((_a = pgColumn.is_nullable) !== null && _a !== void 0 ? _a : 'YES')) {
+            if (intelliwaketsfoundation.IsOn((_c = pgColumn.is_nullable) !== null && _c !== void 0 ? _c : 'YES')) {
                 text += ' | null';
             }
             text += TS_EOL;
+        };
+        for (var _k = 0, _l = this.columns; _k < _l.length; _k++) {
+            var pgColumn = _l[_k];
+            _loop_1(pgColumn);
         }
         text += '}' + TS_EOL;
         text += TS_EOL;
@@ -848,8 +848,8 @@ var PGTable = /** @class */ (function () {
         if (this.inherits.length > 0) {
             text += "\t...initial_" + this.inherits.join("," + TS_EOL + "\t...initial_") + "," + TS_EOL;
         }
-        for (var _l = 0, _m = this.columns; _l < _m.length; _l++) {
-            var pgColumn = _m[_l];
+        for (var _m = 0, _o = this.columns; _m < _o.length; _m++) {
+            var pgColumn = _o[_m];
             if (addComma) {
                 text += ',' + TS_EOL;
             }
@@ -887,7 +887,7 @@ var PGTable = /** @class */ (function () {
                         }
                         else if (typeof pgColumn.udt_name !== 'string') {
                             text +=
-                                '\'' + ((_c = (_b = pgColumn.column_default) !== null && _b !== void 0 ? _b : pgColumn.udt_name.defaultValue) !== null && _c !== void 0 ? _c : '') + '\' as ' + pgColumn.jsType();
+                                '\'' + ((_e = (_d = pgColumn.column_default) !== null && _d !== void 0 ? _d : pgColumn.udt_name.defaultValue) !== null && _e !== void 0 ? _e : '') + '\' as ' + pgColumn.jsType();
                         }
                         else if (!!pgColumn.column_default && pgColumn.column_default.toString().includes('::')) {
                             if (pgColumn.udt_name.startsWith('e_')) {
@@ -899,11 +899,11 @@ var PGTable = /** @class */ (function () {
                                 // text += PGEnum.TypeName(pgColumn.udt_name)
                             }
                             else {
-                                text += '\'' + ((_d = pgColumn.column_default) !== null && _d !== void 0 ? _d : '').toString().substring(1, ((_e = pgColumn.column_default) !== null && _e !== void 0 ? _e : '').toString().indexOf('::') - 1) + '\'';
+                                text += '\'' + ((_f = pgColumn.column_default) !== null && _f !== void 0 ? _f : '').toString().substring(1, ((_g = pgColumn.column_default) !== null && _g !== void 0 ? _g : '').toString().indexOf('::') - 1) + '\'';
                             }
                         }
                         else {
-                            text += '\'' + ((_f = pgColumn.column_default) !== null && _f !== void 0 ? _f : '') + '\'';
+                            text += '\'' + ((_h = pgColumn.column_default) !== null && _h !== void 0 ? _h : '') + '\'';
                         }
                     }
                     else if (intelliwaketsfoundation.IsOn(pgColumn.is_nullable)) {

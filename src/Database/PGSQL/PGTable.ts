@@ -171,14 +171,12 @@ export class PGTable {
 			}
 		}
 		
-		const enums = Array.from(
+		const enums: {column_name: string, enum_name: string}[] = Array.from(
 			new Set(
 				[...this.columns
-					.map((column) => (typeof column.udt_name !== 'string' ? column.udt_name.enumName : ''))
-					.filter((enumName) => !!enumName),
+					.map((column) => ({column_name: column.column_name, enum_name: (typeof column.udt_name !== 'string' ? column.udt_name.enumName : '')})),
 				 ...this.columns
-					 .map((column) => (typeof column.udt_name === 'string' && column.udt_name.startsWith('e_') ? PGEnum.TypeName(column.udt_name) : ''))
-					 .filter((enumName) => !!enumName),
+					 .map((column) => ({column_name: column.column_name, enum_name: (typeof column.udt_name === 'string' && column.udt_name.startsWith('e_') ? PGEnum.TypeName(column.udt_name) : '')})),
 					...this.columns
 						.map(column => {
 							const regExp = /{([^}]*)}/;
@@ -186,21 +184,22 @@ export class PGTable {
 							if (!!results) {
 								const items = results[1].split(':')
 								if ((items[0] ?? '').toLowerCase().trim() === 'enum') {
-									return (items[1] ?? '').trim()
+									return {column_name: column.column_name, enum_name: (items[1] ?? '').trim()}
 								}
 							}
-							return ''
+							return {column_name: column.column_name, enum_name: ''}
 						})
-						.filter(enumName => !!enumName)
 				 ]
+						.filter(enumName => !!enumName.enum_name)
 			)
 		)
 		
-		if (enums.length > 0) {
-			for (const enumItem of enums) {
+		enums.map(enumItem => enumItem.enum_name).reduce<string[]>((results, enumItem) => results.includes(enumItem) ? results : [...results, enumItem], [])
+			.forEach(enumItem => {
 				text += `import {${enumItem}} from "../Enums/${enumItem}"${TS_EOL}`
-			}
-			
+			})
+		
+		if (enums.length > 0) {
 			text += TS_EOL
 		}
 		
@@ -223,7 +222,7 @@ export class PGTable {
 			text += '\t'
 			text += pgColumn.column_name
 			text += ': '
-			text += pgColumn.jsType()
+			text += enums.find(enumItem => enumItem.column_name === pgColumn.column_name)?.enum_name ?? pgColumn.jsType()
 			if (pgColumn.array_dimensions.length > 0) {
 				text += `[${pgColumn.array_dimensions.map(() => '').join('],[')}]`
 			}
@@ -449,6 +448,7 @@ export class PGTable {
 			return comment
 		}
 		
+		// noinspection RegExpRedundantEscape
 		return comment.replace(/[\n\r]/g, ' ').replace(/\{(.+?)\}/g, "").trim()
 	}
 }
