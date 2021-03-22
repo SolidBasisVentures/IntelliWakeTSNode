@@ -28,6 +28,8 @@ export declare class PGColumn {
     static readonly TYPE_BIGINT = "bigint";
     static readonly TYPE_VARCHAR = "varchar";
     static readonly TYPE_TEXT = "text";
+    static readonly TYPE_JSON = "json";
+    static readonly TYPE_JSONB = "jsonb";
     static readonly TYPE_DATE = "date";
     static readonly TYPE_TIME = "time";
     static readonly TYPE_TIMETZ = "timetz";
@@ -42,6 +44,7 @@ export declare class PGColumn {
     floatType: () => boolean;
     integerFloatType: () => boolean;
     booleanType: () => boolean;
+    jsonType: () => boolean;
     generalStringType: () => boolean;
     dateType: () => boolean;
     blobType: () => boolean;

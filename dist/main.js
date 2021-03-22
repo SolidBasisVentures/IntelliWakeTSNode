@@ -236,6 +236,9 @@ var PGColumn = /** @class */ (function () {
             if (typeof _this.udt_name !== 'string') {
                 return _this.udt_name.enumName;
             }
+            else if (_this.jsonType()) {
+                return 'object';
+            }
             else if (_this.booleanType()) {
                 return 'boolean';
             }
@@ -266,6 +269,9 @@ var PGColumn = /** @class */ (function () {
         };
         this.booleanType = function () {
             return (typeof _this.udt_name === 'string') && [PGColumn.TYPE_BOOLEAN].includes(_this.udt_name.toLowerCase());
+        };
+        this.jsonType = function () {
+            return (typeof _this.udt_name === 'string') && [PGColumn.TYPE_JSON, PGColumn.TYPE_JSONB].includes(_this.udt_name.toLowerCase());
         };
         this.generalStringType = function () {
             return (typeof _this.udt_name !== 'string') || [PGColumn.TYPE_VARCHAR].includes(_this.udt_name.toLowerCase());
@@ -440,6 +446,8 @@ var PGColumn = /** @class */ (function () {
     PGColumn.TYPE_BIGINT = 'bigint';
     PGColumn.TYPE_VARCHAR = 'varchar';
     PGColumn.TYPE_TEXT = 'text';
+    PGColumn.TYPE_JSON = 'json';
+    PGColumn.TYPE_JSONB = 'jsonb';
     PGColumn.TYPE_DATE = 'date';
     PGColumn.TYPE_TIME = 'time';
     PGColumn.TYPE_TIMETZ = 'timetz';
@@ -457,6 +465,8 @@ var PGColumn = /** @class */ (function () {
         PGColumn.TYPE_BIGINT,
         PGColumn.TYPE_VARCHAR,
         PGColumn.TYPE_TEXT,
+        PGColumn.TYPE_JSON,
+        PGColumn.TYPE_JSONB,
         PGColumn.TYPE_DATE,
         PGColumn.TYPE_TIME,
         PGColumn.TYPE_TIMETZ,
@@ -885,7 +895,7 @@ var PGTable = /** @class */ (function () {
                         if (pgColumn.dateType()) {
                             text += '\'\'';
                         }
-                        else if (pgColumn.integerFloatType() || pgColumn.dateType()) {
+                        else if (pgColumn.integerFloatType() || pgColumn.dateType() || pgColumn.jsonType()) {
                             text += pgColumn.column_default;
                         }
                         else if (typeof pgColumn.udt_name !== 'string') {

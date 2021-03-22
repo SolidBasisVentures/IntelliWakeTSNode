@@ -270,7 +270,7 @@ export class PGTable {
 					) {
 						if (pgColumn.dateType()) {
 							text += '\'\''
-						} else if (pgColumn.integerFloatType() || pgColumn.dateType()) {
+						} else if (pgColumn.integerFloatType() || pgColumn.dateType() || pgColumn.jsonType()) {
 							text += pgColumn.column_default
 						} else if (typeof pgColumn.udt_name !== 'string') {
 							text +=
