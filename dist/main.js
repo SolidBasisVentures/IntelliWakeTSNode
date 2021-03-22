@@ -789,11 +789,11 @@ var PGTable = /** @class */ (function () {
         return text;
     };
     PGTable.prototype.tsText = function () {
-        var _a, _b, _c, _d, _e, _f, _g, _h, _j;
+        var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l;
         var text = this.tableHeaderText('Table Manager for');
         if (this.inherits.length > 0) {
-            for (var _i = 0, _k = this.inherits; _i < _k.length; _i++) {
-                var inherit = _k[_i];
+            for (var _i = 0, _m = this.inherits; _i < _m.length; _i++) {
+                var inherit = _m[_i];
                 text += "import {I" + inherit + ", initial_" + inherit + "} from \"./I" + inherit + "\"" + TS_EOL;
             }
         }
@@ -847,8 +847,8 @@ var PGTable = /** @class */ (function () {
             }
             text += TS_EOL;
         };
-        for (var _l = 0, _m = this.columns; _l < _m.length; _l++) {
-            var pgColumn = _m[_l];
+        for (var _o = 0, _p = this.columns; _o < _p.length; _o++) {
+            var pgColumn = _p[_o];
             _loop_1(pgColumn);
         }
         text += '}' + TS_EOL;
@@ -895,12 +895,15 @@ var PGTable = /** @class */ (function () {
                         if (pgColumn.dateType()) {
                             text += '\'\'';
                         }
-                        else if (pgColumn.integerFloatType() || pgColumn.dateType() || pgColumn.jsonType()) {
+                        else if (pgColumn.jsonType()) {
+                            text += ((_e = pgColumn.column_default) !== null && _e !== void 0 ? _e : '{}').toString().substring(1, ((_f = pgColumn.column_default) !== null && _f !== void 0 ? _f : '').toString().indexOf('::') - 1);
+                        }
+                        else if (pgColumn.integerFloatType() || pgColumn.dateType()) {
                             text += pgColumn.column_default;
                         }
                         else if (typeof pgColumn.udt_name !== 'string') {
                             text +=
-                                '\'' + ((_f = (_e = pgColumn.column_default) !== null && _e !== void 0 ? _e : pgColumn.udt_name.defaultValue) !== null && _f !== void 0 ? _f : '') + '\' as ' + pgColumn.jsType();
+                                '\'' + ((_h = (_g = pgColumn.column_default) !== null && _g !== void 0 ? _g : pgColumn.udt_name.defaultValue) !== null && _h !== void 0 ? _h : '') + '\' as ' + pgColumn.jsType();
                         }
                         else if (!!pgColumn.column_default && pgColumn.column_default.toString().includes('::')) {
                             if (pgColumn.udt_name.startsWith('e_')) {
@@ -912,11 +915,11 @@ var PGTable = /** @class */ (function () {
                                 // text += PGEnum.TypeName(pgColumn.udt_name)
                             }
                             else {
-                                text += '\'' + ((_g = pgColumn.column_default) !== null && _g !== void 0 ? _g : '').toString().substring(1, ((_h = pgColumn.column_default) !== null && _h !== void 0 ? _h : '').toString().indexOf('::') - 1) + '\'';
+                                text += '\'' + ((_j = pgColumn.column_default) !== null && _j !== void 0 ? _j : '').toString().substring(1, ((_k = pgColumn.column_default) !== null && _k !== void 0 ? _k : '').toString().indexOf('::') - 1) + '\'';
                             }
                         }
                         else {
-                            text += '\'' + ((_j = pgColumn.column_default) !== null && _j !== void 0 ? _j : '') + '\'';
+                            text += '\'' + ((_l = pgColumn.column_default) !== null && _l !== void 0 ? _l : '') + '\'';
                         }
                     }
                     else if (intelliwaketsfoundation.IsOn(pgColumn.is_nullable)) {
@@ -943,8 +946,8 @@ var PGTable = /** @class */ (function () {
             }
             addComma = true;
         };
-        for (var _o = 0, _p = this.columns; _o < _p.length; _o++) {
-            var pgColumn = _p[_o];
+        for (var _q = 0, _r = this.columns; _q < _r.length; _q++) {
+            var pgColumn = _r[_q];
             _loop_2(pgColumn);
         }
         text += TS_EOL + '}' + TS_EOL; // Removed semi
