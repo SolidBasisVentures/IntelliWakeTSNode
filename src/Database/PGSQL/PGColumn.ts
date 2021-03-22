@@ -35,6 +35,9 @@ export class PGColumn {
 	static readonly TYPE_VARCHAR = 'varchar'
 	static readonly TYPE_TEXT = 'text'
 	
+	static readonly TYPE_JSON = 'json'
+	static readonly TYPE_JSONB = 'jsonb'
+	
 	static readonly TYPE_DATE = 'date'
 	static readonly TYPE_TIME = 'time'
 	static readonly TYPE_TIMETZ = 'timetz'
@@ -55,6 +58,8 @@ export class PGColumn {
 		PGColumn.TYPE_BIGINT,
 		PGColumn.TYPE_VARCHAR,
 		PGColumn.TYPE_TEXT,
+		PGColumn.TYPE_JSON,
+		PGColumn.TYPE_JSONB,
 		PGColumn.TYPE_DATE,
 		PGColumn.TYPE_TIME,
 		PGColumn.TYPE_TIMETZ,
@@ -66,6 +71,8 @@ export class PGColumn {
 	public jsType = (): string => {
 		if (typeof this.udt_name !== 'string') {
 			return this.udt_name.enumName
+		} else if (this.jsonType()) {
+			return 'object'
 		} else if (this.booleanType()) {
 			return 'boolean'
 		} else if (this.integerFloatType()) {
@@ -97,6 +104,10 @@ export class PGColumn {
 	
 	public booleanType = (): boolean => {
 		return (typeof this.udt_name === 'string') && [PGColumn.TYPE_BOOLEAN].includes(this.udt_name.toLowerCase())
+	}
+	
+	public jsonType = (): boolean => {
+		return (typeof this.udt_name === 'string') && [PGColumn.TYPE_JSON, PGColumn.TYPE_JSONB].includes(this.udt_name.toLowerCase())
 	}
 	
 	public generalStringType = (): boolean => {
