@@ -9,7 +9,9 @@ export class PGColumn {
 	public udt_name: string | PGEnum = ''
 	public character_maximum_length: number | null = null
 	public character_octet_length: number | null = null
+	/** Total number of digits */
 	public numeric_precision: number | null = null
+	/** Number of digits after the decimal point */
 	public numeric_scale: number | null = null
 	public datetime_precision: number | null = null
 	public is_identity: 'YES' | 'NO' = 'NO'
