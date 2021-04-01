@@ -356,6 +356,9 @@ var PGColumn = /** @class */ (function () {
             if (!intelliwaketsfoundation.IsOn(this.is_nullable)) {
                 ddl += 'NOT NULL ';
             }
+            if (typeof this.column_default === 'string' && this.column_default.toLowerCase().includes('null')) {
+                this.column_default = null;
+            }
             if ((this.column_default !== undefined && this.column_default !== null) || this.is_identity || this.isAutoIncrement) {
                 if (!(this.dateType() && (!this.column_default || ((_c = this.column_default) !== null && _c !== void 0 ? _c : '').toString().toUpperCase().includes('NULL')))) {
                     if (this.array_dimensions.length > 0) {
