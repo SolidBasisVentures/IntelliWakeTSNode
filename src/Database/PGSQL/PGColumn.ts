@@ -1,7 +1,29 @@
 import {PGEnum} from './PGEnum'
 import {IsOn} from '@solidbasisventures/intelliwaketsfoundation'
 
-export class PGColumn {
+export interface IPGColumn {
+	column_name: string
+	ordinal_position: number
+	column_default: string | number | boolean | null | undefined
+	is_nullable: 'YES' | 'NO'
+	udt_name: string | PGEnum
+	character_maximum_length: number | null
+	character_octet_length: number | null
+	/** Total number of digits */
+	numeric_precision: number | null
+	/** Number of digits after the decimal point */
+	numeric_scale: number | null
+	datetime_precision: number | null
+	is_identity: 'YES' | 'NO'
+	is_self_referencing: 'YES' | 'NO'
+	identity_generation: 'BY DEFAULT' | null
+	array_dimensions: (number | null)[]
+	check: string | null
+	checkStringValues: string[]
+	generatedAlwaysAs: string | null
+}
+
+export class PGColumn implements IPGColumn {
 	public column_name = ''
 	public ordinal_position = 0
 	public column_default: string | number | boolean | null | undefined = null
@@ -9,9 +31,7 @@ export class PGColumn {
 	public udt_name: string | PGEnum = ''
 	public character_maximum_length: number | null = null
 	public character_octet_length: number | null = null
-	/** Total number of digits */
 	public numeric_precision: number | null = null
-	/** Number of digits after the decimal point */
 	public numeric_scale: number | null = null
 	public datetime_precision: number | null = null
 	public is_identity: 'YES' | 'NO' = 'NO'
@@ -72,7 +92,7 @@ export class PGColumn {
 	
 	public jsType = (): string => {
 		if (typeof this.udt_name !== 'string') {
-			return this.udt_name.enumName
+			return (this.udt_name as any).enumName
 		} else if (this.jsonType()) {
 			return 'object'
 		} else if (this.booleanType()) {
@@ -136,13 +156,13 @@ export class PGColumn {
 		)
 	}
 	
-	constructor(instanceData?: Partial<PGColumn>) {
+	constructor(instanceData?: Partial<IPGColumn>) {
 		if (instanceData) {
 			this.deserialize(instanceData)
 		}
 	}
 	
-	private deserialize(instanceData: Partial<PGColumn>) {
+	private deserialize(instanceData: Partial<IPGColumn>) {
 		const keys = Object.keys(this)
 		
 		for (const key of keys) {

@@ -1,5 +1,26 @@
 import { PGEnum } from './PGEnum';
-export declare class PGColumn {
+export interface IPGColumn {
+    column_name: string;
+    ordinal_position: number;
+    column_default: string | number | boolean | null | undefined;
+    is_nullable: 'YES' | 'NO';
+    udt_name: string | PGEnum;
+    character_maximum_length: number | null;
+    character_octet_length: number | null;
+    /** Total number of digits */
+    numeric_precision: number | null;
+    /** Number of digits after the decimal point */
+    numeric_scale: number | null;
+    datetime_precision: number | null;
+    is_identity: 'YES' | 'NO';
+    is_self_referencing: 'YES' | 'NO';
+    identity_generation: 'BY DEFAULT' | null;
+    array_dimensions: (number | null)[];
+    check: string | null;
+    checkStringValues: string[];
+    generatedAlwaysAs: string | null;
+}
+export declare class PGColumn implements IPGColumn {
     column_name: string;
     ordinal_position: number;
     column_default: string | number | boolean | null | undefined;
@@ -49,7 +70,7 @@ export declare class PGColumn {
     dateType: () => boolean;
     blobType: () => boolean;
     otherType: () => boolean;
-    constructor(instanceData?: Partial<PGColumn>);
+    constructor(instanceData?: Partial<IPGColumn>);
     private deserialize;
     clean(): void;
     ddlDefinition(): string;
