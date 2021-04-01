@@ -220,6 +220,10 @@ export class PGColumn implements IPGColumn {
 				ddl += 'NOT NULL '
 			}
 			
+			if (typeof this.column_default === 'string' && this.column_default.toLowerCase().includes('null')) {
+				this.column_default = null
+			}
+			
 			if ((this.column_default !== undefined && this.column_default !== null) || this.is_identity || this.isAutoIncrement) {
 				if (!(this.dateType() && (!this.column_default || (this.column_default ?? '').toString().toUpperCase().includes('NULL')))) {
 					if (this.array_dimensions.length > 0) {
