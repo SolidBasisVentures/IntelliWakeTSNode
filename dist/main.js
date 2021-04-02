@@ -877,8 +877,10 @@ var PGTable = /** @class */ (function () {
             text += pgColumn.column_name;
             text += ': ';
             var enumDefault = (_d = enums.find(function (enumItem) { return enumItem.column_name === pgColumn.column_name; })) === null || _d === void 0 ? void 0 : _d.default_value;
-            console.log(enums);
-            console.log(enumDefault);
+            if (enums.length > 0) {
+                console.log(enums);
+                console.log(enumDefault);
+            }
             if (!!enumDefault) {
                 text += enumDefault;
             }
