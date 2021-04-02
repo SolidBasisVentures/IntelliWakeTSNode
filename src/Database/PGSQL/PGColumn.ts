@@ -21,6 +21,11 @@ export interface IPGColumn {
 	check: string | null
 	checkStringValues: string[]
 	generatedAlwaysAs: string | null
+	/** Comment on column, except for within {}'s
+	 * {} can contain comma separated values
+	 * {enum: EValue} */
+	column_comment: string
+	isAutoIncrement: boolean
 }
 
 export class PGColumn implements IPGColumn {
