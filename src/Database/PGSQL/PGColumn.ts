@@ -36,7 +36,9 @@ export class PGColumn implements IPGColumn {
 	public udt_name: string | PGEnum = ''
 	public character_maximum_length: number | null = null
 	public character_octet_length: number | null = null
+	/** Total number of digits */
 	public numeric_precision: number | null = null
+	/** Number of digits after the decimal point */
 	public numeric_scale: number | null = null
 	public datetime_precision: number | null = null
 	public is_identity: 'YES' | 'NO' = 'NO'
@@ -47,6 +49,9 @@ export class PGColumn implements IPGColumn {
 	public checkStringValues: string[] = []
 	public generatedAlwaysAs: string | null = null
 	
+	/** Comment on column, except for within {}'s
+	 * {} can contain comma separated values
+	 * {enum: EDeclaration: default_value} */
 	public column_comment: string = ''
 	public isAutoIncrement = true
 	

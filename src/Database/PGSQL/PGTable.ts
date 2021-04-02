@@ -253,10 +253,6 @@ export class PGTable {
 			text += pgColumn.column_name
 			text += ': '
 			const enumDefault = enums.find(enumItem => enumItem.column_name === pgColumn.column_name)?.default_value
-			if (enums.length > 0) {
-				console.log(enums)
-				console.log(enumDefault)
-			}
 			if (!!enumDefault) {
 				text += enumDefault
 			} else if (pgColumn.array_dimensions.length > 0) {
