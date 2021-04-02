@@ -1050,6 +1050,10 @@ var PGTable = /** @class */ (function () {
         if (createForeignKeys) {
             ddl += this.ddlCreateForeignKeysText();
         }
+        for (var _c = 0, _d = this.columns.filter(function (col) { return !!col.column_comment; }); _c < _d.length; _c++) {
+            var pgColumn = _d[_c];
+            ddl += TS_EOL + ("COMMENT ON COLUMN " + this.name + "." + pgColumn.column_name + " IS '" + PGTable.CleanComment(pgColumn.column_comment) + "';");
+        }
         return ddl;
     };
     PGTable.prototype.ddlCreateIndexes = function () {

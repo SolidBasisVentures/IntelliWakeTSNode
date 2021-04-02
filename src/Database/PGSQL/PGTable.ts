@@ -426,7 +426,7 @@ export class PGTable {
 		}
 		
 		for (const pgColumn of this.columns.filter(col => !!col.column_comment)) {
-			ddl += TS_EOL + `COMMENT ON COLUMN ${this.name}.${pgColumn.udt_name} IS '${PGTable.CleanComment(pgColumn.column_comment)}';`
+			ddl += TS_EOL + `COMMENT ON COLUMN ${this.name}.${pgColumn.column_name} IS '${PGTable.CleanComment(pgColumn.column_comment)}';`
 		}
 		
 		return ddl
