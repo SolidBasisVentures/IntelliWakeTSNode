@@ -807,10 +807,18 @@ var PGTable = /** @class */ (function () {
             var _a, _b, _c;
             var regExp = /{([^}]*)}/;
             var results = regExp.exec(column.column_comment);
-            if (!!results) {
-                var items = results[1].split(':');
-                if (((_a = items[0]) !== null && _a !== void 0 ? _a : '').toLowerCase().trim() === 'enum') {
-                    return { column_name: column.column_name, enum_name: ((_b = items[1]) !== null && _b !== void 0 ? _b : '').trim(), default_value: ((_c = items[2]) !== null && _c !== void 0 ? _c : '').trim() };
+            if (!!results && !!results[1]) {
+                var commaItems = results[1].split(',');
+                for (var _i = 0, commaItems_1 = commaItems; _i < commaItems_1.length; _i++) {
+                    var commaItem = commaItems_1[_i];
+                    var items = commaItem.split(':');
+                    if (((_a = items[0]) !== null && _a !== void 0 ? _a : '').toLowerCase().trim() === 'enum') {
+                        return {
+                            column_name: column.column_name,
+                            enum_name: ((_b = items[1]) !== null && _b !== void 0 ? _b : '').trim(),
+                            default_value: ((_c = items[2]) !== null && _c !== void 0 ? _c : '').trim()
+                        };
+                    }
                 }
             }
             return { column_name: column.column_name, enum_name: '' };
@@ -869,6 +877,8 @@ var PGTable = /** @class */ (function () {
             text += pgColumn.column_name;
             text += ': ';
             var enumDefault = (_d = enums.find(function (enumItem) { return enumItem.column_name === pgColumn.column_name; })) === null || _d === void 0 ? void 0 : _d.default_value;
+            console.log(enums);
+            console.log(enumDefault);
             if (!!enumDefault) {
                 text += enumDefault;
             }

@@ -181,10 +181,17 @@ export class PGTable {
 						.map(column => {
 							const regExp = /{([^}]*)}/;
 							const results = regExp.exec(column.column_comment)
-							if (!!results) {
-								const items = results[1].split(':')
-								if ((items[0] ?? '').toLowerCase().trim() === 'enum') {
-									return {column_name: column.column_name, enum_name: (items[1] ?? '').trim(), default_value: (items[2] ?? '').trim()}
+							if (!!results && !!results[1]) {
+								const commaItems = results[1].split(',')
+								for (const commaItem of commaItems) {
+									const items = commaItem.split(':')
+									if ((items[0] ?? '').toLowerCase().trim() === 'enum') {
+										return {
+											column_name: column.column_name,
+											enum_name: (items[1] ?? '').trim(),
+											default_value: (items[2] ?? '').trim()
+										}
+									}
 								}
 							}
 							return {column_name: column.column_name, enum_name: ''}
