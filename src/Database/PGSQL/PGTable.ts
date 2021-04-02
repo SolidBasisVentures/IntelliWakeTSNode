@@ -426,7 +426,7 @@ export class PGTable {
 		}
 		
 		for (const pgColumn of this.columns.filter(col => !!col.column_comment)) {
-			ddl += TS_EOL + `COMMENT ON COLUMN ${this.name}.${pgColumn.column_name} IS '${PGTable.CleanComment(pgColumn.column_comment)}';`
+			ddl += TS_EOL + `COMMENT ON COLUMN ${this.name}.${pgColumn.column_name} IS '${PGTable.CleanComment(pgColumn.column_comment, false)}';`
 		}
 		
 		return ddl
@@ -452,12 +452,12 @@ export class PGTable {
 		return ddl
 	}
 	
-	public static CleanComment(comment: string): string {
+	public static CleanComment(comment: string, stripBrackets = true): string {
 		if (!comment) {
 			return comment
 		}
 		
 		// noinspection RegExpRedundantEscape
-		return comment.replace(/[\n\r]/g, ' ').replace(/\{(.+?)\}/g, "").trim()
+		return stripBrackets ? comment.replace(/[\n\r]/g, ' ').replace(/\{(.+?)\}/g, "").trim() : comment.replace(/[\n\r]/g, ' ').trim()
 	}
 }

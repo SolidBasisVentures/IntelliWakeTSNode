@@ -1052,7 +1052,7 @@ var PGTable = /** @class */ (function () {
         }
         for (var _c = 0, _d = this.columns.filter(function (col) { return !!col.column_comment; }); _c < _d.length; _c++) {
             var pgColumn = _d[_c];
-            ddl += TS_EOL + ("COMMENT ON COLUMN " + this.name + "." + pgColumn.column_name + " IS '" + PGTable.CleanComment(pgColumn.column_comment) + "';");
+            ddl += TS_EOL + ("COMMENT ON COLUMN " + this.name + "." + pgColumn.column_name + " IS '" + PGTable.CleanComment(pgColumn.column_comment, false) + "';");
         }
         return ddl;
     };
@@ -1072,12 +1072,13 @@ var PGTable = /** @class */ (function () {
         }
         return ddl;
     };
-    PGTable.CleanComment = function (comment) {
+    PGTable.CleanComment = function (comment, stripBrackets) {
+        if (stripBrackets === void 0) { stripBrackets = true; }
         if (!comment) {
             return comment;
         }
         // noinspection RegExpRedundantEscape
-        return comment.replace(/[\n\r]/g, ' ').replace(/\{(.+?)\}/g, "").trim();
+        return stripBrackets ? comment.replace(/[\n\r]/g, ' ').replace(/\{(.+?)\}/g, "").trim() : comment.replace(/[\n\r]/g, ' ').trim();
     };
     return PGTable;
 }());
