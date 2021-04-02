@@ -29,5 +29,5 @@ export declare class PGTable {
     ddlCreateTableText(createForeignKeys: boolean, createIndexes: boolean, dropFirst?: boolean): string;
     ddlCreateIndexes(): string;
     ddlCreateForeignKeysText(): string;
-    static CleanComment(comment: string): string;
+    static CleanComment(comment: string, stripBrackets?: boolean): string;
 }
