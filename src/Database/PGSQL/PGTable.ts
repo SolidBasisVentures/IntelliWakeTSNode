@@ -189,7 +189,7 @@ export class PGTable {
 										return {
 											column_name: column.column_name,
 											enum_name: ((items[1] ?? '').split('.')[0] ?? '').trim(),
-											default_value: (items[2] ?? ((items[1] ?? '').split('.')[1] ?? '')).trim()
+											default_value: ((items[1] ?? '').split('.')[0] ?? '').trim() + '.' + (items[2] ?? ((items[1] ?? '').split('.')[1] ?? '')).trim()
 										}
 									}
 								}
