@@ -220,7 +220,9 @@ var PGColumn = /** @class */ (function () {
         this.udt_name = '';
         this.character_maximum_length = null;
         this.character_octet_length = null;
+        /** Total number of digits */
         this.numeric_precision = null;
+        /** Number of digits after the decimal point */
         this.numeric_scale = null;
         this.datetime_precision = null;
         this.is_identity = 'NO';
@@ -230,6 +232,9 @@ var PGColumn = /** @class */ (function () {
         this.check = null;
         this.checkStringValues = [];
         this.generatedAlwaysAs = null;
+        /** Comment on column, except for within {}'s
+         * {} can contain comma separated values
+         * {enum: EDeclaration: default_value} or {enum: EDeclaration.default_value} or {enum: EDeclaration} */
         this.column_comment = '';
         this.isAutoIncrement = true;
         this.jsType = function () {
@@ -804,7 +809,7 @@ var PGTable = /** @class */ (function () {
             .map(function (column) { return ({ column_name: column.column_name, enum_name: (typeof column.udt_name !== 'string' ? column.udt_name.enumName : '') }); }), this.columns
             .map(function (column) { return ({ column_name: column.column_name, enum_name: (typeof column.udt_name === 'string' && column.udt_name.startsWith('e_') ? PGEnum.TypeName(column.udt_name) : '') }); }), this.columns
             .map(function (column) {
-            var _a, _b, _c;
+            var _a, _b, _c, _d, _e, _f;
             var regExp = /{([^}]*)}/;
             var results = regExp.exec(column.column_comment);
             if (!!results && !!results[1]) {
@@ -815,8 +820,8 @@ var PGTable = /** @class */ (function () {
                     if (((_a = items[0]) !== null && _a !== void 0 ? _a : '').toLowerCase().trim() === 'enum') {
                         return {
                             column_name: column.column_name,
-                            enum_name: ((_b = items[1]) !== null && _b !== void 0 ? _b : '').trim(),
-                            default_value: ((_c = items[2]) !== null && _c !== void 0 ? _c : '').trim()
+                            enum_name: ((_c = ((_b = items[1]) !== null && _b !== void 0 ? _b : '').split('.')[0]) !== null && _c !== void 0 ? _c : '').trim(),
+                            default_value: ((_d = items[2]) !== null && _d !== void 0 ? _d : ((_f = ((_e = items[1]) !== null && _e !== void 0 ? _e : '').split('.')[1]) !== null && _f !== void 0 ? _f : '')).trim()
                         };
                     }
                 }
@@ -877,10 +882,6 @@ var PGTable = /** @class */ (function () {
             text += pgColumn.column_name;
             text += ': ';
             var enumDefault = (_d = enums.find(function (enumItem) { return enumItem.column_name === pgColumn.column_name; })) === null || _d === void 0 ? void 0 : _d.default_value;
-            if (enums.length > 0) {
-                console.log(enums);
-                console.log(enumDefault);
-            }
             if (!!enumDefault) {
                 text += enumDefault;
             }

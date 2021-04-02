@@ -21,7 +21,7 @@ export interface IPGColumn {
     generatedAlwaysAs: string | null;
     /** Comment on column, except for within {}'s
      * {} can contain comma separated values
-     * {enum: EDeclaration: default_value} */
+     * {enum: EDeclaration: default_value} or {enum: EDeclaration.default_value} or {enum: EDeclaration} */
     column_comment: string;
     isAutoIncrement: boolean;
 }
@@ -33,7 +33,9 @@ export declare class PGColumn implements IPGColumn {
     udt_name: string | PGEnum;
     character_maximum_length: number | null;
     character_octet_length: number | null;
+    /** Total number of digits */
     numeric_precision: number | null;
+    /** Number of digits after the decimal point */
     numeric_scale: number | null;
     datetime_precision: number | null;
     is_identity: 'YES' | 'NO';
@@ -43,6 +45,9 @@ export declare class PGColumn implements IPGColumn {
     check: string | null;
     checkStringValues: string[];
     generatedAlwaysAs: string | null;
+    /** Comment on column, except for within {}'s
+     * {} can contain comma separated values
+     * {enum: EDeclaration: default_value} or {enum: EDeclaration.default_value} or {enum: EDeclaration} */
     column_comment: string;
     isAutoIncrement: boolean;
     static readonly TYPE_BOOLEAN = "bool";

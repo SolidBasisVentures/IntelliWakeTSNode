@@ -23,7 +23,7 @@ export interface IPGColumn {
 	generatedAlwaysAs: string | null
 	/** Comment on column, except for within {}'s
 	 * {} can contain comma separated values
-	 * {enum: EDeclaration: default_value} */
+	 * {enum: EDeclaration: default_value} or {enum: EDeclaration.default_value} or {enum: EDeclaration} */
 	column_comment: string
 	isAutoIncrement: boolean
 }
@@ -51,7 +51,7 @@ export class PGColumn implements IPGColumn {
 	
 	/** Comment on column, except for within {}'s
 	 * {} can contain comma separated values
-	 * {enum: EDeclaration: default_value} */
+	 * {enum: EDeclaration: default_value} or {enum: EDeclaration.default_value} or {enum: EDeclaration} */
 	public column_comment: string = ''
 	public isAutoIncrement = true
 	
