@@ -809,7 +809,7 @@ var PGTable = /** @class */ (function () {
             .map(function (column) { return ({ column_name: column.column_name, enum_name: (typeof column.udt_name !== 'string' ? column.udt_name.enumName : '') }); }), this.columns
             .map(function (column) { return ({ column_name: column.column_name, enum_name: (typeof column.udt_name === 'string' && column.udt_name.startsWith('e_') ? PGEnum.TypeName(column.udt_name) : '') }); }), this.columns
             .map(function (column) {
-            var _a, _b, _c, _d, _e, _f, _g, _h;
+            var _a, _b, _c, _d, _e, _f, _g, _h, _j;
             var regExp = /{([^}]*)}/;
             var results = regExp.exec(column.column_comment);
             if (!!results && !!results[1]) {
@@ -821,7 +821,7 @@ var PGTable = /** @class */ (function () {
                         return {
                             column_name: column.column_name,
                             enum_name: ((_c = ((_b = items[1]) !== null && _b !== void 0 ? _b : '').split('.')[0]) !== null && _c !== void 0 ? _c : '').trim(),
-                            default_value: ((_e = ((_d = items[1]) !== null && _d !== void 0 ? _d : '').split('.')[0]) !== null && _e !== void 0 ? _e : '').trim() + '.' + ((_f = items[2]) !== null && _f !== void 0 ? _f : ((_h = ((_g = items[1]) !== null && _g !== void 0 ? _g : '').split('.')[1]) !== null && _h !== void 0 ? _h : '')).trim()
+                            default_value: ((_d = items[2]) !== null && _d !== void 0 ? _d : '').includes('.') ? items[2] : ((_f = ((_e = items[1]) !== null && _e !== void 0 ? _e : '').split('.')[0]) !== null && _f !== void 0 ? _f : '').trim() + '.' + ((_g = items[2]) !== null && _g !== void 0 ? _g : ((_j = ((_h = items[1]) !== null && _h !== void 0 ? _h : '').split('.')[1]) !== null && _j !== void 0 ? _j : '')).trim()
                         };
                     }
                 }
