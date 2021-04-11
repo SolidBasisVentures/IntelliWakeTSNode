@@ -105,7 +105,7 @@ export class PGTable {
 		if (!!column) {
 			this.removeForeignKeysByColumn(columnName)
 			
-			this.columns.filter((column) => column.column_name !== columnName)
+			this.columns = this.columns.filter((column) => column.column_name !== columnName)
 			
 			this.reOrderColumns()
 		}
