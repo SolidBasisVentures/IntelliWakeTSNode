@@ -104,6 +104,7 @@ export class PGTable {
 		
 		if (!!column) {
 			this.removeForeignKeysByColumn(columnName)
+			this.removeIndexsByColumn(columnName)
 			
 			this.columns = this.columns.filter((column) => column.column_name !== columnName)
 			

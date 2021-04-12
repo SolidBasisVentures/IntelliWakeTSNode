@@ -752,7 +752,8 @@ var PGTable = /** @class */ (function () {
         var column = this.getColumn(columnName);
         if (!!column) {
             this.removeForeignKeysByColumn(columnName);
-            this.columns.filter(function (column) { return column.column_name !== columnName; });
+            this.removeIndexsByColumn(columnName);
+            this.columns = this.columns.filter(function (column) { return column.column_name !== columnName; });
             this.reOrderColumns();
         }
     };
