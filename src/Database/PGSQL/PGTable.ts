@@ -87,8 +87,38 @@ export class PGTable {
 		this.foreignKeys = this.foreignKeys.filter((foreignKey) => !foreignKey.columnNames.includes(columnName))
 	}
 	
+	public renameForeignKeysByColumn(fromName: string, toName: string, pgTables?: PGTable[]) {
+		const thisObject = this
+		
+		this.foreignKeys.forEach(fk => {
+			if (fk.columnNames.includes(fromName)) {
+				fk.columnNames = [...fk.columnNames.filter(cN => cN !== fromName), toName]
+			}
+		})
+		
+		if (pgTables) {
+			pgTables.filter(pgTable => pgTable.name !== thisObject.name).forEach(pgTable => {
+				pgTable.foreignKeys.forEach(fk => {
+					if (fk.primaryTable === thisObject.name) {
+						if (fk.primaryColumns.includes(fromName)) {
+							fk.primaryColumns = [...fk.primaryColumns.filter(pC => pC !== fromName), toName]
+						}
+					}
+				})
+			})
+		}
+	}
+	
 	public removeIndexsByColumn(columnName: string) {
 		this.indexes = this.indexes.filter((index) => !index.columns.includes(columnName))
+	}
+	
+	public renameIndexsByColumn(fromName: string, toName: string) {
+		this.indexes.forEach(idx => {
+			if (idx.columns.includes(fromName)) {
+				idx.columns = [...idx.columns.filter(cN => cN !== fromName), toName]
+			}
+		})
 	}
 	
 	public addForeignKey(pgForeignKey: PGForeignKey) {
@@ -109,6 +139,17 @@ export class PGTable {
 			this.columns = this.columns.filter((column) => column.column_name !== columnName)
 			
 			this.reOrderColumns()
+		}
+	}
+	
+	public renameColumn(fromName: string, toName: string, pgTables?: PGTable[]) {
+		const column = this.getColumn(fromName)
+		
+		if (!!column) {
+			column.column_name = toName
+			
+			this.renameForeignKeysByColumn(fromName, toName, pgTables)
+			this.renameIndexsByColumn(fromName, toName)
 		}
 	}
 	
@@ -174,13 +215,20 @@ export class PGTable {
 		
 		const enums: {column_name: string, enum_name: string, default_value?: string}[] = Array.from(
 			new Set(
-				[...this.columns
-					.map((column) => ({column_name: column.column_name, enum_name: (typeof column.udt_name !== 'string' ? column.udt_name.enumName : '')})),
-				 ...this.columns
-					 .map((column) => ({column_name: column.column_name, enum_name: (typeof column.udt_name === 'string' && column.udt_name.startsWith('e_') ? PGEnum.TypeName(column.udt_name) : '')})),
+				[
+					...this.columns
+						.map((column) => ({
+							column_name: column.column_name,
+							enum_name: (typeof column.udt_name !== 'string' ? column.udt_name.enumName : '')
+						})),
+					...this.columns
+						.map((column) => ({
+							column_name: column.column_name,
+							enum_name: (typeof column.udt_name === 'string' && column.udt_name.startsWith('e_') ? PGEnum.TypeName(column.udt_name) : '')
+						})),
 					...this.columns
 						.map(column => {
-							const regExp = /{([^}]*)}/;
+							const regExp = /{([^}]*)}/
 							const results = regExp.exec(column.column_comment)
 							if (!!results && !!results[1]) {
 								const commaItems = results[1].split(',')
@@ -197,8 +245,8 @@ export class PGTable {
 							}
 							return {column_name: column.column_name, enum_name: ''}
 						})
-				 ]
-						.filter(enumName => !!enumName.enum_name)
+				]
+					.filter(enumName => !!enumName.enum_name)
 			)
 		)
 		
@@ -391,7 +439,8 @@ export class PGTable {
 		if (dropFirst) {
 			ddl += `DROP TABLE IF EXISTS ${this.name} CASCADE;` + TS_EOL
 		}
-		ddl += `CREATE TABLE ${this.name} (` + TS_EOL
+		ddl += `CREATE TABLE ${this.name}
+    (` + TS_EOL
 		
 		let prevColumn: PGColumn | null = null
 		for (const pgColumn of this.columns) {
@@ -466,6 +515,6 @@ export class PGTable {
 		}
 		
 		// noinspection RegExpRedundantEscape
-		return stripBrackets ? comment.replace(/[\n\r]/g, ' ').replace(/\{(.+?)\}/g, "").trim() : comment.replace(/[\n\r]/g, ' ').trim()
+		return stripBrackets ? comment.replace(/[\n\r]/g, ' ').replace(/\{(.+?)\}/g, '').trim() : comment.replace(/[\n\r]/g, ' ').trim()
 	}
 }
