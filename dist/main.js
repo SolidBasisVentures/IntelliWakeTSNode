@@ -738,8 +738,34 @@ var PGTable = /** @class */ (function () {
     PGTable.prototype.removeForeignKeysByColumn = function (columnName) {
         this.foreignKeys = this.foreignKeys.filter(function (foreignKey) { return !foreignKey.columnNames.includes(columnName); });
     };
+    PGTable.prototype.renameForeignKeysByColumn = function (fromName, toName, pgTables) {
+        var thisObject = this;
+        this.foreignKeys.forEach(function (fk) {
+            if (fk.columnNames.includes(fromName)) {
+                fk.columnNames = __spreadArrays(fk.columnNames.filter(function (cN) { return cN !== fromName; }), [toName]);
+            }
+        });
+        if (pgTables) {
+            pgTables.filter(function (pgTable) { return pgTable.name !== thisObject.name; }).forEach(function (pgTable) {
+                pgTable.foreignKeys.forEach(function (fk) {
+                    if (fk.primaryTable === thisObject.name) {
+                        if (fk.primaryColumns.includes(fromName)) {
+                            fk.primaryColumns = __spreadArrays(fk.primaryColumns.filter(function (pC) { return pC !== fromName; }), [toName]);
+                        }
+                    }
+                });
+            });
+        }
+    };
     PGTable.prototype.removeIndexsByColumn = function (columnName) {
         this.indexes = this.indexes.filter(function (index) { return !index.columns.includes(columnName); });
+    };
+    PGTable.prototype.renameIndexsByColumn = function (fromName, toName) {
+        this.indexes.forEach(function (idx) {
+            if (idx.columns.includes(fromName)) {
+                idx.columns = __spreadArrays(idx.columns.filter(function (cN) { return cN !== fromName; }), [toName]);
+            }
+        });
     };
     PGTable.prototype.addForeignKey = function (pgForeignKey) {
         this.foreignKeys.push(pgForeignKey);
@@ -755,6 +781,14 @@ var PGTable = /** @class */ (function () {
             this.removeIndexsByColumn(columnName);
             this.columns = this.columns.filter(function (column) { return column.column_name !== columnName; });
             this.reOrderColumns();
+        }
+    };
+    PGTable.prototype.renameColumn = function (fromName, toName, pgTables) {
+        var column = this.getColumn(fromName);
+        if (!!column) {
+            column.column_name = toName;
+            this.renameForeignKeysByColumn(fromName, toName, pgTables);
+            this.renameIndexsByColumn(fromName, toName);
         }
     };
     PGTable.prototype.addColumn = function (pgColumn) {
@@ -807,8 +841,14 @@ var PGTable = /** @class */ (function () {
             }
         }
         var enums = Array.from(new Set(__spreadArrays(this.columns
-            .map(function (column) { return ({ column_name: column.column_name, enum_name: (typeof column.udt_name !== 'string' ? column.udt_name.enumName : '') }); }), this.columns
-            .map(function (column) { return ({ column_name: column.column_name, enum_name: (typeof column.udt_name === 'string' && column.udt_name.startsWith('e_') ? PGEnum.TypeName(column.udt_name) : '') }); }), this.columns
+            .map(function (column) { return ({
+            column_name: column.column_name,
+            enum_name: (typeof column.udt_name !== 'string' ? column.udt_name.enumName : '')
+        }); }), this.columns
+            .map(function (column) { return ({
+            column_name: column.column_name,
+            enum_name: (typeof column.udt_name === 'string' && column.udt_name.startsWith('e_') ? PGEnum.TypeName(column.udt_name) : '')
+        }); }), this.columns
             .map(function (column) {
             var _a, _b, _c, _d, _e, _f, _g, _h, _j;
             var regExp = /{([^}]*)}/;
@@ -884,6 +924,7 @@ var PGTable = /** @class */ (function () {
             text += ': ';
             var enumDefault = (_d = enums.find(function (enumItem) { return enumItem.column_name === pgColumn.column_name; })) === null || _d === void 0 ? void 0 : _d.default_value;
             if (!!enumDefault) {
+                console.log('HERE', enums.find(function (enumItem) { return enumItem.column_name === pgColumn.column_name; }));
                 text += enumDefault;
             }
             else if (pgColumn.array_dimensions.length > 0) {
@@ -1031,7 +1072,7 @@ var PGTable = /** @class */ (function () {
         if (dropFirst) {
             ddl += "DROP TABLE IF EXISTS " + this.name + " CASCADE;" + TS_EOL;
         }
-        ddl += "CREATE TABLE " + this.name + " (" + TS_EOL;
+        ddl += "CREATE TABLE " + this.name + "\n    (" + TS_EOL;
         var prevColumn = null;
         for (var _i = 0, _a = this.columns; _i < _a.length; _i++) {
             var pgColumn = _a[_i];
@@ -1092,7 +1133,7 @@ var PGTable = /** @class */ (function () {
             return comment;
         }
         // noinspection RegExpRedundantEscape
-        return stripBrackets ? comment.replace(/[\n\r]/g, ' ').replace(/\{(.+?)\}/g, "").trim() : comment.replace(/[\n\r]/g, ' ').trim();
+        return stripBrackets ? comment.replace(/[\n\r]/g, ' ').replace(/\{(.+?)\}/g, '').trim() : comment.replace(/[\n\r]/g, ' ').trim();
     };
     return PGTable;
 }());

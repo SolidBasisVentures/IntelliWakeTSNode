@@ -15,10 +15,13 @@ export declare class PGTable {
     indexesOfForeignKeyByColumn(columnName: string): number[];
     getForeignKeysByColumn(columnName: string): PGForeignKey[];
     removeForeignKeysByColumn(columnName: string): void;
+    renameForeignKeysByColumn(fromName: string, toName: string, pgTables?: PGTable[]): void;
     removeIndexsByColumn(columnName: string): void;
+    renameIndexsByColumn(fromName: string, toName: string): void;
     addForeignKey(pgForeignKey: PGForeignKey): void;
     getColumn(columnName: string): PGColumn | null;
     removeColumn(columnName: string): void;
+    renameColumn(fromName: string, toName: string, pgTables?: PGTable[]): void;
     addColumn(pgColumn: PGColumn): void;
     reOrderColumns(): void;
     addIndex(pgIndex: PGIndex): void;
