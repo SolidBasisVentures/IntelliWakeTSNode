@@ -924,6 +924,8 @@ var PGTable = /** @class */ (function () {
             text += ': ';
             var enumDefault = (_d = enums.find(function (enumItem) { return enumItem.column_name === pgColumn.column_name; })) === null || _d === void 0 ? void 0 : _d.default_value;
             if (!!enumDefault) {
+                console.log('HERE', enums.find(function (enumItem) { return enumItem.column_name === pgColumn.column_name; }));
+                console.log('THERE', pgColumn);
                 text += enumDefault;
             }
             else if (pgColumn.array_dimensions.length > 0) {

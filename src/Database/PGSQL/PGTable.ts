@@ -303,6 +303,8 @@ export class PGTable {
 			text += ': '
 			const enumDefault = enums.find(enumItem => enumItem.column_name === pgColumn.column_name)?.default_value
 			if (!!enumDefault) {
+				console.log('HERE', enums.find(enumItem => enumItem.column_name === pgColumn.column_name))
+				console.log('THERE', pgColumn)
 				text += enumDefault
 			} else if (pgColumn.array_dimensions.length > 0) {
 				if (IsOn(pgColumn.is_nullable)) {
