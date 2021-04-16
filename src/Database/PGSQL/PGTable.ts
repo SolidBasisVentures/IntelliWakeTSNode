@@ -238,7 +238,7 @@ export class PGTable {
 										return {
 											column_name: column.column_name,
 											enum_name: ((items[1] ?? '').split('.')[0] ?? '').trim(),
-											default_value: (items[2] ?? '').includes('.') ? items[2] : ((items[1] ?? '').split('.')[0] ?? '').trim() + '.' + (items[2] ?? ((items[1] ?? '').split('.')[1] ?? '')).trim()
+											default_value: column.column_name.includes('[]') ? '[]' : (items[2] ?? '').includes('.') ? items[2] : ((items[1] ?? '').split('.')[0] ?? '').trim() + '.' + (items[2] ?? ((items[1] ?? '').split('.')[1] ?? '')).trim()
 										}
 									}
 								}
@@ -303,7 +303,6 @@ export class PGTable {
 			text += ': '
 			const enumDefault = enums.find(enumItem => enumItem.column_name === pgColumn.column_name)?.default_value
 			if (!!enumDefault) {
-				console.log('HERE', enums.find(enumItem => enumItem.column_name === pgColumn.column_name))
 				text += enumDefault
 			} else if (pgColumn.array_dimensions.length > 0) {
 				if (IsOn(pgColumn.is_nullable)) {
