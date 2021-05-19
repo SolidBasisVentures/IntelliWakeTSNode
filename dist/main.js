@@ -3395,7 +3395,7 @@ var PGParams = /** @class */ (function () {
                                 .map(function (idx) { return idx.trim(); })
                                 .filter(function (idx) { return !!idx; }),
                             isUnique: indexDef.includes(' UNIQUE '),
-                            where: wherePos > 0 ? indexDef.substring(wherePos + 7).trim() : undefined
+                            where: wherePos > 0 ? indexDef.substring(wherePos + 7).trim() : null
                         });
                         pgTable.indexes.push(pgIndex);
                     }
