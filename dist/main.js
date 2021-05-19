@@ -619,6 +619,7 @@ var PGForeignKey = /** @class */ (function () {
 var PGIndex = /** @class */ (function () {
     function PGIndex(instanceData) {
         this.columns = [];
+        this.where = null;
         this.isUnique = false;
         this.concurrently = false;
         this.using = 'BTREE';
@@ -3387,17 +3388,13 @@ var PGParams = /** @class */ (function () {
                         index = indexes_1[_b];
                         indexDef = index.indexdef;
                         wherePos = indexDef.toUpperCase().indexOf(' WHERE ');
-                        if (wherePos > 0) {
-                            console.log('index', indexDef);
-                            console.log('WP', wherePos);
-                        }
                         pgIndex = new PGIndex({
                             columns: indexDef
-                                .substring(indexDef.indexOf('(') + 1, wherePos > 0 ? wherePos : indexDef.length - 1)
+                                .substring(indexDef.indexOf('(') + 1, wherePos > 0 ? wherePos - 1 : indexDef.length - 1)
                                 .split(',')
                                 .map(function (idx) { return idx.trim(); })
                                 .filter(function (idx) { return !!idx; }),
-                            isUnique: index.indexdef.includes(' UNIQUE '),
+                            isUnique: indexDef.includes(' UNIQUE '),
                             where: wherePos > 0 ? indexDef.substring(wherePos + 7).trim() : undefined
                         });
                         pgTable.indexes.push(pgIndex);
