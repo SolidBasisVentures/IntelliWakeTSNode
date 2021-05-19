@@ -370,7 +370,7 @@ export namespace PGSQL {
 		
 		for (const table of tables) {
 			if (exceptions.includes(table)) {
-				await Execute(connection, `TRUNCATE TABLE ${table}`, undefined)
+				await Execute(connection, `TRUNCATE TABLE ${table} RESTART IDENTITY`, undefined)
 			}
 		}
 		
@@ -379,7 +379,7 @@ export namespace PGSQL {
 	
 	export const TruncateTables = async (connection: TConnection, tables: string[]) => {
 		for (const table of tables) {
-			await Execute(connection, `TRUNCATE TABLE ${table}`)
+			await Execute(connection, `TRUNCATE TABLE ${table} RESTART IDENTITY`)
 		}
 	}
 	

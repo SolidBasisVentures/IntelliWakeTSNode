@@ -3064,7 +3064,7 @@ var PGParams = /** @class */ (function () {
                         if (!(_i < tables_1.length)) return [3 /*break*/, 6];
                         table = tables_1[_i];
                         if (!exceptions.includes(table)) return [3 /*break*/, 5];
-                        return [4 /*yield*/, PGSQL.Execute(connection, "TRUNCATE TABLE " + table, undefined)];
+                        return [4 /*yield*/, PGSQL.Execute(connection, "TRUNCATE TABLE " + table + " RESTART IDENTITY", undefined)];
                     case 4:
                         _a.sent();
                         _a.label = 5;
@@ -3086,7 +3086,7 @@ var PGParams = /** @class */ (function () {
                 case 1:
                     if (!(_i < tables_2.length)) return [3 /*break*/, 4];
                     table = tables_2[_i];
-                    return [4 /*yield*/, PGSQL.Execute(connection, "TRUNCATE TABLE " + table)];
+                    return [4 /*yield*/, PGSQL.Execute(connection, "TRUNCATE TABLE " + table + " RESTART IDENTITY")];
                 case 2:
                     _a.sent();
                     _a.label = 3;
