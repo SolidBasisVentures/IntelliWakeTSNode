@@ -2,7 +2,7 @@ import {PGTable} from './PGTable'
 
 export class PGIndex {
 	public columns: string[] = []
-	public where: string | null = null
+	public whereCondition: string | null = null
 	public isUnique = false
 	public concurrently = false
 	public using = 'BTREE'
@@ -15,6 +15,8 @@ export class PGIndex {
 
 	private deserialize(instanceData: Partial<PGIndex>) {
 		const keys = Object.keys(this)
+		
+		console.log(keys, Object.keys(instanceData))
 
 		for (const key of keys) {
 			if (instanceData.hasOwnProperty(key)) {
@@ -56,8 +58,8 @@ export class PGIndex {
 		ddl += `"${pgTable.name}" `
 		ddl += 'USING btree '
 		ddl += '(' + this.columns.join(',') + ')'
-		if (this.where) {
-			ddl += ' WHERE ' + this.where
+		if (this.whereCondition) {
+			ddl += ' WHERE ' + this.whereCondition
 		}
 		ddl += ';'
 

@@ -84,6 +84,7 @@ export namespace MyToPG {
 		
 		pgIndex.columns = myIndex.columns.map(col => col.toLowerCase())
 		pgIndex.isUnique = myIndex.isUnique
+		pgIndex.whereCondition = myIndex.where
 		
 		return pgIndex
 	}

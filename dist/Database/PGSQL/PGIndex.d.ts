@@ -1,7 +1,7 @@
 import { PGTable } from './PGTable';
 export declare class PGIndex {
     columns: string[];
-    where: string | null;
+    whereCondition: string | null;
     isUnique: boolean;
     concurrently: boolean;
     using: string;

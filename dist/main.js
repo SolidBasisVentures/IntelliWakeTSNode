@@ -619,7 +619,7 @@ var PGForeignKey = /** @class */ (function () {
 var PGIndex = /** @class */ (function () {
     function PGIndex(instanceData) {
         this.columns = [];
-        this.where = null;
+        this.whereCondition = null;
         this.isUnique = false;
         this.concurrently = false;
         this.using = 'BTREE';
@@ -629,6 +629,7 @@ var PGIndex = /** @class */ (function () {
     }
     PGIndex.prototype.deserialize = function (instanceData) {
         var keys = Object.keys(this);
+        console.log(keys, Object.keys(instanceData));
         for (var _i = 0, keys_1 = keys; _i < keys_1.length; _i++) {
             var key = keys_1[_i];
             if (instanceData.hasOwnProperty(key)) {
@@ -665,8 +666,8 @@ var PGIndex = /** @class */ (function () {
         ddl += "\"" + pgTable.name + "\" ";
         ddl += 'USING btree ';
         ddl += '(' + this.columns.join(',') + ')';
-        if (this.where) {
-            ddl += ' WHERE ' + this.where;
+        if (this.whereCondition) {
+            ddl += ' WHERE ' + this.whereCondition;
         }
         ddl += ';';
         return ddl;
@@ -1210,6 +1211,7 @@ var PGTableMy = /** @class */ (function (_super) {
         var pgIndex = new PGIndex();
         pgIndex.columns = myIndex.columns.map(function (col) { return col.toLowerCase(); });
         pgIndex.isUnique = myIndex.isUnique;
+        pgIndex.whereCondition = myIndex.where;
         return pgIndex;
     };
     MyToPG.UDTNameFromDataType = function (columnName) {
@@ -1439,6 +1441,7 @@ var MyIndex = /** @class */ (function () {
         this.isUnique = false;
         this.using = 'BTREE';
         this.indexName = '';
+        this.where = null;
         if (instanceData) {
             this.deserialize(instanceData);
         }
@@ -3387,8 +3390,7 @@ var PGParams = /** @class */ (function () {
                     for (_b = 0, indexes_1 = indexes; _b < indexes_1.length; _b++) {
                         index = indexes_1[_b];
                         indexDef = index.indexdef;
-                        wherePos = -1 //indexDef.toUpperCase().indexOf(' WHERE ')
-                        ;
+                        wherePos = indexDef.toUpperCase().indexOf(' WHERE ');
                         pgIndex = new PGIndex({
                             columns: indexDef
                                 .substring(indexDef.indexOf('(') + 1, wherePos > 0 ? wherePos - 1 : indexDef.length - 1)
@@ -3396,7 +3398,7 @@ var PGParams = /** @class */ (function () {
                                 .map(function (idx) { return idx.trim(); })
                                 .filter(function (idx) { return !!idx; }),
                             isUnique: indexDef.includes(' UNIQUE '),
-                            where: wherePos > 0 ? indexDef.substring(wherePos + 7).trim() : null
+                            whereCondition: wherePos > 0 ? indexDef.substring(wherePos + 7).trim() : null
                         });
                         pgTable.indexes.push(pgIndex);
                     }

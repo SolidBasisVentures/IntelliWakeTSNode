@@ -747,7 +747,7 @@ export namespace PGSQL {
 		for (const index of indexes) {
 			const indexDef = index.indexdef as string
 			
-			const wherePos = -1 //indexDef.toUpperCase().indexOf(' WHERE ')
+			const wherePos = indexDef.toUpperCase().indexOf(' WHERE ')
 			
 			const pgIndex = new PGIndex({
 				columns: indexDef
@@ -756,7 +756,7 @@ export namespace PGSQL {
 					.map(idx => idx.trim())
 					.filter(idx => !!idx),
 				isUnique: indexDef.includes(' UNIQUE '),
-				where: wherePos > 0 ? indexDef.substring(wherePos + 7).trim() : null
+				whereCondition: wherePos > 0 ? indexDef.substring(wherePos + 7).trim() : null
 			} as any)
 			
 			pgTable.indexes.push(pgIndex)

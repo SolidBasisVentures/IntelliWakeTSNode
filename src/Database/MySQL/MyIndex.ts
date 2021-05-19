@@ -5,6 +5,7 @@ export class MyIndex {
 	public isUnique = false
 	public using = 'BTREE'
 	public indexName = ''
+	public where: string | null = null
 	
 	constructor(instanceData?: MyIndex) {
 		if (instanceData) {
