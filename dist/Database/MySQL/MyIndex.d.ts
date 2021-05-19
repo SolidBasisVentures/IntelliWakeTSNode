@@ -4,6 +4,7 @@ export declare class MyIndex {
     isUnique: boolean;
     using: string;
     indexName: string;
+    where: string | null;
     constructor(instanceData?: MyIndex);
     private deserialize;
     name(myTable: MyTable): string;

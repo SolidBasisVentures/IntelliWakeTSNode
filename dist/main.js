@@ -629,7 +629,6 @@ var PGIndex = /** @class */ (function () {
     }
     PGIndex.prototype.deserialize = function (instanceData) {
         var keys = Object.keys(this);
-        console.log(keys, Object.keys(instanceData));
         for (var _i = 0, keys_1 = keys; _i < keys_1.length; _i++) {
             var key = keys_1[_i];
             if (instanceData.hasOwnProperty(key)) {
@@ -3387,6 +3386,7 @@ var PGParams = /** @class */ (function () {
                     return [4 /*yield*/, PGSQL.TableIndexesData(connection, table)];
                 case 4:
                     indexes = _h.sent();
+                    console.log('idxs', pgTable.name, indexes.length);
                     for (_b = 0, indexes_1 = indexes; _b < indexes_1.length; _b++) {
                         index = indexes_1[_b];
                         indexDef = index.indexdef;
@@ -3397,8 +3397,8 @@ var PGParams = /** @class */ (function () {
                                 .split(',')
                                 .map(function (idx) { return idx.trim(); })
                                 .filter(function (idx) { return !!idx; }),
-                            isUnique: indexDef.includes(' UNIQUE '),
-                            whereCondition: wherePos > 0 ? indexDef.substring(wherePos + 7).trim() : null
+                            isUnique: indexDef.includes(' UNIQUE ') /*,
+                            whereCondition: wherePos > 0 ? indexDef.substring(wherePos + 7).trim() : null */
                         });
                         pgTable.indexes.push(pgIndex);
                     }

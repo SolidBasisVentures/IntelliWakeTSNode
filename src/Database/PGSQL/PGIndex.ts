@@ -16,8 +16,6 @@ export class PGIndex {
 	private deserialize(instanceData: Partial<PGIndex>) {
 		const keys = Object.keys(this)
 		
-		console.log(keys, Object.keys(instanceData))
-
 		for (const key of keys) {
 			if (instanceData.hasOwnProperty(key)) {
 				;(this as any)[key] = (instanceData as any)[key]
