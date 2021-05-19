@@ -756,7 +756,7 @@ export namespace PGSQL {
 					.map(idx => idx.trim())
 					.filter(idx => !!idx),
 				isUnique: indexDef.includes(' UNIQUE '),
-				where: wherePos > 0 ? indexDef.substring(wherePos + 7).trim() : undefined
+				where: wherePos > 0 ? indexDef.substring(wherePos + 7).trim() : null
 			} as any)
 			
 			pgTable.indexes.push(pgIndex)
