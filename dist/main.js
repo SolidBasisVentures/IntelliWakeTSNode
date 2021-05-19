@@ -3387,7 +3387,8 @@ var PGParams = /** @class */ (function () {
                     for (_b = 0, indexes_1 = indexes; _b < indexes_1.length; _b++) {
                         index = indexes_1[_b];
                         indexDef = index.indexdef;
-                        wherePos = indexDef.toUpperCase().indexOf(' WHERE ');
+                        wherePos = -1 //indexDef.toUpperCase().indexOf(' WHERE ')
+                        ;
                         pgIndex = new PGIndex({
                             columns: indexDef
                                 .substring(indexDef.indexOf('(') + 1, wherePos > 0 ? wherePos - 1 : indexDef.length - 1)

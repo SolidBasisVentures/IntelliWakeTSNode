@@ -747,7 +747,7 @@ export namespace PGSQL {
 		for (const index of indexes) {
 			const indexDef = index.indexdef as string
 			
-			const wherePos = indexDef.toUpperCase().indexOf(' WHERE ')
+			const wherePos = -1 //indexDef.toUpperCase().indexOf(' WHERE ')
 			
 			const pgIndex = new PGIndex({
 				columns: indexDef
