@@ -744,7 +744,6 @@ export namespace PGSQL {
 		}
 		
 		const indexes = await TableIndexesData(connection, table)
-		console.log('idxs', pgTable.name, indexes.length)
 		for (const index of indexes) {
 			const indexDef = index.indexdef as string
 			
@@ -756,8 +755,8 @@ export namespace PGSQL {
 					.split(',')
 					.map(idx => idx.trim())
 					.filter(idx => !!idx),
-				isUnique: indexDef.includes(' UNIQUE ')/*,
-				whereCondition: wherePos > 0 ? indexDef.substring(wherePos + 7).trim() : null */
+				isUnique: indexDef.includes(' UNIQUE '),
+				whereCondition: wherePos > 0 ? indexDef.substring(wherePos + 7).trim() : null
 			})
 			
 			pgTable.indexes.push(pgIndex)
