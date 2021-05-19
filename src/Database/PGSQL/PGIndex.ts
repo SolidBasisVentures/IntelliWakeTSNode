@@ -2,7 +2,7 @@ import {PGTable} from './PGTable'
 
 export class PGIndex {
 	public columns: string[] = []
-	public where?: string
+	public where: string | null = null
 	public isUnique = false
 	public concurrently = false
 	public using = 'BTREE'
