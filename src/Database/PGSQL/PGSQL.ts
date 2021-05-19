@@ -749,6 +749,11 @@ export namespace PGSQL {
 			
 			const wherePos = indexDef.toUpperCase().indexOf(' WHERE ')
 			
+			if (wherePos > 0) {
+				console.log('index', indexDef)
+				console.log('WP', wherePos)
+			}
+			
 			const pgIndex = new PGIndex({
 				columns: indexDef
 					.substring(indexDef.indexOf('(') + 1, wherePos > 0 ? wherePos : indexDef.length - 1)
