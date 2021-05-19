@@ -663,7 +663,11 @@ var PGIndex = /** @class */ (function () {
         ddl += 'ON ';
         ddl += "\"" + pgTable.name + "\" ";
         ddl += 'USING btree ';
-        ddl += '(' + this.columns.join(',') + ');';
+        ddl += '(' + this.columns.join(',') + ')';
+        if (this.where) {
+            ddl += ' WHERE ' + this.where;
+        }
+        ddl += ';';
         return ddl;
     };
     return PGIndex;
@@ -926,7 +930,12 @@ var PGTable = /** @class */ (function () {
             if (!!enumDefault) {
                 // console.log('HERE', enums.find(enumItem => enumItem.column_name === pgColumn.column_name))
                 // console.log('THERE', pgColumn)
-                text += enumDefault;
+                if (enumDefault.endsWith('.') && pgColumn.is_nullable === 'YES' && !pgColumn.column_default) {
+                    text += 'null';
+                }
+                else {
+                    text += enumDefault;
+                }
             }
             else if (pgColumn.array_dimensions.length > 0) {
                 if (intelliwaketsfoundation.IsOn(pgColumn.is_nullable)) {
@@ -3338,7 +3347,7 @@ var PGParams = /** @class */ (function () {
         });
     }); };
     PGSQL.GetPGTable = function (connection, table) { return __awaiter(_this, void 0, void 0, function () {
-        var pgTable, columnComments, columns, _loop_1, _i, columns_1, column, fks, _a, fks_1, fk, pgForeignKey, indexes, _b, indexes_1, index, indexDef, pgIndex;
+        var pgTable, columnComments, columns, _loop_1, _i, columns_1, column, fks, _a, fks_1, fk, pgForeignKey, indexes, _b, indexes_1, index, indexDef, wherePos, pgIndex;
         var _c, _d, _e, _f, _g;
         return __generator(this, function (_h) {
             switch (_h.label) {
@@ -3377,13 +3386,15 @@ var PGParams = /** @class */ (function () {
                     for (_b = 0, indexes_1 = indexes; _b < indexes_1.length; _b++) {
                         index = indexes_1[_b];
                         indexDef = index.indexdef;
+                        wherePos = indexDef.toUpperCase().indexOf(' WHERE ');
                         pgIndex = new PGIndex({
                             columns: indexDef
-                                .substring(indexDef.indexOf('(') + 1, indexDef.length - 1)
+                                .substring(indexDef.indexOf('(') + 1, wherePos > 0 ? wherePos : indexDef.length - 1)
                                 .split(',')
                                 .map(function (idx) { return idx.trim(); })
                                 .filter(function (idx) { return !!idx; }),
-                            isUnique: index.indexdef.includes(' UNIQUE ')
+                            isUnique: index.indexdef.includes(' UNIQUE '),
+                            where: wherePos > 0 ? indexDef.substring(wherePos + 7).trim() : undefined
                         });
                         pgTable.indexes.push(pgIndex);
                     }

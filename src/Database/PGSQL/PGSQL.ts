@@ -747,13 +747,16 @@ export namespace PGSQL {
 		for (const index of indexes) {
 			const indexDef = index.indexdef as string
 			
+			const wherePos = indexDef.toUpperCase().indexOf(' WHERE ')
+			
 			const pgIndex = new PGIndex({
 				columns: indexDef
-					.substring(indexDef.indexOf('(') + 1, indexDef.length - 1)
+					.substring(indexDef.indexOf('(') + 1, wherePos > 0 ? wherePos : indexDef.length - 1)
 					.split(',')
 					.map(idx => idx.trim())
 					.filter(idx => !!idx),
-				isUnique: index.indexdef.includes(' UNIQUE ')
+				isUnique: index.indexdef.includes(' UNIQUE '),
+				where: wherePos > 0 ? indexDef.substring(wherePos + 7).trim() : undefined
 			} as any)
 			
 			pgTable.indexes.push(pgIndex)

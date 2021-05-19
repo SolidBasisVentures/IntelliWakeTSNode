@@ -2,6 +2,7 @@ import {PGTable} from './PGTable'
 
 export class PGIndex {
 	public columns: string[] = []
+	public where?: string
 	public isUnique = false
 	public concurrently = false
 	public using = 'BTREE'
@@ -54,7 +55,11 @@ export class PGIndex {
 		ddl += 'ON '
 		ddl += `"${pgTable.name}" `
 		ddl += 'USING btree '
-		ddl += '(' + this.columns.join(',') + ');'
+		ddl += '(' + this.columns.join(',') + ')'
+		if (this.where) {
+			ddl += ' WHERE ' + this.where
+		}
+		ddl += ';'
 
 		return ddl
 	}
