@@ -234,7 +234,8 @@ var PGColumn = /** @class */ (function () {
         this.generatedAlwaysAs = null;
         /** Comment on column, except for within {}'s
          * {} can contain comma separated values
-         * {enum: EDeclaration: default_value} or {enum: EDeclaration.default_value} or {enum: EDeclaration} */
+         * {enum: EDeclaration: default_value} or {enum: EDeclaration.default_value} or {enum: EDeclaration}
+         * {interface: IDeclaration} */
         this.column_comment = '';
         this.isAutoIncrement = true;
         this.jsType = function () {
@@ -837,11 +838,11 @@ var PGTable = /** @class */ (function () {
         return text;
     };
     PGTable.prototype.tsText = function () {
-        var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l;
+        var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q;
         var text = this.tableHeaderText('Table Manager for');
         if (this.inherits.length > 0) {
-            for (var _i = 0, _m = this.inherits; _i < _m.length; _i++) {
-                var inherit = _m[_i];
+            for (var _i = 0, _r = this.inherits; _i < _r.length; _i++) {
+                var inherit = _r[_i];
                 text += "import {I" + inherit + ", initial_" + inherit + "} from \"./I" + inherit + "\"" + TS_EOL;
             }
         }
@@ -874,9 +875,34 @@ var PGTable = /** @class */ (function () {
             }
             return { column_name: column.column_name, enum_name: '' };
         })).filter(function (enumName) { return !!enumName.enum_name; })));
+        var interfaces = Array.from(new Set(__spreadArrays(this.columns
+            .map(function (column) {
+            var _a, _b, _c, _d, _e, _f, _g, _h, _j;
+            var regExp = /{([^}]*)}/;
+            var results = regExp.exec(column.column_comment);
+            if (!!results && !!results[1]) {
+                var commaItems = results[1].split(',');
+                for (var _i = 0, commaItems_2 = commaItems; _i < commaItems_2.length; _i++) {
+                    var commaItem = commaItems_2[_i];
+                    var items = commaItem.split(':');
+                    if (((_a = items[0]) !== null && _a !== void 0 ? _a : '').toLowerCase().trim() === 'interface') {
+                        return {
+                            column_name: column.column_name,
+                            interface_name: ((_c = ((_b = items[1]) !== null && _b !== void 0 ? _b : '').split('.')[0]) !== null && _c !== void 0 ? _c : '').trim(),
+                            default_value: column.array_dimensions.length > 0 ? '[]' : ((_d = items[2]) !== null && _d !== void 0 ? _d : '').includes('.') ? items[2] : ((_f = ((_e = items[1]) !== null && _e !== void 0 ? _e : '').split('.')[0]) !== null && _f !== void 0 ? _f : '').trim() + '.' + ((_g = items[2]) !== null && _g !== void 0 ? _g : ((_j = ((_h = items[1]) !== null && _h !== void 0 ? _h : '').split('.')[1]) !== null && _j !== void 0 ? _j : '')).trim()
+                        };
+                    }
+                }
+            }
+            return { column_name: column.column_name, interface_name: '' };
+        })).filter(function (enumName) { return !!enumName.interface_name; })));
         enums.map(function (enumItem) { return enumItem.enum_name; }).reduce(function (results, enumItem) { return results.includes(enumItem) ? results : __spreadArrays(results, [enumItem]); }, [])
             .forEach(function (enumItem) {
             text += "import {" + enumItem + "} from \"../Enums/" + enumItem + "\"" + TS_EOL;
+        });
+        interfaces.map(function (interfaceItem) { return interfaceItem.interface_name; }).reduce(function (results, enumItem) { return results.includes(enumItem) ? results : __spreadArrays(results, [enumItem]); }, [])
+            .forEach(function (interfaceItem) {
+            text += "import {" + interfaceItem + "} from \"../Interfaces/" + interfaceItem + "\"" + TS_EOL;
         });
         if (enums.length > 0) {
             text += TS_EOL;
@@ -900,17 +926,17 @@ var PGTable = /** @class */ (function () {
             text += '\t';
             text += pgColumn.column_name;
             text += ': ';
-            text += (_b = (_a = enums.find(function (enumItem) { return enumItem.column_name === pgColumn.column_name; })) === null || _a === void 0 ? void 0 : _a.enum_name) !== null && _b !== void 0 ? _b : pgColumn.jsType();
+            text += (_d = (_b = (_a = enums.find(function (enumItem) { return enumItem.column_name === pgColumn.column_name; })) === null || _a === void 0 ? void 0 : _a.enum_name) !== null && _b !== void 0 ? _b : (_c = interfaces.find(function (interfaceItem) { return interfaceItem.column_name === pgColumn.column_name; })) === null || _c === void 0 ? void 0 : _c.interface_name) !== null && _d !== void 0 ? _d : pgColumn.jsType();
             if (pgColumn.array_dimensions.length > 0) {
                 text += "[" + pgColumn.array_dimensions.map(function () { return ''; }).join('],[') + "]";
             }
-            if (intelliwaketsfoundation.IsOn((_c = pgColumn.is_nullable) !== null && _c !== void 0 ? _c : 'YES')) {
+            if (intelliwaketsfoundation.IsOn((_e = pgColumn.is_nullable) !== null && _e !== void 0 ? _e : 'YES')) {
                 text += ' | null';
             }
             text += TS_EOL;
         };
-        for (var _o = 0, _p = this.columns; _o < _p.length; _o++) {
-            var pgColumn = _p[_o];
+        for (var _s = 0, _t = this.columns; _s < _t.length; _s++) {
+            var pgColumn = _t[_s];
             _loop_1(pgColumn);
         }
         text += '}' + TS_EOL;
@@ -927,15 +953,15 @@ var PGTable = /** @class */ (function () {
             text += '\t';
             text += pgColumn.column_name;
             text += ': ';
-            var enumDefault = (_d = enums.find(function (enumItem) { return enumItem.column_name === pgColumn.column_name; })) === null || _d === void 0 ? void 0 : _d.default_value;
-            if (!!enumDefault) {
+            var itemDefault = (_g = (_f = enums.find(function (enumItem) { return enumItem.column_name === pgColumn.column_name; })) === null || _f === void 0 ? void 0 : _f.default_value) !== null && _g !== void 0 ? _g : (_h = interfaces.find(function (interfaceItem) { return interfaceItem.column_name === pgColumn.column_name; })) === null || _h === void 0 ? void 0 : _h.default_value;
+            if (!!itemDefault) {
                 // console.log('HERE', enums.find(enumItem => enumItem.column_name === pgColumn.column_name))
                 // console.log('THERE', pgColumn)
-                if (enumDefault.endsWith('.') && pgColumn.is_nullable === 'YES' && !pgColumn.column_default) {
+                if (itemDefault.endsWith('.') && pgColumn.is_nullable === 'YES' && !pgColumn.column_default) {
                     text += 'null';
                 }
                 else {
-                    text += enumDefault;
+                    text += itemDefault;
                 }
             }
             else if (pgColumn.array_dimensions.length > 0) {
@@ -965,14 +991,14 @@ var PGTable = /** @class */ (function () {
                             text += '\'\'';
                         }
                         else if (pgColumn.jsonType()) {
-                            text += ((_e = pgColumn.column_default) !== null && _e !== void 0 ? _e : '{}').toString().substring(1, ((_f = pgColumn.column_default) !== null && _f !== void 0 ? _f : '').toString().indexOf('::') - 1);
+                            text += ((_j = pgColumn.column_default) !== null && _j !== void 0 ? _j : '{}').toString().substring(1, ((_k = pgColumn.column_default) !== null && _k !== void 0 ? _k : '').toString().indexOf('::') - 1);
                         }
                         else if (pgColumn.integerFloatType() || pgColumn.dateType()) {
                             text += pgColumn.column_default;
                         }
                         else if (typeof pgColumn.udt_name !== 'string') {
                             text +=
-                                '\'' + ((_h = (_g = pgColumn.column_default) !== null && _g !== void 0 ? _g : pgColumn.udt_name.defaultValue) !== null && _h !== void 0 ? _h : '') + '\' as ' + pgColumn.jsType();
+                                '\'' + ((_m = (_l = pgColumn.column_default) !== null && _l !== void 0 ? _l : pgColumn.udt_name.defaultValue) !== null && _m !== void 0 ? _m : '') + '\' as ' + pgColumn.jsType();
                         }
                         else if (!!pgColumn.column_default && pgColumn.column_default.toString().includes('::')) {
                             if (pgColumn.udt_name.startsWith('e_')) {
@@ -984,11 +1010,11 @@ var PGTable = /** @class */ (function () {
                                 // text += PGEnum.TypeName(pgColumn.udt_name)
                             }
                             else {
-                                text += '\'' + ((_j = pgColumn.column_default) !== null && _j !== void 0 ? _j : '').toString().substring(1, ((_k = pgColumn.column_default) !== null && _k !== void 0 ? _k : '').toString().indexOf('::') - 1) + '\'';
+                                text += '\'' + ((_o = pgColumn.column_default) !== null && _o !== void 0 ? _o : '').toString().substring(1, ((_p = pgColumn.column_default) !== null && _p !== void 0 ? _p : '').toString().indexOf('::') - 1) + '\'';
                             }
                         }
                         else {
-                            text += '\'' + ((_l = pgColumn.column_default) !== null && _l !== void 0 ? _l : '') + '\'';
+                            text += '\'' + ((_q = pgColumn.column_default) !== null && _q !== void 0 ? _q : '') + '\'';
                         }
                     }
                     else if (intelliwaketsfoundation.IsOn(pgColumn.is_nullable)) {
@@ -1015,8 +1041,8 @@ var PGTable = /** @class */ (function () {
             }
             addComma = true;
         };
-        for (var _q = 0, _r = this.columns; _q < _r.length; _q++) {
-            var pgColumn = _r[_q];
+        for (var _u = 0, _v = this.columns; _u < _v.length; _u++) {
+            var pgColumn = _v[_u];
             _loop_2(pgColumn);
         }
         text += TS_EOL + '}' + TS_EOL; // Removed semi

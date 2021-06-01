@@ -282,12 +282,16 @@ export class PGTable {
 				text += `import {${enumItem}} from "../Enums/${enumItem}"${TS_EOL}`
 			})
 		
+		if (enums.length > 0) {
+			text += TS_EOL
+		}
+		
 		interfaces.map(interfaceItem => interfaceItem.interface_name).reduce<string[]>((results, enumItem) => results.includes(enumItem) ? results : [...results, enumItem], [])
 			.forEach(interfaceItem => {
 				text += `import {${interfaceItem}} from "../Interfaces/${interfaceItem}"${TS_EOL}`
 			})
 		
-		if (enums.length > 0) {
+		if (interfaces.length > 0) {
 			text += TS_EOL
 		}
 		
