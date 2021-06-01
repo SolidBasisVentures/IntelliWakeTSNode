@@ -250,9 +250,41 @@ export class PGTable {
 			)
 		)
 		
+		const interfaces: {column_name: string, interface_name: string, default_value?: string}[] = Array.from(
+			new Set(
+				[
+					...this.columns
+						.map(column => {
+							const regExp = /{([^}]*)}/
+							const results = regExp.exec(column.column_comment)
+							if (!!results && !!results[1]) {
+								const commaItems = results[1].split(',')
+								for (const commaItem of commaItems) {
+									const items = commaItem.split(':')
+									if ((items[0] ?? '').toLowerCase().trim() === 'interface') {
+										return {
+											column_name: column.column_name,
+											interface_name: ((items[1] ?? '').split('.')[0] ?? '').trim(),
+											default_value: column.array_dimensions.length > 0 ? '[]' : (items[2] ?? '').includes('.') ? items[2] : ((items[1] ?? '').split('.')[0] ?? '').trim() + '.' + (items[2] ?? ((items[1] ?? '').split('.')[1] ?? '')).trim()
+										}
+									}
+								}
+							}
+							return {column_name: column.column_name, interface_name: ''}
+						})
+				]
+					.filter(enumName => !!enumName.interface_name)
+			)
+		)
+		
 		enums.map(enumItem => enumItem.enum_name).reduce<string[]>((results, enumItem) => results.includes(enumItem) ? results : [...results, enumItem], [])
 			.forEach(enumItem => {
 				text += `import {${enumItem}} from "../Enums/${enumItem}"${TS_EOL}`
+			})
+		
+		interfaces.map(interfaceItem => interfaceItem.interface_name).reduce<string[]>((results, enumItem) => results.includes(enumItem) ? results : [...results, enumItem], [])
+			.forEach(interfaceItem => {
+				text += `import {${interfaceItem}} from "../Interfaces/${interfaceItem}"${TS_EOL}`
 			})
 		
 		if (enums.length > 0) {
@@ -278,7 +310,7 @@ export class PGTable {
 			text += '\t'
 			text += pgColumn.column_name
 			text += ': '
-			text += enums.find(enumItem => enumItem.column_name === pgColumn.column_name)?.enum_name ?? pgColumn.jsType()
+			text += enums.find(enumItem => enumItem.column_name === pgColumn.column_name)?.enum_name ?? interfaces.find(interfaceItem => interfaceItem.column_name === pgColumn.column_name)?.interface_name ?? pgColumn.jsType()
 			if (pgColumn.array_dimensions.length > 0) {
 				text += `[${pgColumn.array_dimensions.map(() => '').join('],[')}]`
 			}
@@ -301,14 +333,14 @@ export class PGTable {
 			text += '\t'
 			text += pgColumn.column_name
 			text += ': '
-			const enumDefault = enums.find(enumItem => enumItem.column_name === pgColumn.column_name)?.default_value
-			if (!!enumDefault) {
+			const itemDefault = enums.find(enumItem => enumItem.column_name === pgColumn.column_name)?.default_value ?? interfaces.find(interfaceItem => interfaceItem.column_name === pgColumn.column_name)?.default_value
+			if (!!itemDefault) {
 				// console.log('HERE', enums.find(enumItem => enumItem.column_name === pgColumn.column_name))
 				// console.log('THERE', pgColumn)
-				if (enumDefault.endsWith('.') && pgColumn.is_nullable === 'YES' && !pgColumn.column_default) {
+				if (itemDefault.endsWith('.') && pgColumn.is_nullable === 'YES' && !pgColumn.column_default) {
 					text += 'null'
 				} else {
-					text += enumDefault
+					text += itemDefault
 				}
 			} else if (pgColumn.array_dimensions.length > 0) {
 				if (IsOn(pgColumn.is_nullable)) {
