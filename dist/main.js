@@ -900,11 +900,14 @@ var PGTable = /** @class */ (function () {
             .forEach(function (enumItem) {
             text += "import {" + enumItem + "} from \"../Enums/" + enumItem + "\"" + TS_EOL;
         });
+        if (enums.length > 0) {
+            text += TS_EOL;
+        }
         interfaces.map(function (interfaceItem) { return interfaceItem.interface_name; }).reduce(function (results, enumItem) { return results.includes(enumItem) ? results : __spreadArrays(results, [enumItem]); }, [])
             .forEach(function (interfaceItem) {
             text += "import {" + interfaceItem + "} from \"../Interfaces/" + interfaceItem + "\"" + TS_EOL;
         });
-        if (enums.length > 0) {
+        if (interfaces.length > 0) {
             text += TS_EOL;
         }
         text += "export interface I" + this.name;
