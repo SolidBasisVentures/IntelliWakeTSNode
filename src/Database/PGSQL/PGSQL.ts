@@ -735,9 +735,9 @@ export namespace PGSQL {
 		const fks = await TableFKsData(connection, table)
 		for (const fk of fks) {
 			const pgForeignKey = new PGForeignKey({
-				columnNames: fk.columnNames,
+				columnNames: (fk.columnNames as string[]).reduce<string[]>((results, columnName) => results.includes(columnName) ? results : [...results, columnName], []),
 				primaryTable: fk.primaryTable,
-				primaryColumns: fk.primaryColumns
+				primaryColumns: (fk.primaryColumns as string[]).reduce<string[]>((results, primaryColumn) => results.includes(primaryColumn) ? results : [...results, primaryColumn], [])
 			} as any)
 			
 			pgTable.foreignKeys.push(pgForeignKey)
