@@ -3406,9 +3406,9 @@ var PGParams = /** @class */ (function () {
                     for (_a = 0, fks_1 = fks; _a < fks_1.length; _a++) {
                         fk = fks_1[_a];
                         pgForeignKey = new PGForeignKey({
-                            columnNames: fk.columnNames,
+                            columnNames: fk.columnNames.reduce(function (results, columnName) { return results.includes(columnName) ? results : __spreadArrays(results, [columnName]); }, []),
                             primaryTable: fk.primaryTable,
-                            primaryColumns: fk.primaryColumns
+                            primaryColumns: fk.primaryColumns.reduce(function (results, primaryColumn) { return results.includes(primaryColumn) ? results : __spreadArrays(results, [primaryColumn]); }, [])
                         });
                         pgTable.foreignKeys.push(pgForeignKey);
                     }

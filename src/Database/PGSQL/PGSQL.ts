@@ -1,3 +1,5 @@
+// noinspection SqlNoDataSourceInspection
+
 import {IPaginatorRequest, IPaginatorResponse, IsOn, ISortColumn} from '@solidbasisventures/intelliwaketsfoundation'
 import {PGTable} from './PGTable'
 import {PGColumn} from './PGColumn'
@@ -113,17 +115,19 @@ export namespace PGSQL {
 	): Promise<void> => PGQueryValuesStream<T>(connection, sql, [], row)
 	
 	
-	export const TableRowCount = async (connection: TConnection, table: string): Promise<number> => {
+	export const TableRowCount = async (connection: TConnection, table: string, schema?: string): Promise<number> => {
 		const data = await query(connection, `SELECT COUNT(*) AS count
-                                          FROM ${table}`, undefined)
+                                          FROM ${(!!schema ? `${schema}.` : '') + table}`, undefined)
 		
 		return (((data.rows ?? [])[0] ?? {}) as any)['count'] ?? 0
 	}
 	
-	export const TableExists = async (connection: TConnection, table: string): Promise<boolean> => {
+	export const CurrentSchema = (schema?: string) => schema ?? 'public'
+	
+	export const TableExists = async (connection: TConnection, table: string, schema?: string): Promise<boolean> => {
 		const sql = `SELECT COUNT(*) AS count
                  FROM information_schema.tables
-                 WHERE table_schema = 'public'
+                 WHERE table_schema = '${CurrentSchema(schema)}'
                    AND table_name = '${table}'`
 		
 		const data = await query(connection, sql, undefined)
@@ -131,20 +135,20 @@ export namespace PGSQL {
 		return ((((data.rows ?? [])[0] ?? {}) as any)['count'] ?? 0) > 0
 	}
 	
-	export const TableColumnExists = async (connection: TConnection, table: string, column: string): Promise<boolean> => {
+	export const TableColumnExists = async (connection: TConnection, table: string, column: string, schema?: string): Promise<boolean> => {
 		const sql = `SELECT COUNT(*) AS count
                  FROM information_schema.COLUMNS
-                 WHERE table_schema = 'public'
+                 WHERE table_schema = '${CurrentSchema(schema)}'
                    AND table_name = '${table}'
                    AND column_name = '${column}'`
 		const data = await query(connection, sql, undefined)
 		return ((((data.rows ?? [])[0] ?? {}) as any)['count'] ?? 0) > 0
 	}
 	
-	export const TriggerExists = async (connection: TConnection, trigger: string): Promise<boolean> => {
+	export const TriggerExists = async (connection: TConnection, trigger: string, schema?: string): Promise<boolean> => {
 		const sql = `SELECT COUNT(*) AS count
                  FROM information_schema.triggers
-                 WHERE trigger_schema = 'public'
+                 WHERE trigger_schema = '${CurrentSchema(schema)}'
                    AND trigger_name = '${trigger}'`
 		const data = await query(connection, sql, undefined)
 		return ((((data.rows ?? [])[0] ?? {}) as any)['count'] ?? 0) > 0
@@ -167,11 +171,11 @@ export namespace PGSQL {
 		}
 	}
 	
-	export const ConstraintExists = async (connection: TConnection, constraint: string): Promise<boolean> => {
+	export const ConstraintExists = async (connection: TConnection, constraint: string, schema?: string): Promise<boolean> => {
 		const sql = `
         SELECT COUNT(*) AS count
         FROM information_schema.table_constraints
-        WHERE constraint_schema = 'public'
+        WHERE constraint_schema = '${CurrentSchema(schema)}'
           AND constraint_name = '${constraint}'`
 		const data = await query(connection, sql, undefined)
 		return ((((data.rows ?? [])[0] ?? {}) as any)['count'] ?? 0) > 0
@@ -182,21 +186,21 @@ export namespace PGSQL {
 		constraint_name: string
 	}
 	
-	export const FKConstraints = async (connection: TConnection): Promise<IConstraints[]> => {
+	export const FKConstraints = async (connection: TConnection, schema?: string): Promise<IConstraints[]> => {
 		const sql = `
         SELECT table_name, constraint_name
         FROM information_schema.table_constraints
-        WHERE constraint_schema = 'public'
+        WHERE constraint_schema = '${CurrentSchema(schema)}'
           AND constraint_type = 'FOREIGN KEY'`
 		
 		return PGSQL.FetchMany<IConstraints>(connection, sql)
 	}
 	
-	export const Functions = async (connection: TConnection): Promise<string[]> => {
+	export const Functions = async (connection: TConnection, schema?: string): Promise<string[]> => {
 		const sql = `
         SELECT routines.routine_name
         FROM information_schema.routines
-        WHERE routines.specific_schema = 'public'
+        WHERE routines.specific_schema = '${CurrentSchema(schema)}'
           AND routine_type = 'FUNCTION'
         ORDER BY routines.routine_name`
 		
@@ -206,11 +210,11 @@ export namespace PGSQL {
 	export const IndexExists = async (
 		connection: TConnection,
 		tablename: string,
-		indexName: string
+		indexName: string, schema?: string
 	): Promise<boolean> => {
 		const sql = `SELECT COUNT(*) AS count
                  FROM pg_indexes
-                 WHERE schemaname = 'public'
+                 WHERE schemaname = '${CurrentSchema(schema)}'
                    AND tablename = '${tablename}'
                    AND indexname = '${indexName}'`
 		const data = await query(connection, sql, undefined)
@@ -383,35 +387,35 @@ export namespace PGSQL {
 		}
 	}
 	
-	export const TablesArray = async (connection: TConnection): Promise<string[]> => {
+	export const TablesArray = async (connection: TConnection, schema?: string): Promise<string[]> => {
 		return FetchArray<string>(
 			connection,
 			`
           SELECT table_name
           FROM information_schema.tables
-          WHERE table_schema = 'public'
+          WHERE table_schema = '${CurrentSchema(schema)}'
             AND table_type = 'BASE TABLE'`
 		)
 	}
 	
-	export const ViewsArray = async (connection: TConnection): Promise<string[]> => {
+	export const ViewsArray = async (connection: TConnection, schema?: string): Promise<string[]> => {
 		return await FetchArray<string>(
 			connection,
 			`
           SELECT table_name
           FROM information_schema.tables
-          WHERE table_schema = 'public'
+          WHERE table_schema = '${CurrentSchema(schema)}'
             AND table_type = 'VIEW'`
 		)
 	}
 	
-	export const ViewsMatArray = async (connection: TConnection): Promise<string[]> => {
+	export const ViewsMatArray = async (connection: TConnection, schema?: string): Promise<string[]> => {
 		return await FetchArray<string>(
 			connection,
 			`
           SELECT matviewname
           FROM pg_matviews
-          WHERE schemaname = 'public'`
+          WHERE schemaname = '${CurrentSchema(schema)}'`
 		)
 	}
 	
@@ -426,26 +430,26 @@ export namespace PGSQL {
 		)
 	}
 	
-	export const FunctionsArray = async (connection: TConnection): Promise<string[]> => {
+	export const FunctionsArray = async (connection: TConnection, schema?: string): Promise<string[]> => {
 		return await FetchArray<string>(
 			connection,
 			`
           SELECT f.proname
           FROM pg_catalog.pg_proc f
                    INNER JOIN pg_catalog.pg_namespace n ON (f.pronamespace = n.oid)
-          WHERE n.nspname = 'public'
+          WHERE n.nspname = '${CurrentSchema(schema)}'
             AND f.proname ILIKE 'func_%'`
 		)
 	}
 	
-	export const FunctionsOIDArray = async (connection: TConnection): Promise<any[]> => {
+	export const FunctionsOIDArray = async (connection: TConnection, schema?: string): Promise<any[]> => {
 		return await FetchArray<any>(
 			connection,
 			`
           SELECT f.oid
           FROM pg_catalog.pg_proc f
                    INNER JOIN pg_catalog.pg_namespace n ON (f.pronamespace = n.oid)
-          WHERE n.nspname = 'public'
+          WHERE n.nspname = '${CurrentSchema(schema)}'
             AND f.proname ILIKE 'func_%'`
 		)
 	}
@@ -460,33 +464,33 @@ export namespace PGSQL {
 		)
 	}
 	
-	export const TableData = async (connection: TConnection, table: string): Promise<any> => {
+	export const TableData = async (connection: TConnection, table: string, schema?: string): Promise<any> => {
 		return FetchOne<any>(
 			connection,
 			`
           SELECT *
           FROM information_schema.tables
-          WHERE table_schema = 'public'
+          WHERE table_schema = '${CurrentSchema(schema)}'
             AND table_type = 'BASE TABLE'
             AND table_name = $1`,
 			[table]
 		)
 	}
 	
-	export const TableColumnsData = async (connection: TConnection, table: string): Promise<any[]> => {
+	export const TableColumnsData = async (connection: TConnection, table: string, schema?: string): Promise<any[]> => {
 		return FetchMany<any>(
 			connection,
 			`
           SELECT *
           FROM information_schema.columns
-          WHERE table_schema = 'public'
+          WHERE table_schema = '${CurrentSchema(schema)}'
             AND table_name = $1
           ORDER BY ordinal_position`,
 			[table]
 		)
 	}
 	
-	export const TableFKsData = async (connection: TConnection, table: string): Promise<any[]> => {
+	export const TableFKsData = async (connection: TConnection, table: string, schema?: string): Promise<any[]> => {
 		return FetchMany<any>(
 			connection,
 			`
@@ -505,7 +509,7 @@ export namespace PGSQL {
                    JOIN information_schema.constraint_column_usage AS ccu
                         ON ccu.constraint_name = tc.constraint_name
                             AND ccu.table_schema = tc.table_schema
-          WHERE tc.table_schema = 'public'
+          WHERE tc.table_schema = '${CurrentSchema(schema)}'
             AND tc.constraint_type = 'FOREIGN KEY'
             AND tc.table_name = $1
           GROUP BY tc.table_schema,
@@ -515,13 +519,13 @@ export namespace PGSQL {
 		)
 	}
 	
-	export const TableIndexesData = async (connection: TConnection, table: string): Promise<any[]> => {
+	export const TableIndexesData = async (connection: TConnection, table: string, schema?: string): Promise<any[]> => {
 		return FetchMany<any>(
 			connection,
 			`
           SELECT *
           FROM pg_indexes
-          WHERE schemaname = 'public'
+          WHERE schemaname = '${CurrentSchema(schema)}'
             AND tablename = $1
             AND (indexname NOT ILIKE '%_pkey'
               OR indexdef ILIKE '%(%,%)%')`,
@@ -696,7 +700,7 @@ export namespace PGSQL {
 		return enums
 	}
 	
-	export const TableColumnComments = async (connection: TConnection, table: string): Promise<{column_name: string, column_comment: string | null}[]> => {
+	export const TableColumnComments = async (connection: TConnection, table: string, schema?: string): Promise<{column_name: string, column_comment: string | null}[]> => {
 		return PGSQL.FetchMany<{column_name: string, column_comment: string | null}>(connection, `
         SELECT cols.column_name,
                (
@@ -707,18 +711,18 @@ export namespace PGSQL {
                ) AS column_comment
 
         FROM information_schema.columns cols
-        WHERE cols.table_schema = 'public'
+        WHERE cols.table_schema = '${CurrentSchema(schema)}'
           AND cols.table_name = '${table}'`)
 	}
 	
-	export const GetPGTable = async (connection: TConnection, table: string): Promise<PGTable> => {
+	export const GetPGTable = async (connection: TConnection, table: string, schema?: string): Promise<PGTable> => {
 		const pgTable = new PGTable()
 		
 		pgTable.name = table
 		
-		const columnComments = await TableColumnComments(connection, table)
+		const columnComments = await TableColumnComments(connection, table, schema)
 		
-		const columns = await TableColumnsData(connection, table)
+		const columns = await TableColumnsData(connection, table, schema)
 		for (const column of columns) {
 			const pgColumn = new PGColumn({
 				...column,
