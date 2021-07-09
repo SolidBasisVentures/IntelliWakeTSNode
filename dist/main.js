@@ -7,14 +7,12 @@ var intelliwaketsfoundation = require('@solidbasisventures/intelliwaketsfoundati
 var moment = require('moment');
 var path = require('path');
 var fs = require('fs');
-var QueryStream = require('pg-query-stream');
 
 function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e : { 'default': e }; }
 
 var readline__default = /*#__PURE__*/_interopDefaultLegacy(readline);
 var moment__default = /*#__PURE__*/_interopDefaultLegacy(moment);
 var fs__default = /*#__PURE__*/_interopDefaultLegacy(fs);
-var QueryStream__default = /*#__PURE__*/_interopDefaultLegacy(QueryStream);
 
 /*! *****************************************************************************
 Copyright (c) Microsoft Corporation.
@@ -2683,6 +2681,7 @@ var PGParams = /** @class */ (function () {
     return PGParams;
 }());
 
+// noinspection SqlNoDataSourceInspection
 (function (PGSQL) {
     var _this = this;
     PGSQL.query = function (connection, sql, values) { return __awaiter(_this, void 0, void 0, function () {
@@ -2711,96 +2710,82 @@ var PGParams = /** @class */ (function () {
                 })];
         });
     }); };
-    PGSQL.PGQueryValuesStream = function (connection, sql, values, row) { return __awaiter(_this, void 0, void 0, function () {
-        var _this = this;
-        return __generator(this, function (_a) {
-            return [2 /*return*/, new Promise(function (resolve, reject) { return __awaiter(_this, void 0, void 0, function () {
-                    var actualRow, actualValues, loadCount, processedCount, query, stream;
-                    var _this = this;
-                    return __generator(this, function (_a) {
-                        if (!!row) {
-                            actualRow = row;
-                            actualValues = values;
-                        }
-                        else {
-                            actualRow = values;
-                            values = [];
-                        }
-                        loadCount = 0;
-                        processedCount = 0;
-                        query = new QueryStream__default['default'](sql, actualValues);
-                        stream = connection.query(query);
-                        stream.on('data', function (row) { return __awaiter(_this, void 0, void 0, function () {
-                            var paused;
-                            return __generator(this, function (_a) {
-                                switch (_a.label) {
-                                    case 0:
-                                        loadCount++;
-                                        paused = false;
-                                        if (loadCount > processedCount + 100) {
-                                            stream.pause();
-                                            paused = true;
-                                        }
-                                        return [4 /*yield*/, actualRow(row)];
-                                    case 1:
-                                        _a.sent();
-                                        processedCount++;
-                                        if (paused) {
-                                            stream.resume();
-                                        }
-                                        return [2 /*return*/];
-                                }
-                            });
-                        }); });
-                        stream.on('error', function (err) {
-                            reject(err);
-                        });
-                        stream.on('end', function () { return __awaiter(_this, void 0, void 0, function () {
-                            return __generator(this, function (_a) {
-                                switch (_a.label) {
-                                    case 0: return [4 /*yield*/, PGSQL.timeout(100)];
-                                    case 1:
-                                        _a.sent();
-                                        _a.label = 2;
-                                    case 2:
-                                        if (!(processedCount < loadCount)) return [3 /*break*/, 4];
-                                        return [4 /*yield*/, PGSQL.timeout(100)];
-                                    case 3:
-                                        _a.sent();
-                                        return [3 /*break*/, 2];
-                                    case 4:
-                                        resolve();
-                                        return [2 /*return*/];
-                                }
-                            });
-                        }); });
-                        return [2 /*return*/];
-                    });
-                }); })];
-        });
-    }); };
-    PGSQL.PGQueryStream = function (connection, sql, row) { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
-        return [2 /*return*/, PGSQL.PGQueryValuesStream(connection, sql, [], row)];
-    }); }); };
-    PGSQL.TableRowCount = function (connection, table) { return __awaiter(_this, void 0, void 0, function () {
+    // export const PGQueryValuesStream = async <T = any>(
+    // 	connection: TConnection,
+    // 	sql: string,
+    // 	values: any,
+    // 	row?: (row: T) => void
+    // ): Promise<void> => {
+    // 	return new Promise(async (resolve, reject) => {
+    // 		let actualRow: (row: T) => void
+    // 		let actualValues: any
+    //
+    // 		if (!!row) {
+    // 			actualRow = row
+    // 			actualValues = values
+    // 		} else {
+    // 			actualRow = values
+    // 			values = []
+    // 		}
+    //
+    // 		let loadCount = 0
+    // 		let processedCount = 0
+    //
+    // 		const query = new QueryStream(sql, actualValues)
+    // 		const stream = connection.query(query)
+    // 		stream.on('data', async (row: any) => {
+    // 			loadCount++
+    // 			let paused = false
+    //
+    // 			if (loadCount > processedCount + 100) {
+    // 				stream.pause()
+    // 				paused = true
+    // 			}
+    // 			await actualRow(row)
+    // 			processedCount++
+    // 			if (paused) {
+    // 				stream.resume()
+    // 			}
+    // 		})
+    // 		stream.on('error', (err: Error) => {
+    // 			reject(err)
+    // 		})
+    // 		stream.on('end', async () => {
+    // 			await timeout(100)
+    // 			while (processedCount < loadCount) {
+    // 				await timeout(100)
+    // 			}
+    //
+    // 			resolve()
+    // 		})
+    // 	})
+    // }
+    //
+    // export const PGQueryStream = async <T = any>(
+    // 	connection: TConnection,
+    // 	sql: string,
+    // 	row: (row: T) => void
+    // ): Promise<void> => PGQueryValuesStream<T>(connection, sql, [], row)
+    PGSQL.TableRowCount = function (connection, table, schema) { return __awaiter(_this, void 0, void 0, function () {
         var data;
         var _a, _b, _c;
         return __generator(this, function (_d) {
             switch (_d.label) {
-                case 0: return [4 /*yield*/, PGSQL.query(connection, "SELECT COUNT(*) AS count\n                                          FROM " + table, undefined)];
+                case 0: return [4 /*yield*/, PGSQL.query(connection, "SELECT COUNT(*) AS count\n                                          FROM " + ((!!schema ? schema + "." : '') + table), undefined)];
                 case 1:
                     data = _d.sent();
                     return [2 /*return*/, (_c = ((_b = ((_a = data.rows) !== null && _a !== void 0 ? _a : [])[0]) !== null && _b !== void 0 ? _b : {})['count']) !== null && _c !== void 0 ? _c : 0];
             }
         });
     }); };
-    PGSQL.TableExists = function (connection, table) { return __awaiter(_this, void 0, void 0, function () {
+    PGSQL.CurrentSchema = function (schema) { return schema !== null && schema !== void 0 ? schema : 'public'; };
+    PGSQL.TableExists = function (connection, table, schema) { return __awaiter(_this, void 0, void 0, function () {
         var sql, data;
         var _a, _b, _c;
         return __generator(this, function (_d) {
             switch (_d.label) {
                 case 0:
-                    sql = "SELECT COUNT(*) AS count\n                 FROM information_schema.tables\n                 WHERE table_schema = 'public'\n                   AND table_name = '" + table + "'";
+                    sql = "SELECT COUNT(*) AS count\n                 FROM information_schema.tables\n                 WHERE table_schema = '" + PGSQL.CurrentSchema(schema) + "'\n                   AND table_name = '" + table + "'";
                     return [4 /*yield*/, PGSQL.query(connection, sql, undefined)];
                 case 1:
                     data = _d.sent();
@@ -2808,13 +2793,13 @@ var PGParams = /** @class */ (function () {
             }
         });
     }); };
-    PGSQL.TableColumnExists = function (connection, table, column) { return __awaiter(_this, void 0, void 0, function () {
+    PGSQL.TableColumnExists = function (connection, table, column, schema) { return __awaiter(_this, void 0, void 0, function () {
         var sql, data;
         var _a, _b, _c;
         return __generator(this, function (_d) {
             switch (_d.label) {
                 case 0:
-                    sql = "SELECT COUNT(*) AS count\n                 FROM information_schema.COLUMNS\n                 WHERE table_schema = 'public'\n                   AND table_name = '" + table + "'\n                   AND column_name = '" + column + "'";
+                    sql = "SELECT COUNT(*) AS count\n                 FROM information_schema.COLUMNS\n                 WHERE table_schema = '" + PGSQL.CurrentSchema(schema) + "'\n                   AND table_name = '" + table + "'\n                   AND column_name = '" + column + "'";
                     return [4 /*yield*/, PGSQL.query(connection, sql, undefined)];
                 case 1:
                     data = _d.sent();
@@ -2822,13 +2807,13 @@ var PGParams = /** @class */ (function () {
             }
         });
     }); };
-    PGSQL.TriggerExists = function (connection, trigger) { return __awaiter(_this, void 0, void 0, function () {
+    PGSQL.TriggerExists = function (connection, trigger, schema) { return __awaiter(_this, void 0, void 0, function () {
         var sql, data;
         var _a, _b, _c;
         return __generator(this, function (_d) {
             switch (_d.label) {
                 case 0:
-                    sql = "SELECT COUNT(*) AS count\n                 FROM information_schema.triggers\n                 WHERE trigger_schema = 'public'\n                   AND trigger_name = '" + trigger + "'";
+                    sql = "SELECT COUNT(*) AS count\n                 FROM information_schema.triggers\n                 WHERE trigger_schema = '" + PGSQL.CurrentSchema(schema) + "'\n                   AND trigger_name = '" + trigger + "'";
                     return [4 /*yield*/, PGSQL.query(connection, sql, undefined)];
                 case 1:
                     data = _d.sent();
@@ -2846,13 +2831,13 @@ var PGParams = /** @class */ (function () {
             }
         });
     }); };
-    PGSQL.ConstraintExists = function (connection, constraint) { return __awaiter(_this, void 0, void 0, function () {
+    PGSQL.ConstraintExists = function (connection, constraint, schema) { return __awaiter(_this, void 0, void 0, function () {
         var sql, data;
         var _a, _b, _c;
         return __generator(this, function (_d) {
             switch (_d.label) {
                 case 0:
-                    sql = "\n        SELECT COUNT(*) AS count\n        FROM information_schema.table_constraints\n        WHERE constraint_schema = 'public'\n          AND constraint_name = '" + constraint + "'";
+                    sql = "\n        SELECT COUNT(*) AS count\n        FROM information_schema.table_constraints\n        WHERE constraint_schema = '" + PGSQL.CurrentSchema(schema) + "'\n          AND constraint_name = '" + constraint + "'";
                     return [4 /*yield*/, PGSQL.query(connection, sql, undefined)];
                 case 1:
                     data = _d.sent();
@@ -2860,31 +2845,31 @@ var PGParams = /** @class */ (function () {
             }
         });
     }); };
-    PGSQL.FKConstraints = function (connection) { return __awaiter(_this, void 0, void 0, function () {
+    PGSQL.FKConstraints = function (connection, schema) { return __awaiter(_this, void 0, void 0, function () {
         var sql;
         return __generator(this, function (_a) {
-            sql = "\n        SELECT table_name, constraint_name\n        FROM information_schema.table_constraints\n        WHERE constraint_schema = 'public'\n          AND constraint_type = 'FOREIGN KEY'";
+            sql = "\n        SELECT table_name, constraint_name\n        FROM information_schema.table_constraints\n        WHERE constraint_schema = '" + PGSQL.CurrentSchema(schema) + "'\n          AND constraint_type = 'FOREIGN KEY'";
             return [2 /*return*/, PGSQL.FetchMany(connection, sql)];
         });
     }); };
-    PGSQL.Functions = function (connection) { return __awaiter(_this, void 0, void 0, function () {
+    PGSQL.Functions = function (connection, schema) { return __awaiter(_this, void 0, void 0, function () {
         var sql;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
-                    sql = "\n        SELECT routines.routine_name\n        FROM information_schema.routines\n        WHERE routines.specific_schema = 'public'\n          AND routine_type = 'FUNCTION'\n        ORDER BY routines.routine_name";
+                    sql = "\n        SELECT routines.routine_name\n        FROM information_schema.routines\n        WHERE routines.specific_schema = '" + PGSQL.CurrentSchema(schema) + "'\n          AND routine_type = 'FUNCTION'\n        ORDER BY routines.routine_name";
                     return [4 /*yield*/, PGSQL.FetchArray(connection, sql)];
                 case 1: return [2 /*return*/, (_a.sent()).filter(function (func) { return func.startsWith('func_'); })];
             }
         });
     }); };
-    PGSQL.IndexExists = function (connection, tablename, indexName) { return __awaiter(_this, void 0, void 0, function () {
+    PGSQL.IndexExists = function (connection, tablename, indexName, schema) { return __awaiter(_this, void 0, void 0, function () {
         var sql, data;
         var _a, _b, _c;
         return __generator(this, function (_d) {
             switch (_d.label) {
                 case 0:
-                    sql = "SELECT COUNT(*) AS count\n                 FROM pg_indexes\n                 WHERE schemaname = 'public'\n                   AND tablename = '" + tablename + "'\n                   AND indexname = '" + indexName + "'";
+                    sql = "SELECT COUNT(*) AS count\n                 FROM pg_indexes\n                 WHERE schemaname = '" + PGSQL.CurrentSchema(schema) + "'\n                   AND tablename = '" + tablename + "'\n                   AND indexname = '" + indexName + "'";
                     return [4 /*yield*/, PGSQL.query(connection, sql, undefined)];
                 case 1:
                     data = _d.sent();
@@ -3126,23 +3111,23 @@ var PGParams = /** @class */ (function () {
             }
         });
     }); };
-    PGSQL.TablesArray = function (connection) { return __awaiter(_this, void 0, void 0, function () {
+    PGSQL.TablesArray = function (connection, schema) { return __awaiter(_this, void 0, void 0, function () {
         return __generator(this, function (_a) {
-            return [2 /*return*/, PGSQL.FetchArray(connection, "\n          SELECT table_name\n          FROM information_schema.tables\n          WHERE table_schema = 'public'\n            AND table_type = 'BASE TABLE'")];
+            return [2 /*return*/, PGSQL.FetchArray(connection, "\n          SELECT table_name\n          FROM information_schema.tables\n          WHERE table_schema = '" + PGSQL.CurrentSchema(schema) + "'\n            AND table_type = 'BASE TABLE'")];
         });
     }); };
-    PGSQL.ViewsArray = function (connection) { return __awaiter(_this, void 0, void 0, function () {
+    PGSQL.ViewsArray = function (connection, schema) { return __awaiter(_this, void 0, void 0, function () {
         return __generator(this, function (_a) {
             switch (_a.label) {
-                case 0: return [4 /*yield*/, PGSQL.FetchArray(connection, "\n          SELECT table_name\n          FROM information_schema.tables\n          WHERE table_schema = 'public'\n            AND table_type = 'VIEW'")];
+                case 0: return [4 /*yield*/, PGSQL.FetchArray(connection, "\n          SELECT table_name\n          FROM information_schema.tables\n          WHERE table_schema = '" + PGSQL.CurrentSchema(schema) + "'\n            AND table_type = 'VIEW'")];
                 case 1: return [2 /*return*/, _a.sent()];
             }
         });
     }); };
-    PGSQL.ViewsMatArray = function (connection) { return __awaiter(_this, void 0, void 0, function () {
+    PGSQL.ViewsMatArray = function (connection, schema) { return __awaiter(_this, void 0, void 0, function () {
         return __generator(this, function (_a) {
             switch (_a.label) {
-                case 0: return [4 /*yield*/, PGSQL.FetchArray(connection, "\n          SELECT matviewname\n          FROM pg_matviews\n          WHERE schemaname = 'public'")];
+                case 0: return [4 /*yield*/, PGSQL.FetchArray(connection, "\n          SELECT matviewname\n          FROM pg_matviews\n          WHERE schemaname = '" + PGSQL.CurrentSchema(schema) + "'")];
                 case 1: return [2 /*return*/, _a.sent()];
             }
         });
@@ -3155,18 +3140,18 @@ var PGParams = /** @class */ (function () {
             }
         });
     }); };
-    PGSQL.FunctionsArray = function (connection) { return __awaiter(_this, void 0, void 0, function () {
+    PGSQL.FunctionsArray = function (connection, schema) { return __awaiter(_this, void 0, void 0, function () {
         return __generator(this, function (_a) {
             switch (_a.label) {
-                case 0: return [4 /*yield*/, PGSQL.FetchArray(connection, "\n          SELECT f.proname\n          FROM pg_catalog.pg_proc f\n                   INNER JOIN pg_catalog.pg_namespace n ON (f.pronamespace = n.oid)\n          WHERE n.nspname = 'public'\n            AND f.proname ILIKE 'func_%'")];
+                case 0: return [4 /*yield*/, PGSQL.FetchArray(connection, "\n          SELECT f.proname\n          FROM pg_catalog.pg_proc f\n                   INNER JOIN pg_catalog.pg_namespace n ON (f.pronamespace = n.oid)\n          WHERE n.nspname = '" + PGSQL.CurrentSchema(schema) + "'\n            AND f.proname ILIKE 'func_%'")];
                 case 1: return [2 /*return*/, _a.sent()];
             }
         });
     }); };
-    PGSQL.FunctionsOIDArray = function (connection) { return __awaiter(_this, void 0, void 0, function () {
+    PGSQL.FunctionsOIDArray = function (connection, schema) { return __awaiter(_this, void 0, void 0, function () {
         return __generator(this, function (_a) {
             switch (_a.label) {
-                case 0: return [4 /*yield*/, PGSQL.FetchArray(connection, "\n          SELECT f.oid\n          FROM pg_catalog.pg_proc f\n                   INNER JOIN pg_catalog.pg_namespace n ON (f.pronamespace = n.oid)\n          WHERE n.nspname = 'public'\n            AND f.proname ILIKE 'func_%'")];
+                case 0: return [4 /*yield*/, PGSQL.FetchArray(connection, "\n          SELECT f.oid\n          FROM pg_catalog.pg_proc f\n                   INNER JOIN pg_catalog.pg_namespace n ON (f.pronamespace = n.oid)\n          WHERE n.nspname = '" + PGSQL.CurrentSchema(schema) + "'\n            AND f.proname ILIKE 'func_%'")];
                 case 1: return [2 /*return*/, _a.sent()];
             }
         });
@@ -3179,24 +3164,24 @@ var PGParams = /** @class */ (function () {
             }
         });
     }); };
-    PGSQL.TableData = function (connection, table) { return __awaiter(_this, void 0, void 0, function () {
+    PGSQL.TableData = function (connection, table, schema) { return __awaiter(_this, void 0, void 0, function () {
         return __generator(this, function (_a) {
-            return [2 /*return*/, PGSQL.FetchOne(connection, "\n          SELECT *\n          FROM information_schema.tables\n          WHERE table_schema = 'public'\n            AND table_type = 'BASE TABLE'\n            AND table_name = $1", [table])];
+            return [2 /*return*/, PGSQL.FetchOne(connection, "\n          SELECT *\n          FROM information_schema.tables\n          WHERE table_schema = '" + PGSQL.CurrentSchema(schema) + "'\n            AND table_type = 'BASE TABLE'\n            AND table_name = $1", [table])];
         });
     }); };
-    PGSQL.TableColumnsData = function (connection, table) { return __awaiter(_this, void 0, void 0, function () {
+    PGSQL.TableColumnsData = function (connection, table, schema) { return __awaiter(_this, void 0, void 0, function () {
         return __generator(this, function (_a) {
-            return [2 /*return*/, PGSQL.FetchMany(connection, "\n          SELECT *\n          FROM information_schema.columns\n          WHERE table_schema = 'public'\n            AND table_name = $1\n          ORDER BY ordinal_position", [table])];
+            return [2 /*return*/, PGSQL.FetchMany(connection, "\n          SELECT *\n          FROM information_schema.columns\n          WHERE table_schema = '" + PGSQL.CurrentSchema(schema) + "'\n            AND table_name = $1\n          ORDER BY ordinal_position", [table])];
         });
     }); };
-    PGSQL.TableFKsData = function (connection, table) { return __awaiter(_this, void 0, void 0, function () {
+    PGSQL.TableFKsData = function (connection, table, schema) { return __awaiter(_this, void 0, void 0, function () {
         return __generator(this, function (_a) {
-            return [2 /*return*/, PGSQL.FetchMany(connection, "\n          SELECT tc.table_schema,\n                 tc.constraint_name,\n                 tc.table_name,\n                 MAX(tc.enforced),\n                 JSON_AGG(kcu.column_name) AS \"columnNames\",\n                 MAX(ccu.table_schema)     AS foreign_table_schema,\n                 MAX(ccu.table_name)       AS \"primaryTable\",\n                 JSON_AGG(ccu.column_name) AS \"primaryColumns\"\n          FROM information_schema.table_constraints AS tc\n                   JOIN information_schema.key_column_usage AS kcu\n                        ON tc.constraint_name = kcu.constraint_name\n                            AND tc.table_schema = kcu.table_schema\n                   JOIN information_schema.constraint_column_usage AS ccu\n                        ON ccu.constraint_name = tc.constraint_name\n                            AND ccu.table_schema = tc.table_schema\n          WHERE tc.table_schema = 'public'\n            AND tc.constraint_type = 'FOREIGN KEY'\n            AND tc.table_name = $1\n          GROUP BY tc.table_schema,\n                   tc.constraint_name,\n                   tc.table_name", [table])];
+            return [2 /*return*/, PGSQL.FetchMany(connection, "\n          SELECT tc.table_schema,\n                 tc.constraint_name,\n                 tc.table_name,\n                 MAX(tc.enforced),\n                 JSON_AGG(kcu.column_name) AS \"columnNames\",\n                 MAX(ccu.table_schema)     AS foreign_table_schema,\n                 MAX(ccu.table_name)       AS \"primaryTable\",\n                 JSON_AGG(ccu.column_name) AS \"primaryColumns\"\n          FROM information_schema.table_constraints AS tc\n                   JOIN information_schema.key_column_usage AS kcu\n                        ON tc.constraint_name = kcu.constraint_name\n                            AND tc.table_schema = kcu.table_schema\n                   JOIN information_schema.constraint_column_usage AS ccu\n                        ON ccu.constraint_name = tc.constraint_name\n                            AND ccu.table_schema = tc.table_schema\n          WHERE tc.table_schema = '" + PGSQL.CurrentSchema(schema) + "'\n            AND tc.constraint_type = 'FOREIGN KEY'\n            AND tc.table_name = $1\n          GROUP BY tc.table_schema,\n                   tc.constraint_name,\n                   tc.table_name", [table])];
         });
     }); };
-    PGSQL.TableIndexesData = function (connection, table) { return __awaiter(_this, void 0, void 0, function () {
+    PGSQL.TableIndexesData = function (connection, table, schema) { return __awaiter(_this, void 0, void 0, function () {
         return __generator(this, function (_a) {
-            return [2 /*return*/, PGSQL.FetchMany(connection, "\n          SELECT *\n          FROM pg_indexes\n          WHERE schemaname = 'public'\n            AND tablename = $1\n            AND (indexname NOT ILIKE '%_pkey'\n              OR indexdef ILIKE '%(%,%)%')", [table])];
+            return [2 /*return*/, PGSQL.FetchMany(connection, "\n          SELECT *\n          FROM pg_indexes\n          WHERE schemaname = '" + PGSQL.CurrentSchema(schema) + "'\n            AND tablename = $1\n            AND (indexname NOT ILIKE '%_pkey'\n              OR indexdef ILIKE '%(%,%)%')", [table])];
         });
     }); };
     PGSQL.ViewData = function (connection, view) { return __awaiter(_this, void 0, void 0, function () {
@@ -3373,12 +3358,12 @@ var PGParams = /** @class */ (function () {
             }
         });
     }); };
-    PGSQL.TableColumnComments = function (connection, table) { return __awaiter(_this, void 0, void 0, function () {
+    PGSQL.TableColumnComments = function (connection, table, schema) { return __awaiter(_this, void 0, void 0, function () {
         return __generator(this, function (_a) {
-            return [2 /*return*/, PGSQL.FetchMany(connection, "\n        SELECT cols.column_name,\n               (\n                   SELECT pg_catalog.COL_DESCRIPTION(c.oid, cols.ordinal_position::INT)\n                   FROM pg_catalog.pg_class c\n                   WHERE c.oid = (SELECT cols.table_name::REGCLASS::OID)\n                     AND c.relname = cols.table_name\n               ) AS column_comment\n\n        FROM information_schema.columns cols\n        WHERE cols.table_schema = 'public'\n          AND cols.table_name = '" + table + "'")];
+            return [2 /*return*/, PGSQL.FetchMany(connection, "\n        SELECT cols.column_name,\n               (\n                   SELECT pg_catalog.COL_DESCRIPTION(c.oid, cols.ordinal_position::INT)\n                   FROM pg_catalog.pg_class c\n                   WHERE c.oid = (SELECT cols.table_name::REGCLASS::OID)\n                     AND c.relname = cols.table_name\n               ) AS column_comment\n\n        FROM information_schema.columns cols\n        WHERE cols.table_schema = '" + PGSQL.CurrentSchema(schema) + "'\n          AND cols.table_name = '" + table + "'")];
         });
     }); };
-    PGSQL.GetPGTable = function (connection, table) { return __awaiter(_this, void 0, void 0, function () {
+    PGSQL.GetPGTable = function (connection, table, schema) { return __awaiter(_this, void 0, void 0, function () {
         var pgTable, columnComments, columns, _loop_1, _i, columns_1, column, fks, _a, fks_1, fk, pgForeignKey, indexes, _b, indexes_1, index, indexDef, wherePos, pgIndex;
         var _c, _d, _e, _f, _g;
         return __generator(this, function (_h) {
@@ -3386,10 +3371,10 @@ var PGParams = /** @class */ (function () {
                 case 0:
                     pgTable = new PGTable();
                     pgTable.name = table;
-                    return [4 /*yield*/, PGSQL.TableColumnComments(connection, table)];
+                    return [4 /*yield*/, PGSQL.TableColumnComments(connection, table, schema)];
                 case 1:
                     columnComments = _h.sent();
-                    return [4 /*yield*/, PGSQL.TableColumnsData(connection, table)];
+                    return [4 /*yield*/, PGSQL.TableColumnsData(connection, table, schema)];
                 case 2:
                     columns = _h.sent();
                     _loop_1 = function (column) {

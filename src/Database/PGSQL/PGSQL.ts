@@ -8,7 +8,7 @@ import {PGEnum} from './PGEnum'
 import {PGIndex} from './PGIndex'
 import {PGForeignKey} from './PGForeignKey'
 import {Client, FieldDef, Pool, PoolClient} from 'pg'
-import QueryStream from 'pg-query-stream'
+// import QueryStream from 'pg-query-stream'
 
 export type TConnection = Pool | PoolClient | Client
 
@@ -57,62 +57,62 @@ export namespace PGSQL {
 		})
 	}
 	
-	export const PGQueryValuesStream = async <T = any>(
-		connection: TConnection,
-		sql: string,
-		values: any,
-		row?: (row: T) => void
-	): Promise<void> => {
-		return new Promise(async (resolve, reject) => {
-			let actualRow: (row: T) => void
-			let actualValues: any
-			
-			if (!!row) {
-				actualRow = row
-				actualValues = values
-			} else {
-				actualRow = values
-				values = []
-			}
-			
-			let loadCount = 0
-			let processedCount = 0
-			
-			const query = new QueryStream(sql, actualValues)
-			const stream = connection.query(query)
-			stream.on('data', async (row: any) => {
-				loadCount++
-				let paused = false
-				
-				if (loadCount > processedCount + 100) {
-					stream.pause()
-					paused = true
-				}
-				await actualRow(row)
-				processedCount++
-				if (paused) {
-					stream.resume()
-				}
-			})
-			stream.on('error', (err: Error) => {
-				reject(err)
-			})
-			stream.on('end', async () => {
-				await timeout(100)
-				while (processedCount < loadCount) {
-					await timeout(100)
-				}
-				
-				resolve()
-			})
-		})
-	}
-	
-	export const PGQueryStream = async <T = any>(
-		connection: TConnection,
-		sql: string,
-		row: (row: T) => void
-	): Promise<void> => PGQueryValuesStream<T>(connection, sql, [], row)
+	// export const PGQueryValuesStream = async <T = any>(
+	// 	connection: TConnection,
+	// 	sql: string,
+	// 	values: any,
+	// 	row?: (row: T) => void
+	// ): Promise<void> => {
+	// 	return new Promise(async (resolve, reject) => {
+	// 		let actualRow: (row: T) => void
+	// 		let actualValues: any
+	//
+	// 		if (!!row) {
+	// 			actualRow = row
+	// 			actualValues = values
+	// 		} else {
+	// 			actualRow = values
+	// 			values = []
+	// 		}
+	//
+	// 		let loadCount = 0
+	// 		let processedCount = 0
+	//
+	// 		const query = new QueryStream(sql, actualValues)
+	// 		const stream = connection.query(query)
+	// 		stream.on('data', async (row: any) => {
+	// 			loadCount++
+	// 			let paused = false
+	//
+	// 			if (loadCount > processedCount + 100) {
+	// 				stream.pause()
+	// 				paused = true
+	// 			}
+	// 			await actualRow(row)
+	// 			processedCount++
+	// 			if (paused) {
+	// 				stream.resume()
+	// 			}
+	// 		})
+	// 		stream.on('error', (err: Error) => {
+	// 			reject(err)
+	// 		})
+	// 		stream.on('end', async () => {
+	// 			await timeout(100)
+	// 			while (processedCount < loadCount) {
+	// 				await timeout(100)
+	// 			}
+	//
+	// 			resolve()
+	// 		})
+	// 	})
+	// }
+	//
+	// export const PGQueryStream = async <T = any>(
+	// 	connection: TConnection,
+	// 	sql: string,
+	// 	row: (row: T) => void
+	// ): Promise<void> => PGQueryValuesStream<T>(connection, sql, [], row)
 	
 	
 	export const TableRowCount = async (connection: TConnection, table: string, schema?: string): Promise<number> => {
