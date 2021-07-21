@@ -2538,7 +2538,8 @@ exports.PGSQL = void 0;
             else {
                 const start = moment__default['default']();
                 const response = yield connection.query(sql, values);
-                const ms = moment__default['default'].duration(start.diff(moment__default['default']())).asMilliseconds();
+                const ms = moment__default['default'].duration(moment__default['default']().diff(start)).asMilliseconds();
+                console.log(intelliwaketsfoundation.CleanNumber(process.env.DB_MS_ALERT), ms);
                 if (ms > intelliwaketsfoundation.CleanNumber(process.env.DB_MS_ALERT)) {
                     console.log('----- Long SQL Query', ms / 1000, 'ms');
                     console.log(sql);
@@ -2829,7 +2830,7 @@ exports.PGSQL = void 0;
             else {
                 const start = moment__default['default']();
                 const response = yield connection.query(sql, values);
-                const ms = moment__default['default'].duration(start.diff(moment__default['default']())).asMilliseconds();
+                const ms = moment__default['default'].duration(moment__default['default']().diff(start)).asMilliseconds();
                 if (ms > intelliwaketsfoundation.CleanNumber(process.env.DB_MS_ALERT)) {
                     console.log('----- Long SQL Query', ms / 1000, 'ms');
                     console.log(sql);
