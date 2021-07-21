@@ -10,8 +10,29 @@ var fs = require('fs');
 
 function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e : { 'default': e }; }
 
+function _interopNamespace(e) {
+    if (e && e.__esModule) return e;
+    var n = Object.create(null);
+    if (e) {
+        Object.keys(e).forEach(function (k) {
+            if (k !== 'default') {
+                var d = Object.getOwnPropertyDescriptor(e, k);
+                Object.defineProperty(n, k, d.get ? d : {
+                    enumerable: true,
+                    get: function () {
+                        return e[k];
+                    }
+                });
+            }
+        });
+    }
+    n['default'] = e;
+    return Object.freeze(n);
+}
+
 var readline__default = /*#__PURE__*/_interopDefaultLegacy(readline);
 var moment__default = /*#__PURE__*/_interopDefaultLegacy(moment);
+var path__namespace = /*#__PURE__*/_interopNamespace(path);
 var fs__default = /*#__PURE__*/_interopDefaultLegacy(fs);
 
 /*! *****************************************************************************
@@ -28,31 +49,6 @@ LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR
 OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
 PERFORMANCE OF THIS SOFTWARE.
 ***************************************************************************** */
-/* global Reflect, Promise */
-
-var extendStatics = function(d, b) {
-    extendStatics = Object.setPrototypeOf ||
-        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-        function (d, b) { for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p]; };
-    return extendStatics(d, b);
-};
-
-function __extends(d, b) {
-    extendStatics(d, b);
-    function __() { this.constructor = d; }
-    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-}
-
-var __assign = function() {
-    __assign = Object.assign || function __assign(t) {
-        for (var s, i = 1, n = arguments.length; i < n; i++) {
-            s = arguments[i];
-            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
-        }
-        return t;
-    };
-    return __assign.apply(this, arguments);
-};
 
 function __awaiter(thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
@@ -64,91 +60,48 @@ function __awaiter(thisArg, _arguments, P, generator) {
     });
 }
 
-function __generator(thisArg, body) {
-    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
-    return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
-    function verb(n) { return function (v) { return step([n, v]); }; }
-    function step(op) {
-        if (f) throw new TypeError("Generator is already executing.");
-        while (_) try {
-            if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
-            if (y = 0, t) op = [op[0] & 2, t.value];
-            switch (op[0]) {
-                case 0: case 1: t = op; break;
-                case 4: _.label++; return { value: op[1], done: false };
-                case 5: _.label++; y = op[1]; op = [0]; continue;
-                case 7: op = _.ops.pop(); _.trys.pop(); continue;
-                default:
-                    if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) { _ = 0; continue; }
-                    if (op[0] === 3 && (!t || (op[1] > t[0] && op[1] < t[3]))) { _.label = op[1]; break; }
-                    if (op[0] === 6 && _.label < t[1]) { _.label = t[1]; t = op; break; }
-                    if (t && _.label < t[2]) { _.label = t[2]; _.ops.push(op); break; }
-                    if (t[2]) _.ops.pop();
-                    _.trys.pop(); continue;
+const KeyboardLine = (question, validAnswers) => __awaiter(void 0, void 0, void 0, function* () {
+    const rl = readline__default['default'].createInterface({
+        input: process.stdin,
+        output: process.stdout
+    });
+    return new Promise(resolve => rl.question(`${question} `, answer => {
+        if (!validAnswers || validAnswers.includes(answer)) {
+            resolve(answer);
+            rl.close();
+        }
+    }));
+});
+const KeyboardKey = (question, validKeys) => __awaiter(void 0, void 0, void 0, function* () {
+    return new Promise(resolve => {
+        if (!!question)
+            console.log(question);
+        process.stdin.setRawMode(true);
+        process.stdin.resume();
+        process.stdin.setEncoding('utf8');
+        const getData = (key) => {
+            if (key === '\u0003')
+                process.exit();
+            if (!validKeys || (Array.isArray(validKeys) ? validKeys.includes(key) : validKeys(key))) {
+                process.stdin.setRawMode(false);
+                process.stdin.pause();
+                process.stdin.removeListener('data', getData);
+                resolve(key);
             }
-            op = body.call(thisArg, _);
-        } catch (e) { op = [6, e]; y = 0; } finally { f = t = 0; }
-        if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
-    }
-}
-
-function __spreadArrays() {
-    for (var s = 0, i = 0, il = arguments.length; i < il; i++) s += arguments[i].length;
-    for (var r = Array(s), k = 0, i = 0; i < il; i++)
-        for (var a = arguments[i], j = 0, jl = a.length; j < jl; j++, k++)
-            r[k] = a[j];
-    return r;
-}
-
-var KeyboardLine = function (question, validAnswers) { return __awaiter(void 0, void 0, void 0, function () {
-    var rl;
-    return __generator(this, function (_a) {
-        rl = readline__default['default'].createInterface({
-            input: process.stdin,
-            output: process.stdout
-        });
-        return [2 /*return*/, new Promise(function (resolve) {
-                return rl.question(question + " ", function (answer) {
-                    if (!validAnswers || validAnswers.includes(answer)) {
-                        resolve(answer);
-                        rl.close();
-                    }
-                });
-            })];
+        };
+        process.stdin.on('data', getData);
     });
-}); };
-var KeyboardKey = function (question, validKeys) { return __awaiter(void 0, void 0, void 0, function () {
-    return __generator(this, function (_a) {
-        return [2 /*return*/, new Promise(function (resolve) {
-                if (!!question)
-                    console.log(question);
-                process.stdin.setRawMode(true);
-                process.stdin.resume();
-                process.stdin.setEncoding('utf8');
-                var getData = function (key) {
-                    if (key === '\u0003')
-                        process.exit();
-                    if (!validKeys || (Array.isArray(validKeys) ? validKeys.includes(key) : validKeys(key))) {
-                        process.stdin.setRawMode(false);
-                        process.stdin.pause();
-                        process.stdin.removeListener('data', getData);
-                        resolve(key);
-                    }
-                };
-                process.stdin.on('data', getData);
-            })];
-    });
-}); };
+});
 
-var PaginatorInitializeResponseFromRequest = function (paginatorRequest) { return ({
+const PaginatorInitializeResponseFromRequest = (paginatorRequest) => ({
     page: paginatorRequest.page < 1 ? 1 : paginatorRequest.page,
     pageCount: 1,
     rowCount: 0,
     countPerPage: paginatorRequest.countPerPage,
     currentOffset: 1,
     rows: []
-}); };
-var PaginatorApplyRowCount = function (paginatorResponse, rowCount) {
+});
+const PaginatorApplyRowCount = (paginatorResponse, rowCount) => {
     paginatorResponse.rowCount = +rowCount;
     if (+rowCount > 0) {
         paginatorResponse.pageCount = Math.floor((+rowCount + (+paginatorResponse.countPerPage - 1)) / +paginatorResponse.countPerPage);
@@ -165,52 +118,41 @@ var PaginatorApplyRowCount = function (paginatorResponse, rowCount) {
     }
 };
 
-var PGEnum = /** @class */ (function () {
-    function PGEnum(instanceData) {
+class PGEnum {
+    constructor(instanceData) {
         this.enumName = '';
         this.values = [];
         if (instanceData) {
             this.deserialize(instanceData);
         }
     }
-    PGEnum.prototype.deserialize = function (instanceData) {
-        var keys = Object.keys(this);
-        for (var _i = 0, keys_1 = keys; _i < keys_1.length; _i++) {
-            var key = keys_1[_i];
+    deserialize(instanceData) {
+        const keys = Object.keys(this);
+        for (const key of keys) {
             if (instanceData.hasOwnProperty(key)) {
                 this[key] = instanceData[key];
             }
         }
-    };
-    Object.defineProperty(PGEnum.prototype, "columnName", {
-        get: function () {
-            return intelliwaketsfoundation.ToSnakeCase(this.enumName);
-        },
-        enumerable: false,
-        configurable: true
-    });
-    Object.defineProperty(PGEnum.prototype, "typeName", {
-        get: function () {
-            return this.enumName;
-        },
-        enumerable: false,
-        configurable: true
-    });
-    PGEnum.TypeName = function (columnName) {
+    }
+    get columnName() {
+        return intelliwaketsfoundation.ToSnakeCase(this.enumName);
+    }
+    get typeName() {
+        return this.enumName;
+    }
+    static TypeName(columnName) {
         return intelliwaketsfoundation.ToPascalCase(columnName);
-    };
-    PGEnum.prototype.ddlRemove = function () {
-        return "DROP TYPE IF EXISTS " + this.columnName + " CASCADE ";
-    };
-    PGEnum.prototype.ddlDefinition = function () {
-        return "CREATE TYPE " + this.columnName + " AS ENUM ('" + this.values.join('\',\'') + "')";
-    };
-    return PGEnum;
-}());
+    }
+    ddlRemove() {
+        return `DROP TYPE IF EXISTS ${this.columnName} CASCADE `;
+    }
+    ddlDefinition() {
+        return `CREATE TYPE ${this.columnName} AS ENUM ('${this.values.join('\',\'')}')`;
+    }
+}
 
-var PGColumn = /** @class */ (function () {
-    function PGColumn(instanceData) {
-        var _this = this;
+class PGColumn {
+    constructor(instanceData) {
         this.column_name = '';
         this.ordinal_position = 0;
         this.column_default = null;
@@ -236,93 +178,92 @@ var PGColumn = /** @class */ (function () {
          * {interface: IDeclaration} */
         this.column_comment = '';
         this.isAutoIncrement = true;
-        this.jsType = function () {
-            if (typeof _this.udt_name !== 'string') {
-                return _this.udt_name.enumName;
+        this.jsType = () => {
+            if (typeof this.udt_name !== 'string') {
+                return this.udt_name.enumName;
             }
-            else if (_this.jsonType()) {
+            else if (this.jsonType()) {
                 return 'object';
             }
-            else if (_this.booleanType()) {
+            else if (this.booleanType()) {
                 return 'boolean';
             }
-            else if (_this.integerFloatType()) {
+            else if (this.integerFloatType()) {
                 return 'number';
             }
-            else if (_this.udt_name === PGColumn.TYPE_POINT) {
+            else if (this.udt_name === PGColumn.TYPE_POINT) {
                 return '[number, number]';
             }
-            else if (_this.udt_name.startsWith('e_')) {
-                return PGEnum.TypeName(_this.udt_name);
+            else if (this.udt_name.startsWith('e_')) {
+                return PGEnum.TypeName(this.udt_name);
             }
             else {
                 return 'string'; // Date or String or Enum
             }
         };
-        this.enumType = function () {
-            return typeof _this.udt_name !== 'string';
+        this.enumType = () => {
+            return typeof this.udt_name !== 'string';
         };
-        this.integerType = function () {
-            return (typeof _this.udt_name === 'string') && (_this.udt_name.toLowerCase().startsWith('int') || [PGColumn.TYPE_SMALLINT, PGColumn.TYPE_INTEGER, PGColumn.TYPE_BIGINT].includes(_this.udt_name.toLowerCase()));
+        this.integerType = () => {
+            return (typeof this.udt_name === 'string') && (this.udt_name.toLowerCase().startsWith('int') || [PGColumn.TYPE_SMALLINT, PGColumn.TYPE_INTEGER, PGColumn.TYPE_BIGINT].includes(this.udt_name.toLowerCase()));
         };
-        this.floatType = function () {
-            return (typeof _this.udt_name === 'string') && [PGColumn.TYPE_NUMERIC, PGColumn.TYPE_FLOAT8].includes(_this.udt_name.toLowerCase());
+        this.floatType = () => {
+            return (typeof this.udt_name === 'string') && [PGColumn.TYPE_NUMERIC, PGColumn.TYPE_FLOAT8].includes(this.udt_name.toLowerCase());
         };
-        this.integerFloatType = function () {
-            return _this.integerType() || _this.floatType();
+        this.integerFloatType = () => {
+            return this.integerType() || this.floatType();
         };
-        this.booleanType = function () {
-            return (typeof _this.udt_name === 'string') && [PGColumn.TYPE_BOOLEAN].includes(_this.udt_name.toLowerCase());
+        this.booleanType = () => {
+            return (typeof this.udt_name === 'string') && [PGColumn.TYPE_BOOLEAN].includes(this.udt_name.toLowerCase());
         };
-        this.jsonType = function () {
-            return (typeof _this.udt_name === 'string') && [PGColumn.TYPE_JSON, PGColumn.TYPE_JSONB].includes(_this.udt_name.toLowerCase());
+        this.jsonType = () => {
+            return (typeof this.udt_name === 'string') && [PGColumn.TYPE_JSON, PGColumn.TYPE_JSONB].includes(this.udt_name.toLowerCase());
         };
-        this.generalStringType = function () {
-            return (typeof _this.udt_name !== 'string') || [PGColumn.TYPE_VARCHAR].includes(_this.udt_name.toLowerCase());
+        this.generalStringType = () => {
+            return (typeof this.udt_name !== 'string') || [PGColumn.TYPE_VARCHAR].includes(this.udt_name.toLowerCase());
         };
-        this.dateType = function () {
-            return (typeof _this.udt_name === 'string') && [
+        this.dateType = () => {
+            return (typeof this.udt_name === 'string') && [
                 PGColumn.TYPE_DATE,
                 PGColumn.TYPE_TIME,
                 PGColumn.TYPE_TIMETZ,
                 PGColumn.TYPE_TIMESTAMP,
                 PGColumn.TYPE_TIMESTAMPTZ
-            ].includes(_this.udt_name.toLowerCase());
+            ].includes(this.udt_name.toLowerCase());
         };
-        this.blobType = function () {
-            return (typeof _this.udt_name === 'string') && [PGColumn.TYPE_TEXT].includes(_this.udt_name.toLowerCase());
+        this.blobType = () => {
+            return (typeof this.udt_name === 'string') && [PGColumn.TYPE_TEXT].includes(this.udt_name.toLowerCase());
         };
-        this.otherType = function () {
-            return (!_this.integerFloatType && !_this.booleanType && !_this.dateType() && !_this.generalStringType() && !_this.blobType());
+        this.otherType = () => {
+            return (!this.integerFloatType && !this.booleanType && !this.dateType() && !this.generalStringType() && !this.blobType());
         };
         if (instanceData) {
             this.deserialize(instanceData);
         }
     }
-    PGColumn.prototype.deserialize = function (instanceData) {
-        var keys = Object.keys(this);
-        for (var _i = 0, keys_1 = keys; _i < keys_1.length; _i++) {
-            var key = keys_1[_i];
+    deserialize(instanceData) {
+        const keys = Object.keys(this);
+        for (const key of keys) {
             if (instanceData.hasOwnProperty(key) && typeof instanceData !== 'function') {
                 this[key] = instanceData[key];
             }
         }
-    };
-    PGColumn.prototype.clean = function () {
+    }
+    clean() {
         //		if (this.dateType()) {
         //			if (IsEmpty(this.DATETIME_PRECISION) || this.DATETIME_PRECISION < 3 || this.DATETIME_PRECISION > 6) {
         //				this.DATETIME_PRECISION = 6;
         //			}
         //		}
-    };
-    PGColumn.prototype.ddlDefinition = function () {
+    }
+    ddlDefinition() {
         var _a, _b, _c, _d, _e, _f, _g, _h;
-        var ddl = '"' + this.column_name + '" ';
+        let ddl = '"' + this.column_name + '" ';
         ddl += (typeof this.udt_name === 'string') ? this.udt_name : this.udt_name.columnName;
         if (this.array_dimensions.length > 0) {
-            ddl += "[" + this.array_dimensions
-                .map(function (array_dimension) { return (!!array_dimension ? array_dimension.toString() : ''); })
-                .join('],[') + "] ";
+            ddl += `[${this.array_dimensions
+                .map((array_dimension) => (!!array_dimension ? array_dimension.toString() : ''))
+                .join('],[')}] `;
         }
         else {
             if (this.udt_name !== PGColumn.TYPE_POINT) {
@@ -354,7 +295,7 @@ var PGColumn = /** @class */ (function () {
             }
         }
         if (!!this.generatedAlwaysAs) {
-            ddl += "GENERATED ALWAYS AS " + PGColumn.CleanComment(this.generatedAlwaysAs) + " STORED ";
+            ddl += `GENERATED ALWAYS AS ${PGColumn.CleanComment(this.generatedAlwaysAs)} STORED `;
         }
         else {
             if (!intelliwaketsfoundation.IsOn(this.is_nullable)) {
@@ -367,10 +308,10 @@ var PGColumn = /** @class */ (function () {
                 if (!(this.dateType() && (!this.column_default || ((_c = this.column_default) !== null && _c !== void 0 ? _c : '').toString().toUpperCase().includes('NULL')))) {
                     if (this.array_dimensions.length > 0) {
                         if (intelliwaketsfoundation.IsOn(this.is_nullable)) {
-                            ddl += "DEFAULT " + ((_d = this.column_default) !== null && _d !== void 0 ? _d : 'NULL') + " ";
+                            ddl += `DEFAULT ${(_d = this.column_default) !== null && _d !== void 0 ? _d : 'NULL'} `;
                         }
                         else {
-                            ddl += "DEFAULT " + ((_e = this.column_default) !== null && _e !== void 0 ? _e : ((typeof this.udt_name === 'string') ? '\'{}\'' : (_f = this.udt_name.defaultValue) !== null && _f !== void 0 ? _f : '\'{}')) + " ";
+                            ddl += `DEFAULT ${(_e = this.column_default) !== null && _e !== void 0 ? _e : ((typeof this.udt_name === 'string') ? '\'{}\'' : (_f = this.udt_name.defaultValue) !== null && _f !== void 0 ? _f : '\'{}')} `;
                         }
                     }
                     else {
@@ -378,42 +319,42 @@ var PGColumn = /** @class */ (function () {
                             if (intelliwaketsfoundation.IsOn(this.is_identity)) {
                                 if (this.isAutoIncrement) {
                                     if (!!this.identity_generation) {
-                                        ddl += "GENERATED " + this.identity_generation + " AS IDENTITY ";
+                                        ddl += `GENERATED ${this.identity_generation} AS IDENTITY `;
                                     }
                                     else {
-                                        ddl += "GENERATED BY DEFAULT AS IDENTITY ";
+                                        ddl += `GENERATED BY DEFAULT AS IDENTITY `;
                                     }
                                 }
                             }
                             else if (this.booleanType()) {
                                 if (intelliwaketsfoundation.IsOn(this.is_nullable) || this.column_default === null) {
-                                    ddl += "DEFAULT NULL ";
+                                    ddl += `DEFAULT NULL `;
                                 }
                                 else {
-                                    ddl += "DEFAULT " + (intelliwaketsfoundation.IsOn(this.column_default) ? 'true' : 'false') + " ";
+                                    ddl += `DEFAULT ${intelliwaketsfoundation.IsOn(this.column_default) ? 'true' : 'false'} `;
                                 }
                             }
                             else if (!this.column_default && (typeof this.udt_name !== 'string') && !!this.udt_name.defaultValue) {
-                                ddl += "DEFAULT '" + this.udt_name.defaultValue + "' ";
+                                ddl += `DEFAULT '${this.udt_name.defaultValue}' `;
                             }
                             else {
                                 if (!!this.column_default) {
                                     if (this.integerFloatType() || this.dateType() || ((_g = this.column_default) !== null && _g !== void 0 ? _g : '').toString().includes('::') || ((_h = this.column_default) !== null && _h !== void 0 ? _h : '').toString().includes('()')) {
-                                        ddl += "DEFAULT " + this.column_default + " ";
+                                        ddl += `DEFAULT ${this.column_default} `;
                                     }
                                     else {
-                                        ddl += "DEFAULT '" + this.column_default + "' ";
+                                        ddl += `DEFAULT '${this.column_default}' `;
                                     }
                                 }
                                 else if (intelliwaketsfoundation.IsOn(this.is_nullable)) {
-                                    ddl += "DEFAULT NULL ";
+                                    ddl += `DEFAULT NULL `;
                                 }
                                 else {
                                     if (this.integerFloatType()) {
-                                        ddl += "DEFAULT 0 ";
+                                        ddl += `DEFAULT 0 `;
                                     }
                                     else if (this.dateType()) {
-                                        ddl += "DEFAULT now() ";
+                                        ddl += `DEFAULT now() `;
                                         // if (!!this.datetime_precision) {
                                         // 	ddl += `(${this.datetime_precision} `;
                                         // } else {
@@ -421,7 +362,7 @@ var PGColumn = /** @class */ (function () {
                                         // }
                                     }
                                     else {
-                                        ddl += "DEFAULT '' ";
+                                        ddl += `DEFAULT '' `;
                                     }
                                 }
                             }
@@ -430,63 +371,61 @@ var PGColumn = /** @class */ (function () {
                 }
             }
             if (!!this.check) {
-                ddl += "CHECK (" + this.check + ") ";
+                ddl += `CHECK (${this.check}) `;
             }
             else if (this.checkStringValues.length > 0) {
-                ddl += "CHECK (" + (intelliwaketsfoundation.IsOn(this.is_nullable) ? this.column_name + ' IS NULL OR ' : '') + this.column_name + " IN ('" + this.checkStringValues.join('\', \'') + "')) ";
+                ddl += `CHECK (${intelliwaketsfoundation.IsOn(this.is_nullable) ? this.column_name + ' IS NULL OR ' : ''}${this.column_name} IN ('${this.checkStringValues.join('\', \'')}')) `;
             }
         }
         return ddl.trim();
-    };
-    PGColumn.CleanComment = function (comment) {
+    }
+    static CleanComment(comment) {
         if (!comment) {
             return comment;
         }
         return comment.replace(/[\n\r]/g, ' ');
-    };
-    PGColumn.TYPE_BOOLEAN = 'bool'; // Changed from boolean
-    PGColumn.TYPE_NUMERIC = 'numeric';
-    PGColumn.TYPE_FLOAT8 = 'float8';
-    PGColumn.TYPE_POINT = 'point';
-    PGColumn.TYPE_SMALLINT = 'smallint';
-    PGColumn.TYPE_INTEGER = 'integer';
-    PGColumn.TYPE_BIGINT = 'bigint';
-    PGColumn.TYPE_VARCHAR = 'varchar';
-    PGColumn.TYPE_TEXT = 'text';
-    PGColumn.TYPE_JSON = 'json';
-    PGColumn.TYPE_JSONB = 'jsonb';
-    PGColumn.TYPE_DATE = 'date';
-    PGColumn.TYPE_TIME = 'time';
-    PGColumn.TYPE_TIMETZ = 'timetz';
-    PGColumn.TYPE_TIMESTAMP = 'timestamp';
-    PGColumn.TYPE_TIMESTAMPTZ = 'timestamptz';
-    PGColumn.TYPE_BYTEA = 'bytea';
-    PGColumn.TYPE_UUID = 'uuid';
-    PGColumn.TYPES_ALL = [
-        PGColumn.TYPE_BOOLEAN,
-        PGColumn.TYPE_NUMERIC,
-        PGColumn.TYPE_FLOAT8,
-        PGColumn.TYPE_POINT,
-        PGColumn.TYPE_SMALLINT,
-        PGColumn.TYPE_INTEGER,
-        PGColumn.TYPE_BIGINT,
-        PGColumn.TYPE_VARCHAR,
-        PGColumn.TYPE_TEXT,
-        PGColumn.TYPE_JSON,
-        PGColumn.TYPE_JSONB,
-        PGColumn.TYPE_DATE,
-        PGColumn.TYPE_TIME,
-        PGColumn.TYPE_TIMETZ,
-        PGColumn.TYPE_TIMESTAMP,
-        PGColumn.TYPE_TIMESTAMPTZ,
-        PGColumn.TYPE_UUID
-    ];
-    return PGColumn;
-}());
+    }
+}
+PGColumn.TYPE_BOOLEAN = 'bool'; // Changed from boolean
+PGColumn.TYPE_NUMERIC = 'numeric';
+PGColumn.TYPE_FLOAT8 = 'float8';
+PGColumn.TYPE_POINT = 'point';
+PGColumn.TYPE_SMALLINT = 'smallint';
+PGColumn.TYPE_INTEGER = 'integer';
+PGColumn.TYPE_BIGINT = 'bigint';
+PGColumn.TYPE_VARCHAR = 'varchar';
+PGColumn.TYPE_TEXT = 'text';
+PGColumn.TYPE_JSON = 'json';
+PGColumn.TYPE_JSONB = 'jsonb';
+PGColumn.TYPE_DATE = 'date';
+PGColumn.TYPE_TIME = 'time';
+PGColumn.TYPE_TIMETZ = 'timetz';
+PGColumn.TYPE_TIMESTAMP = 'timestamp';
+PGColumn.TYPE_TIMESTAMPTZ = 'timestamptz';
+PGColumn.TYPE_BYTEA = 'bytea';
+PGColumn.TYPE_UUID = 'uuid';
+PGColumn.TYPES_ALL = [
+    PGColumn.TYPE_BOOLEAN,
+    PGColumn.TYPE_NUMERIC,
+    PGColumn.TYPE_FLOAT8,
+    PGColumn.TYPE_POINT,
+    PGColumn.TYPE_SMALLINT,
+    PGColumn.TYPE_INTEGER,
+    PGColumn.TYPE_BIGINT,
+    PGColumn.TYPE_VARCHAR,
+    PGColumn.TYPE_TEXT,
+    PGColumn.TYPE_JSON,
+    PGColumn.TYPE_JSONB,
+    PGColumn.TYPE_DATE,
+    PGColumn.TYPE_TIME,
+    PGColumn.TYPE_TIMETZ,
+    PGColumn.TYPE_TIMESTAMP,
+    PGColumn.TYPE_TIMESTAMPTZ,
+    PGColumn.TYPE_UUID
+];
 
-var ColumnDefinition = /** @class */ (function () {
-    function ColumnDefinition() {
-        var _this = this;
+class ColumnDefinition {
+    constructor() {
         this.COLUMN_NAME = "";
         this.ORDINAL_POSITION = 0;
         this.COLUMN_DEFAULT = null;
@@ -503,91 +442,90 @@ var ColumnDefinition = /** @class */ (function () {
         this.COLUMN_COMMENT = null;
         this.CHARACTER_SET_NAME = null;
         this.COLLATION_NAME = null;
-        this.jsType = function () {
-            if (_this.booleanType()) {
+        this.jsType = () => {
+            if (this.booleanType()) {
                 return 'boolean';
             }
-            else if (_this.integerFloatType()) {
+            else if (this.integerFloatType()) {
                 return 'number';
             }
-            else if (_this.booleanType()) {
+            else if (this.booleanType()) {
                 return 'boolean';
             }
             else {
                 return 'string'; // Date or String
             }
         };
-        this.integerType = function () {
-            return [ColumnDefinition.TYPE_TINYINT, ColumnDefinition.TYPE_SMALLINT, ColumnDefinition.TYPE_MEDIUMINT, ColumnDefinition.TYPE_INT, ColumnDefinition.TYPE_BIGINT, ColumnDefinition.TYPE_BIT, ColumnDefinition.TYPE_YEAR].includes(_this.DATA_TYPE.toUpperCase());
+        this.integerType = () => {
+            return [ColumnDefinition.TYPE_TINYINT, ColumnDefinition.TYPE_SMALLINT, ColumnDefinition.TYPE_MEDIUMINT, ColumnDefinition.TYPE_INT, ColumnDefinition.TYPE_BIGINT, ColumnDefinition.TYPE_BIT, ColumnDefinition.TYPE_YEAR].includes(this.DATA_TYPE.toUpperCase());
         };
-        this.tinyintType = function () {
-            return [ColumnDefinition.TYPE_TINYINT].includes(_this.DATA_TYPE.toUpperCase());
+        this.tinyintType = () => {
+            return [ColumnDefinition.TYPE_TINYINT].includes(this.DATA_TYPE.toUpperCase());
         };
-        this.floatType = function () {
-            return [ColumnDefinition.TYPE_DECIMAL, ColumnDefinition.TYPE_NUMERIC, ColumnDefinition.TYPE_FLOAT, ColumnDefinition.TYPE_DOUBLE].includes(_this.DATA_TYPE.toUpperCase());
+        this.floatType = () => {
+            return [ColumnDefinition.TYPE_DECIMAL, ColumnDefinition.TYPE_NUMERIC, ColumnDefinition.TYPE_FLOAT, ColumnDefinition.TYPE_DOUBLE].includes(this.DATA_TYPE.toUpperCase());
         };
-        this.integerFloatType = function () {
-            return _this.integerType() || _this.floatType();
+        this.integerFloatType = () => {
+            return this.integerType() || this.floatType();
         };
-        this.booleanType = function () {
-            return [ColumnDefinition.TYPE_BIT].includes(_this.DATA_TYPE.toUpperCase());
+        this.booleanType = () => {
+            return [ColumnDefinition.TYPE_BIT].includes(this.DATA_TYPE.toUpperCase());
         };
-        this.dateType = function () {
-            return [ColumnDefinition.TYPE_DATE, ColumnDefinition.TYPE_TIME, ColumnDefinition.TYPE_DATETIME, ColumnDefinition.TYPE_TIMESTAMP].includes(_this.DATA_TYPE.toUpperCase());
+        this.dateType = () => {
+            return [ColumnDefinition.TYPE_DATE, ColumnDefinition.TYPE_TIME, ColumnDefinition.TYPE_DATETIME, ColumnDefinition.TYPE_TIMESTAMP].includes(this.DATA_TYPE.toUpperCase());
         };
-        this.generalStringType = function () {
-            return !_this.integerFloatType() && !_this.booleanType();
+        this.generalStringType = () => {
+            return !this.integerFloatType() && !this.booleanType();
         };
-        this.blobType = function () {
-            return [ColumnDefinition.TYPE_TINYTEXT, ColumnDefinition.TYPE_TEXT, ColumnDefinition.TYPE_MEDIUMTEXT, ColumnDefinition.TYPE_LONGTEXT, ColumnDefinition.TYPE_TINYBLOB, ColumnDefinition.TYPE_BLOB, ColumnDefinition.TYPE_MEDIUMBLOB, ColumnDefinition.TYPE_LONGBLOB].includes(_this.DATA_TYPE.toUpperCase());
+        this.blobType = () => {
+            return [ColumnDefinition.TYPE_TINYTEXT, ColumnDefinition.TYPE_TEXT, ColumnDefinition.TYPE_MEDIUMTEXT, ColumnDefinition.TYPE_LONGTEXT, ColumnDefinition.TYPE_TINYBLOB, ColumnDefinition.TYPE_BLOB, ColumnDefinition.TYPE_MEDIUMBLOB, ColumnDefinition.TYPE_LONGBLOB].includes(this.DATA_TYPE.toUpperCase());
         };
-        this.otherType = function () {
-            return [ColumnDefinition.TYPE_GEOMETRY, ColumnDefinition.TYPE_POINT, ColumnDefinition.TYPE_LINESTRING, ColumnDefinition.TYPE_POLYGON, ColumnDefinition.TYPE_GEOMETRYCOLLECTION, ColumnDefinition.TYPE_MULTILINESTRING, ColumnDefinition.TYPE_MULTIPOINT, ColumnDefinition.TYPE_MULTIPOLYGON].includes(_this.DATA_TYPE.toUpperCase());
+        this.otherType = () => {
+            return [ColumnDefinition.TYPE_GEOMETRY, ColumnDefinition.TYPE_POINT, ColumnDefinition.TYPE_LINESTRING, ColumnDefinition.TYPE_POLYGON, ColumnDefinition.TYPE_GEOMETRYCOLLECTION, ColumnDefinition.TYPE_MULTILINESTRING, ColumnDefinition.TYPE_MULTIPOINT, ColumnDefinition.TYPE_MULTIPOLYGON].includes(this.DATA_TYPE.toUpperCase());
         };
     }
-    ColumnDefinition.TYPE_TINYINT = 'TINYINT';
-    ColumnDefinition.TYPE_SMALLINT = 'SMALLINT';
-    ColumnDefinition.TYPE_MEDIUMINT = 'MEDIUMINT';
-    ColumnDefinition.TYPE_INT = 'INT';
-    ColumnDefinition.TYPE_BIGINT = 'BIGINT';
-    ColumnDefinition.TYPE_DECIMAL = 'DECIMAL';
-    ColumnDefinition.TYPE_NUMERIC = 'NUMERIC';
-    ColumnDefinition.TYPE_FLOAT = 'FLOAT';
-    ColumnDefinition.TYPE_DOUBLE = 'DOUBLE';
-    ColumnDefinition.TYPE_BIT = 'BIT';
-    ColumnDefinition.TYPE_CHAR = 'CHAR';
-    ColumnDefinition.TYPE_VARCHAR = 'VARCHAR';
-    ColumnDefinition.TYPE_BINARY = 'BINARY';
-    ColumnDefinition.TYPE_VARBINARY = 'VARBINARY';
-    ColumnDefinition.TYPE_TINYBLOB = 'TINYBLOB';
-    ColumnDefinition.TYPE_BLOB = 'BLOB';
-    ColumnDefinition.TYPE_MEDIUMBLOB = 'MEDIUMBLOB';
-    ColumnDefinition.TYPE_LONGBLOB = 'LONGBLOB';
-    ColumnDefinition.TYPE_TINYTEXT = 'TINYTEXT';
-    ColumnDefinition.TYPE_TEXT = 'TEXT';
-    ColumnDefinition.TYPE_MEDIUMTEXT = 'MEDIUMTEXT';
-    ColumnDefinition.TYPE_LONGTEXT = 'LONGTEXT';
-    ColumnDefinition.TYPE_ENUM = 'ENUM';
-    ColumnDefinition.TYPE_SET = 'SET';
-    ColumnDefinition.TYPE_DATE = 'DATE';
-    ColumnDefinition.TYPE_TIME = 'TIME';
-    ColumnDefinition.TYPE_DATETIME = 'DATETIME';
-    ColumnDefinition.TYPE_TIMESTAMP = 'TIMESTAMP';
-    ColumnDefinition.TYPE_YEAR = 'YEAR';
-    ColumnDefinition.TYPE_GEOMETRY = 'GEOMETRY';
-    ColumnDefinition.TYPE_POINT = 'POINT';
-    ColumnDefinition.TYPE_LINESTRING = 'LINESTRING';
-    ColumnDefinition.TYPE_POLYGON = 'POLYGON';
-    ColumnDefinition.TYPE_GEOMETRYCOLLECTION = 'GEOMETRYCOLLECTION';
-    ColumnDefinition.TYPE_MULTILINESTRING = 'MULTILINESTRING';
-    ColumnDefinition.TYPE_MULTIPOINT = 'MULTIPOINT';
-    ColumnDefinition.TYPE_MULTIPOLYGON = 'MULTIPOLYGON';
-    ColumnDefinition.TYPE_JSON = 'JSON';
-    return ColumnDefinition;
-}());
+}
+ColumnDefinition.TYPE_TINYINT = 'TINYINT';
+ColumnDefinition.TYPE_SMALLINT = 'SMALLINT';
+ColumnDefinition.TYPE_MEDIUMINT = 'MEDIUMINT';
+ColumnDefinition.TYPE_INT = 'INT';
+ColumnDefinition.TYPE_BIGINT = 'BIGINT';
+ColumnDefinition.TYPE_DECIMAL = 'DECIMAL';
+ColumnDefinition.TYPE_NUMERIC = 'NUMERIC';
+ColumnDefinition.TYPE_FLOAT = 'FLOAT';
+ColumnDefinition.TYPE_DOUBLE = 'DOUBLE';
+ColumnDefinition.TYPE_BIT = 'BIT';
+ColumnDefinition.TYPE_CHAR = 'CHAR';
+ColumnDefinition.TYPE_VARCHAR = 'VARCHAR';
+ColumnDefinition.TYPE_BINARY = 'BINARY';
+ColumnDefinition.TYPE_VARBINARY = 'VARBINARY';
+ColumnDefinition.TYPE_TINYBLOB = 'TINYBLOB';
+ColumnDefinition.TYPE_BLOB = 'BLOB';
+ColumnDefinition.TYPE_MEDIUMBLOB = 'MEDIUMBLOB';
+ColumnDefinition.TYPE_LONGBLOB = 'LONGBLOB';
+ColumnDefinition.TYPE_TINYTEXT = 'TINYTEXT';
+ColumnDefinition.TYPE_TEXT = 'TEXT';
+ColumnDefinition.TYPE_MEDIUMTEXT = 'MEDIUMTEXT';
+ColumnDefinition.TYPE_LONGTEXT = 'LONGTEXT';
+ColumnDefinition.TYPE_ENUM = 'ENUM';
+ColumnDefinition.TYPE_SET = 'SET';
+ColumnDefinition.TYPE_DATE = 'DATE';
+ColumnDefinition.TYPE_TIME = 'TIME';
+ColumnDefinition.TYPE_DATETIME = 'DATETIME';
+ColumnDefinition.TYPE_TIMESTAMP = 'TIMESTAMP';
+ColumnDefinition.TYPE_YEAR = 'YEAR';
+ColumnDefinition.TYPE_GEOMETRY = 'GEOMETRY';
+ColumnDefinition.TYPE_POINT = 'POINT';
+ColumnDefinition.TYPE_LINESTRING = 'LINESTRING';
+ColumnDefinition.TYPE_POLYGON = 'POLYGON';
+ColumnDefinition.TYPE_GEOMETRYCOLLECTION = 'GEOMETRYCOLLECTION';
+ColumnDefinition.TYPE_MULTILINESTRING = 'MULTILINESTRING';
+ColumnDefinition.TYPE_MULTIPOINT = 'MULTIPOINT';
+ColumnDefinition.TYPE_MULTIPOLYGON = 'MULTIPOLYGON';
+ColumnDefinition.TYPE_JSON = 'JSON';
 
-var PGForeignKey = /** @class */ (function () {
-    function PGForeignKey(instanceData) {
+class PGForeignKey {
+    constructor(instanceData) {
         this.columnNames = [];
         this.primaryTable = '';
         this.primaryColumns = [];
@@ -597,26 +535,33 @@ var PGForeignKey = /** @class */ (function () {
             this.deserialize(instanceData);
         }
     }
-    PGForeignKey.prototype.deserialize = function (instanceData) {
-        var keys = Object.keys(this);
-        for (var _i = 0, keys_1 = keys; _i < keys_1.length; _i++) {
-            var key = keys_1[_i];
+    deserialize(instanceData) {
+        const keys = Object.keys(this);
+        for (const key of keys) {
             if (instanceData.hasOwnProperty(key)) {
                 this[key] = instanceData[key];
             }
         }
-    };
-    PGForeignKey.prototype.fkName = function (pgTable) {
-        return pgTable.name + '_' + this.columnNames.map(function (column) { return column.substr(-25); }).join('_') + '_fkey';
-    };
-    PGForeignKey.prototype.ddlConstraintDefinition = function (pgTable) {
-        return "\n\t\tDO $$\n\t\tBEGIN\n\t\t\tIF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = '" + this.fkName(pgTable) + "') THEN\n\t\t\t\tALTER TABLE \"" + pgTable.name + "\"\n\t\t\t\t\tADD CONSTRAINT \"" + this.fkName(pgTable) + "\"\n\t\t\t\t\tFOREIGN KEY (\"" + this.columnNames.join('","') + "\") REFERENCES \"" + this.primaryTable + "\"(\"" + this.primaryColumns.join('","') + "\") DEFERRABLE INITIALLY DEFERRED;\n\t\t\tEND IF;\n\t\tEND;\n\t\t$$;"; // was INITIALLY IMMEDIATE
-    };
-    return PGForeignKey;
-}());
+    }
+    fkName(pgTable) {
+        return pgTable.name + '_' + this.columnNames.map(column => column.substr(-25)).join('_') + '_fkey';
+    }
+    ddlConstraintDefinition(pgTable) {
+        return `
+		DO $$
+		BEGIN
+			IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = '${this.fkName(pgTable)}') THEN
+				ALTER TABLE "${pgTable.name}"
+					ADD CONSTRAINT "${this.fkName(pgTable)}"
+					FOREIGN KEY ("${this.columnNames.join('","')}") REFERENCES "${this.primaryTable}"("${this.primaryColumns.join('","')}") DEFERRABLE INITIALLY DEFERRED;
+			END IF;
+		END;
+		$$;`; // was INITIALLY IMMEDIATE
+    }
+}
 
-var PGIndex = /** @class */ (function () {
-    function PGIndex(instanceData) {
+class PGIndex {
+    constructor(instanceData) {
         this.columns = [];
         this.whereCondition = null;
         this.isUnique = false;
@@ -626,42 +571,39 @@ var PGIndex = /** @class */ (function () {
             this.deserialize(instanceData);
         }
     }
-    PGIndex.prototype.deserialize = function (instanceData) {
-        var keys = Object.keys(this);
-        for (var _i = 0, keys_1 = keys; _i < keys_1.length; _i++) {
-            var key = keys_1[_i];
+    deserialize(instanceData) {
+        const keys = Object.keys(this);
+        for (const key of keys) {
             if (instanceData.hasOwnProperty(key)) {
                 this[key] = instanceData[key];
             }
         }
-    };
-    PGIndex.prototype.name = function (pgTable) {
+    }
+    name(pgTable) {
         return ('idx_' +
             pgTable.name.substr(-25) +
             '_' +
             this.columns
-                .map(function (column) {
-                return column
-                    .replace(' ASC', '')
-                    .replace(' DESC', '')
-                    .replace(' NULLS', '')
-                    .replace(' FIRST', '')
-                    .replace(' LAST', '')
-                    .replace('(', '_')
-                    .replace(')', '_')
-                    .trim().substr(-25);
-            })
+                .map((column) => column
+                .replace(' ASC', '')
+                .replace(' DESC', '')
+                .replace(' NULLS', '')
+                .replace(' FIRST', '')
+                .replace(' LAST', '')
+                .replace('(', '_')
+                .replace(')', '_')
+                .trim().substr(-25))
                 .join('_'));
-    };
-    PGIndex.prototype.ddlDefinition = function (pgTable) {
-        var ddl = 'CREATE ';
+    }
+    ddlDefinition(pgTable) {
+        let ddl = 'CREATE ';
         if (this.isUnique) {
             ddl += 'UNIQUE ';
         }
         ddl += 'INDEX IF NOT EXISTS ';
-        ddl += "\"" + this.name(pgTable) + "\" ";
+        ddl += `"${this.name(pgTable)}" `;
         ddl += 'ON ';
-        ddl += "\"" + pgTable.name + "\" ";
+        ddl += `"${pgTable.name}" `;
         ddl += 'USING btree ';
         ddl += '(' + this.columns.join(',') + ')';
         if (this.whereCondition) {
@@ -669,13 +611,12 @@ var PGIndex = /** @class */ (function () {
         }
         ddl += ';';
         return ddl;
-    };
-    return PGIndex;
-}());
+    }
+}
 
-var TS_EOL = '\n'; // was \r\n
-var PGTable = /** @class */ (function () {
-    function PGTable(instanceData) {
+const TS_EOL$1 = '\n'; // was \r\n
+class PGTable {
+    constructor(instanceData) {
         this.name = '';
         this.description = '';
         this.check = null;
@@ -687,27 +628,23 @@ var PGTable = /** @class */ (function () {
             this.deserialize(instanceData);
         }
     }
-    PGTable.prototype.deserialize = function (instanceData) {
-        var keys = Object.keys(this);
-        for (var _i = 0, keys_1 = keys; _i < keys_1.length; _i++) {
-            var key = keys_1[_i];
+    deserialize(instanceData) {
+        const keys = Object.keys(this);
+        for (const key of keys) {
             if (instanceData.hasOwnProperty(key)) {
                 switch (key) {
                     case 'columns':
-                        for (var _a = 0, _b = instanceData[key]; _a < _b.length; _a++) {
-                            var column = _b[_a];
+                        for (const column of instanceData[key]) {
                             this[key].push(new PGColumn(column));
                         }
                         break;
                     case 'indexes':
-                        for (var _c = 0, _d = instanceData[key]; _c < _d.length; _c++) {
-                            var index = _d[_c];
+                        for (const index of instanceData[key]) {
                             this[key].push(new PGIndex(index));
                         }
                         break;
                     case 'foreignKeys':
-                        for (var _e = 0, _f = instanceData[key]; _e < _f.length; _e++) {
-                            var foreignKey = _f[_e];
+                        for (const foreignKey of instanceData[key]) {
                             this[key].push(new PGForeignKey(foreignKey));
                         }
                         break;
@@ -717,208 +654,212 @@ var PGTable = /** @class */ (function () {
                 }
             }
         }
-    };
-    PGTable.prototype.indexOfColumn = function (columnName) {
-        return this.columns.findIndex(function (column) { return column.column_name === columnName; });
-    };
-    PGTable.prototype.indexesOfForeignKeyByColumn = function (columnName) {
-        var indexes = [];
-        for (var i = 0; i < this.foreignKeys.length; i++) {
+    }
+    indexOfColumn(columnName) {
+        return this.columns.findIndex((column) => column.column_name === columnName);
+    }
+    indexesOfForeignKeyByColumn(columnName) {
+        let indexes = [];
+        for (let i = 0; i < this.foreignKeys.length; i++) {
             if (this.foreignKeys[i].columnNames.includes(columnName)) {
                 indexes.push(i);
             }
         }
         return indexes;
-    };
-    PGTable.prototype.getForeignKeysByColumn = function (columnName) {
-        var fks = [];
-        var indexes = this.indexesOfForeignKeyByColumn(columnName);
-        for (var _i = 0, indexes_1 = indexes; _i < indexes_1.length; _i++) {
-            var index = indexes_1[_i];
+    }
+    getForeignKeysByColumn(columnName) {
+        let fks = [];
+        const indexes = this.indexesOfForeignKeyByColumn(columnName);
+        for (const index of indexes) {
             fks.push(this.foreignKeys[index]);
         }
         return fks;
-    };
-    PGTable.prototype.removeForeignKeysByColumn = function (columnName) {
-        this.foreignKeys = this.foreignKeys.filter(function (foreignKey) { return !foreignKey.columnNames.includes(columnName); });
-    };
-    PGTable.prototype.renameForeignKeysByColumn = function (fromName, toName, pgTables) {
-        var thisObject = this;
-        this.foreignKeys.forEach(function (fk) {
+    }
+    removeForeignKeysByColumn(columnName) {
+        this.foreignKeys = this.foreignKeys.filter((foreignKey) => !foreignKey.columnNames.includes(columnName));
+    }
+    renameForeignKeysByColumn(fromName, toName, pgTables) {
+        const thisObject = this;
+        this.foreignKeys.forEach(fk => {
             if (fk.columnNames.includes(fromName)) {
-                fk.columnNames = __spreadArrays(fk.columnNames.filter(function (cN) { return cN !== fromName; }), [toName]);
+                fk.columnNames = [...fk.columnNames.filter(cN => cN !== fromName), toName];
             }
         });
         if (pgTables) {
-            pgTables.filter(function (pgTable) { return pgTable.name !== thisObject.name; }).forEach(function (pgTable) {
-                pgTable.foreignKeys.forEach(function (fk) {
+            pgTables.filter(pgTable => pgTable.name !== thisObject.name).forEach(pgTable => {
+                pgTable.foreignKeys.forEach(fk => {
                     if (fk.primaryTable === thisObject.name) {
                         if (fk.primaryColumns.includes(fromName)) {
-                            fk.primaryColumns = __spreadArrays(fk.primaryColumns.filter(function (pC) { return pC !== fromName; }), [toName]);
+                            fk.primaryColumns = [...fk.primaryColumns.filter(pC => pC !== fromName), toName];
                         }
                     }
                 });
             });
         }
-    };
-    PGTable.prototype.removeIndexsByColumn = function (columnName) {
-        this.indexes = this.indexes.filter(function (index) { return !index.columns.includes(columnName); });
-    };
-    PGTable.prototype.renameIndexsByColumn = function (fromName, toName) {
-        this.indexes.forEach(function (idx) {
+    }
+    removeIndexsByColumn(columnName) {
+        this.indexes = this.indexes.filter((index) => !index.columns.includes(columnName));
+    }
+    renameIndexsByColumn(fromName, toName) {
+        this.indexes.forEach(idx => {
             if (idx.columns.includes(fromName)) {
-                idx.columns = __spreadArrays(idx.columns.filter(function (cN) { return cN !== fromName; }), [toName]);
+                idx.columns = [...idx.columns.filter(cN => cN !== fromName), toName];
             }
         });
-    };
-    PGTable.prototype.addForeignKey = function (pgForeignKey) {
+    }
+    addForeignKey(pgForeignKey) {
         this.foreignKeys.push(pgForeignKey);
-    };
-    PGTable.prototype.getColumn = function (columnName) {
+    }
+    getColumn(columnName) {
         var _a;
-        return (_a = this.columns.find(function (column) { return column.column_name === columnName; })) !== null && _a !== void 0 ? _a : null;
-    };
-    PGTable.prototype.removeColumn = function (columnName) {
-        var column = this.getColumn(columnName);
+        return (_a = this.columns.find((column) => column.column_name === columnName)) !== null && _a !== void 0 ? _a : null;
+    }
+    removeColumn(columnName) {
+        const column = this.getColumn(columnName);
         if (!!column) {
             this.removeForeignKeysByColumn(columnName);
             this.removeIndexsByColumn(columnName);
-            this.columns = this.columns.filter(function (column) { return column.column_name !== columnName; });
+            this.columns = this.columns.filter((column) => column.column_name !== columnName);
             this.reOrderColumns();
         }
-    };
-    PGTable.prototype.renameColumn = function (fromName, toName, pgTables) {
-        var column = this.getColumn(fromName);
+    }
+    renameColumn(fromName, toName, pgTables) {
+        const column = this.getColumn(fromName);
         if (!!column) {
             column.column_name = toName;
             this.renameForeignKeysByColumn(fromName, toName, pgTables);
             this.renameIndexsByColumn(fromName, toName);
         }
-    };
-    PGTable.prototype.addColumn = function (pgColumn) {
-        var pgColumnToAdd = new PGColumn(pgColumn);
+    }
+    addColumn(pgColumn) {
+        const pgColumnToAdd = new PGColumn(pgColumn);
         if (!pgColumnToAdd.ordinal_position) {
             pgColumnToAdd.ordinal_position = 999999;
         }
-        this.columns = this.columns.filter(function (column) { return column.column_name !== pgColumnToAdd.column_name; });
-        for (var i = 0; i < this.columns.length; i++) {
+        this.columns = this.columns.filter((column) => column.column_name !== pgColumnToAdd.column_name);
+        for (let i = 0; i < this.columns.length; i++) {
             if (this.columns[i].ordinal_position >= pgColumnToAdd.ordinal_position) {
                 this.columns[i].ordinal_position++;
             }
         }
         this.columns.push(pgColumnToAdd);
         this.reOrderColumns();
-    };
-    PGTable.prototype.reOrderColumns = function () {
-        this.columns = this.columns.sort(function (a, b) { return a.ordinal_position - b.ordinal_position; });
-        var position = 0;
-        for (var i = 0; i < this.columns.length; i++) {
+    }
+    reOrderColumns() {
+        this.columns = this.columns.sort((a, b) => a.ordinal_position - b.ordinal_position);
+        let position = 0;
+        for (let i = 0; i < this.columns.length; i++) {
             position++;
             this.columns[i].ordinal_position = position;
         }
-    };
-    PGTable.prototype.addIndex = function (pgIndex) {
+    }
+    addIndex(pgIndex) {
         this.indexes.push(pgIndex);
-    };
-    PGTable.prototype.tableHeaderText = function (forTableText) {
-        var text = '/**' + TS_EOL;
-        text += ' * Automatically generated: ' + moment__default['default']().format('Y-MM-DD HH:mm:ss') + TS_EOL;
-        text += ' * © ' + moment__default['default']().format('Y') + ', Solid Basis Ventures, LLC.' + TS_EOL; // Must come after generated date so it doesn't keep regenerating
-        text += ' * DO NOT MODIFY' + TS_EOL;
-        text += ' *' + TS_EOL;
-        text += ' * ' + forTableText + ': ' + this.name + TS_EOL;
+    }
+    tableHeaderText(forTableText) {
+        let text = '/**' + TS_EOL$1;
+        text += ' * Automatically generated: ' + moment__default['default']().format('Y-MM-DD HH:mm:ss') + TS_EOL$1;
+        text += ' * © ' + moment__default['default']().format('Y') + ', Solid Basis Ventures, LLC.' + TS_EOL$1; // Must come after generated date so it doesn't keep regenerating
+        text += ' * DO NOT MODIFY' + TS_EOL$1;
+        text += ' *' + TS_EOL$1;
+        text += ' * ' + forTableText + ': ' + this.name + TS_EOL$1;
         if (!!this.description) {
-            text += ' *' + TS_EOL;
-            text += ' * ' + PGTable.CleanComment(this.description) + TS_EOL;
+            text += ' *' + TS_EOL$1;
+            text += ' * ' + PGTable.CleanComment(this.description) + TS_EOL$1;
         }
-        text += ' */' + TS_EOL;
-        text += TS_EOL;
+        text += ' */' + TS_EOL$1;
+        text += TS_EOL$1;
         return text;
-    };
-    PGTable.prototype.tsText = function () {
+    }
+    tsText() {
         var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q;
-        var text = this.tableHeaderText('Table Manager for');
+        let text = this.tableHeaderText('Table Manager for');
         if (this.inherits.length > 0) {
-            for (var _i = 0, _r = this.inherits; _i < _r.length; _i++) {
-                var inherit = _r[_i];
-                text += "import {I" + inherit + ", initial_" + inherit + "} from \"./I" + inherit + "\"" + TS_EOL;
+            for (const inherit of this.inherits) {
+                text += `import {I${inherit}, initial_${inherit}} from "./I${inherit}"${TS_EOL$1}`;
             }
         }
-        var enums = Array.from(new Set(__spreadArrays(this.columns
-            .map(function (column) { return ({
-            column_name: column.column_name,
-            enum_name: (typeof column.udt_name !== 'string' ? column.udt_name.enumName : '')
-        }); }), this.columns
-            .map(function (column) { return ({
-            column_name: column.column_name,
-            enum_name: (typeof column.udt_name === 'string' && column.udt_name.startsWith('e_') ? PGEnum.TypeName(column.udt_name) : '')
-        }); }), this.columns
-            .map(function (column) {
-            var _a, _b, _c, _d, _e, _f, _g, _h, _j;
-            var regExp = /{([^}]*)}/;
-            var results = regExp.exec(column.column_comment);
-            if (!!results && !!results[1]) {
-                var commaItems = results[1].split(',');
-                for (var _i = 0, commaItems_1 = commaItems; _i < commaItems_1.length; _i++) {
-                    var commaItem = commaItems_1[_i];
-                    var items = commaItem.split(':');
-                    if (((_a = items[0]) !== null && _a !== void 0 ? _a : '').toLowerCase().trim() === 'enum') {
-                        return {
-                            column_name: column.column_name,
-                            enum_name: ((_c = ((_b = items[1]) !== null && _b !== void 0 ? _b : '').split('.')[0]) !== null && _c !== void 0 ? _c : '').trim(),
-                            default_value: column.array_dimensions.length > 0 ? '[]' : ((_d = items[2]) !== null && _d !== void 0 ? _d : '').includes('.') ? items[2] : ((_f = ((_e = items[1]) !== null && _e !== void 0 ? _e : '').split('.')[0]) !== null && _f !== void 0 ? _f : '').trim() + '.' + ((_g = items[2]) !== null && _g !== void 0 ? _g : ((_j = ((_h = items[1]) !== null && _h !== void 0 ? _h : '').split('.')[1]) !== null && _j !== void 0 ? _j : '')).trim()
-                        };
+        const enums = Array.from(new Set([
+            ...this.columns
+                .map((column) => ({
+                column_name: column.column_name,
+                enum_name: (typeof column.udt_name !== 'string' ? column.udt_name.enumName : '')
+            })),
+            ...this.columns
+                .map((column) => ({
+                column_name: column.column_name,
+                enum_name: (typeof column.udt_name === 'string' && column.udt_name.startsWith('e_') ? PGEnum.TypeName(column.udt_name) : '')
+            })),
+            ...this.columns
+                .map(column => {
+                var _a, _b, _c, _d, _e, _f, _g, _h, _j;
+                const regExp = /{([^}]*)}/;
+                const results = regExp.exec(column.column_comment);
+                if (!!results && !!results[1]) {
+                    const commaItems = results[1].split(',');
+                    for (const commaItem of commaItems) {
+                        const items = commaItem.split(':');
+                        if (((_a = items[0]) !== null && _a !== void 0 ? _a : '').toLowerCase().trim() === 'enum') {
+                            return {
+                                column_name: column.column_name,
+                                enum_name: ((_c = ((_b = items[1]) !== null && _b !== void 0 ? _b : '').split('.')[0]) !== null && _c !== void 0 ? _c : '').trim(),
+                                default_value: column.array_dimensions.length > 0 ? '[]' : ((_d = items[2]) !== null && _d !== void 0 ? _d : '').includes('.') ? items[2] : ((_f = ((_e = items[1]) !== null && _e !== void 0 ? _e : '').split('.')[0]) !== null && _f !== void 0 ? _f : '').trim() + '.' + ((_g = items[2]) !== null && _g !== void 0 ? _g : ((_j = ((_h = items[1]) !== null && _h !== void 0 ? _h : '').split('.')[1]) !== null && _j !== void 0 ? _j : '')).trim()
+                            };
+                        }
                     }
                 }
-            }
-            return { column_name: column.column_name, enum_name: '' };
-        })).filter(function (enumName) { return !!enumName.enum_name; })));
-        var interfaces = Array.from(new Set(__spreadArrays(this.columns
-            .map(function (column) {
-            var _a, _b, _c, _d, _e, _f, _g, _h, _j;
-            var regExp = /{([^}]*)}/;
-            var results = regExp.exec(column.column_comment);
-            if (!!results && !!results[1]) {
-                var commaItems = results[1].split(',');
-                for (var _i = 0, commaItems_2 = commaItems; _i < commaItems_2.length; _i++) {
-                    var commaItem = commaItems_2[_i];
-                    var items = commaItem.split(':');
-                    if (((_a = items[0]) !== null && _a !== void 0 ? _a : '').toLowerCase().trim() === 'interface') {
-                        return {
-                            column_name: column.column_name,
-                            interface_name: ((_c = ((_b = items[1]) !== null && _b !== void 0 ? _b : '').split('.')[0]) !== null && _c !== void 0 ? _c : '').trim(),
-                            default_value: column.array_dimensions.length > 0 ? '[]' : ((_d = items[2]) !== null && _d !== void 0 ? _d : '').includes('.') ? items[2] : ((_f = ((_e = items[1]) !== null && _e !== void 0 ? _e : '').split('.')[0]) !== null && _f !== void 0 ? _f : '').trim() + '.' + ((_g = items[2]) !== null && _g !== void 0 ? _g : ((_j = ((_h = items[1]) !== null && _h !== void 0 ? _h : '').split('.')[1]) !== null && _j !== void 0 ? _j : '')).trim()
-                        };
+                return { column_name: column.column_name, enum_name: '' };
+            })
+        ]
+            .filter(enumName => !!enumName.enum_name)));
+        const interfaces = Array.from(new Set([
+            ...this.columns
+                .map(column => {
+                var _a, _b, _c, _d, _e, _f, _g, _h, _j;
+                const regExp = /{([^}]*)}/;
+                const results = regExp.exec(column.column_comment);
+                if (!!results && !!results[1]) {
+                    const commaItems = results[1].split(',');
+                    for (const commaItem of commaItems) {
+                        const items = commaItem.split(':');
+                        if (((_a = items[0]) !== null && _a !== void 0 ? _a : '').toLowerCase().trim() === 'interface') {
+                            return {
+                                column_name: column.column_name,
+                                interface_name: ((_c = ((_b = items[1]) !== null && _b !== void 0 ? _b : '').split('.')[0]) !== null && _c !== void 0 ? _c : '').trim(),
+                                default_value: column.array_dimensions.length > 0 ? '[]' : ((_d = items[2]) !== null && _d !== void 0 ? _d : '').includes('.') ? items[2] : ((_f = ((_e = items[1]) !== null && _e !== void 0 ? _e : '').split('.')[0]) !== null && _f !== void 0 ? _f : '').trim() + '.' + ((_g = items[2]) !== null && _g !== void 0 ? _g : ((_j = ((_h = items[1]) !== null && _h !== void 0 ? _h : '').split('.')[1]) !== null && _j !== void 0 ? _j : '')).trim()
+                            };
+                        }
                     }
                 }
-            }
-            return { column_name: column.column_name, interface_name: '' };
-        })).filter(function (enumName) { return !!enumName.interface_name; })));
-        enums.map(function (enumItem) { return enumItem.enum_name; }).reduce(function (results, enumItem) { return results.includes(enumItem) ? results : __spreadArrays(results, [enumItem]); }, [])
-            .forEach(function (enumItem) {
-            text += "import {" + enumItem + "} from \"../Enums/" + enumItem + "\"" + TS_EOL;
+                return { column_name: column.column_name, interface_name: '' };
+            })
+        ]
+            .filter(enumName => !!enumName.interface_name)));
+        enums.map(enumItem => enumItem.enum_name).reduce((results, enumItem) => results.includes(enumItem) ? results : [...results, enumItem], [])
+            .forEach(enumItem => {
+            text += `import {${enumItem}} from "../Enums/${enumItem}"${TS_EOL$1}`;
         });
         if (enums.length > 0) {
-            text += TS_EOL;
+            text += TS_EOL$1;
         }
-        interfaces.map(function (interfaceItem) { return interfaceItem.interface_name; }).reduce(function (results, enumItem) { return results.includes(enumItem) ? results : __spreadArrays(results, [enumItem]); }, [])
-            .forEach(function (interfaceItem) {
-            text += "import {" + interfaceItem + "} from \"../Interfaces/" + interfaceItem + "\"" + TS_EOL;
+        interfaces.map(interfaceItem => interfaceItem.interface_name).reduce((results, enumItem) => results.includes(enumItem) ? results : [...results, enumItem], [])
+            .forEach(interfaceItem => {
+            text += `import {${interfaceItem}} from "../Interfaces/${interfaceItem}"${TS_EOL$1}`;
         });
         if (interfaces.length > 0) {
-            text += TS_EOL;
+            text += TS_EOL$1;
         }
-        text += "export interface I" + this.name;
+        text += `export interface I${this.name}`;
         if (this.inherits.length > 0) {
-            text += " extends I" + this.inherits.join(', I');
+            text += ` extends I${this.inherits.join(', I')}`;
         }
-        text += " {" + TS_EOL;
-        var _loop_1 = function (pgColumn) {
+        text += ` {` + TS_EOL$1;
+        for (const pgColumn of this.columns) {
             // if (!!pgColumn.column_comment || !!pgColumn.generatedAlwaysAs) {
             if (!!PGTable.CleanComment(pgColumn.column_comment)) {
-                text += "\t/** ";
-                text += PGTable.CleanComment(pgColumn.column_comment) + " ";
-                text += "*/" + TS_EOL;
+                text += `\t/** `;
+                text += `${PGTable.CleanComment(pgColumn.column_comment)} `;
+                text += `*/${TS_EOL$1}`;
             }
             // if (!!pgColumn.generatedAlwaysAs) {
             // 	text += `GENERATED AS: ${PGTable.CleanComment(pgColumn.generatedAlwaysAs)} `
@@ -927,34 +868,30 @@ var PGTable = /** @class */ (function () {
             text += '\t';
             text += pgColumn.column_name;
             text += ': ';
-            text += (_d = (_b = (_a = enums.find(function (enumItem) { return enumItem.column_name === pgColumn.column_name; })) === null || _a === void 0 ? void 0 : _a.enum_name) !== null && _b !== void 0 ? _b : (_c = interfaces.find(function (interfaceItem) { return interfaceItem.column_name === pgColumn.column_name; })) === null || _c === void 0 ? void 0 : _c.interface_name) !== null && _d !== void 0 ? _d : pgColumn.jsType();
+            text += (_d = (_b = (_a = enums.find(enumItem => enumItem.column_name === pgColumn.column_name)) === null || _a === void 0 ? void 0 : _a.enum_name) !== null && _b !== void 0 ? _b : (_c = interfaces.find(interfaceItem => interfaceItem.column_name === pgColumn.column_name)) === null || _c === void 0 ? void 0 : _c.interface_name) !== null && _d !== void 0 ? _d : pgColumn.jsType();
             if (pgColumn.array_dimensions.length > 0) {
-                text += "[" + pgColumn.array_dimensions.map(function () { return ''; }).join('],[') + "]";
+                text += `[${pgColumn.array_dimensions.map(() => '').join('],[')}]`;
             }
             if (intelliwaketsfoundation.IsOn((_e = pgColumn.is_nullable) !== null && _e !== void 0 ? _e : 'YES')) {
                 text += ' | null';
             }
-            text += TS_EOL;
-        };
-        for (var _s = 0, _t = this.columns; _s < _t.length; _s++) {
-            var pgColumn = _t[_s];
-            _loop_1(pgColumn);
+            text += TS_EOL$1;
         }
-        text += '}' + TS_EOL;
-        text += TS_EOL;
-        text += "export const initial_" + this.name + ": I" + this.name + " = {" + TS_EOL;
-        var addComma = false;
+        text += '}' + TS_EOL$1;
+        text += TS_EOL$1;
+        text += `export const initial_${this.name}: I${this.name} = {` + TS_EOL$1;
+        let addComma = false;
         if (this.inherits.length > 0) {
-            text += "\t...initial_" + this.inherits.join("," + TS_EOL + "\t...initial_") + "," + TS_EOL;
+            text += `\t...initial_${this.inherits.join(`,${TS_EOL$1}\t...initial_`)},${TS_EOL$1}`;
         }
-        var _loop_2 = function (pgColumn) {
+        for (const pgColumn of this.columns) {
             if (addComma) {
-                text += ',' + TS_EOL;
+                text += ',' + TS_EOL$1;
             }
             text += '\t';
             text += pgColumn.column_name;
             text += ': ';
-            var itemDefault = (_g = (_f = enums.find(function (enumItem) { return enumItem.column_name === pgColumn.column_name; })) === null || _f === void 0 ? void 0 : _f.default_value) !== null && _g !== void 0 ? _g : (_h = interfaces.find(function (interfaceItem) { return interfaceItem.column_name === pgColumn.column_name; })) === null || _h === void 0 ? void 0 : _h.default_value;
+            const itemDefault = (_g = (_f = enums.find(enumItem => enumItem.column_name === pgColumn.column_name)) === null || _f === void 0 ? void 0 : _f.default_value) !== null && _g !== void 0 ? _g : (_h = interfaces.find(interfaceItem => interfaceItem.column_name === pgColumn.column_name)) === null || _h === void 0 ? void 0 : _h.default_value;
             if (!!itemDefault) {
                 // console.log('HERE', enums.find(enumItem => enumItem.column_name === pgColumn.column_name))
                 // console.log('THERE', pgColumn)
@@ -970,7 +907,7 @@ var PGTable = /** @class */ (function () {
                     text += 'null';
                 }
                 else {
-                    text += "[" + pgColumn.array_dimensions.map(function () { return ''; }).join('],[') + "]";
+                    text += `[${pgColumn.array_dimensions.map(() => '').join('],[')}]`;
                 }
             }
             else {
@@ -1003,7 +940,7 @@ var PGTable = /** @class */ (function () {
                         }
                         else if (!!pgColumn.column_default && pgColumn.column_default.toString().includes('::')) {
                             if (pgColumn.udt_name.startsWith('e_')) {
-                                var colDefault = pgColumn.column_default.toString();
+                                const colDefault = pgColumn.column_default.toString();
                                 text += PGEnum.TypeName(pgColumn.udt_name);
                                 text += '.';
                                 text += colDefault.substr(1, colDefault.indexOf('::') - 2);
@@ -1041,14 +978,10 @@ var PGTable = /** @class */ (function () {
                 }
             }
             addComma = true;
-        };
-        for (var _u = 0, _v = this.columns; _u < _v.length; _u++) {
-            var pgColumn = _v[_u];
-            _loop_2(pgColumn);
         }
-        text += TS_EOL + '}' + TS_EOL; // Removed semi
+        text += TS_EOL$1 + '}' + TS_EOL$1; // Removed semi
         return text;
-    };
+    }
     /*export class Cprogress_report_test extends _CTable<Iprogress_report_test> {
     public readonly table: TTables
 
@@ -1058,83 +991,79 @@ var PGTable = /** @class */ (function () {
         this.table = 'progress_report_test'
     }
 }*/
-    PGTable.prototype.tsTextTable = function () {
-        var text = this.tableHeaderText('Table Class for');
-        text += "import {initial_" + this.name + ", I" + this.name + "} from '@Common/Tables/I" + this.name + "'" + TS_EOL;
-        text += "import {TTables} from '../Database/Tables'" + TS_EOL;
-        text += "import {_CTable} from './_CTable'" + TS_EOL;
-        text += "import {ResponseContext} from '../MiddleWare/ResponseContext'" + TS_EOL;
-        for (var _i = 0, _a = this.inherits; _i < _a.length; _i++) {
-            var inherit = _a[_i];
-            text += "import {_C" + inherit + "} from \"./_C" + inherit + "\"" + TS_EOL;
+    tsTextTable() {
+        let text = this.tableHeaderText('Table Class for');
+        text += `import {initial_${this.name}, I${this.name}} from '@Common/Tables/I${this.name}'` + TS_EOL$1;
+        text += `import {TTables} from '../Database/Tables'` + TS_EOL$1;
+        text += `import {_CTable} from './_CTable'` + TS_EOL$1;
+        text += `import {ResponseContext} from '../MiddleWare/ResponseContext'` + TS_EOL$1;
+        for (const inherit of this.inherits) {
+            text += `import {_C${inherit}} from "./_C${inherit}"` + TS_EOL$1;
         }
-        text += TS_EOL;
-        text += "export class C" + this.name + " extends _CTable<I" + this.name + ">";
+        text += TS_EOL$1;
+        text += `export class C${this.name} extends _CTable<I${this.name}>`;
         if (this.inherits.length > 0) {
-            text += ", C" + this.inherits.join(', C');
+            text += `, C${this.inherits.join(', C')}`;
         }
-        text += " {" + TS_EOL;
-        text += "\tpublic readonly table: TTables" + TS_EOL;
-        text += TS_EOL;
-        text += "\tconstructor(responseContext: ResponseContext, initialValues?: Partial<I" + this.name + ">) {" + TS_EOL;
-        text += "\t\tsuper(responseContext, initialValues, {...initial_" + this.name + "})" + TS_EOL;
-        text += TS_EOL;
-        text += "\t\tthis.table = '" + this.name + "'" + TS_EOL;
-        text += "\t}" + TS_EOL;
-        text += "}" + TS_EOL;
+        text += ` {` + TS_EOL$1;
+        text += `\tpublic readonly table: TTables` + TS_EOL$1;
+        text += TS_EOL$1;
+        text += `\tconstructor(responseContext: ResponseContext, initialValues?: Partial<I${this.name}>) {` + TS_EOL$1;
+        text += `\t\tsuper(responseContext, initialValues, {...initial_${this.name}})` + TS_EOL$1;
+        text += TS_EOL$1;
+        text += `\t\tthis.table = '${this.name}'` + TS_EOL$1;
+        text += `\t}` + TS_EOL$1;
+        text += `}` + TS_EOL$1;
         return text;
-    };
-    PGTable.prototype.ddlPrimaryKey = function () {
-        var found = false;
-        var ddl = "PRIMARY KEY (\"";
-        for (var _i = 0, _a = this.columns; _i < _a.length; _i++) {
-            var column = _a[_i];
+    }
+    ddlPrimaryKey() {
+        let found = false;
+        let ddl = `PRIMARY KEY ("`;
+        for (const column of this.columns) {
             if (intelliwaketsfoundation.IsOn(column.is_identity)) {
                 if (found) {
-                    ddl += "\",\"";
+                    ddl += `","`;
                 }
                 ddl += column.column_name;
                 found = true;
             }
         }
         if (found) {
-            ddl += "\")";
+            ddl += `")`;
             return ddl;
         }
         return null;
-    };
-    PGTable.prototype.ddlCreateTableText = function (createForeignKeys, createIndexes, dropFirst) {
-        if (dropFirst === void 0) { dropFirst = true; }
-        var ddl = '';
+    }
+    ddlCreateTableText(createForeignKeys, createIndexes, dropFirst = true) {
+        let ddl = '';
         /** @noinspection SqlResolve */
         if (dropFirst) {
-            ddl += "DROP TABLE IF EXISTS " + this.name + " CASCADE;" + TS_EOL;
+            ddl += `DROP TABLE IF EXISTS ${this.name} CASCADE;` + TS_EOL$1;
         }
-        ddl += "CREATE TABLE " + this.name + "\n    (" + TS_EOL;
-        var prevColumn = null;
-        for (var _i = 0, _a = this.columns; _i < _a.length; _i++) {
-            var pgColumn = _a[_i];
+        ddl += `CREATE TABLE ${this.name}
+    (` + TS_EOL$1;
+        let prevColumn = null;
+        for (const pgColumn of this.columns) {
             if (prevColumn !== null) {
-                ddl += ',' + TS_EOL;
+                ddl += ',' + TS_EOL$1;
             }
             ddl += '\t' + pgColumn.ddlDefinition();
             prevColumn = pgColumn;
         }
-        var pk = this.ddlPrimaryKey();
+        const pk = this.ddlPrimaryKey();
         if (!!pk) {
-            ddl += ',' + TS_EOL + '\t' + pk;
+            ddl += ',' + TS_EOL$1 + '\t' + pk;
         }
         if (!!this.check) {
-            var checkItems = (typeof this.check === 'string' ? [this.check] : this.check).filter(function (item) { return !!item; });
-            for (var _b = 0, checkItems_1 = checkItems; _b < checkItems_1.length; _b++) {
-                var checkItem = checkItems_1[_b];
-                ddl += "," + TS_EOL + "\tCHECK (" + checkItem + ")";
+            const checkItems = (typeof this.check === 'string' ? [this.check] : this.check).filter((item) => !!item);
+            for (const checkItem of checkItems) {
+                ddl += `,${TS_EOL$1}\tCHECK (${checkItem})`;
             }
         }
-        ddl += TS_EOL;
+        ddl += TS_EOL$1;
         ddl += ')';
         if (this.inherits.length > 0) {
-            ddl += TS_EOL + ("INHERITS (" + this.inherits.join(',') + ")");
+            ddl += TS_EOL$1 + `INHERITS (${this.inherits.join(',')})`;
         }
         ddl += ';';
         if (createIndexes) {
@@ -1143,73 +1072,63 @@ var PGTable = /** @class */ (function () {
         if (createForeignKeys) {
             ddl += this.ddlCreateForeignKeysText();
         }
-        for (var _c = 0, _d = this.columns.filter(function (col) { return !!col.column_comment; }); _c < _d.length; _c++) {
-            var pgColumn = _d[_c];
-            ddl += TS_EOL + ("COMMENT ON COLUMN " + this.name + "." + pgColumn.column_name + " IS '" + PGTable.CleanComment(pgColumn.column_comment, false) + "';");
+        for (const pgColumn of this.columns.filter(col => !!col.column_comment)) {
+            ddl += TS_EOL$1 + `COMMENT ON COLUMN ${this.name}.${pgColumn.column_name} IS '${PGTable.CleanComment(pgColumn.column_comment, false)}';`;
         }
         return ddl;
-    };
-    PGTable.prototype.ddlCreateIndexes = function () {
-        var ddl = '';
-        for (var _i = 0, _a = this.indexes; _i < _a.length; _i++) {
-            var index = _a[_i];
-            ddl += TS_EOL + index.ddlDefinition(this);
+    }
+    ddlCreateIndexes() {
+        let ddl = '';
+        for (const index of this.indexes) {
+            ddl += TS_EOL$1 + index.ddlDefinition(this);
         }
         return ddl;
-    };
-    PGTable.prototype.ddlCreateForeignKeysText = function () {
-        var ddl = '';
-        for (var _i = 0, _a = this.foreignKeys; _i < _a.length; _i++) {
-            var foreignKey = _a[_i];
-            ddl += foreignKey.ddlConstraintDefinition(this) + TS_EOL;
+    }
+    ddlCreateForeignKeysText() {
+        let ddl = '';
+        for (const foreignKey of this.foreignKeys) {
+            ddl += foreignKey.ddlConstraintDefinition(this) + TS_EOL$1;
         }
         return ddl;
-    };
-    PGTable.CleanComment = function (comment, stripBrackets) {
-        if (stripBrackets === void 0) { stripBrackets = true; }
+    }
+    static CleanComment(comment, stripBrackets = true) {
         if (!comment) {
             return comment;
         }
         // noinspection RegExpRedundantEscape
         return stripBrackets ? comment.replace(/[\n\r]/g, ' ').replace(/\{(.+?)\}/g, '').trim() : comment.replace(/[\n\r]/g, ' ').trim();
-    };
-    return PGTable;
-}());
-
-var PGTableMy = /** @class */ (function (_super) {
-    __extends(PGTableMy, _super);
-    function PGTableMy(instanceData, myTable) {
-        var _this = _super.call(this, instanceData) || this;
-        _this.myTable = myTable;
-        return _this;
     }
-    return PGTableMy;
-}(PGTable));
+}
+
+class PGTableMy extends PGTable {
+    constructor(instanceData, myTable) {
+        super(instanceData);
+        this.myTable = myTable;
+    }
+}
+exports.MyToPG = void 0;
 (function (MyToPG) {
-    MyToPG.GetPGTable = function (myTable) {
-        var pgTable = new PGTableMy();
+    MyToPG.GetPGTable = (myTable) => {
+        const pgTable = new PGTableMy();
         pgTable.name = myTable.name.toLowerCase();
-        for (var _i = 0, _a = myTable.columns; _i < _a.length; _i++) {
-            var myColumn = _a[_i];
-            var pgColumn = MyToPG.GetPGColumn(myColumn);
+        for (const myColumn of myTable.columns) {
+            const pgColumn = MyToPG.GetPGColumn(myColumn);
             pgTable.columns.push(pgColumn);
         }
-        for (var _b = 0, _c = myTable.foreignKeys; _b < _c.length; _b++) {
-            var myForeignKey = _c[_b];
-            var pgForeignKey = MyToPG.GetPGForeignKey(myForeignKey);
+        for (const myForeignKey of myTable.foreignKeys) {
+            const pgForeignKey = MyToPG.GetPGForeignKey(myForeignKey);
             pgTable.foreignKeys.push(pgForeignKey);
         }
-        for (var _d = 0, _e = myTable.indexes; _d < _e.length; _d++) {
-            var myIndex = _e[_d];
-            var pgIndex = MyToPG.GetPGIndex(myIndex);
+        for (const myIndex of myTable.indexes) {
+            const pgIndex = MyToPG.GetPGIndex(myIndex);
             pgTable.indexes.push(pgIndex);
         }
         pgTable.myTable = myTable;
         return pgTable;
     };
-    MyToPG.GetPGColumn = function (myColumn) {
+    MyToPG.GetPGColumn = (myColumn) => {
         var _a;
-        var pgColumn = new PGColumn();
+        const pgColumn = new PGColumn();
         pgColumn.column_name = myColumn.COLUMN_NAME;
         pgColumn.ordinal_position = myColumn.ORDINAL_POSITION;
         pgColumn.udt_name = MyToPG.UDTNameFromDataType(myColumn.DATA_TYPE);
@@ -1226,21 +1145,21 @@ var PGTableMy = /** @class */ (function (_super) {
         pgColumn.column_comment = (_a = myColumn.COLUMN_COMMENT) !== null && _a !== void 0 ? _a : '';
         return pgColumn;
     };
-    MyToPG.GetPGForeignKey = function (myForeignKey) {
-        var pgForeignKey = new PGForeignKey();
-        pgForeignKey.columnNames = myForeignKey.columnNames.map(function (col) { return col.toLowerCase(); });
+    MyToPG.GetPGForeignKey = (myForeignKey) => {
+        const pgForeignKey = new PGForeignKey();
+        pgForeignKey.columnNames = myForeignKey.columnNames.map(col => col.toLowerCase());
         pgForeignKey.primaryTable = myForeignKey.primaryTable.toLowerCase();
-        pgForeignKey.primaryColumns = myForeignKey.primaryColumns.map(function (col) { return col.toLowerCase(); });
+        pgForeignKey.primaryColumns = myForeignKey.primaryColumns.map(col => col.toLowerCase());
         return pgForeignKey;
     };
-    MyToPG.GetPGIndex = function (myIndex) {
-        var pgIndex = new PGIndex();
-        pgIndex.columns = myIndex.columns.map(function (col) { return col.toLowerCase(); });
+    MyToPG.GetPGIndex = (myIndex) => {
+        const pgIndex = new PGIndex();
+        pgIndex.columns = myIndex.columns.map(col => col.toLowerCase());
         pgIndex.isUnique = myIndex.isUnique;
         pgIndex.whereCondition = myIndex.where;
         return pgIndex;
     };
-    MyToPG.UDTNameFromDataType = function (columnName) {
+    MyToPG.UDTNameFromDataType = (columnName) => {
         switch (columnName.toUpperCase()) {
             case ColumnDefinition.TYPE_TINYINT:
                 return PGColumn.TYPE_BOOLEAN;
@@ -1264,36 +1183,33 @@ var PGTableMy = /** @class */ (function (_super) {
     };
 })(exports.MyToPG || (exports.MyToPG = {}));
 
-var MyColumn = /** @class */ (function (_super) {
-    __extends(MyColumn, _super);
-    function MyColumn(instanceData) {
-        var _this = _super.call(this) || this;
-        _this.isPK = false;
-        _this.isAutoIncrement = false;
+class MyColumn extends ColumnDefinition {
+    constructor(instanceData) {
+        super();
+        this.isPK = false;
+        this.isAutoIncrement = false;
         if (instanceData) {
-            _this.deserialize(instanceData);
+            this.deserialize(instanceData);
         }
-        return _this;
     }
-    MyColumn.prototype.deserialize = function (instanceData) {
-        var keys = Object.keys(this);
-        for (var _i = 0, keys_1 = keys; _i < keys_1.length; _i++) {
-            var key = keys_1[_i];
+    deserialize(instanceData) {
+        const keys = Object.keys(this);
+        for (const key of keys) {
             if (instanceData.hasOwnProperty(key)) {
                 this[key] = instanceData[key];
             }
         }
-    };
-    MyColumn.prototype.clean = function () {
+    }
+    clean() {
         //		if (this.dateType()) {
         //			if (IsEmpty(this.DATETIME_PRECISION) || this.DATETIME_PRECISION < 3 || this.DATETIME_PRECISION > 6) {
         //				this.DATETIME_PRECISION = 6;
         //			}
         //		}
-    };
-    MyColumn.prototype.ddlDefinition = function (myTable, _prevMyColumn, _altering) {
+    }
+    ddlDefinition(myTable, _prevMyColumn, _altering) {
         var _a;
-        var ddl = '`' + this.COLUMN_NAME + '` ';
+        let ddl = '`' + this.COLUMN_NAME + '` ';
         ddl += this.DATA_TYPE;
         if (this.integerType()) {
             switch (this.DATA_TYPE) {
@@ -1402,12 +1318,11 @@ var MyColumn = /** @class */ (function (_super) {
             ddl += 'COMMENT \'' + this.COLUMN_COMMENT + '\' ';
         }
         return ddl.trim();
-    };
-    return MyColumn;
-}(ColumnDefinition));
+    }
+}
 
-var MyForeignKey = /** @class */ (function () {
-    function MyForeignKey(instanceData) {
+class MyForeignKey {
+    constructor(instanceData) {
         this.columnNames = [];
         this.primaryTable = '';
         this.primaryColumns = [];
@@ -1419,20 +1334,19 @@ var MyForeignKey = /** @class */ (function () {
             this.deserialize(instanceData);
         }
     }
-    MyForeignKey.prototype.deserialize = function (instanceData) {
-        var keys = Object.keys(this);
-        for (var _i = 0, keys_1 = keys; _i < keys_1.length; _i++) {
-            var key = keys_1[_i];
+    deserialize(instanceData) {
+        const keys = Object.keys(this);
+        for (const key of keys) {
             if (instanceData.hasOwnProperty(key)) {
                 this[key] = instanceData[key];
             }
         }
-    };
-    MyForeignKey.prototype.fkName = function (myTable, prefix) {
-        return prefix + '_' + myTable.name.substr(-25) + '_' + this.columnNames.map(function (column) { return column.substr(0, -10); }).join('_');
-    };
-    MyForeignKey.prototype.ddlKeyDefinition = function (myTable, altering) {
-        var ddl = '';
+    }
+    fkName(myTable, prefix) {
+        return prefix + '_' + myTable.name.substr(-25) + '_' + this.columnNames.map(column => column.substr(0, -10)).join('_');
+    }
+    ddlKeyDefinition(myTable, altering) {
+        let ddl = '';
         if (altering) {
             ddl += 'ADD ';
         }
@@ -1443,9 +1357,9 @@ var MyForeignKey = /** @class */ (function () {
         ddl += '`' + this.fkName(myTable, 'idx') + '` ';
         ddl += '(`' + this.columnNames.join('`,`') + '`)';
         return ddl;
-    };
-    MyForeignKey.prototype.ddlConstraintDefinition = function (myTable, altering) {
-        var ddl = '';
+    }
+    ddlConstraintDefinition(myTable, altering) {
+        let ddl = '';
         if (altering) {
             ddl += 'ADD ';
         }
@@ -1457,12 +1371,11 @@ var MyForeignKey = /** @class */ (function () {
         ddl += '`' + this.primaryTable + '` ';
         ddl += '(`' + this.primaryColumns.join('`,`') + '`)';
         return ddl;
-    };
-    return MyForeignKey;
-}());
+    }
+}
 
-var MyIndex = /** @class */ (function () {
-    function MyIndex(instanceData) {
+class MyIndex {
+    constructor(instanceData) {
         this.columns = [];
         this.isUnique = false;
         this.using = 'BTREE';
@@ -1472,21 +1385,20 @@ var MyIndex = /** @class */ (function () {
             this.deserialize(instanceData);
         }
     }
-    MyIndex.prototype.deserialize = function (instanceData) {
-        var keys = Object.keys(this);
-        for (var _i = 0, keys_1 = keys; _i < keys_1.length; _i++) {
-            var key = keys_1[_i];
+    deserialize(instanceData) {
+        const keys = Object.keys(this);
+        for (const key of keys) {
             if (instanceData.hasOwnProperty(key)) {
                 this[key] = instanceData[key];
             }
         }
-    };
-    MyIndex.prototype.name = function (myTable) {
-        return 'idx_' + myTable.name.substr(-25) + '_' + this.columns.map(function (column) { return column.substr(0, -25); }).join('_');
-    };
+    }
+    name(myTable) {
+        return 'idx_' + myTable.name.substr(-25) + '_' + this.columns.map(column => column.substr(0, -25)).join('_');
+    }
     // @ts-ignore
-    MyIndex.prototype.ddlDefinition = function (myTable, _altering) {
-        var ddl = '';
+    ddlDefinition(myTable, _altering) {
+        let ddl = '';
         if (this.isUnique) {
             ddl += 'UNIQUE ';
         }
@@ -1494,13 +1406,12 @@ var MyIndex = /** @class */ (function () {
         ddl += '`' + this.name(myTable) + '` ';
         ddl += '(`' + this.columns.join('`,`') + '`)';
         return ddl;
-    };
-    return MyIndex;
-}());
+    }
+}
 
-var TS_EOL$1 = '\r\n';
-var MyTable = /** @class */ (function () {
-    function MyTable(instanceData) {
+const TS_EOL = '\r\n';
+class MyTable {
+    constructor(instanceData) {
         this.name = "";
         this.description = "";
         this.ENGINE = "InnoDB";
@@ -1514,27 +1425,23 @@ var MyTable = /** @class */ (function () {
             this.deserialize(instanceData);
         }
     }
-    MyTable.prototype.deserialize = function (instanceData) {
-        var keys = Object.keys(this);
-        for (var _i = 0, keys_1 = keys; _i < keys_1.length; _i++) {
-            var key = keys_1[_i];
+    deserialize(instanceData) {
+        const keys = Object.keys(this);
+        for (const key of keys) {
             if (instanceData.hasOwnProperty(key)) {
                 switch (key) {
                     case 'columns':
-                        for (var _a = 0, _b = instanceData[key]; _a < _b.length; _a++) {
-                            var column = _b[_a];
+                        for (const column of instanceData[key]) {
                             this[key].push(new MyColumn(column));
                         }
                         break;
                     case 'indexes':
-                        for (var _c = 0, _d = instanceData[key]; _c < _d.length; _c++) {
-                            var index = _d[_c];
+                        for (const index of instanceData[key]) {
                             this[key].push(new MyIndex(index));
                         }
                         break;
                     case 'foreignKeys':
-                        for (var _e = 0, _f = instanceData[key]; _e < _f.length; _e++) {
-                            var foreignKey = _f[_e];
+                        for (const foreignKey of instanceData[key]) {
                             this[key].push(new MyForeignKey(foreignKey));
                         }
                         break;
@@ -1544,97 +1451,93 @@ var MyTable = /** @class */ (function () {
                 }
             }
         }
-    };
-    MyTable.prototype.indexOfColumn = function (columnName) {
-        return this.columns.findIndex(function (column) { return column.COLUMN_NAME === columnName; });
-    };
-    MyTable.prototype.indexesOfForeignKeyByColumn = function (columnName) {
-        var indexes = [];
-        for (var i = 0; i < this.foreignKeys.length; i++) {
+    }
+    indexOfColumn(columnName) {
+        return this.columns.findIndex(column => column.COLUMN_NAME === columnName);
+    }
+    indexesOfForeignKeyByColumn(columnName) {
+        let indexes = [];
+        for (let i = 0; i < this.foreignKeys.length; i++) {
             if (this.foreignKeys[i].columnNames.includes(columnName)) {
                 indexes.push(i);
             }
         }
         return indexes;
-    };
-    MyTable.prototype.getForeignKeysByColumn = function (columnName) {
-        var fks = [];
-        var indexes = this.indexesOfForeignKeyByColumn(columnName);
-        for (var _i = 0, indexes_1 = indexes; _i < indexes_1.length; _i++) {
-            var index = indexes_1[_i];
+    }
+    getForeignKeysByColumn(columnName) {
+        let fks = [];
+        const indexes = this.indexesOfForeignKeyByColumn(columnName);
+        for (const index of indexes) {
             fks.push(this.foreignKeys[index]);
         }
         return fks;
-    };
-    MyTable.prototype.removeForeignKeysByColumn = function (columnName) {
-        this.foreignKeys = this.foreignKeys.filter(function (foreignKey) { return !foreignKey.columnNames.includes(columnName); });
-    };
-    MyTable.prototype.addForeignKey = function (myForeignKey) {
+    }
+    removeForeignKeysByColumn(columnName) {
+        this.foreignKeys = this.foreignKeys.filter(foreignKey => !foreignKey.columnNames.includes(columnName));
+    }
+    addForeignKey(myForeignKey) {
         this.foreignKeys.push(myForeignKey);
-    };
-    MyTable.prototype.getColumn = function (columnName) {
+    }
+    getColumn(columnName) {
         var _a;
-        return (_a = this.columns.find(function (column) { return column.COLUMN_NAME === columnName; })) !== null && _a !== void 0 ? _a : null;
-    };
-    MyTable.prototype.removeColumn = function (columnName) {
-        var column = this.getColumn(columnName);
+        return (_a = this.columns.find(column => column.COLUMN_NAME === columnName)) !== null && _a !== void 0 ? _a : null;
+    }
+    removeColumn(columnName) {
+        const column = this.getColumn(columnName);
         if (!!column) {
             this.removeForeignKeysByColumn(columnName);
-            this.columns.filter(function (column) { return column.COLUMN_NAME !== columnName; });
+            this.columns.filter(column => column.COLUMN_NAME !== columnName);
             this.reOrderColumns();
         }
-    };
-    MyTable.prototype.addColumn = function (myColumn) {
+    }
+    addColumn(myColumn) {
         if (!myColumn.ORDINAL_POSITION) {
             myColumn.ORDINAL_POSITION = 999999;
         }
-        this.columns = this.columns.filter(function (column) { return column.COLUMN_NAME !== myColumn.COLUMN_NAME; });
-        for (var i = 0; i < this.columns.length; i++) {
+        this.columns = this.columns.filter(column => column.COLUMN_NAME !== myColumn.COLUMN_NAME);
+        for (let i = 0; i < this.columns.length; i++) {
             if (this.columns[i].ORDINAL_POSITION >= myColumn.ORDINAL_POSITION) {
                 this.columns[i].ORDINAL_POSITION++;
             }
         }
         this.columns.push(myColumn);
         this.reOrderColumns();
-    };
-    MyTable.prototype.reOrderColumns = function () {
-        this.columns = this.columns.sort(function (a, b) {
-            return a.ORDINAL_POSITION - b.ORDINAL_POSITION;
-        });
-        var position = 0;
-        for (var i = 0; i < this.columns.length; i++) {
+    }
+    reOrderColumns() {
+        this.columns = this.columns.sort((a, b) => a.ORDINAL_POSITION - b.ORDINAL_POSITION);
+        let position = 0;
+        for (let i = 0; i < this.columns.length; i++) {
             position++;
             this.columns[i].ORDINAL_POSITION = position;
         }
-    };
-    MyTable.prototype.addIndex = function (myIndex) {
+    }
+    addIndex(myIndex) {
         this.indexes.push(myIndex);
-    };
-    MyTable.prototype.tableHeaderText = function (forTableText) {
-        var text = "/**" + TS_EOL$1;
-        text += " * Automatically generated: " + moment__default['default']().format('Y-MM-DD HH:mm:ss') + TS_EOL$1;
-        text += " * © " + moment__default['default']().format('Y') + ", Solid Basis Ventures, LLC." + TS_EOL$1; // Must come after generated date so it doesn't keep regenerating
-        text += " * DO NOT MODIFY" + TS_EOL$1;
-        text += " *" + TS_EOL$1;
-        text += " * " + forTableText + ": " + this.name + TS_EOL$1;
+    }
+    tableHeaderText(forTableText) {
+        let text = "/**" + TS_EOL;
+        text += " * Automatically generated: " + moment__default['default']().format('Y-MM-DD HH:mm:ss') + TS_EOL;
+        text += " * © " + moment__default['default']().format('Y') + ", Solid Basis Ventures, LLC." + TS_EOL; // Must come after generated date so it doesn't keep regenerating
+        text += " * DO NOT MODIFY" + TS_EOL;
+        text += " *" + TS_EOL;
+        text += " * " + forTableText + ": " + this.name + TS_EOL;
         if (!!this.description) {
-            text += " *" + TS_EOL$1;
-            text += " * " + MyTable.CleanComment(this.description) + TS_EOL$1;
+            text += " *" + TS_EOL;
+            text += " * " + MyTable.CleanComment(this.description) + TS_EOL;
         }
-        text += " */" + TS_EOL$1;
-        text += TS_EOL$1;
+        text += " */" + TS_EOL;
+        text += TS_EOL;
         return text;
-    };
-    MyTable.prototype.tsText = function () {
+    }
+    tsText() {
         var _a;
-        var text = this.tableHeaderText("Table Manager for");
-        text += "export interface I" + this.name + " {" + TS_EOL$1;
-        var addComma = false;
-        var addComment = "";
-        for (var _i = 0, _b = this.columns; _i < _b.length; _i++) {
-            var myColumn = _b[_i];
+        let text = this.tableHeaderText("Table Manager for");
+        text += `export interface I${this.name} {` + TS_EOL;
+        let addComma = false;
+        let addComment = "";
+        for (const myColumn of this.columns) {
             if (addComma) {
-                text += "," + addComment + TS_EOL$1;
+                text += "," + addComment + TS_EOL;
             }
             text += "\t";
             text += myColumn.COLUMN_NAME;
@@ -1651,16 +1554,15 @@ var MyTable = /** @class */ (function () {
             }
             addComma = true;
         }
-        text += addComment + TS_EOL$1;
-        text += "}" + TS_EOL$1;
-        text += TS_EOL$1;
-        text += "export const initial_" + this.name + ": I" + this.name + " = {" + TS_EOL$1;
+        text += addComment + TS_EOL;
+        text += "}" + TS_EOL;
+        text += TS_EOL;
+        text += `export const initial_${this.name}: I${this.name} = {` + TS_EOL;
         addComma = false;
         addComment = "";
-        for (var _c = 0, _d = this.columns; _c < _d.length; _c++) {
-            var myColumn = _d[_c];
+        for (const myColumn of this.columns) {
             if (addComma) {
-                text += "," + TS_EOL$1;
+                text += "," + TS_EOL;
             }
             text += "\t";
             text += myColumn.COLUMN_NAME;
@@ -1706,34 +1608,33 @@ var MyTable = /** @class */ (function () {
             }
             addComma = true;
         }
-        text += addComment + TS_EOL$1;
-        text += "};" + TS_EOL$1;
+        text += addComment + TS_EOL;
+        text += "};" + TS_EOL;
         return text;
-    };
-    MyTable.prototype.tsTextTable = function () {
-        var text = this.tableHeaderText("Table Class for");
-        text += "import {initial_" + this.name + ", I" + this.name + "} from \"../../../app/src/Common/Tables/" + this.name + "\";" + TS_EOL$1;
-        text += "import {TTables} from \"../Database/Tables\";" + TS_EOL$1;
-        text += "import {TConnection} from \"../Database/mysqlConnection\";" + TS_EOL$1;
-        text += "import {_Table} from \"./_Table\";" + TS_EOL$1;
-        text += TS_EOL$1;
-        text += "export class C" + this.name + " extends _CTable<I" + this.name + "> {" + TS_EOL$1;
-        text += "\tpublic readonly table: TTables;" + TS_EOL$1;
-        text += TS_EOL$1;
-        text += "\tconstructor(connection: TConnection, initialValues?: I" + this.name + " | any) {" + TS_EOL$1;
-        text += "\t\tsuper(connection, initialValues, initial_" + this.name + ");" + TS_EOL$1;
-        text += TS_EOL$1;
-        text += "\t\tthis.table = '" + this.name + "';" + TS_EOL$1;
-        text += "\t}" + TS_EOL$1;
-        text += "}" + TS_EOL$1;
+    }
+    tsTextTable() {
+        let text = this.tableHeaderText("Table Class for");
+        text += `import {initial_${this.name}, I${this.name}} from "../../../app/src/Common/Tables/${this.name}";` + TS_EOL;
+        text += `import {TTables} from "../Database/Tables";` + TS_EOL;
+        text += `import {TConnection} from "../Database/mysqlConnection";` + TS_EOL;
+        text += `import {_Table} from "./_Table";` + TS_EOL;
+        text += TS_EOL;
+        text += `export class C${this.name} extends _CTable<I${this.name}> {` + TS_EOL;
+        text += `\tpublic readonly table: TTables;` + TS_EOL;
+        text += TS_EOL;
+        text += `\tconstructor(connection: TConnection, initialValues?: I${this.name} | any) {` + TS_EOL;
+        text += `\t\tsuper(connection, initialValues, initial_${this.name});` + TS_EOL;
+        text += TS_EOL;
+        text += `\t\tthis.table = '${this.name}';` + TS_EOL;
+        text += `\t}` + TS_EOL;
+        text += `}` + TS_EOL;
         return text;
-    };
+    }
     // @ts-ignore
-    MyTable.prototype.ddlPrimaryKey = function (altering) {
-        var found = false;
-        var ddl = "PRIMARY KEY (`";
-        for (var _i = 0, _a = this.columns; _i < _a.length; _i++) {
-            var column = _a[_i];
+    ddlPrimaryKey(altering) {
+        let found = false;
+        let ddl = "PRIMARY KEY (`";
+        for (const column of this.columns) {
             if (column.isPK) {
                 if (found) {
                     ddl += "`,`";
@@ -1747,103 +1648,92 @@ var MyTable = /** @class */ (function () {
             return ddl;
         }
         return null;
-    };
-    MyTable.prototype.ddlText = function (process, includeFKs, altering) {
+    }
+    ddlText(process, includeFKs, altering = false) {
         var _a, _b, _c, _d;
-        if (altering === void 0) { altering = false; }
-        return __awaiter(this, void 0, void 0, function () {
-            var ddl, prevColumn, _i, _e, myColumn, pk, _f, _g, index, _h, _j, foreignKey, _k, _l, foreignKey, needsComma, _m, _o, index, _p, _q, foreignKey, _r, _s, foreignKey;
-            return __generator(this, function (_t) {
-                ddl = "";
-                if (!altering) {
-                    if (altering) {
-                        /** @noinspection SqlResolve */
-                        ddl += "DROP TABLE " + this.name + " CASCADE;" + TS_EOL$1;
+        return __awaiter(this, void 0, void 0, function* () {
+            let ddl = "";
+            if (!altering) {
+                if (altering) {
+                    /** @noinspection SqlResolve */
+                    ddl += `DROP TABLE ${this.name} CASCADE;` + TS_EOL;
+                }
+                ddl += `CREATE TABLE ${this.name} (` + TS_EOL;
+                let prevColumn = null;
+                for (const myColumn of this.columns) {
+                    if (prevColumn !== null) {
+                        ddl += "," + TS_EOL;
                     }
-                    ddl += "CREATE TABLE " + this.name + " (" + TS_EOL$1;
-                    prevColumn = null;
-                    for (_i = 0, _e = this.columns; _i < _e.length; _i++) {
-                        myColumn = _e[_i];
-                        if (prevColumn !== null) {
-                            ddl += "," + TS_EOL$1;
+                    ddl += "\t" + myColumn.ddlDefinition(this, prevColumn, altering);
+                    prevColumn = myColumn;
+                }
+                const pk = this.ddlPrimaryKey(altering);
+                if (!!pk) {
+                    ddl += "," + TS_EOL + "\t" + pk;
+                }
+                for (const index of this.indexes) {
+                    ddl += "," + TS_EOL + "\t" + index.ddlDefinition(this, altering);
+                }
+                if (includeFKs) {
+                    for (const foreignKey of this.foreignKeys) {
+                        ddl += "," + TS_EOL + "\t" + foreignKey.ddlKeyDefinition(this, altering);
+                    }
+                    for (const foreignKey of this.foreignKeys) {
+                        ddl += "," + TS_EOL + "\t" + foreignKey.ddlConstraintDefinition(this, altering);
+                    }
+                }
+                ddl += TS_EOL;
+                ddl += ') ';
+                ddl += 'ENGINE=' + ((_a = this.ENGINE) !== null && _a !== void 0 ? _a : 'InnoDB') + ' ';
+                ddl += 'DEFAULT CHARSET=' + ((_b = this.CHARSET) !== null && _b !== void 0 ? _b : 'utf8mb4') + ' ';
+                ddl += 'COLLATE=' + ((_c = this.COLLATE) !== null && _c !== void 0 ? _c : 'utf8mb4_unicode_ci') + ' ';
+                ddl += 'ROW_FORMAT=' + ((_d = this.ROW_FORMAT) !== null && _d !== void 0 ? _d : 'COMPACT');
+                ddl += ';';
+            }
+            else {
+                let needsComma = false;
+                ddl += `ALTER TABLE ${this.name}` + TS_EOL;
+                if (includeFKs) {
+                    for (const index of this.indexes) {
+                        // if (!await SQL.IndexExists(connection, this.name, index.name(this))) {
+                        if (needsComma) {
+                            ddl += "," + TS_EOL;
                         }
-                        ddl += "\t" + myColumn.ddlDefinition(this, prevColumn, altering);
-                        prevColumn = myColumn;
+                        needsComma = true;
+                        ddl += "\t" + index.ddlDefinition(this, altering);
+                        // }
                     }
-                    pk = this.ddlPrimaryKey(altering);
-                    if (!!pk) {
-                        ddl += "," + TS_EOL$1 + "\t" + pk;
-                    }
-                    for (_f = 0, _g = this.indexes; _f < _g.length; _f++) {
-                        index = _g[_f];
-                        ddl += "," + TS_EOL$1 + "\t" + index.ddlDefinition(this, altering);
-                    }
-                    if (includeFKs) {
-                        for (_h = 0, _j = this.foreignKeys; _h < _j.length; _h++) {
-                            foreignKey = _j[_h];
-                            ddl += "," + TS_EOL$1 + "\t" + foreignKey.ddlKeyDefinition(this, altering);
+                    for (const foreignKey of this.foreignKeys) {
+                        // if (!await SQL.IndexExists(connection, this.name, foreignKey.fkName(this, 'idx'))) {
+                        if (needsComma) {
+                            ddl += "," + TS_EOL;
                         }
-                        for (_k = 0, _l = this.foreignKeys; _k < _l.length; _k++) {
-                            foreignKey = _l[_k];
-                            ddl += "," + TS_EOL$1 + "\t" + foreignKey.ddlConstraintDefinition(this, altering);
-                        }
+                        needsComma = true;
+                        ddl += "\t" + foreignKey.ddlKeyDefinition(this, altering);
+                        // }
                     }
-                    ddl += TS_EOL$1;
-                    ddl += ') ';
-                    ddl += 'ENGINE=' + ((_a = this.ENGINE) !== null && _a !== void 0 ? _a : 'InnoDB') + ' ';
-                    ddl += 'DEFAULT CHARSET=' + ((_b = this.CHARSET) !== null && _b !== void 0 ? _b : 'utf8mb4') + ' ';
-                    ddl += 'COLLATE=' + ((_c = this.COLLATE) !== null && _c !== void 0 ? _c : 'utf8mb4_unicode_ci') + ' ';
-                    ddl += 'ROW_FORMAT=' + ((_d = this.ROW_FORMAT) !== null && _d !== void 0 ? _d : 'COMPACT');
+                    for (const foreignKey of this.foreignKeys) {
+                        // if (!await SQL.ConstraintExists(connection, this.name, foreignKey.fkName(this, 'fk'))) {
+                        if (needsComma) {
+                            ddl += "," + TS_EOL;
+                        }
+                        needsComma = true;
+                        ddl += "\t" + foreignKey.ddlConstraintDefinition(this, altering);
+                        // }
+                    }
+                }
+                if (needsComma) {
+                    ddl += TS_EOL;
                     ddl += ';';
+                    // } else {
+                    //     ddl = '';
                 }
-                else {
-                    needsComma = false;
-                    ddl += "ALTER TABLE " + this.name + TS_EOL$1;
-                    if (includeFKs) {
-                        for (_m = 0, _o = this.indexes; _m < _o.length; _m++) {
-                            index = _o[_m];
-                            // if (!await SQL.IndexExists(connection, this.name, index.name(this))) {
-                            if (needsComma) {
-                                ddl += "," + TS_EOL$1;
-                            }
-                            needsComma = true;
-                            ddl += "\t" + index.ddlDefinition(this, altering);
-                            // }
-                        }
-                        for (_p = 0, _q = this.foreignKeys; _p < _q.length; _p++) {
-                            foreignKey = _q[_p];
-                            // if (!await SQL.IndexExists(connection, this.name, foreignKey.fkName(this, 'idx'))) {
-                            if (needsComma) {
-                                ddl += "," + TS_EOL$1;
-                            }
-                            needsComma = true;
-                            ddl += "\t" + foreignKey.ddlKeyDefinition(this, altering);
-                            // }
-                        }
-                        for (_r = 0, _s = this.foreignKeys; _r < _s.length; _r++) {
-                            foreignKey = _s[_r];
-                            // if (!await SQL.ConstraintExists(connection, this.name, foreignKey.fkName(this, 'fk'))) {
-                            if (needsComma) {
-                                ddl += "," + TS_EOL$1;
-                            }
-                            needsComma = true;
-                            ddl += "\t" + foreignKey.ddlConstraintDefinition(this, altering);
-                            // }
-                        }
-                    }
-                    if (needsComma) {
-                        ddl += TS_EOL$1;
-                        ddl += ';';
-                        // } else {
-                        //     ddl = '';
-                    }
-                }
-                return [2 /*return*/, ddl];
-            });
+            }
+            return ddl;
         });
-    };
-    MyTable.prototype.save = function () {
-        for (var i = 0; i < this.columns.length; i++) {
+    }
+    save() {
+        for (let i = 0; i < this.columns.length; i++) {
             this.columns[i].clean();
         }
         MyTable.SetPermissions();
@@ -1852,14 +1742,14 @@ var MyTable = /** @class */ (function () {
         MyTable.writeFileIfDifferent(MyTable.DEFINITIONS_DIR + '/' + this.name + '.json', JSON.stringify(this), false);
         MyTable.writeFileIfDifferent(MyTable.TS_INTERFACE_DIR + '/New/I' + this.name + '.ts', this.tsText(), true);
         MyTable.writeFileIfDifferent(MyTable.TS_CLASS_DIR + '/New/C' + this.name + '.ts', this.tsTextTable(), true, true);
-    };
-    MyTable.ExistsNewTS = function () {
+    }
+    static ExistsNewTS() {
         var _a, _b;
-        return (fs__default['default'].existsSync(MyTable.TS_INTERFACE_DIR + '/New') && ((_a = fs__default['default'].readdirSync(MyTable.TS_INTERFACE_DIR + '/New')) !== null && _a !== void 0 ? _a : []).filter(function (file) { return file.endsWith('.ts'); }).length > 0) || (fs__default['default'].existsSync(MyTable.TS_CLASS_DIR + '/New') && ((_b = fs__default['default'].readdirSync(MyTable.TS_CLASS_DIR + '/New')) !== null && _b !== void 0 ? _b : []).filter(function (file) { return file.endsWith('.ts'); }).length > 0);
-    };
-    MyTable.prototype.moveInNewTS = function () {
+        return (fs__default['default'].existsSync(MyTable.TS_INTERFACE_DIR + '/New') && ((_a = fs__default['default'].readdirSync(MyTable.TS_INTERFACE_DIR + '/New')) !== null && _a !== void 0 ? _a : []).filter(file => file.endsWith('.ts')).length > 0) || (fs__default['default'].existsSync(MyTable.TS_CLASS_DIR + '/New') && ((_b = fs__default['default'].readdirSync(MyTable.TS_CLASS_DIR + '/New')) !== null && _b !== void 0 ? _b : []).filter(file => file.endsWith('.ts')).length > 0);
+    }
+    moveInNewTS() {
         // Note: this may break the server as it could change the definition of certain files.  Do this AFTER the connections have been closed!
-        var fileName = MyTable.TS_INTERFACE_DIR + '/New/I' + this.name + '.ts';
+        let fileName = MyTable.TS_INTERFACE_DIR + '/New/I' + this.name + '.ts';
         if (fs__default['default'].existsSync(fileName)) {
             fs__default['default'].renameSync(fileName, fileName.replace('/New/', '/'));
         }
@@ -1867,21 +1757,20 @@ var MyTable = /** @class */ (function () {
         if (fs__default['default'].existsSync(fileName)) {
             fs__default['default'].renameSync(fileName, fileName.replace('/New/', '/'));
         }
-    };
-    MyTable.writeFileIfDifferent = function (fileName, data, useSBVCheck, skipIfExists) {
-        if (skipIfExists === void 0) { skipIfExists = false; }
+    }
+    static writeFileIfDifferent(fileName, data, useSBVCheck, skipIfExists = false) {
         MyTable.SetPermissions();
         if (skipIfExists && (fs__default['default'].existsSync(fileName.replace('/New/', '/')) || fs__default['default'].existsSync(fileName))) {
             return;
         }
         if (useSBVCheck) {
-            var newSBVPos = data.indexOf("Solid Basis Ventures");
+            let newSBVPos = data.indexOf("Solid Basis Ventures");
             if (newSBVPos) {
                 if (fs__default['default'].existsSync(fileName.replace('/New/', '/')) && (!fileName.includes('/New/') || !fs__default['default'].existsSync(fileName))) {
-                    var originalData = fs__default['default'].readFileSync(fileName.replace('/New/', '/'), 'utf8');
-                    var originalSBVPos = originalData.indexOf("Solid Basis Ventures");
-                    var originalCheck = originalData.substr(originalSBVPos);
-                    var newCheck = data.substr(newSBVPos);
+                    const originalData = fs__default['default'].readFileSync(fileName.replace('/New/', '/'), 'utf8');
+                    const originalSBVPos = originalData.indexOf("Solid Basis Ventures");
+                    const originalCheck = originalData.substr(originalSBVPos);
+                    const newCheck = data.substr(newSBVPos);
                     if (originalCheck === newCheck) {
                         return true;
                     }
@@ -1890,42 +1779,34 @@ var MyTable = /** @class */ (function () {
         }
         else {
             if (fs__default['default'].existsSync(fileName)) {
-                var originalData = fs__default['default'].readFileSync(fileName, 'utf8');
+                const originalData = fs__default['default'].readFileSync(fileName, 'utf8');
                 if (originalData === data) {
                     return true;
                 }
             }
         }
         return fs__default['default'].writeFileSync(fileName, data);
-    };
-    MyTable.writeFileIfNotExists = function (fileName, data) {
+    }
+    static writeFileIfNotExists(fileName, data) {
         MyTable.SetPermissions();
         if (!fs__default['default'].existsSync(fileName)) {
             fs__default['default'].writeFileSync(fileName, data);
         }
-    };
-    MyTable.prototype.syncToDB = function (includeFKs, altering) {
-        if (altering === void 0) { altering = false; }
-        return __awaiter(this, void 0, void 0, function () {
-            var ddl;
-            return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0: return [4 /*yield*/, this.ddlText(true, includeFKs, altering)];
-                    case 1:
-                        ddl = _a.sent();
-                        return [2 /*return*/, !!ddl];
-                }
-            });
+    }
+    syncToDB(includeFKs, altering = false) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const ddl = yield this.ddlText(true, includeFKs, altering);
+            return !!ddl;
         });
-    };
-    MyTable.SaveAll = function (myTables) {
-        for (var i = 0; i < myTables.length; i++) {
+    }
+    static SaveAll(myTables) {
+        for (let i = 0; i < myTables.length; i++) {
             myTables[i].save();
         }
-    };
-    MyTable.Load = function (fileName) {
+    }
+    static Load(fileName) {
         MyTable.SetPermissions();
-        var calcFileName = fileName;
+        let calcFileName = fileName;
         if (!calcFileName.endsWith('.json')) {
             calcFileName += '.json';
         }
@@ -1933,42 +1814,39 @@ var MyTable = /** @class */ (function () {
             calcFileName = MyTable.DEFINITIONS_DIR + "/" + calcFileName;
         }
         return new MyTable(JSON.parse(fs__default['default'].readFileSync(calcFileName)));
-    };
-    MyTable.LoadAll = function () {
+    }
+    static LoadAll() {
         MyTable.SetPermissions();
-        var files = fs__default['default'].readdirSync(MyTable.DEFINITIONS_DIR);
-        var myTables = [];
-        for (var _i = 0, files_1 = files; _i < files_1.length; _i++) {
-            var file = files_1[_i];
+        let files = fs__default['default'].readdirSync(MyTable.DEFINITIONS_DIR);
+        let myTables = [];
+        for (const file of files) {
             if (file.endsWith('.json')) {
-                var myTable = MyTable.Load(file);
+                const myTable = MyTable.Load(file);
                 if (!!myTable) {
                     myTables.push(myTable);
                 }
             }
         }
         return myTables;
-    };
+    }
     // noinspection JSUnusedLocalSymbols
-    MyTable.DeleteAll = function () {
+    static DeleteAll() {
         MyTable.SetPermissions();
-        var files = fs__default['default'].readdirSync(MyTable.DEFINITIONS_DIR);
-        for (var _i = 0, files_2 = files; _i < files_2.length; _i++) {
-            var file = files_2[_i];
+        let files = fs__default['default'].readdirSync(MyTable.DEFINITIONS_DIR);
+        for (const file of files) {
             if (file.endsWith('.json')) {
                 fs__default['default'].unlinkSync(MyTable.DEFINITIONS_DIR + "/" + file);
             }
         }
         files = fs__default['default'].readdirSync(MyTable.TS_INTERFACE_DIR);
-        for (var _a = 0, files_3 = files; _a < files_3.length; _a++) {
-            var file = files_3[_a];
+        for (const file of files) {
             if (file.endsWith('.json')) {
                 fs__default['default'].unlinkSync(MyTable.TS_INTERFACE_DIR + "/" + file);
             }
         }
-    };
+    }
     // static ArePermissionsSet = false;
-    MyTable.SetPermissions = function () {
+    static SetPermissions() {
         // if (!self::ArePermissionsSet) {
         // 	self::ArePermissionsSet = true;
         //
@@ -1977,189 +1855,150 @@ var MyTable = /** @class */ (function () {
         // 	exec('chmod a+rwx -R ' + MyTable.TRAITS_DIR);
         // 	exec('chmod a+rwx -R ' + MyTable.DEFINITIONS_DIR);
         // }
-    };
-    MyTable.CleanComment = function (comment) {
+    }
+    static CleanComment(comment) {
         if (!comment) {
             return comment;
         }
         return comment.replace(/[\n\r]/g, ' ');
-    };
-    MyTable.DEFINITIONS_DIR = path.resolve("./") + "/src/Assets/Tables";
-    MyTable.TS_INTERFACE_DIR = path.resolve("./") + "/../app/src/Common/Tables";
-    MyTable.TS_CLASS_DIR = path.resolve("./") + "/src/Tables";
-    return MyTable;
-}());
+    }
+}
+MyTable.DEFINITIONS_DIR = path__namespace.resolve("./") + "/src/Assets/Tables";
+MyTable.TS_INTERFACE_DIR = path__namespace.resolve("./") + "/../app/src/Common/Tables";
+MyTable.TS_CLASS_DIR = path__namespace.resolve("./") + "/src/Tables";
 
+exports.MySQL = void 0;
 (function (MySQL) {
-    var _this = this;
-    MySQL.TableRowCount = function (connection, table) { return __awaiter(_this, void 0, void 0, function () {
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0: return [4 /*yield*/, new Promise(function (resolve) {
-                        connection.query("SELECT COUNT(*) AS count FROM " + table, function (error, results, _fields) {
-                            var _a, _b;
-                            if (error)
-                                throw error;
-                            resolve((_b = ((_a = (results !== null && results !== void 0 ? results : [])[0]) !== null && _a !== void 0 ? _a : {})['count']) !== null && _b !== void 0 ? _b : 0);
-                        });
-                    })];
-                case 1: return [2 /*return*/, _a.sent()];
-            }
+    MySQL.TableRowCount = (connection, table) => __awaiter(this, void 0, void 0, function* () {
+        return yield new Promise((resolve) => {
+            connection.query(`SELECT COUNT(*) AS count FROM ${table}`, (error, results, _fields) => {
+                var _a, _b;
+                if (error)
+                    throw error;
+                resolve((_b = ((_a = (results !== null && results !== void 0 ? results : [])[0]) !== null && _a !== void 0 ? _a : {})['count']) !== null && _b !== void 0 ? _b : 0);
+            });
         });
-    }); };
-    MySQL.TableExists = function (connection, table) { return __awaiter(_this, void 0, void 0, function () {
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0: return [4 /*yield*/, new Promise(function (resolve) {
-                        connection.query("SELECT COUNT(*) AS count\n                      FROM information_schema.tables\n                      WHERE TABLE_SCHEMA = '" + connection.config.database + "'\n                        AND TABLE_NAME = '" + table + "'", function (error, results, _fields) {
-                            var _a, _b;
-                            if (error)
-                                throw error;
-                            resolve(((_b = ((_a = (results !== null && results !== void 0 ? results : [])[0]) !== null && _a !== void 0 ? _a : {})['count']) !== null && _b !== void 0 ? _b : 0) > 0);
-                        });
-                    })];
-                case 1: return [2 /*return*/, _a.sent()];
-            }
+    });
+    MySQL.TableExists = (connection, table) => __awaiter(this, void 0, void 0, function* () {
+        return yield new Promise((resolve) => {
+            connection.query(`SELECT COUNT(*) AS count
+                      FROM information_schema.tables
+                      WHERE TABLE_SCHEMA = '${connection.config.database}'
+                        AND TABLE_NAME = '${table}'`, (error, results, _fields) => {
+                var _a, _b;
+                if (error)
+                    throw error;
+                resolve(((_b = ((_a = (results !== null && results !== void 0 ? results : [])[0]) !== null && _a !== void 0 ? _a : {})['count']) !== null && _b !== void 0 ? _b : 0) > 0);
+            });
         });
-    }); };
-    MySQL.Tables = function (connection) { return __awaiter(_this, void 0, void 0, function () {
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0: return [4 /*yield*/, new Promise(function (resolve) {
-                        connection.query("SELECT TABLE_NAME\n                      FROM information_schema.tables\n                      WHERE TABLE_SCHEMA = '" + connection.config.database + "'", function (error, results, _fields) {
-                            var _a;
-                            if (error)
-                                throw error;
-                            resolve(((_a = results) !== null && _a !== void 0 ? _a : []).map(function (result) { return result.TABLE_NAME; }).sort(function (a, b) { return a.localeCompare(b); }));
-                        });
-                    })];
-                case 1: return [2 /*return*/, _a.sent()];
-            }
+    });
+    MySQL.Tables = (connection) => __awaiter(this, void 0, void 0, function* () {
+        return yield new Promise((resolve) => {
+            connection.query(`SELECT TABLE_NAME
+                      FROM information_schema.tables
+                      WHERE TABLE_SCHEMA = '${connection.config.database}'`, (error, results, _fields) => {
+                var _a;
+                if (error)
+                    throw error;
+                resolve(((_a = results) !== null && _a !== void 0 ? _a : []).map((result) => result.TABLE_NAME).sort((a, b) => a.localeCompare(b)));
+            });
         });
-    }); };
-    MySQL.TableColumnExists = function (connection, table, column) { return __awaiter(_this, void 0, void 0, function () {
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0: return [4 /*yield*/, new Promise(function (resolve) {
-                        connection.query("SELECT COUNT(*) AS count\n                      FROM information_schema.COLUMNS\n                      WHERE TABLE_SCHEMA = '" + connection.config.database + "'\n                        AND TABLE_NAME = '" + table + "'\n                        AND COLUMN_NAME = '" + column + "'", function (error, results, _fields) {
-                            var _a, _b;
-                            if (error)
-                                throw error;
-                            resolve(((_b = ((_a = (results !== null && results !== void 0 ? results : [])[0]) !== null && _a !== void 0 ? _a : {})['count']) !== null && _b !== void 0 ? _b : 0) > 0);
-                        });
-                    })];
-                case 1: return [2 /*return*/, _a.sent()];
-            }
+    });
+    MySQL.TableColumnExists = (connection, table, column) => __awaiter(this, void 0, void 0, function* () {
+        return yield new Promise((resolve) => {
+            connection.query(`SELECT COUNT(*) AS count
+                      FROM information_schema.COLUMNS
+                      WHERE TABLE_SCHEMA = '${connection.config.database}'
+                        AND TABLE_NAME = '${table}'
+                        AND COLUMN_NAME = '${column}'`, (error, results, _fields) => {
+                var _a, _b;
+                if (error)
+                    throw error;
+                resolve(((_b = ((_a = (results !== null && results !== void 0 ? results : [])[0]) !== null && _a !== void 0 ? _a : {})['count']) !== null && _b !== void 0 ? _b : 0) > 0);
+            });
         });
-    }); };
-    MySQL.TableColumns = function (connection, table) { return __awaiter(_this, void 0, void 0, function () {
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0: return [4 /*yield*/, new Promise(function (resolve) {
-                        connection.query("SELECT *\n                      FROM information_schema.COLUMNS\n                      WHERE TABLE_SCHEMA = '" + connection.config.database + "'\n                        AND TABLE_NAME = '" + table + "'\n                        ORDER BY ORDINAL_POSITION", function (error, results, _fields) {
-                            var _a;
-                            if (error)
-                                throw error;
-                            resolve(__spreadArrays(((_a = results) !== null && _a !== void 0 ? _a : [])));
-                        });
-                    })];
-                case 1: return [2 /*return*/, _a.sent()];
-            }
+    });
+    MySQL.TableColumns = (connection, table) => __awaiter(this, void 0, void 0, function* () {
+        return yield new Promise((resolve) => {
+            connection.query(`SELECT *
+                      FROM information_schema.COLUMNS
+                      WHERE TABLE_SCHEMA = '${connection.config.database}'
+                        AND TABLE_NAME = '${table}'
+                        ORDER BY ORDINAL_POSITION`, (error, results, _fields) => {
+                var _a;
+                if (error)
+                    throw error;
+                resolve([...((_a = results) !== null && _a !== void 0 ? _a : [])]);
+            });
         });
-    }); };
-    MySQL.TableFKs = function (connection, table) { return __awaiter(_this, void 0, void 0, function () {
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0: return [4 /*yield*/, new Promise(function (resolve) {
-                        connection.query("SELECT TABLE_NAME,COLUMN_NAME,CONSTRAINT_NAME, REFERENCED_TABLE_NAME,REFERENCED_COLUMN_NAME\n\t\t\t\tFROM INFORMATION_SCHEMA.KEY_COLUMN_USAGE\n\t\t\t\tWHERE REFERENCED_TABLE_SCHEMA = '" + connection.config.database + "'\n\t\t\t\t  AND TABLE_NAME = '" + table + "'", function (error, results, _fields) {
-                            if (error)
-                                throw error;
-                            var myForeignKeys = [];
-                            var _loop_1 = function (result) {
-                                var prevFK = myForeignKeys.find(function (fk) { return fk.keyName === result.CONSTRAINT_NAME; });
-                                if (!!prevFK) {
-                                    prevFK.columnNames = __spreadArrays(prevFK.columnNames, [result.COLUMN_NAME]);
-                                    prevFK.primaryColumns = __spreadArrays(prevFK.primaryColumns, [result.REFERENCED_COLUMN_NAME]);
-                                }
-                                else {
-                                    var myForeignKey = new MyForeignKey();
-                                    myForeignKey.keyName = result.CONSTRAINT_NAME;
-                                    myForeignKey.columnNames = [result.COLUMN_NAME];
-                                    myForeignKey.primaryTable = result.REFERENCED_TABLE_NAME;
-                                    myForeignKey.primaryColumns = [result.REFERENCED_COLUMN_NAME];
-                                    myForeignKeys.push(myForeignKey);
-                                }
-                            };
-                            for (var _i = 0, results_1 = results; _i < results_1.length; _i++) {
-                                var result = results_1[_i];
-                                _loop_1(result);
-                            }
-                            resolve(myForeignKeys);
-                        });
-                    })];
-                case 1: return [2 /*return*/, _a.sent()];
-            }
-        });
-    }); };
-    MySQL.TableIndexes = function (connection, table) { return __awaiter(_this, void 0, void 0, function () {
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0: return [4 /*yield*/, new Promise(function (resolve) {
-                        connection.query("SELECT INDEX_NAME, COLUMN_NAME, NON_UNIQUE\n\t\t\t\tFROM INFORMATION_SCHEMA.STATISTICS\n\t\t\t\tWHERE TABLE_SCHEMA = '" + connection.config.database + "'\n\t\t\t\t\tAND TABLE_NAME = '" + table + "'\n\t\t\t\tORDER BY INDEX_NAME", function (error, results, _fields) {
-                            if (error)
-                                throw error;
-                            var myIndexes = [];
-                            var _loop_2 = function (result) {
-                                var prevIndex = myIndexes.find(function (idx) { return idx.indexName === result.INDEX_NAME; });
-                                if (!!prevIndex) {
-                                    prevIndex.columns = __spreadArrays(prevIndex.columns, [result.COLUMN_NAME]);
-                                }
-                                else {
-                                    var myIndex = new MyIndex();
-                                    myIndex.indexName = result.INDEX_NAME;
-                                    myIndex.columns = [result.COLUMN_NAME];
-                                    myIndex.isUnique = !intelliwaketsfoundation.IsOn(result.NON_UNIQUE);
-                                    myIndexes.push(myIndex);
-                                }
-                            };
-                            for (var _i = 0, results_2 = results; _i < results_2.length; _i++) {
-                                var result = results_2[_i];
-                                _loop_2(result);
-                            }
-                            resolve(myIndexes);
-                        });
-                    })];
-                case 1: return [2 /*return*/, _a.sent()];
-            }
-        });
-    }); };
-    MySQL.GetMyTable = function (connection, table) { return __awaiter(_this, void 0, void 0, function () {
-        var myTable, columns, _i, columns_1, column, myColumn, _a, _b;
-        return __generator(this, function (_c) {
-            switch (_c.label) {
-                case 0:
-                    myTable = new MyTable();
-                    myTable.name = table;
-                    return [4 /*yield*/, MySQL.TableColumns(connection, table)];
-                case 1:
-                    columns = _c.sent();
-                    for (_i = 0, columns_1 = columns; _i < columns_1.length; _i++) {
-                        column = columns_1[_i];
-                        myColumn = new MyColumn(column);
-                        myTable.columns.push(myColumn);
+    });
+    MySQL.TableFKs = (connection, table) => __awaiter(this, void 0, void 0, function* () {
+        return yield new Promise((resolve) => {
+            connection.query(`SELECT TABLE_NAME,COLUMN_NAME,CONSTRAINT_NAME, REFERENCED_TABLE_NAME,REFERENCED_COLUMN_NAME
+				FROM INFORMATION_SCHEMA.KEY_COLUMN_USAGE
+				WHERE REFERENCED_TABLE_SCHEMA = '${connection.config.database}'
+				  AND TABLE_NAME = '${table}'`, (error, results, _fields) => {
+                if (error)
+                    throw error;
+                let myForeignKeys = [];
+                for (const result of results) {
+                    const prevFK = myForeignKeys.find(fk => fk.keyName === result.CONSTRAINT_NAME);
+                    if (!!prevFK) {
+                        prevFK.columnNames = [...prevFK.columnNames, result.COLUMN_NAME];
+                        prevFK.primaryColumns = [...prevFK.primaryColumns, result.REFERENCED_COLUMN_NAME];
                     }
-                    _a = myTable;
-                    return [4 /*yield*/, MySQL.TableFKs(connection, table)];
-                case 2:
-                    _a.foreignKeys = _c.sent();
-                    _b = myTable;
-                    return [4 /*yield*/, MySQL.TableIndexes(connection, table)];
-                case 3:
-                    _b.indexes = _c.sent();
-                    return [2 /*return*/, myTable];
-            }
+                    else {
+                        const myForeignKey = new MyForeignKey();
+                        myForeignKey.keyName = result.CONSTRAINT_NAME;
+                        myForeignKey.columnNames = [result.COLUMN_NAME];
+                        myForeignKey.primaryTable = result.REFERENCED_TABLE_NAME;
+                        myForeignKey.primaryColumns = [result.REFERENCED_COLUMN_NAME];
+                        myForeignKeys.push(myForeignKey);
+                    }
+                }
+                resolve(myForeignKeys);
+            });
         });
-    }); };
+    });
+    MySQL.TableIndexes = (connection, table) => __awaiter(this, void 0, void 0, function* () {
+        return yield new Promise((resolve) => {
+            connection.query(`SELECT INDEX_NAME, COLUMN_NAME, NON_UNIQUE
+				FROM INFORMATION_SCHEMA.STATISTICS
+				WHERE TABLE_SCHEMA = '${connection.config.database}'
+					AND TABLE_NAME = '${table}'
+				ORDER BY INDEX_NAME`, (error, results, _fields) => {
+                if (error)
+                    throw error;
+                let myIndexes = [];
+                for (const result of results) {
+                    const prevIndex = myIndexes.find(idx => idx.indexName === result.INDEX_NAME);
+                    if (!!prevIndex) {
+                        prevIndex.columns = [...prevIndex.columns, result.COLUMN_NAME];
+                    }
+                    else {
+                        const myIndex = new MyIndex();
+                        myIndex.indexName = result.INDEX_NAME;
+                        myIndex.columns = [result.COLUMN_NAME];
+                        myIndex.isUnique = !intelliwaketsfoundation.IsOn(result.NON_UNIQUE);
+                        myIndexes.push(myIndex);
+                    }
+                }
+                resolve(myIndexes);
+            });
+        });
+    });
+    MySQL.GetMyTable = (connection, table) => __awaiter(this, void 0, void 0, function* () {
+        const myTable = new MyTable();
+        myTable.name = table;
+        const columns = yield MySQL.TableColumns(connection, table);
+        for (const column of columns) {
+            const myColumn = new MyColumn(column);
+            myTable.columns.push(myColumn);
+        }
+        myTable.foreignKeys = yield MySQL.TableFKs(connection, table);
+        myTable.indexes = yield MySQL.TableIndexes(connection, table);
+        return myTable;
+    });
     // export const TriggerExists = async (connection: TConnection, trigger: string): Promise<boolean> => {
     // 	return await new Promise((resolve) => {
     // 		const sql = `SELECT COUNT(*) AS count
@@ -2645,12 +2484,12 @@ var MyTable = /** @class */ (function () {
     // }
 })(exports.MySQL || (exports.MySQL = {}));
 
-var PGParams = /** @class */ (function () {
-    function PGParams() {
+class PGParams {
+    constructor() {
         this.lastPosition = 0;
         this.values = [];
     }
-    PGParams.prototype.add = function (value) {
+    add(value) {
         // const idx = this.values.indexOf(value)
         //
         // if (idx >= 0) {
@@ -2658,58 +2497,87 @@ var PGParams = /** @class */ (function () {
         // }
         this.lastPosition++;
         this.values.push(value);
-        return "$" + this.lastPosition;
-    };
-    PGParams.prototype.addLike = function (value) {
-        return this.add("%" + value + "%");
-    };
-    PGParams.prototype.addEqualNullable = function (field, value) {
+        return `$${this.lastPosition}`;
+    }
+    addLike(value) {
+        return this.add(`%${value}%`);
+    }
+    addEqualNullable(field, value) {
         if (value === null || value === undefined) {
-            return field + " IS NULL";
+            return `${field} IS NULL`;
         }
         else {
-            return field + " = " + this.add(value);
+            return `${field} = ${this.add(value)}`;
         }
-    };
-    PGParams.prototype.replaceSQLWithValues = function (sql) {
-        var returnSQL = sql;
-        for (var i = this.values.length; i > 0; i--) {
-            returnSQL = intelliwaketsfoundation.ReplaceAll("$" + i, typeof this.values[i - 1] === 'string' ? "'" + this.values[i - 1] + "'" : this.values[i - 1], returnSQL);
+    }
+    replaceSQLWithValues(sql) {
+        let returnSQL = sql;
+        for (let i = this.values.length; i > 0; i--) {
+            returnSQL = intelliwaketsfoundation.ReplaceAll(`$${i}`, typeof this.values[i - 1] === 'string' ? `'${this.values[i - 1]}'` : this.values[i - 1], returnSQL);
         }
         return returnSQL;
-    };
-    return PGParams;
-}());
+    }
+}
 
 // noinspection SqlNoDataSourceInspection
+exports.PGSQL = void 0;
 (function (PGSQL) {
-    var _this = this;
-    PGSQL.query = function (connection, sql, values) { return __awaiter(_this, void 0, void 0, function () {
-        var err_1;
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0:
-                    _a.trys.push([0, 2, , 3]);
-                    return [4 /*yield*/, connection.query(sql, values)];
-                case 1: return [2 /*return*/, _a.sent()];
-                case 2:
-                    err_1 = _a.sent();
-                    console.log('------------ SQL Query');
-                    console.log(err_1.message);
+    PGSQL.SetDBMSAlert = (milliseconds) => {
+        if (!milliseconds) {
+            delete process.env.DB_MS_ALERT;
+        }
+        else {
+            process.env.DB_MS_ALERT = milliseconds.toString();
+        }
+    };
+    PGSQL.query = (connection, sql, values) => __awaiter(this, void 0, void 0, function* () {
+        try {
+            if (!process.env.DB_MS_ALERT) {
+                return connection.query(sql, values);
+            }
+            else {
+                const start = moment__default['default']();
+                const response = yield connection.query(sql, values);
+                const ms = moment__default['default'].duration(moment__default['default']().diff(start)).asMilliseconds();
+                if (ms > intelliwaketsfoundation.CleanNumber(process.env.DB_MS_ALERT)) {
+                    console.log('----- Long SQL Query', ms / 1000, 'ms');
                     console.log(sql);
                     console.log(values);
-                    throw err_1;
-                case 3: return [2 /*return*/];
+                }
+                return response;
             }
+        }
+        catch (err) {
+            console.log('------------ SQL Query');
+            console.log(err.message);
+            console.log(sql);
+            console.log(values);
+            throw err;
+        }
+        // return await new Promise((resolve, reject) => {
+        // 	// const stackTrace = new Error().stack
+        // 	const res = await connection.query(sql, values)
+        // 	connection
+        // 		.query(sql, values)
+        // 		.then(res => {
+        // 			resolve({rows: res.rows, fields: res.fields, rowCount: res.rowCount})
+        // 		})
+        // 		.catch(err => {
+        // 			// console.log('------------ SQL')
+        // 			// console.log(sql)
+        // 			// console.log(values)
+        // 			// console.log(err)
+        // 			// console.log(stackTrace)
+        // 			// throw 'SQL Error'
+        // 			reject(`${err.message}\n${sql}\n${JSON.stringify(values ?? {})}`)
+        // 		})
+        // })
+    });
+    PGSQL.timeout = (ms) => __awaiter(this, void 0, void 0, function* () {
+        return new Promise(resolve => {
+            setTimeout(resolve, ms);
         });
-    }); };
-    PGSQL.timeout = function (ms) { return __awaiter(_this, void 0, void 0, function () {
-        return __generator(this, function (_a) {
-            return [2 /*return*/, new Promise(function (resolve) {
-                    setTimeout(resolve, ms);
-                })];
-        });
-    }); };
+    });
     // export const PGQueryValuesStream = async <T = any>(
     // 	connection: TConnection,
     // 	sql: string,
@@ -2766,474 +2634,368 @@ var PGParams = /** @class */ (function () {
     // 	sql: string,
     // 	row: (row: T) => void
     // ): Promise<void> => PGQueryValuesStream<T>(connection, sql, [], row)
-    PGSQL.TableRowCount = function (connection, table, schema) { return __awaiter(_this, void 0, void 0, function () {
-        var data;
+    PGSQL.TableRowCount = (connection, table, schema) => __awaiter(this, void 0, void 0, function* () {
         var _a, _b, _c;
-        return __generator(this, function (_d) {
-            switch (_d.label) {
-                case 0: return [4 /*yield*/, PGSQL.query(connection, "SELECT COUNT(*) AS count\n                                          FROM " + ((!!schema ? schema + "." : '') + table), undefined)];
-                case 1:
-                    data = _d.sent();
-                    return [2 /*return*/, (_c = ((_b = ((_a = data.rows) !== null && _a !== void 0 ? _a : [])[0]) !== null && _b !== void 0 ? _b : {})['count']) !== null && _c !== void 0 ? _c : 0];
-            }
-        });
-    }); };
-    PGSQL.CurrentSchema = function (schema) { return schema !== null && schema !== void 0 ? schema : 'public'; };
-    PGSQL.TableExists = function (connection, table, schema) { return __awaiter(_this, void 0, void 0, function () {
-        var sql, data;
-        var _a, _b, _c;
-        return __generator(this, function (_d) {
-            switch (_d.label) {
-                case 0:
-                    sql = "SELECT COUNT(*) AS count\n                 FROM information_schema.tables\n                 WHERE table_schema = '" + PGSQL.CurrentSchema(schema) + "'\n                   AND table_name = '" + table + "'";
-                    return [4 /*yield*/, PGSQL.query(connection, sql, undefined)];
-                case 1:
-                    data = _d.sent();
-                    return [2 /*return*/, ((_c = ((_b = ((_a = data.rows) !== null && _a !== void 0 ? _a : [])[0]) !== null && _b !== void 0 ? _b : {})['count']) !== null && _c !== void 0 ? _c : 0) > 0];
-            }
-        });
-    }); };
-    PGSQL.TableColumnExists = function (connection, table, column, schema) { return __awaiter(_this, void 0, void 0, function () {
-        var sql, data;
-        var _a, _b, _c;
-        return __generator(this, function (_d) {
-            switch (_d.label) {
-                case 0:
-                    sql = "SELECT COUNT(*) AS count\n                 FROM information_schema.COLUMNS\n                 WHERE table_schema = '" + PGSQL.CurrentSchema(schema) + "'\n                   AND table_name = '" + table + "'\n                   AND column_name = '" + column + "'";
-                    return [4 /*yield*/, PGSQL.query(connection, sql, undefined)];
-                case 1:
-                    data = _d.sent();
-                    return [2 /*return*/, ((_c = ((_b = ((_a = data.rows) !== null && _a !== void 0 ? _a : [])[0]) !== null && _b !== void 0 ? _b : {})['count']) !== null && _c !== void 0 ? _c : 0) > 0];
-            }
-        });
-    }); };
-    PGSQL.TriggerExists = function (connection, trigger, schema) { return __awaiter(_this, void 0, void 0, function () {
-        var sql, data;
-        var _a, _b, _c;
-        return __generator(this, function (_d) {
-            switch (_d.label) {
-                case 0:
-                    sql = "SELECT COUNT(*) AS count\n                 FROM information_schema.triggers\n                 WHERE trigger_schema = '" + PGSQL.CurrentSchema(schema) + "'\n                   AND trigger_name = '" + trigger + "'";
-                    return [4 /*yield*/, PGSQL.query(connection, sql, undefined)];
-                case 1:
-                    data = _d.sent();
-                    return [2 /*return*/, ((_c = ((_b = ((_a = data.rows) !== null && _a !== void 0 ? _a : [])[0]) !== null && _b !== void 0 ? _b : {})['count']) !== null && _c !== void 0 ? _c : 0) > 0];
-            }
-        });
-    }); };
-    PGSQL.TableResetIncrement = function (connection, table, column, toID) { return __awaiter(_this, void 0, void 0, function () {
-        return __generator(this, function (_a) {
-            if (!!toID) {
-                return [2 /*return*/, PGSQL.Execute(connection, "SELECT setval(pg_get_serial_sequence('" + table + "', '" + column + "'), " + toID + ");\n\t\t\t")];
-            }
-            else {
-                return [2 /*return*/, PGSQL.Execute(connection, "SELECT SETVAL(PG_GET_SERIAL_SEQUENCE('" + table + "', '" + column + "'), MAX(" + column + "))\n         FROM " + table + ";\n\t\t\t\t")];
-            }
-        });
-    }); };
-    PGSQL.ConstraintExists = function (connection, constraint, schema) { return __awaiter(_this, void 0, void 0, function () {
-        var sql, data;
-        var _a, _b, _c;
-        return __generator(this, function (_d) {
-            switch (_d.label) {
-                case 0:
-                    sql = "\n        SELECT COUNT(*) AS count\n        FROM information_schema.table_constraints\n        WHERE constraint_schema = '" + PGSQL.CurrentSchema(schema) + "'\n          AND constraint_name = '" + constraint + "'";
-                    return [4 /*yield*/, PGSQL.query(connection, sql, undefined)];
-                case 1:
-                    data = _d.sent();
-                    return [2 /*return*/, ((_c = ((_b = ((_a = data.rows) !== null && _a !== void 0 ? _a : [])[0]) !== null && _b !== void 0 ? _b : {})['count']) !== null && _c !== void 0 ? _c : 0) > 0];
-            }
-        });
-    }); };
-    PGSQL.FKConstraints = function (connection, schema) { return __awaiter(_this, void 0, void 0, function () {
-        var sql;
-        return __generator(this, function (_a) {
-            sql = "\n        SELECT table_name, constraint_name\n        FROM information_schema.table_constraints\n        WHERE constraint_schema = '" + PGSQL.CurrentSchema(schema) + "'\n          AND constraint_type = 'FOREIGN KEY'";
-            return [2 /*return*/, PGSQL.FetchMany(connection, sql)];
-        });
-    }); };
-    PGSQL.Functions = function (connection, schema) { return __awaiter(_this, void 0, void 0, function () {
-        var sql;
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0:
-                    sql = "\n        SELECT routines.routine_name\n        FROM information_schema.routines\n        WHERE routines.specific_schema = '" + PGSQL.CurrentSchema(schema) + "'\n          AND routine_type = 'FUNCTION'\n        ORDER BY routines.routine_name";
-                    return [4 /*yield*/, PGSQL.FetchArray(connection, sql)];
-                case 1: return [2 /*return*/, (_a.sent()).filter(function (func) { return func.startsWith('func_'); })];
-            }
-        });
-    }); };
-    PGSQL.IndexExists = function (connection, tablename, indexName, schema) { return __awaiter(_this, void 0, void 0, function () {
-        var sql, data;
-        var _a, _b, _c;
-        return __generator(this, function (_d) {
-            switch (_d.label) {
-                case 0:
-                    sql = "SELECT COUNT(*) AS count\n                 FROM pg_indexes\n                 WHERE schemaname = '" + PGSQL.CurrentSchema(schema) + "'\n                   AND tablename = '" + tablename + "'\n                   AND indexname = '" + indexName + "'";
-                    return [4 /*yield*/, PGSQL.query(connection, sql, undefined)];
-                case 1:
-                    data = _d.sent();
-                    return [2 /*return*/, ((_c = ((_b = ((_a = data.rows) !== null && _a !== void 0 ? _a : [])[0]) !== null && _b !== void 0 ? _b : {})['count']) !== null && _c !== void 0 ? _c : 0) > 0];
-            }
-        });
-    }); };
-    PGSQL.GetByID = function (connection, table, id) { return __awaiter(_this, void 0, void 0, function () {
-        var sql, data;
-        var _a, _b;
-        return __generator(this, function (_c) {
-            switch (_c.label) {
-                case 0:
-                    if (!!id) return [3 /*break*/, 1];
-                    return [2 /*return*/, Promise.resolve(null)];
-                case 1:
-                    sql = "SELECT *\n                   FROM " + table + "\n                   WHERE id = $1";
-                    return [4 /*yield*/, PGSQL.query(connection, sql, [id])];
-                case 2:
-                    data = _c.sent();
-                    return [2 /*return*/, !!((_a = data.rows) !== null && _a !== void 0 ? _a : [])[0] ? __assign({}, ((_b = data.rows) !== null && _b !== void 0 ? _b : [])[0]) : null];
-            }
-        });
-    }); };
+        const data = yield PGSQL.query(connection, `SELECT COUNT(*) AS count
+                                          FROM ${(!!schema ? `${schema}.` : '') + table}`, undefined);
+        return (_c = ((_b = ((_a = data.rows) !== null && _a !== void 0 ? _a : [])[0]) !== null && _b !== void 0 ? _b : {})['count']) !== null && _c !== void 0 ? _c : 0;
+    });
+    PGSQL.CurrentSchema = (schema) => schema !== null && schema !== void 0 ? schema : 'public';
+    PGSQL.TableExists = (connection, table, schema) => __awaiter(this, void 0, void 0, function* () {
+        var _d, _e, _f;
+        const sql = `SELECT COUNT(*) AS count
+                 FROM information_schema.tables
+                 WHERE table_schema = '${PGSQL.CurrentSchema(schema)}'
+                   AND table_name = '${table}'`;
+        const data = yield PGSQL.query(connection, sql, undefined);
+        return ((_f = ((_e = ((_d = data.rows) !== null && _d !== void 0 ? _d : [])[0]) !== null && _e !== void 0 ? _e : {})['count']) !== null && _f !== void 0 ? _f : 0) > 0;
+    });
+    PGSQL.TableColumnExists = (connection, table, column, schema) => __awaiter(this, void 0, void 0, function* () {
+        var _g, _h, _j;
+        const sql = `SELECT COUNT(*) AS count
+                 FROM information_schema.COLUMNS
+                 WHERE table_schema = '${PGSQL.CurrentSchema(schema)}'
+                   AND table_name = '${table}'
+                   AND column_name = '${column}'`;
+        const data = yield PGSQL.query(connection, sql, undefined);
+        return ((_j = ((_h = ((_g = data.rows) !== null && _g !== void 0 ? _g : [])[0]) !== null && _h !== void 0 ? _h : {})['count']) !== null && _j !== void 0 ? _j : 0) > 0;
+    });
+    PGSQL.TriggerExists = (connection, trigger, schema) => __awaiter(this, void 0, void 0, function* () {
+        var _k, _l, _m;
+        const sql = `SELECT COUNT(*) AS count
+                 FROM information_schema.triggers
+                 WHERE trigger_schema = '${PGSQL.CurrentSchema(schema)}'
+                   AND trigger_name = '${trigger}'`;
+        const data = yield PGSQL.query(connection, sql, undefined);
+        return ((_m = ((_l = ((_k = data.rows) !== null && _k !== void 0 ? _k : [])[0]) !== null && _l !== void 0 ? _l : {})['count']) !== null && _m !== void 0 ? _m : 0) > 0;
+    });
+    PGSQL.TableResetIncrement = (connection, table, column, toID) => __awaiter(this, void 0, void 0, function* () {
+        if (!!toID) {
+            return PGSQL.Execute(connection, `SELECT setval(pg_get_serial_sequence('${table}', '${column}'), ${toID});
+			`);
+        }
+        else {
+            return PGSQL.Execute(connection, `SELECT SETVAL(PG_GET_SERIAL_SEQUENCE('${table}', '${column}'), MAX(${column}))
+         FROM ${table};
+				`);
+        }
+    });
+    PGSQL.ConstraintExists = (connection, constraint, schema) => __awaiter(this, void 0, void 0, function* () {
+        var _o, _p, _q;
+        const sql = `
+        SELECT COUNT(*) AS count
+        FROM information_schema.table_constraints
+        WHERE constraint_schema = '${PGSQL.CurrentSchema(schema)}'
+          AND constraint_name = '${constraint}'`;
+        const data = yield PGSQL.query(connection, sql, undefined);
+        return ((_q = ((_p = ((_o = data.rows) !== null && _o !== void 0 ? _o : [])[0]) !== null && _p !== void 0 ? _p : {})['count']) !== null && _q !== void 0 ? _q : 0) > 0;
+    });
+    PGSQL.FKConstraints = (connection, schema) => __awaiter(this, void 0, void 0, function* () {
+        const sql = `
+        SELECT table_name, constraint_name
+        FROM information_schema.table_constraints
+        WHERE constraint_schema = '${PGSQL.CurrentSchema(schema)}'
+          AND constraint_type = 'FOREIGN KEY'`;
+        return PGSQL.FetchMany(connection, sql);
+    });
+    PGSQL.Functions = (connection, schema) => __awaiter(this, void 0, void 0, function* () {
+        const sql = `
+        SELECT routines.routine_name
+        FROM information_schema.routines
+        WHERE routines.specific_schema = '${PGSQL.CurrentSchema(schema)}'
+          AND routine_type = 'FUNCTION'
+        ORDER BY routines.routine_name`;
+        return (yield PGSQL.FetchArray(connection, sql)).filter(func => func.startsWith('func_'));
+    });
+    PGSQL.IndexExists = (connection, tablename, indexName, schema) => __awaiter(this, void 0, void 0, function* () {
+        var _r, _s, _t;
+        const sql = `SELECT COUNT(*) AS count
+                 FROM pg_indexes
+                 WHERE schemaname = '${PGSQL.CurrentSchema(schema)}'
+                   AND tablename = '${tablename}'
+                   AND indexname = '${indexName}'`;
+        const data = yield PGSQL.query(connection, sql, undefined);
+        return ((_t = ((_s = ((_r = data.rows) !== null && _r !== void 0 ? _r : [])[0]) !== null && _s !== void 0 ? _s : {})['count']) !== null && _t !== void 0 ? _t : 0) > 0;
+    });
+    PGSQL.GetByID = (connection, table, id) => __awaiter(this, void 0, void 0, function* () {
+        var _u, _v;
+        if (!id) {
+            return Promise.resolve(null);
+        }
+        else {
+            // noinspection SqlResolve
+            const sql = `SELECT *
+                   FROM ${table}
+                   WHERE id = $1`;
+            const data = yield PGSQL.query(connection, sql, [id]);
+            return !!((_u = data.rows) !== null && _u !== void 0 ? _u : [])[0] ? Object.assign({}, ((_v = data.rows) !== null && _v !== void 0 ? _v : [])[0]) : null;
+        }
+    });
     /**
      * Returns a number from the sql who's only column returned is "count"
      */
-    PGSQL.GetCountSQL = function (connection, sql, values) { return __awaiter(_this, void 0, void 0, function () {
-        var data, value;
-        var _a, _b;
-        return __generator(this, function (_c) {
-            switch (_c.label) {
-                case 0: return [4 /*yield*/, PGSQL.query(connection, sql, values)];
-                case 1:
-                    data = _c.sent();
-                    value = ((_b = ((_a = data.rows) !== null && _a !== void 0 ? _a : [])[0]) !== null && _b !== void 0 ? _b : {})['count'];
-                    return [2 /*return*/, isNaN(value) ? 0 : parseInt(value)];
-            }
-        });
-    }); };
-    PGSQL.FetchOne = function (connection, sql, values) { return __awaiter(_this, void 0, void 0, function () {
-        var data;
-        var _a, _b;
-        return __generator(this, function (_c) {
-            switch (_c.label) {
-                case 0: return [4 /*yield*/, PGSQL.query(connection, sql, values)];
-                case 1:
-                    data = _c.sent();
-                    return [2 /*return*/, !!((_a = data.rows) !== null && _a !== void 0 ? _a : [])[0] ? __assign({}, ((_b = data.rows) !== null && _b !== void 0 ? _b : [])[0]) : null];
-            }
-        });
-    }); };
-    PGSQL.FetchMany = function (connection, sql, values) { return __awaiter(_this, void 0, void 0, function () {
-        var data;
-        var _a;
-        return __generator(this, function (_b) {
-            switch (_b.label) {
-                case 0: return [4 /*yield*/, PGSQL.query(connection, sql, values)];
-                case 1:
-                    data = _b.sent();
-                    return [2 /*return*/, (_a = data.rows) !== null && _a !== void 0 ? _a : []];
-            }
-        });
-    }); };
-    PGSQL.FetchArray = function (connection, sql, values) { return __awaiter(_this, void 0, void 0, function () {
-        var data;
-        var _a;
-        return __generator(this, function (_b) {
-            switch (_b.label) {
-                case 0: return [4 /*yield*/, PGSQL.query(connection, sql, values)];
-                case 1:
-                    data = _b.sent();
-                    return [2 /*return*/, ((_a = data.rows) !== null && _a !== void 0 ? _a : []).map(function (row) { return row[Object.keys(row)[0]]; })];
-            }
-        });
-    }); };
-    PGSQL.InsertAndGetReturning = function (connection, table, values) { return __awaiter(_this, void 0, void 0, function () {
-        var newValues, params, sql, results;
-        var _a;
-        return __generator(this, function (_b) {
-            switch (_b.label) {
-                case 0:
-                    newValues = __assign({}, values);
-                    if (!newValues.id) {
-                        delete newValues.id;
-                        // delete newValues.added_date;
-                        // delete newValues.modified_date;
-                    }
-                    params = new PGParams();
-                    sql = "\n        INSERT INTO " + table + "\n            (\"" + Object.keys(newValues).join('","') + "\")\n        VALUES (" + Object.values(newValues)
-                        .map(function (value) { return params.add(value); })
-                        .join(',') + ")\n        RETURNING *";
-                    return [4 /*yield*/, PGSQL.query(connection, sql, params.values)];
-                case 1:
-                    results = _b.sent();
-                    return [2 /*return*/, ((_a = results.rows) !== null && _a !== void 0 ? _a : [])[0]];
-            }
-        });
-    }); };
-    PGSQL.InsertBulk = function (connection, table, values) { return __awaiter(_this, void 0, void 0, function () {
-        var params, sql;
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0:
-                    params = new PGParams();
-                    sql = "\n        INSERT INTO " + table + "\n            (\"" + Object.keys(values).join('","') + "\")\n        VALUES (" + Object.values(values)
-                        .map(function (value) { return params.add(value); })
-                        .join(',') + ")";
-                    return [4 /*yield*/, PGSQL.query(connection, sql, params.values)];
-                case 1:
-                    _a.sent();
-                    return [2 /*return*/];
-            }
-        });
-    }); };
-    PGSQL.UpdateAndGetReturning = function (connection, table, whereValues, updateValues) { return __awaiter(_this, void 0, void 0, function () {
-        var params, sql, data;
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0:
-                    params = new PGParams();
-                    sql = "UPDATE " + table + "\n                 SET " + PGSQL.BuildSetComponents(updateValues, params) + "\n                 WHERE " + PGSQL.BuildWhereComponents(whereValues, params) + "\n                 RETURNING *";
-                    return [4 /*yield*/, PGSQL.query(connection, sql, params.values)
-                        // @ts-ignore
-                    ];
-                case 1:
-                    data = _a.sent();
-                    // @ts-ignore
-                    return [2 /*return*/, data.rows[0]];
-            }
-        });
-    }); };
-    PGSQL.BuildWhereComponents = function (whereValues, params) {
-        return Object.keys(whereValues)
-            .map(function (key) { return "\"" + key + "\"=" + params.add(whereValues[key]); })
-            .join(' AND ');
-    };
-    PGSQL.BuildSetComponents = function (setValues, params) {
-        return Object.keys(setValues)
-            .map(function (key) { return "\"" + key + "\"=" + params.add(setValues[key]); })
-            .join(',');
-    };
-    PGSQL.Save = function (connection, table, values) { return __awaiter(_this, void 0, void 0, function () {
-        var whereValues;
-        return __generator(this, function (_a) {
-            if (!values.id) {
-                return [2 /*return*/, PGSQL.InsertAndGetReturning(connection, table, values)];
+    PGSQL.GetCountSQL = (connection, sql, values) => __awaiter(this, void 0, void 0, function* () {
+        var _w, _x;
+        const data = yield PGSQL.query(connection, sql, values);
+        const value = ((_x = ((_w = data.rows) !== null && _w !== void 0 ? _w : [])[0]) !== null && _x !== void 0 ? _x : {})['count'];
+        return isNaN(value) ? 0 : parseInt(value);
+    });
+    PGSQL.FetchOne = (connection, sql, values) => __awaiter(this, void 0, void 0, function* () {
+        var _y, _z;
+        // noinspection SqlResolve
+        const data = yield PGSQL.query(connection, sql, values);
+        return !!((_y = data.rows) !== null && _y !== void 0 ? _y : [])[0] ? Object.assign({}, ((_z = data.rows) !== null && _z !== void 0 ? _z : [])[0]) : null;
+    });
+    PGSQL.FetchMany = (connection, sql, values) => __awaiter(this, void 0, void 0, function* () {
+        var _0;
+        // noinspection SqlResolve
+        const data = yield PGSQL.query(connection, sql, values);
+        return (_0 = data.rows) !== null && _0 !== void 0 ? _0 : [];
+    });
+    PGSQL.FetchArray = (connection, sql, values) => __awaiter(this, void 0, void 0, function* () {
+        var _1;
+        const data = yield PGSQL.query(connection, sql, values);
+        return ((_1 = data.rows) !== null && _1 !== void 0 ? _1 : []).map((row) => row[Object.keys(row)[0]]);
+    });
+    PGSQL.InsertAndGetReturning = (connection, table, values) => __awaiter(this, void 0, void 0, function* () {
+        var _2;
+        let newValues = Object.assign({}, values);
+        if (!newValues.id) {
+            delete newValues.id;
+            // delete newValues.added_date;
+            // delete newValues.modified_date;
+        }
+        let params = new PGParams();
+        const sql = `
+        INSERT INTO ${table}
+            ("${Object.keys(newValues).join('","')}")
+        VALUES (${Object.values(newValues)
+            .map(value => params.add(value))
+            .join(',')})
+        RETURNING *`;
+        const results = yield PGSQL.query(connection, sql, params.values);
+        return ((_2 = results.rows) !== null && _2 !== void 0 ? _2 : [])[0];
+    });
+    PGSQL.InsertBulk = (connection, table, values) => __awaiter(this, void 0, void 0, function* () {
+        let params = new PGParams();
+        const sql = `
+        INSERT INTO ${table}
+            ("${Object.keys(values).join('","')}")
+        VALUES (${Object.values(values)
+            .map(value => params.add(value))
+            .join(',')})`;
+        yield PGSQL.query(connection, sql, params.values);
+    });
+    PGSQL.UpdateAndGetReturning = (connection, table, whereValues, updateValues) => __awaiter(this, void 0, void 0, function* () {
+        let params = new PGParams();
+        // noinspection SqlResolve
+        const sql = `UPDATE ${table}
+                 SET ${PGSQL.BuildSetComponents(updateValues, params)}
+                 WHERE ${PGSQL.BuildWhereComponents(whereValues, params)}
+                 RETURNING *`;
+        const data = yield PGSQL.query(connection, sql, params.values);
+        // @ts-ignore
+        return data.rows[0];
+    });
+    PGSQL.BuildWhereComponents = (whereValues, params) => Object.keys(whereValues)
+        .map(key => `"${key}"=${params.add(whereValues[key])}`)
+        .join(' AND ');
+    PGSQL.BuildSetComponents = (setValues, params) => Object.keys(setValues)
+        .map(key => `"${key}"=${params.add(setValues[key])}`)
+        .join(',');
+    PGSQL.Save = (connection, table, values) => __awaiter(this, void 0, void 0, function* () {
+        if (!values.id) {
+            return PGSQL.InsertAndGetReturning(connection, table, values);
+        }
+        else {
+            let whereValues = { id: values.id };
+            return PGSQL.UpdateAndGetReturning(connection, table, whereValues, values);
+        }
+    });
+    PGSQL.Delete = (connection, table, whereValues) => __awaiter(this, void 0, void 0, function* () {
+        let params = new PGParams();
+        // noinspection SqlResolve
+        const sql = `DELETE
+                 FROM ${table}
+                 WHERE ${PGSQL.BuildWhereComponents(whereValues, params)}`;
+        yield PGSQL.query(connection, sql, params.values);
+    });
+    PGSQL.ExecuteRaw = (connection, sql) => __awaiter(this, void 0, void 0, function* () { return PGSQL.Execute(connection, sql); });
+    PGSQL.Execute = (connection, sql, values) => __awaiter(this, void 0, void 0, function* () {
+        try {
+            if (!process.env.DB_MS_ALERT) {
+                return connection.query(sql, values);
             }
             else {
-                whereValues = { id: values.id };
-                return [2 /*return*/, PGSQL.UpdateAndGetReturning(connection, table, whereValues, values)];
-            }
-        });
-    }); };
-    PGSQL.Delete = function (connection, table, whereValues) { return __awaiter(_this, void 0, void 0, function () {
-        var params, sql;
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0:
-                    params = new PGParams();
-                    sql = "DELETE\n                 FROM " + table + "\n                 WHERE " + PGSQL.BuildWhereComponents(whereValues, params);
-                    return [4 /*yield*/, PGSQL.query(connection, sql, params.values)];
-                case 1:
-                    _a.sent();
-                    return [2 /*return*/];
-            }
-        });
-    }); };
-    PGSQL.ExecuteRaw = function (connection, sql) { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_a) {
-        return [2 /*return*/, PGSQL.Execute(connection, sql)];
-    }); }); };
-    PGSQL.Execute = function (connection, sql, values) { return __awaiter(_this, void 0, void 0, function () {
-        var err_2;
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0:
-                    _a.trys.push([0, 2, , 3]);
-                    return [4 /*yield*/, connection.query(sql, values)];
-                case 1: return [2 /*return*/, _a.sent()];
-                case 2:
-                    err_2 = _a.sent();
-                    console.log('------------ SQL Execute');
-                    console.log(err_2.message);
+                const start = moment__default['default']();
+                const response = yield connection.query(sql, values);
+                const ms = moment__default['default'].duration(moment__default['default']().diff(start)).asMilliseconds();
+                if (ms > intelliwaketsfoundation.CleanNumber(process.env.DB_MS_ALERT)) {
+                    console.log('----- Long SQL Query', ms / 1000, 'ms');
                     console.log(sql);
                     console.log(values);
-                    throw err_2;
-                case 3: return [2 /*return*/];
-            }
-        });
-    }); };
-    PGSQL.TruncateAllTables = function (connection, exceptions) {
-        if (exceptions === void 0) { exceptions = []; }
-        return __awaiter(_this, void 0, void 0, function () {
-            var tables, _i, tables_1, table;
-            return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0: return [4 /*yield*/, PGSQL.TablesArray(connection)];
-                    case 1:
-                        tables = _a.sent();
-                        return [4 /*yield*/, PGSQL.Execute(connection, 'SET CONSTRAINTS ALL DEFERRED', undefined)];
-                    case 2:
-                        _a.sent();
-                        _i = 0, tables_1 = tables;
-                        _a.label = 3;
-                    case 3:
-                        if (!(_i < tables_1.length)) return [3 /*break*/, 6];
-                        table = tables_1[_i];
-                        if (!exceptions.includes(table)) return [3 /*break*/, 5];
-                        return [4 /*yield*/, PGSQL.Execute(connection, "TRUNCATE TABLE " + table + " RESTART IDENTITY", undefined)];
-                    case 4:
-                        _a.sent();
-                        _a.label = 5;
-                    case 5:
-                        _i++;
-                        return [3 /*break*/, 3];
-                    case 6: return [2 /*return*/, true];
                 }
-            });
-        });
-    };
-    PGSQL.TruncateTables = function (connection, tables) { return __awaiter(_this, void 0, void 0, function () {
-        var _i, tables_2, table;
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0:
-                    _i = 0, tables_2 = tables;
-                    _a.label = 1;
-                case 1:
-                    if (!(_i < tables_2.length)) return [3 /*break*/, 4];
-                    table = tables_2[_i];
-                    return [4 /*yield*/, PGSQL.Execute(connection, "TRUNCATE TABLE " + table + " RESTART IDENTITY")];
-                case 2:
-                    _a.sent();
-                    _a.label = 3;
-                case 3:
-                    _i++;
-                    return [3 /*break*/, 1];
-                case 4: return [2 /*return*/];
+                return response;
             }
-        });
-    }); };
-    PGSQL.TablesArray = function (connection, schema) { return __awaiter(_this, void 0, void 0, function () {
-        return __generator(this, function (_a) {
-            return [2 /*return*/, PGSQL.FetchArray(connection, "\n          SELECT table_name\n          FROM information_schema.tables\n          WHERE table_schema = '" + PGSQL.CurrentSchema(schema) + "'\n            AND table_type = 'BASE TABLE'")];
-        });
-    }); };
-    PGSQL.ViewsArray = function (connection, schema) { return __awaiter(_this, void 0, void 0, function () {
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0: return [4 /*yield*/, PGSQL.FetchArray(connection, "\n          SELECT table_name\n          FROM information_schema.tables\n          WHERE table_schema = '" + PGSQL.CurrentSchema(schema) + "'\n            AND table_type = 'VIEW'")];
-                case 1: return [2 /*return*/, _a.sent()];
+        }
+        catch (err) {
+            console.log('------------ SQL Execute');
+            console.log(err.message);
+            console.log(sql);
+            console.log(values);
+            throw err;
+        }
+    });
+    PGSQL.TruncateAllTables = (connection, exceptions = []) => __awaiter(this, void 0, void 0, function* () {
+        let tables = yield PGSQL.TablesArray(connection);
+        yield PGSQL.Execute(connection, 'SET CONSTRAINTS ALL DEFERRED', undefined);
+        for (const table of tables) {
+            if (exceptions.includes(table)) {
+                yield PGSQL.Execute(connection, `TRUNCATE TABLE ${table} RESTART IDENTITY`, undefined);
             }
-        });
-    }); };
-    PGSQL.ViewsMatArray = function (connection, schema) { return __awaiter(_this, void 0, void 0, function () {
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0: return [4 /*yield*/, PGSQL.FetchArray(connection, "\n          SELECT matviewname\n          FROM pg_matviews\n          WHERE schemaname = '" + PGSQL.CurrentSchema(schema) + "'")];
-                case 1: return [2 /*return*/, _a.sent()];
-            }
-        });
-    }); };
-    PGSQL.TypesArray = function (connection) { return __awaiter(_this, void 0, void 0, function () {
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0: return [4 /*yield*/, PGSQL.FetchArray(connection, "\n          SELECT typname\n          FROM pg_type\n          WHERE typcategory = 'E'\n          ORDER BY typname")];
-                case 1: return [2 /*return*/, _a.sent()];
-            }
-        });
-    }); };
-    PGSQL.FunctionsArray = function (connection, schema) { return __awaiter(_this, void 0, void 0, function () {
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0: return [4 /*yield*/, PGSQL.FetchArray(connection, "\n          SELECT f.proname\n          FROM pg_catalog.pg_proc f\n                   INNER JOIN pg_catalog.pg_namespace n ON (f.pronamespace = n.oid)\n          WHERE n.nspname = '" + PGSQL.CurrentSchema(schema) + "'\n            AND f.proname ILIKE 'func_%'")];
-                case 1: return [2 /*return*/, _a.sent()];
-            }
-        });
-    }); };
-    PGSQL.FunctionsOIDArray = function (connection, schema) { return __awaiter(_this, void 0, void 0, function () {
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0: return [4 /*yield*/, PGSQL.FetchArray(connection, "\n          SELECT f.oid\n          FROM pg_catalog.pg_proc f\n                   INNER JOIN pg_catalog.pg_namespace n ON (f.pronamespace = n.oid)\n          WHERE n.nspname = '" + PGSQL.CurrentSchema(schema) + "'\n            AND f.proname ILIKE 'func_%'")];
-                case 1: return [2 /*return*/, _a.sent()];
-            }
-        });
-    }); };
-    PGSQL.ExtensionsArray = function (connection) { return __awaiter(_this, void 0, void 0, function () {
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0: return [4 /*yield*/, PGSQL.FetchArray(connection, "\n          SELECT extname\n          FROM pg_extension\n          WHERE extname != 'plpgsql'")];
-                case 1: return [2 /*return*/, _a.sent()];
-            }
-        });
-    }); };
-    PGSQL.TableData = function (connection, table, schema) { return __awaiter(_this, void 0, void 0, function () {
-        return __generator(this, function (_a) {
-            return [2 /*return*/, PGSQL.FetchOne(connection, "\n          SELECT *\n          FROM information_schema.tables\n          WHERE table_schema = '" + PGSQL.CurrentSchema(schema) + "'\n            AND table_type = 'BASE TABLE'\n            AND table_name = $1", [table])];
-        });
-    }); };
-    PGSQL.TableColumnsData = function (connection, table, schema) { return __awaiter(_this, void 0, void 0, function () {
-        return __generator(this, function (_a) {
-            return [2 /*return*/, PGSQL.FetchMany(connection, "\n          SELECT *\n          FROM information_schema.columns\n          WHERE table_schema = '" + PGSQL.CurrentSchema(schema) + "'\n            AND table_name = $1\n          ORDER BY ordinal_position", [table])];
-        });
-    }); };
-    PGSQL.TableFKsData = function (connection, table, schema) { return __awaiter(_this, void 0, void 0, function () {
-        return __generator(this, function (_a) {
-            return [2 /*return*/, PGSQL.FetchMany(connection, "\n          SELECT tc.table_schema,\n                 tc.constraint_name,\n                 tc.table_name,\n                 MAX(tc.enforced),\n                 JSON_AGG(kcu.column_name) AS \"columnNames\",\n                 MAX(ccu.table_schema)     AS foreign_table_schema,\n                 MAX(ccu.table_name)       AS \"primaryTable\",\n                 JSON_AGG(ccu.column_name) AS \"primaryColumns\"\n          FROM information_schema.table_constraints AS tc\n                   JOIN information_schema.key_column_usage AS kcu\n                        ON tc.constraint_name = kcu.constraint_name\n                            AND tc.table_schema = kcu.table_schema\n                   JOIN information_schema.constraint_column_usage AS ccu\n                        ON ccu.constraint_name = tc.constraint_name\n                            AND ccu.table_schema = tc.table_schema\n          WHERE tc.table_schema = '" + PGSQL.CurrentSchema(schema) + "'\n            AND tc.constraint_type = 'FOREIGN KEY'\n            AND tc.table_name = $1\n          GROUP BY tc.table_schema,\n                   tc.constraint_name,\n                   tc.table_name", [table])];
-        });
-    }); };
-    PGSQL.TableIndexesData = function (connection, table, schema) { return __awaiter(_this, void 0, void 0, function () {
-        return __generator(this, function (_a) {
-            return [2 /*return*/, PGSQL.FetchMany(connection, "\n          SELECT *\n          FROM pg_indexes\n          WHERE schemaname = '" + PGSQL.CurrentSchema(schema) + "'\n            AND tablename = $1\n            AND (indexname NOT ILIKE '%_pkey'\n              OR indexdef ILIKE '%(%,%)%')", [table])];
-        });
-    }); };
-    PGSQL.ViewData = function (connection, view) { return __awaiter(_this, void 0, void 0, function () {
-        var _a, _b;
-        return __generator(this, function (_c) {
-            switch (_c.label) {
-                case 0: return [4 /*yield*/, PGSQL.FetchOne(connection, "\n          select pg_get_viewdef($1, true) as viewd", [view])];
-                case 1: return [2 /*return*/, ((_b = (_a = (_c.sent())) === null || _a === void 0 ? void 0 : _a.viewd) !== null && _b !== void 0 ? _b : null)];
-            }
-        });
-    }); };
-    PGSQL.ViewsMatData = function (connection, viewMat) { return __awaiter(_this, void 0, void 0, function () {
-        var _a, _b;
-        return __generator(this, function (_c) {
-            switch (_c.label) {
-                case 0: return [4 /*yield*/, PGSQL.FetchOne(connection, "\n          select pg_get_viewdef($1, true) as viewd", [viewMat])];
-                case 1: return [2 /*return*/, ((_b = (_a = (_c.sent())) === null || _a === void 0 ? void 0 : _a.viewd) !== null && _b !== void 0 ? _b : null)];
-            }
-        });
-    }); };
-    PGSQL.FunctionData = function (connection, func) { return __awaiter(_this, void 0, void 0, function () {
-        var _a, _b;
-        return __generator(this, function (_c) {
-            switch (_c.label) {
-                case 0: return [4 /*yield*/, PGSQL.FetchOne(connection, "\n          select pg_get_functiondef($1) as viewd", [func])];
-                case 1: return [2 /*return*/, ((_b = (_a = (_c.sent())) === null || _a === void 0 ? void 0 : _a.viewd) !== null && _b !== void 0 ? _b : null)];
-            }
-        });
-    }); };
-    PGSQL.TypeData = function (connection, type) { return __awaiter(_this, void 0, void 0, function () {
-        return __generator(this, function (_a) {
-            return [2 /*return*/, PGSQL.FetchArray(connection, "\n                SELECT unnest(enum_range(NULL::" + type + "))")];
-        });
-    }); };
-    PGSQL.SortColumnSort = function (sortColumn) {
-        var sort = '';
+        }
+        return true;
+    });
+    PGSQL.TruncateTables = (connection, tables) => __awaiter(this, void 0, void 0, function* () {
+        for (const table of tables) {
+            yield PGSQL.Execute(connection, `TRUNCATE TABLE ${table} RESTART IDENTITY`);
+        }
+    });
+    PGSQL.TablesArray = (connection, schema) => __awaiter(this, void 0, void 0, function* () {
+        return PGSQL.FetchArray(connection, `
+          SELECT table_name
+          FROM information_schema.tables
+          WHERE table_schema = '${PGSQL.CurrentSchema(schema)}'
+            AND table_type = 'BASE TABLE'`);
+    });
+    PGSQL.ViewsArray = (connection, schema) => __awaiter(this, void 0, void 0, function* () {
+        return yield PGSQL.FetchArray(connection, `
+          SELECT table_name
+          FROM information_schema.tables
+          WHERE table_schema = '${PGSQL.CurrentSchema(schema)}'
+            AND table_type = 'VIEW'`);
+    });
+    PGSQL.ViewsMatArray = (connection, schema) => __awaiter(this, void 0, void 0, function* () {
+        return yield PGSQL.FetchArray(connection, `
+          SELECT matviewname
+          FROM pg_matviews
+          WHERE schemaname = '${PGSQL.CurrentSchema(schema)}'`);
+    });
+    PGSQL.TypesArray = (connection) => __awaiter(this, void 0, void 0, function* () {
+        return yield PGSQL.FetchArray(connection, `
+          SELECT typname
+          FROM pg_type
+          WHERE typcategory = 'E'
+          ORDER BY typname`);
+    });
+    PGSQL.FunctionsArray = (connection, schema) => __awaiter(this, void 0, void 0, function* () {
+        return yield PGSQL.FetchArray(connection, `
+          SELECT f.proname
+          FROM pg_catalog.pg_proc f
+                   INNER JOIN pg_catalog.pg_namespace n ON (f.pronamespace = n.oid)
+          WHERE n.nspname = '${PGSQL.CurrentSchema(schema)}'
+            AND f.proname ILIKE 'func_%'`);
+    });
+    PGSQL.FunctionsOIDArray = (connection, schema) => __awaiter(this, void 0, void 0, function* () {
+        return yield PGSQL.FetchArray(connection, `
+          SELECT f.oid
+          FROM pg_catalog.pg_proc f
+                   INNER JOIN pg_catalog.pg_namespace n ON (f.pronamespace = n.oid)
+          WHERE n.nspname = '${PGSQL.CurrentSchema(schema)}'
+            AND f.proname ILIKE 'func_%'`);
+    });
+    PGSQL.ExtensionsArray = (connection) => __awaiter(this, void 0, void 0, function* () {
+        return yield PGSQL.FetchArray(connection, `
+          SELECT extname
+          FROM pg_extension
+          WHERE extname != 'plpgsql'`);
+    });
+    PGSQL.TableData = (connection, table, schema) => __awaiter(this, void 0, void 0, function* () {
+        return PGSQL.FetchOne(connection, `
+          SELECT *
+          FROM information_schema.tables
+          WHERE table_schema = '${PGSQL.CurrentSchema(schema)}'
+            AND table_type = 'BASE TABLE'
+            AND table_name = $1`, [table]);
+    });
+    PGSQL.TableColumnsData = (connection, table, schema) => __awaiter(this, void 0, void 0, function* () {
+        return PGSQL.FetchMany(connection, `
+          SELECT *
+          FROM information_schema.columns
+          WHERE table_schema = '${PGSQL.CurrentSchema(schema)}'
+            AND table_name = $1
+          ORDER BY ordinal_position`, [table]);
+    });
+    PGSQL.TableFKsData = (connection, table, schema) => __awaiter(this, void 0, void 0, function* () {
+        return PGSQL.FetchMany(connection, `
+          SELECT tc.table_schema,
+                 tc.constraint_name,
+                 tc.table_name,
+                 MAX(tc.enforced),
+                 JSON_AGG(kcu.column_name) AS "columnNames",
+                 MAX(ccu.table_schema)     AS foreign_table_schema,
+                 MAX(ccu.table_name)       AS "primaryTable",
+                 JSON_AGG(ccu.column_name) AS "primaryColumns"
+          FROM information_schema.table_constraints AS tc
+                   JOIN information_schema.key_column_usage AS kcu
+                        ON tc.constraint_name = kcu.constraint_name
+                            AND tc.table_schema = kcu.table_schema
+                   JOIN information_schema.constraint_column_usage AS ccu
+                        ON ccu.constraint_name = tc.constraint_name
+                            AND ccu.table_schema = tc.table_schema
+          WHERE tc.table_schema = '${PGSQL.CurrentSchema(schema)}'
+            AND tc.constraint_type = 'FOREIGN KEY'
+            AND tc.table_name = $1
+          GROUP BY tc.table_schema,
+                   tc.constraint_name,
+                   tc.table_name`, [table]);
+    });
+    PGSQL.TableIndexesData = (connection, table, schema) => __awaiter(this, void 0, void 0, function* () {
+        return PGSQL.FetchMany(connection, `
+          SELECT *
+          FROM pg_indexes
+          WHERE schemaname = '${PGSQL.CurrentSchema(schema)}'
+            AND tablename = $1
+            AND (indexname NOT ILIKE '%_pkey'
+              OR indexdef ILIKE '%(%,%)%')`, [table]);
+    });
+    PGSQL.ViewData = (connection, view) => __awaiter(this, void 0, void 0, function* () {
+        var _3, _4;
+        return ((_4 = (_3 = (yield PGSQL.FetchOne(connection, `
+          select pg_get_viewdef($1, true) as viewd`, [view]))) === null || _3 === void 0 ? void 0 : _3.viewd) !== null && _4 !== void 0 ? _4 : null);
+    });
+    PGSQL.ViewsMatData = (connection, viewMat) => __awaiter(this, void 0, void 0, function* () {
+        var _5, _6;
+        return ((_6 = (_5 = (yield PGSQL.FetchOne(connection, `
+          select pg_get_viewdef($1, true) as viewd`, [viewMat]))) === null || _5 === void 0 ? void 0 : _5.viewd) !== null && _6 !== void 0 ? _6 : null);
+    });
+    PGSQL.FunctionData = (connection, func) => __awaiter(this, void 0, void 0, function* () {
+        var _7, _8;
+        return ((_8 = (_7 = (yield PGSQL.FetchOne(connection, `
+          select pg_get_functiondef($1) as viewd`, [func]))) === null || _7 === void 0 ? void 0 : _7.viewd) !== null && _8 !== void 0 ? _8 : null);
+    });
+    PGSQL.TypeData = (connection, type) => __awaiter(this, void 0, void 0, function* () {
+        return PGSQL.FetchArray(connection, `
+                SELECT unnest(enum_range(NULL::${type}))`);
+    });
+    PGSQL.SortColumnSort = (sortColumn) => {
+        let sort = '';
         if (!!sortColumn.primarySort) {
             sort += 'ORDER BY ';
             if (!sortColumn.primaryAscending) {
-                sort += AltColumn(sortColumn.primarySort) + " DESC";
+                sort += `${AltColumn(sortColumn.primarySort)} DESC`;
             }
             else {
                 switch (sortColumn.primaryEmptyToBottom) {
                     case 'string':
-                        sort += "NULLIF(" + sortColumn.primarySort + ", '')";
+                        sort += `NULLIF(${sortColumn.primarySort}, '')`;
                         break;
                     case 'number':
-                        sort += "NULLIF(" + sortColumn.primarySort + ", 0)";
+                        sort += `NULLIF(${sortColumn.primarySort}, 0)`;
                         break;
                     default:
                         // null, so do not empty to bottom
-                        sort += "" + AltColumn(sortColumn.primarySort);
+                        sort += `${AltColumn(sortColumn.primarySort)}`;
                         break;
                 }
             }
@@ -3242,19 +3004,19 @@ var PGParams = /** @class */ (function () {
             if (!!sortColumn.secondarySort) {
                 sort += ', ';
                 if (!sortColumn.secondaryAscending) {
-                    sort += AltColumn(sortColumn.secondarySort) + " DESC";
+                    sort += `${AltColumn(sortColumn.secondarySort)} DESC`;
                 }
                 else {
                     switch (sortColumn.secondaryEmptyToBottom) {
                         case 'string':
-                            sort += "NULLIF(" + sortColumn.secondarySort + ", '')";
+                            sort += `NULLIF(${sortColumn.secondarySort}, '')`;
                             break;
                         case 'number':
-                            sort += "NULLIF(" + sortColumn.secondarySort + ", 0)";
+                            sort += `NULLIF(${sortColumn.secondarySort}, 0)`;
                             break;
                         default:
                             // null, so do not empty to bottom
-                            sort += "" + AltColumn(sortColumn.secondarySort);
+                            sort += `${AltColumn(sortColumn.secondarySort)}`;
                             break;
                     }
                 }
@@ -3264,20 +3026,20 @@ var PGParams = /** @class */ (function () {
         }
         return sort;
     };
-    PGSQL.PaginatorOrderBy = function (paginatorRequest) { return PGSQL.SortColumnSort(paginatorRequest.sortColumns); };
-    PGSQL.LimitOffset = function (limit, offset) { return " LIMIT " + limit + " OFFSET " + offset + " "; };
-    PGSQL.PaginatorLimitOffset = function (paginatorResponse) { return PGSQL.LimitOffset(paginatorResponse.countPerPage, paginatorResponse.currentOffset); };
-    var AltColumn = function (column) {
+    PGSQL.PaginatorOrderBy = (paginatorRequest) => PGSQL.SortColumnSort(paginatorRequest.sortColumns);
+    PGSQL.LimitOffset = (limit, offset) => ` LIMIT ${limit} OFFSET ${offset} `;
+    PGSQL.PaginatorLimitOffset = (paginatorResponse) => PGSQL.LimitOffset(paginatorResponse.countPerPage, paginatorResponse.currentOffset);
+    const AltColumn = (column) => {
         if (column === 'appointment_date') {
-            return "concat_ws(' ', appointment_date, appointment_time)";
+            return `concat_ws(' ', appointment_date, appointment_time)`;
         }
         else {
             return column;
         }
     };
-    PGSQL.CalcOffsetFromPage = function (page, pageSize, totalRecords) {
+    PGSQL.CalcOffsetFromPage = (page, pageSize, totalRecords) => {
         if (totalRecords > 0) {
-            var pages = PGSQL.CalcPageCount(+pageSize, +totalRecords);
+            const pages = PGSQL.CalcPageCount(+pageSize, +totalRecords);
             if (page < 1) {
                 page = 1;
             }
@@ -3292,7 +3054,7 @@ var PGParams = /** @class */ (function () {
             return 0;
         }
     };
-    PGSQL.CalcPageCount = function (pageSize, totalRecords) {
+    PGSQL.CalcPageCount = (pageSize, totalRecords) => {
         if (totalRecords > 0) {
             return Math.floor((totalRecords + (pageSize - 1)) / pageSize);
         }
@@ -3300,283 +3062,196 @@ var PGParams = /** @class */ (function () {
             return 0;
         }
     };
-    PGSQL.ResetIDs = function (connection) { return __awaiter(_this, void 0, void 0, function () {
-        var tables, _i, tables_3, table;
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0: return [4 /*yield*/, PGSQL.TablesArray(connection)];
-                case 1:
-                    tables = _a.sent();
-                    _i = 0, tables_3 = tables;
-                    _a.label = 2;
-                case 2:
-                    if (!(_i < tables_3.length)) return [3 /*break*/, 6];
-                    table = tables_3[_i];
-                    return [4 /*yield*/, PGSQL.TableColumnExists(connection, table, 'id')];
-                case 3:
-                    if (!_a.sent()) return [3 /*break*/, 5];
-                    return [4 /*yield*/, PGSQL.TableResetIncrement(connection, table, 'id')];
-                case 4:
-                    _a.sent();
-                    _a.label = 5;
-                case 5:
-                    _i++;
-                    return [3 /*break*/, 2];
-                case 6: return [2 /*return*/];
+    PGSQL.ResetIDs = (connection) => __awaiter(this, void 0, void 0, function* () {
+        let tables = yield PGSQL.TablesArray(connection);
+        for (const table of tables) {
+            if (yield PGSQL.TableColumnExists(connection, table, 'id')) {
+                yield PGSQL.TableResetIncrement(connection, table, 'id');
             }
-        });
-    }); };
-    PGSQL.GetTypes = function (connection) { return __awaiter(_this, void 0, void 0, function () {
-        var enumItems, enums, _i, enumItems_1, enumItem, _a, _b, _c;
-        var _d;
-        return __generator(this, function (_e) {
-            switch (_e.label) {
-                case 0: return [4 /*yield*/, PGSQL.TypesArray(connection)];
-                case 1:
-                    enumItems = _e.sent();
-                    enums = [];
-                    _i = 0, enumItems_1 = enumItems;
-                    _e.label = 2;
-                case 2:
-                    if (!(_i < enumItems_1.length)) return [3 /*break*/, 5];
-                    enumItem = enumItems_1[_i];
-                    _b = (_a = enums).push;
-                    _c = PGEnum.bind;
-                    _d = {
-                        enumName: enumItem
-                    };
-                    return [4 /*yield*/, PGSQL.TypeData(connection, enumItem)];
-                case 3:
-                    _b.apply(_a, [new (_c.apply(PGEnum, [void 0, (_d.values = _e.sent(),
-                                _d.defaultValue = undefined,
-                                _d)]))()]);
-                    _e.label = 4;
-                case 4:
-                    _i++;
-                    return [3 /*break*/, 2];
-                case 5: return [2 /*return*/, enums];
-            }
-        });
-    }); };
-    PGSQL.TableColumnComments = function (connection, table, schema) { return __awaiter(_this, void 0, void 0, function () {
-        return __generator(this, function (_a) {
-            return [2 /*return*/, PGSQL.FetchMany(connection, "\n        SELECT cols.column_name,\n               (\n                   SELECT pg_catalog.COL_DESCRIPTION(c.oid, cols.ordinal_position::INT)\n                   FROM pg_catalog.pg_class c\n                   WHERE c.oid = (SELECT cols.table_name::REGCLASS::OID)\n                     AND c.relname = cols.table_name\n               ) AS column_comment\n\n        FROM information_schema.columns cols\n        WHERE cols.table_schema = '" + PGSQL.CurrentSchema(schema) + "'\n          AND cols.table_name = '" + table + "'")];
-        });
-    }); };
-    PGSQL.GetPGTable = function (connection, table, schema) { return __awaiter(_this, void 0, void 0, function () {
-        var pgTable, columnComments, columns, _loop_1, _i, columns_1, column, fks, _a, fks_1, fk, pgForeignKey, indexes, _b, indexes_1, index, indexDef, wherePos, pgIndex;
-        var _c, _d, _e, _f, _g;
-        return __generator(this, function (_h) {
-            switch (_h.label) {
-                case 0:
-                    pgTable = new PGTable();
-                    pgTable.name = table;
-                    return [4 /*yield*/, PGSQL.TableColumnComments(connection, table, schema)];
-                case 1:
-                    columnComments = _h.sent();
-                    return [4 /*yield*/, PGSQL.TableColumnsData(connection, table, schema)];
-                case 2:
-                    columns = _h.sent();
-                    _loop_1 = function (column) {
-                        var pgColumn = new PGColumn(__assign(__assign({}, column), { isAutoIncrement: intelliwaketsfoundation.IsOn(column.identity_increment), udt_name: column.udt_name.toString().startsWith('_') ? column.udt_name.toString().substr(1) : column.udt_name, array_dimensions: column.udt_name.toString().startsWith('_') ? [null] : [], column_default: (((_c = column.column_default) !== null && _c !== void 0 ? _c : '').toString().startsWith('\'NULL\'') || ((_d = column.column_default) !== null && _d !== void 0 ? _d : '').toString().startsWith('NULL::')) ? null : ((_e = column.column_default) !== null && _e !== void 0 ? _e : '').toString().startsWith('\'\'::') ? '' : column.column_default, column_comment: (_g = (_f = columnComments.find(function (col) { return col.column_name === column.column_name; })) === null || _f === void 0 ? void 0 : _f.column_comment) !== null && _g !== void 0 ? _g : '' }));
-                        pgTable.columns.push(pgColumn);
-                    };
-                    for (_i = 0, columns_1 = columns; _i < columns_1.length; _i++) {
-                        column = columns_1[_i];
-                        _loop_1(column);
-                    }
-                    return [4 /*yield*/, PGSQL.TableFKsData(connection, table)];
-                case 3:
-                    fks = _h.sent();
-                    for (_a = 0, fks_1 = fks; _a < fks_1.length; _a++) {
-                        fk = fks_1[_a];
-                        pgForeignKey = new PGForeignKey({
-                            columnNames: fk.columnNames.reduce(function (results, columnName) { return results.includes(columnName) ? results : __spreadArrays(results, [columnName]); }, []),
-                            primaryTable: fk.primaryTable,
-                            primaryColumns: fk.primaryColumns.reduce(function (results, primaryColumn) { return results.includes(primaryColumn) ? results : __spreadArrays(results, [primaryColumn]); }, [])
-                        });
-                        pgTable.foreignKeys.push(pgForeignKey);
-                    }
-                    return [4 /*yield*/, PGSQL.TableIndexesData(connection, table)];
-                case 4:
-                    indexes = _h.sent();
-                    for (_b = 0, indexes_1 = indexes; _b < indexes_1.length; _b++) {
-                        index = indexes_1[_b];
-                        indexDef = index.indexdef;
-                        wherePos = indexDef.toUpperCase().indexOf(' WHERE ');
-                        pgIndex = new PGIndex({
-                            columns: indexDef
-                                .substring(indexDef.indexOf('(') + 1, wherePos > 0 ? wherePos - 1 : indexDef.length - 1)
-                                .split(',')
-                                .map(function (idx) { return idx.trim(); })
-                                .filter(function (idx) { return !!idx; }),
-                            isUnique: indexDef.includes(' UNIQUE '),
-                            whereCondition: wherePos > 0 ? indexDef.substring(wherePos + 7).trim() : null
-                        });
-                        pgTable.indexes.push(pgIndex);
-                    }
-                    return [2 /*return*/, pgTable];
-            }
-        });
-    }); };
+        }
+    });
+    PGSQL.GetTypes = (connection) => __awaiter(this, void 0, void 0, function* () {
+        const enumItems = yield PGSQL.TypesArray(connection);
+        let enums = [];
+        for (const enumItem of enumItems) {
+            enums.push(new PGEnum({
+                enumName: enumItem,
+                values: yield PGSQL.TypeData(connection, enumItem),
+                defaultValue: undefined
+            }));
+        }
+        return enums;
+    });
+    PGSQL.TableColumnComments = (connection, table, schema) => __awaiter(this, void 0, void 0, function* () {
+        return PGSQL.FetchMany(connection, `
+        SELECT cols.column_name,
+               (
+                   SELECT pg_catalog.COL_DESCRIPTION(c.oid, cols.ordinal_position::INT)
+                   FROM pg_catalog.pg_class c
+                   WHERE c.oid = (SELECT cols.table_name::REGCLASS::OID)
+                     AND c.relname = cols.table_name
+               ) AS column_comment
+
+        FROM information_schema.columns cols
+        WHERE cols.table_schema = '${PGSQL.CurrentSchema(schema)}'
+          AND cols.table_name = '${table}'`);
+    });
+    PGSQL.GetPGTable = (connection, table, schema) => __awaiter(this, void 0, void 0, function* () {
+        var _9, _10, _11, _12, _13;
+        const pgTable = new PGTable();
+        pgTable.name = table;
+        const columnComments = yield PGSQL.TableColumnComments(connection, table, schema);
+        const columns = yield PGSQL.TableColumnsData(connection, table, schema);
+        for (const column of columns) {
+            const pgColumn = new PGColumn(Object.assign(Object.assign({}, column), { isAutoIncrement: intelliwaketsfoundation.IsOn(column.identity_increment), udt_name: column.udt_name.toString().startsWith('_') ? column.udt_name.toString().substr(1) : column.udt_name, array_dimensions: column.udt_name.toString().startsWith('_') ? [null] : [], column_default: (((_9 = column.column_default) !== null && _9 !== void 0 ? _9 : '').toString().startsWith('\'NULL\'') || ((_10 = column.column_default) !== null && _10 !== void 0 ? _10 : '').toString().startsWith('NULL::')) ? null : ((_11 = column.column_default) !== null && _11 !== void 0 ? _11 : '').toString().startsWith('\'\'::') ? '' : column.column_default, column_comment: (_13 = (_12 = columnComments.find(col => col.column_name === column.column_name)) === null || _12 === void 0 ? void 0 : _12.column_comment) !== null && _13 !== void 0 ? _13 : '' }));
+            pgTable.columns.push(pgColumn);
+        }
+        const fks = yield PGSQL.TableFKsData(connection, table);
+        for (const fk of fks) {
+            const pgForeignKey = new PGForeignKey({
+                columnNames: fk.columnNames.reduce((results, columnName) => results.includes(columnName) ? results : [...results, columnName], []),
+                primaryTable: fk.primaryTable,
+                primaryColumns: fk.primaryColumns.reduce((results, primaryColumn) => results.includes(primaryColumn) ? results : [...results, primaryColumn], [])
+            });
+            pgTable.foreignKeys.push(pgForeignKey);
+        }
+        const indexes = yield PGSQL.TableIndexesData(connection, table);
+        for (const index of indexes) {
+            const indexDef = index.indexdef;
+            const wherePos = indexDef.toUpperCase().indexOf(' WHERE ');
+            const pgIndex = new PGIndex({
+                columns: indexDef
+                    .substring(indexDef.indexOf('(') + 1, wherePos > 0 ? wherePos - 1 : indexDef.length - 1)
+                    .split(',')
+                    .map(idx => idx.trim())
+                    .filter(idx => !!idx),
+                isUnique: indexDef.includes(' UNIQUE '),
+                whereCondition: wherePos > 0 ? indexDef.substring(wherePos + 7).trim() : null
+            });
+            pgTable.indexes.push(pgIndex);
+        }
+        return pgTable;
+    });
 })(exports.PGSQL || (exports.PGSQL = {}));
 
-var PGView = /** @class */ (function () {
-    function PGView(instanceData) {
+class PGView {
+    constructor(instanceData) {
         this.name = '';
         this.definition = '';
         if (instanceData) {
             this.deserialize(instanceData);
         }
     }
-    PGView.prototype.deserialize = function (instanceData) {
-        var keys = Object.keys(this);
-        for (var _i = 0, keys_1 = keys; _i < keys_1.length; _i++) {
-            var key = keys_1[_i];
+    deserialize(instanceData) {
+        const keys = Object.keys(this);
+        for (const key of keys) {
             if (instanceData.hasOwnProperty(key)) {
                 this[key] = (instanceData)[key];
             }
         }
-    };
-    PGView.GetFromDB = function (connection, name) {
-        return __awaiter(this, void 0, void 0, function () {
-            var definition;
-            return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0: return [4 /*yield*/, exports.PGSQL.ViewData(connection, name)];
-                    case 1:
-                        definition = _a.sent();
-                        if (!!definition) {
-                            return [2 /*return*/, new PGView({ name: name, definition: definition })];
-                        }
-                        return [2 /*return*/, null];
-                }
-            });
+    }
+    static GetFromDB(connection, name) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const definition = yield exports.PGSQL.ViewData(connection, name);
+            if (!!definition) {
+                return new PGView({ name: name, definition: definition });
+            }
+            return null;
         });
-    };
-    PGView.prototype.ddlDefinition = function () { return "CREATE OR REPLACE VIEW " + this.name + " AS " + this.definition; };
-    PGView.prototype.writeToDB = function (connection) {
-        return __awaiter(this, void 0, void 0, function () {
-            return __generator(this, function (_a) {
-                if (!!this.name && !!this.definition) {
-                    return [2 /*return*/, exports.PGSQL.Execute(connection, this.ddlDefinition())];
-                }
-                return [2 /*return*/, null];
-            });
+    }
+    ddlDefinition() { return `CREATE OR REPLACE VIEW ${this.name} AS ${this.definition}`; }
+    writeToDB(connection) {
+        return __awaiter(this, void 0, void 0, function* () {
+            if (!!this.name && !!this.definition) {
+                return exports.PGSQL.Execute(connection, this.ddlDefinition());
+            }
+            return null;
         });
-    };
-    return PGView;
-}());
+    }
+}
 
-var PGMatView = /** @class */ (function () {
-    function PGMatView(instanceData) {
+class PGMatView {
+    constructor(instanceData) {
         this.name = '';
         this.definition = '';
         if (instanceData) {
             this.deserialize(instanceData);
         }
     }
-    PGMatView.prototype.deserialize = function (instanceData) {
-        var keys = Object.keys(this);
-        for (var _i = 0, keys_1 = keys; _i < keys_1.length; _i++) {
-            var key = keys_1[_i];
+    deserialize(instanceData) {
+        const keys = Object.keys(this);
+        for (const key of keys) {
             if (instanceData.hasOwnProperty(key)) {
                 this[key] = instanceData[key];
             }
         }
-    };
-    PGMatView.GetFromDB = function (connection, name) {
-        return __awaiter(this, void 0, void 0, function () {
-            var definition;
-            return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0: return [4 /*yield*/, exports.PGSQL.ViewsMatData(connection, name)];
-                    case 1:
-                        definition = _a.sent();
-                        if (!!definition) {
-                            return [2 /*return*/, new PGMatView({ name: name, definition: definition })];
-                        }
-                        return [2 /*return*/, null];
-                }
-            });
+    }
+    static GetFromDB(connection, name) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const definition = yield exports.PGSQL.ViewsMatData(connection, name);
+            if (!!definition) {
+                return new PGMatView({ name: name, definition: definition });
+            }
+            return null;
         });
-    };
-    PGMatView.prototype.ddlDefinition = function () { return "CREATE MATERIALIZED VIEW " + this.name + " AS " + this.definition; };
-    PGMatView.prototype.writeToDB = function (connection) {
-        return __awaiter(this, void 0, void 0, function () {
-            return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0:
-                        if (!(!!this.name && !!this.definition)) return [3 /*break*/, 2];
-                        return [4 /*yield*/, exports.PGSQL.Execute(connection, this.ddlDefinition())];
-                    case 1: return [2 /*return*/, _a.sent()];
-                    case 2: return [2 /*return*/, null];
-                }
-            });
+    }
+    ddlDefinition() { return `CREATE MATERIALIZED VIEW ${this.name} AS ${this.definition}`; }
+    writeToDB(connection) {
+        return __awaiter(this, void 0, void 0, function* () {
+            if (!!this.name && !!this.definition) {
+                return yield exports.PGSQL.Execute(connection, this.ddlDefinition());
+            }
+            return null;
         });
-    };
-    return PGMatView;
-}());
+    }
+}
 
-var PGFunc = /** @class */ (function () {
-    function PGFunc(instanceData) {
+class PGFunc {
+    constructor(instanceData) {
         this.name = '';
         this.definition = '';
         if (instanceData) {
             this.deserialize(instanceData);
         }
     }
-    PGFunc.prototype.deserialize = function (instanceData) {
-        var keys = Object.keys(this);
-        for (var _i = 0, keys_1 = keys; _i < keys_1.length; _i++) {
-            var key = keys_1[_i];
+    deserialize(instanceData) {
+        const keys = Object.keys(this);
+        for (const key of keys) {
             if (instanceData.hasOwnProperty(key)) {
                 this[key] = instanceData[key];
             }
         }
-    };
-    PGFunc.GetFromDB = function (connection, name) {
-        return __awaiter(this, void 0, void 0, function () {
-            var definition;
-            return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0: return [4 /*yield*/, exports.PGSQL.ViewData(connection, name)];
-                    case 1:
-                        definition = _a.sent();
-                        if (!!definition) {
-                            return [2 /*return*/, new PGFunc({ name: name, definition: definition })];
-                        }
-                        return [2 /*return*/, null];
-                }
-            });
+    }
+    static GetFromDB(connection, name) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const definition = yield exports.PGSQL.ViewData(connection, name);
+            if (!!definition) {
+                return new PGFunc({ name: name, definition: definition });
+            }
+            return null;
         });
-    };
-    PGFunc.prototype.ddlDefinition = function () { return this.definition; };
-    PGFunc.prototype.writeToDB = function (connection) {
-        return __awaiter(this, void 0, void 0, function () {
-            return __generator(this, function (_a) {
-                if (!!this.name && !!this.definition) {
-                    return [2 /*return*/, exports.PGSQL.Execute(connection, this.ddlDefinition())];
-                }
-                return [2 /*return*/, null];
-            });
+    }
+    ddlDefinition() { return this.definition; }
+    writeToDB(connection) {
+        return __awaiter(this, void 0, void 0, function* () {
+            if (!!this.name && !!this.definition) {
+                return exports.PGSQL.Execute(connection, this.ddlDefinition());
+            }
+            return null;
         });
-    };
-    return PGFunc;
-}());
+    }
+}
 
-var PGWhereSearchClause = function (search, params, fields, startWithAnd) {
-    if (startWithAnd === void 0) { startWithAnd = true; }
-    var where = '';
-    var andAdded = false;
+const PGWhereSearchClause = (search, params, fields, startWithAnd = true) => {
+    let where = '';
+    let andAdded = false;
     if (!!search && fields.length > 0) {
-        var terms = intelliwaketsfoundation.SearchTerms(search);
-        for (var _i = 0, terms_1 = terms; _i < terms_1.length; _i++) {
-            var term = terms_1[_i];
+        const terms = intelliwaketsfoundation.SearchTerms(search);
+        for (const term of terms) {
             if (andAdded || startWithAnd)
                 where += 'AND ';
             andAdded = true;
-            where += "CONCAT_WS('|'," + fields.join(',') + (") ILIKE " + params.addLike(term) + " ");
+            where += `CONCAT_WS('|',` + fields.join(',') + `) ILIKE ${params.addLike(term)} `;
         }
     }
     return where;

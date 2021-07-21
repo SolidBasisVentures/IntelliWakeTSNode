@@ -9,6 +9,7 @@ export declare namespace PGSQL {
         offset: number;
         countPerPage: number;
     }
+    const SetDBMSAlert: (milliseconds?: number | undefined) => void;
     type TQueryResults<T> = {
         rows?: Array<T>;
         fields?: FieldDef[];
