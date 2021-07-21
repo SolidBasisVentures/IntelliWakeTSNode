@@ -1,6 +1,12 @@
 // noinspection SqlNoDataSourceInspection
 
-import {IPaginatorRequest, IPaginatorResponse, IsOn, ISortColumn} from '@solidbasisventures/intelliwaketsfoundation'
+import {
+	CleanNumber,
+	IPaginatorRequest,
+	IPaginatorResponse,
+	IsOn,
+	ISortColumn
+} from '@solidbasisventures/intelliwaketsfoundation'
 import {PGTable} from './PGTable'
 import {PGColumn} from './PGColumn'
 import {PGParams} from './PGParams'
@@ -8,6 +14,7 @@ import {PGEnum} from './PGEnum'
 import {PGIndex} from './PGIndex'
 import {PGForeignKey} from './PGForeignKey'
 import {Client, FieldDef, Pool, PoolClient} from 'pg'
+import moment from 'moment'
 // import QueryStream from 'pg-query-stream'
 
 export type TConnection = Pool | PoolClient | Client
@@ -18,11 +25,31 @@ export namespace PGSQL {
 		countPerPage: number
 	}
 	
+	export const SetDBMSAlert = (milliseconds?: number) => {
+		if (!milliseconds) {
+			delete process.env.DB_MS_ALERT
+		} else {
+			process.env.DB_MS_ALERT = milliseconds.toString()
+		}
+	}
+	
 	export type TQueryResults<T> = {rows?: Array<T>; fields?: FieldDef[]; rowCount?: number}
 	
 	export const query = async <T>(connection: TConnection, sql: string, values?: any): Promise<TQueryResults<T>> => {
 		try {
-			return await connection.query(sql, values)
+			if (!process.env.DB_MS_ALERT) {
+				return connection.query(sql, values)
+			} else {
+				const start = moment()
+				const response = await connection.query(sql, values)
+				const ms = moment.duration(moment().diff(start)).asMilliseconds()
+				if (ms > CleanNumber(process.env.DB_MS_ALERT)) {
+					console.log('----- Long SQL Query', ms / 1000, 'ms')
+					console.log(sql)
+					console.log(values)
+				}
+				return response
+			}
 		} catch (err) {
 			console.log('------------ SQL Query')
 			console.log(err.message)
@@ -357,7 +384,19 @@ export namespace PGSQL {
 	
 	export const Execute = async (connection: TConnection, sql: string, values?: any) => {
 		try {
-			return await connection.query(sql, values)
+			if (!process.env.DB_MS_ALERT) {
+				return connection.query(sql, values)
+			} else {
+				const start = moment()
+				const response = await connection.query(sql, values)
+				const ms = moment.duration(moment().diff(start)).asMilliseconds()
+				if (ms > CleanNumber(process.env.DB_MS_ALERT)) {
+					console.log('----- Long SQL Query', ms / 1000, 'ms')
+					console.log(sql)
+					console.log(values)
+				}
+				return response
+			}
 		} catch (err) {
 			console.log('------------ SQL Execute')
 			console.log(err.message)
