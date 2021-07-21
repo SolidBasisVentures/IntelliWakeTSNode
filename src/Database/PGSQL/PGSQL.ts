@@ -42,7 +42,7 @@ export namespace PGSQL {
 			} else {
 				const start = moment()
 				const response = await connection.query(sql, values)
-				const ms = moment.duration(moment().diff(start)).asMilliseconds()
+				const ms = moment.duration(start.diff(moment())).asMilliseconds()
 				if (ms > CleanNumber(process.env.DB_MS_ALERT)) {
 					console.log('----- Long SQL Query', ms / 1000, 'ms')
 					console.log(sql)
@@ -389,7 +389,7 @@ export namespace PGSQL {
 			} else {
 				const start = moment()
 				const response = await connection.query(sql, values)
-				const ms = moment.duration(moment().diff(start)).asMilliseconds()
+				const ms = moment.duration(start.diff(moment())).asMilliseconds()
 				if (ms > CleanNumber(process.env.DB_MS_ALERT)) {
 					console.log('----- Long SQL Query', ms / 1000, 'ms')
 					console.log(sql)
