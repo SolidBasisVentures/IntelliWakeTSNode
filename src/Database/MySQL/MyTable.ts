@@ -1,10 +1,9 @@
 import {MyColumn} from "./MyColumn";
 import {MyIndex} from "./MyIndex";
 import {MyForeignKey} from "./MyForeignKey";
-import moment from "moment";
 import * as path from "path";
 import fs from "fs";
-import {IsOn} from '@solidbasisventures/intelliwaketsfoundation'
+import {IsOn, YYYYsMMsDDsHHcmmcss} from '@solidbasisventures/intelliwaketsfoundation'
 
 const TS_EOL = '\r\n';
 
@@ -151,8 +150,8 @@ export class MyTable {
 
     public tableHeaderText(forTableText: string): string {
         let text = "/**" + TS_EOL;
-        text += " * Automatically generated: " + moment().format('Y-MM-DD HH:mm:ss') + TS_EOL;
-        text += " * © " + moment().format('Y') + ", Solid Basis Ventures, LLC." + TS_EOL; // Must come after generated date so it doesn't keep regenerating
+        text += " * Automatically generated: " + YYYYsMMsDDsHHcmmcss + TS_EOL;
+        text += " * © " + (new Date()).getFullYear() + ", Solid Basis Ventures, LLC." + TS_EOL; // Must come after generated date so it doesn't keep regenerating
         text += " * DO NOT MODIFY" + TS_EOL;
         text += " *" + TS_EOL;
         text += " * " + forTableText + ": " + this.name + TS_EOL;
@@ -259,8 +258,7 @@ export class MyTable {
         return text;
     }
 
-    // @ts-ignore
-	public ddlPrimaryKey(altering: boolean): string | null {
+	public ddlPrimaryKey(_altering: boolean): string | null {
         let found = false;
 
         let ddl = "PRIMARY KEY (`";

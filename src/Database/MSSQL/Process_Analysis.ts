@@ -1,5 +1,4 @@
 import {MSTable} from './MSTable'
-import moment from 'moment'
 import {ToDigits} from '@solidbasisventures/intelliwaketsfoundation'
 
 export namespace Process_Analysis {
@@ -44,7 +43,7 @@ export namespace Process_Analysis {
 
 		let processed = 0
 
-		let secondsStart = moment().valueOf()
+		let secondsStart = Date.now()
 
 		for (let itbl = 0; itbl < msTables.length; itbl++) {
 			for (let icol = 0; icol < msTables[itbl].columns.length; icol++) {
@@ -68,7 +67,7 @@ export namespace Process_Analysis {
 						}
 					}
 
-					if (moment().valueOf() - secondsStart > 60000) {
+					if (Date.now() - secondsStart > 60000) {
 						if (processed > 0) {
 							return 'Processed (Partial): ' + ToDigits(processed)
 						}
@@ -89,7 +88,7 @@ export namespace Process_Analysis {
 
 		let processed = 0
 
-		let secondsStart = moment().valueOf()
+		let secondsStart = Date.now()
 
 		for (let itbl = 0; itbl < msTables.length; itbl++) {
 			for (let icol = 0; icol < msTables[itbl].columns.length; icol++) {
@@ -113,7 +112,7 @@ export namespace Process_Analysis {
 						}
 					}
 
-					if (moment().valueOf() - secondsStart > 60000) {
+					if (Date.now() - secondsStart > 60000) {
 						if (processed > 0) {
 							return 'Processed (Partial): ' + ToDigits(processed)
 						}

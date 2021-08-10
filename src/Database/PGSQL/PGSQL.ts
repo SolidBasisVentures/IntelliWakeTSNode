@@ -14,7 +14,6 @@ import {PGEnum} from './PGEnum'
 import {PGIndex} from './PGIndex'
 import {PGForeignKey} from './PGForeignKey'
 import {Client, FieldDef, Pool, PoolClient} from 'pg'
-import moment from 'moment'
 // import QueryStream from 'pg-query-stream'
 
 export type TConnection = Pool | PoolClient | Client
@@ -40,9 +39,9 @@ export namespace PGSQL {
 			if (!process.env.DB_MS_ALERT) {
 				return connection.query(sql, values)
 			} else {
-				const start = moment()
+				const start = Date.now()
 				const response = await connection.query(sql, values)
-				const ms = moment.duration(moment().diff(start)).asMilliseconds()
+				const ms = Date.now() - start
 				if (ms > CleanNumber(process.env.DB_MS_ALERT)) {
 					console.log('----- Long SQL Query', ms / 1000, 'ms')
 					console.log(sql)
@@ -387,9 +386,9 @@ export namespace PGSQL {
 			if (!process.env.DB_MS_ALERT) {
 				return connection.query(sql, values)
 			} else {
-				const start = moment()
+				const start = Date.now()
 				const response = await connection.query(sql, values)
-				const ms = moment.duration(moment().diff(start)).asMilliseconds()
+				const ms = Date.now() - start
 				if (ms > CleanNumber(process.env.DB_MS_ALERT)) {
 					console.log('----- Long SQL Query', ms / 1000, 'ms')
 					console.log(sql)

@@ -4,7 +4,6 @@ Object.defineProperty(exports, '__esModule', { value: true });
 
 var readline = require('readline');
 var intelliwaketsfoundation = require('@solidbasisventures/intelliwaketsfoundation');
-var moment = require('moment');
 var path = require('path');
 var fs = require('fs');
 
@@ -31,7 +30,6 @@ function _interopNamespace(e) {
 }
 
 var readline__default = /*#__PURE__*/_interopDefaultLegacy(readline);
-var moment__default = /*#__PURE__*/_interopDefaultLegacy(moment);
 var path__namespace = /*#__PURE__*/_interopNamespace(path);
 var fs__default = /*#__PURE__*/_interopDefaultLegacy(fs);
 
@@ -758,8 +756,8 @@ class PGTable {
     }
     tableHeaderText(forTableText) {
         let text = '/**' + TS_EOL$1;
-        text += ' * Automatically generated: ' + moment__default['default']().format('Y-MM-DD HH:mm:ss') + TS_EOL$1;
-        text += ' * © ' + moment__default['default']().format('Y') + ', Solid Basis Ventures, LLC.' + TS_EOL$1; // Must come after generated date so it doesn't keep regenerating
+        text += ' * Automatically generated: ' + intelliwaketsfoundation.YYYYsMMsDDsHHcmmcss + TS_EOL$1;
+        text += ' * © ' + (new Date()).getFullYear() + ', Solid Basis Ventures, LLC.' + TS_EOL$1; // Must come after generated date so it doesn't keep regenerating
         text += ' * DO NOT MODIFY' + TS_EOL$1;
         text += ' *' + TS_EOL$1;
         text += ' * ' + forTableText + ': ' + this.name + TS_EOL$1;
@@ -1516,8 +1514,8 @@ class MyTable {
     }
     tableHeaderText(forTableText) {
         let text = "/**" + TS_EOL;
-        text += " * Automatically generated: " + moment__default['default']().format('Y-MM-DD HH:mm:ss') + TS_EOL;
-        text += " * © " + moment__default['default']().format('Y') + ", Solid Basis Ventures, LLC." + TS_EOL; // Must come after generated date so it doesn't keep regenerating
+        text += " * Automatically generated: " + intelliwaketsfoundation.YYYYsMMsDDsHHcmmcss + TS_EOL;
+        text += " * © " + (new Date()).getFullYear() + ", Solid Basis Ventures, LLC." + TS_EOL; // Must come after generated date so it doesn't keep regenerating
         text += " * DO NOT MODIFY" + TS_EOL;
         text += " *" + TS_EOL;
         text += " * " + forTableText + ": " + this.name + TS_EOL;
@@ -1630,8 +1628,7 @@ class MyTable {
         text += `}` + TS_EOL;
         return text;
     }
-    // @ts-ignore
-    ddlPrimaryKey(altering) {
+    ddlPrimaryKey(_altering) {
         let found = false;
         let ddl = "PRIMARY KEY (`";
         for (const column of this.columns) {
@@ -2536,9 +2533,9 @@ exports.PGSQL = void 0;
                 return connection.query(sql, values);
             }
             else {
-                const start = moment__default['default']();
+                const start = Date.now();
                 const response = yield connection.query(sql, values);
-                const ms = moment__default['default'].duration(moment__default['default']().diff(start)).asMilliseconds();
+                const ms = Date.now() - start;
                 if (ms > intelliwaketsfoundation.CleanNumber(process.env.DB_MS_ALERT)) {
                     console.log('----- Long SQL Query', ms / 1000, 'ms');
                     console.log(sql);
@@ -2827,9 +2824,9 @@ exports.PGSQL = void 0;
                 return connection.query(sql, values);
             }
             else {
-                const start = moment__default['default']();
+                const start = Date.now();
                 const response = yield connection.query(sql, values);
-                const ms = moment__default['default'].duration(moment__default['default']().diff(start)).asMilliseconds();
+                const ms = Date.now() - start;
                 if (ms > intelliwaketsfoundation.CleanNumber(process.env.DB_MS_ALERT)) {
                     console.log('----- Long SQL Query', ms / 1000, 'ms');
                     console.log(sql);
