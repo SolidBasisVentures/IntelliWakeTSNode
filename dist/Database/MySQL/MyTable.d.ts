@@ -29,7 +29,7 @@ export declare class MyTable {
     tableHeaderText(forTableText: string): string;
     tsText(): string;
     tsTextTable(): string;
-    ddlPrimaryKey(altering: boolean): string | null;
+    ddlPrimaryKey(_altering: boolean): string | null;
     ddlText(process: boolean, includeFKs: boolean, altering?: boolean): Promise<string | null>;
     save(): void;
     static ExistsNewTS(): boolean;
