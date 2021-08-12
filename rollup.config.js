@@ -14,5 +14,5 @@ export default {
         }
     ],
     plugins: [typescript({ objectHashIgnoreUnknownHack: false })],
-    external: []
+    external: ['path', 'fs', 'dayjs', 'readline', '@solidbasisventures/intelliwaketsfoundation']
 }

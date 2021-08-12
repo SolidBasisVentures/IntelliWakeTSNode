@@ -1,6 +1,6 @@
-import { MyColumn } from "./MyColumn";
-import { MyIndex } from "./MyIndex";
-import { MyForeignKey } from "./MyForeignKey";
+import { MyColumn } from './MyColumn';
+import { MyIndex } from './MyIndex';
+import { MyForeignKey } from './MyForeignKey';
 export declare class MyTable {
     name: string;
     description: string;

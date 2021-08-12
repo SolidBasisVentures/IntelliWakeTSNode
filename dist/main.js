@@ -9,28 +9,8 @@ var fs = require('fs');
 
 function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e : { 'default': e }; }
 
-function _interopNamespace(e) {
-    if (e && e.__esModule) return e;
-    var n = Object.create(null);
-    if (e) {
-        Object.keys(e).forEach(function (k) {
-            if (k !== 'default') {
-                var d = Object.getOwnPropertyDescriptor(e, k);
-                Object.defineProperty(n, k, d.get ? d : {
-                    enumerable: true,
-                    get: function () {
-                        return e[k];
-                    }
-                });
-            }
-        });
-    }
-    n['default'] = e;
-    return Object.freeze(n);
-}
-
 var readline__default = /*#__PURE__*/_interopDefaultLegacy(readline);
-var path__namespace = /*#__PURE__*/_interopNamespace(path);
+var path__default = /*#__PURE__*/_interopDefaultLegacy(path);
 var fs__default = /*#__PURE__*/_interopDefaultLegacy(fs);
 
 /*! *****************************************************************************
@@ -756,7 +736,7 @@ class PGTable {
     }
     tableHeaderText(forTableText) {
         let text = '/**' + TS_EOL$1;
-        text += ' * Automatically generated: ' + intelliwaketsfoundation.YYYYsMMsDDsHHcmmcss + TS_EOL$1;
+        text += ' * Automatically generated: ' + intelliwaketsfoundation.DayjsDateTimeString(new Date()) + TS_EOL$1;
         text += ' * © ' + (new Date()).getFullYear() + ', Solid Basis Ventures, LLC.' + TS_EOL$1; // Must come after generated date so it doesn't keep regenerating
         text += ' * DO NOT MODIFY' + TS_EOL$1;
         text += ' *' + TS_EOL$1;
@@ -1514,7 +1494,7 @@ class MyTable {
     }
     tableHeaderText(forTableText) {
         let text = "/**" + TS_EOL;
-        text += " * Automatically generated: " + intelliwaketsfoundation.YYYYsMMsDDsHHcmmcss + TS_EOL;
+        text += " * Automatically generated: " + intelliwaketsfoundation.DayjsDateTimeString(new Date()) + TS_EOL;
         text += " * © " + (new Date()).getFullYear() + ", Solid Basis Ventures, LLC." + TS_EOL; // Must come after generated date so it doesn't keep regenerating
         text += " * DO NOT MODIFY" + TS_EOL;
         text += " *" + TS_EOL;
@@ -1860,9 +1840,9 @@ class MyTable {
         return comment.replace(/[\n\r]/g, ' ');
     }
 }
-MyTable.DEFINITIONS_DIR = path__namespace.resolve("./") + "/src/Assets/Tables";
-MyTable.TS_INTERFACE_DIR = path__namespace.resolve("./") + "/../app/src/Common/Tables";
-MyTable.TS_CLASS_DIR = path__namespace.resolve("./") + "/src/Tables";
+MyTable.DEFINITIONS_DIR = path__default['default'].resolve("./") + "/src/Assets/Tables";
+MyTable.TS_INTERFACE_DIR = path__default['default'].resolve("./") + "/../app/src/Common/Tables";
+MyTable.TS_CLASS_DIR = path__default['default'].resolve("./") + "/src/Tables";
 
 exports.MySQL = void 0;
 (function (MySQL) {
