@@ -3,7 +3,7 @@ import {MyIndex} from './MyIndex'
 import {MyForeignKey} from './MyForeignKey'
 import path from 'path'
 import fs from 'fs'
-import {DayjsDateTimeString, IsOn} from '@solidbasisventures/intelliwaketsfoundation'
+import {MomentDateTimeString, IsOn} from '@solidbasisventures/intelliwaketsfoundation'
 
 const TS_EOL = '\r\n';
 
@@ -150,7 +150,7 @@ export class MyTable {
 
     public tableHeaderText(forTableText: string): string {
         let text = "/**" + TS_EOL;
-        text += " * Automatically generated: " + DayjsDateTimeString(new Date()) + TS_EOL;
+        text += " * Automatically generated: " + MomentDateTimeString(new Date()) + TS_EOL;
         text += " * © " + (new Date()).getFullYear() + ", Solid Basis Ventures, LLC." + TS_EOL; // Must come after generated date so it doesn't keep regenerating
         text += " * DO NOT MODIFY" + TS_EOL;
         text += " *" + TS_EOL;

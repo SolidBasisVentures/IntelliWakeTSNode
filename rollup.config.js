@@ -14,5 +14,5 @@ export default {
         }
     ],
     plugins: [typescript({ objectHashIgnoreUnknownHack: false })],
-    external: ['path', 'fs', 'dayjs', 'readline', '@solidbasisventures/intelliwaketsfoundation']
+    external: ['path', 'fs', 'moment-timezone', 'readline', '@solidbasisventures/intelliwaketsfoundation']
 }
