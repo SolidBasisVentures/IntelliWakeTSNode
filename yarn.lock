@@ -556,10 +556,10 @@
   dependencies:
     "@sinonjs/commons" "^1.7.0"
 
-"@solidbasisventures/intelliwaketsfoundation@^2.0.171":
-  version "2.0.171"
-  resolved "https://registry.yarnpkg.com/@solidbasisventures/intelliwaketsfoundation/-/intelliwaketsfoundation-2.0.171.tgz#23159eef9d6af6c30be120300d04c414a264b9b1"
-  integrity sha512-2wo8eipc6hxw4HeZMJGMEVlnDZn+tIHjNc5OtNPtCAHh3MCE+8oPEYvdzxVBI5lI+jViKxLPevE5Dko0+kVCrQ==
+"@solidbasisventures/intelliwaketsfoundation@^3.0.4":
+  version "3.0.4"
+  resolved "https://registry.yarnpkg.com/@solidbasisventures/intelliwaketsfoundation/-/intelliwaketsfoundation-3.0.4.tgz#17645b2fc20d7fac948d3d8c1ea3543374db5874"
+  integrity sha512-fmBHaRYkslGTQol+EvjLpegTCgOHcEFbBGi2GFwG/bpEDmHjSc/sdvN1PpQMpzppe6iZSg5JMx2ki3BTw7440Q==
 
 "@tootallnate/once@1":
   version "1.1.2"
@@ -1362,6 +1362,11 @@ date-utils@*:
   version "1.2.21"
   resolved "https://registry.yarnpkg.com/date-utils/-/date-utils-1.2.21.tgz#61fb16cdc1274b3c9acaaffe9fc69df8720a2b64"
   integrity sha1-YfsWzcEnSzyayq/+n8ad+HIKK2Q=
+
+dayjs@^1.10.6:
+  version "1.10.6"
+  resolved "https://registry.yarnpkg.com/dayjs/-/dayjs-1.10.6.tgz#288b2aa82f2d8418a6c9d4df5898c0737ad02a63"
+  integrity sha512-AztC/IOW4L1Q41A86phW5Thhcrco3xuAA+YX/BLpLWWjRcTj5TOt/QImBLmCKlrF7u7k47arTnOyL6GnbG8Hvw==
 
 debug@4, debug@^4.1.0, debug@^4.1.1, debug@^4.3.1:
   version "4.3.2"
