@@ -1,6 +1,6 @@
 {
   "name": "@solidbasisventures/intelliwaketsnode",
-  "version": "2.0.177",
+  "version": "2.0.179",
   "description": "NPM package for IntelliWake Node Components",
   "main": "dist/main.js",
   "types": "dist/main.d.ts",
@@ -29,8 +29,8 @@
     "@types/mysql": "^2.15.15",
     "@types/node": "^14.0.5",
     "@types/pg": "^7.14.3",
-    "dayjs": "^1.10.6",
     "jest": "^26.6.1",
+    "moment-timezone": "^0.5.33",
     "mssql": "^6.2.0",
     "mysql": "^2.18.1",
     "pg": "^8.2.1",
