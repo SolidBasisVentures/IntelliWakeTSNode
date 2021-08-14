@@ -1,7 +1,7 @@
 import {PGColumn} from './PGColumn'
 import {PGIndex} from './PGIndex'
 import {PGForeignKey} from './PGForeignKey'
-import {MomentDateTimeString, IsOn} from '@solidbasisventures/intelliwaketsfoundation'
+import {IsOn, YYYY_MM_DD_HH_mm_ss} from '@solidbasisventures/intelliwaketsfoundation'
 import {PGEnum} from './PGEnum'
 
 const TS_EOL = '\n' // was \r\n
@@ -189,7 +189,7 @@ export class PGTable {
 	
 	public tableHeaderText(forTableText: string): string {
 		let text = '/**' + TS_EOL
-		text += ' * Automatically generated: ' + MomentDateTimeString(new Date()) + TS_EOL
+		text += ' * Automatically generated: ' + YYYY_MM_DD_HH_mm_ss() + TS_EOL
 		text += ' * © ' + (new Date()).getFullYear() + ', Solid Basis Ventures, LLC.' + TS_EOL // Must come after generated date so it doesn't keep regenerating
 		text += ' * DO NOT MODIFY' + TS_EOL
 		text += ' *' + TS_EOL
