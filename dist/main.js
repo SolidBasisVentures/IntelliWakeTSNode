@@ -736,7 +736,7 @@ class PGTable {
     }
     tableHeaderText(forTableText) {
         let text = '/**' + TS_EOL$1;
-        text += ' * Automatically generated: ' + intelliwaketsfoundation.MomentDateTimeString(new Date()) + TS_EOL$1;
+        text += ' * Automatically generated: ' + intelliwaketsfoundation.YYYY_MM_DD_HH_mm_ss() + TS_EOL$1;
         text += ' * © ' + (new Date()).getFullYear() + ', Solid Basis Ventures, LLC.' + TS_EOL$1; // Must come after generated date so it doesn't keep regenerating
         text += ' * DO NOT MODIFY' + TS_EOL$1;
         text += ' *' + TS_EOL$1;
@@ -1494,7 +1494,7 @@ class MyTable {
     }
     tableHeaderText(forTableText) {
         let text = "/**" + TS_EOL;
-        text += " * Automatically generated: " + intelliwaketsfoundation.MomentDateTimeString(new Date()) + TS_EOL;
+        text += " * Automatically generated: " + intelliwaketsfoundation.YYYY_MM_DD_HH_mm_ss() + TS_EOL;
         text += " * © " + (new Date()).getFullYear() + ", Solid Basis Ventures, LLC." + TS_EOL; // Must come after generated date so it doesn't keep regenerating
         text += " * DO NOT MODIFY" + TS_EOL;
         text += " *" + TS_EOL;
