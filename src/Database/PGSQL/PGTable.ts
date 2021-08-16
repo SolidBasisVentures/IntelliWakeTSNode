@@ -337,6 +337,11 @@ export class PGTable {
 			text += pgColumn.column_name
 			text += ': '
 			const itemDefault = enums.find(enumItem => enumItem.column_name === pgColumn.column_name)?.default_value ?? interfaces.find(interfaceItem => interfaceItem.column_name === pgColumn.column_name)?.default_value
+			
+			if (pgColumn.column_name === 'inspect_roles') {
+				console.log('Column', pgColumn)
+			}
+			
 			if (!!itemDefault) {
 				// console.log('HERE', enums.find(enumItem => enumItem.column_name === pgColumn.column_name))
 				// console.log('THERE', pgColumn)
