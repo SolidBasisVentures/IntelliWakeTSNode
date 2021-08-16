@@ -813,14 +813,14 @@ class PGTable {
             })
         ]
             .filter(enumName => !!enumName.interface_name)));
-        enums.map(enumItem => enumItem.enum_name).reduce((results, enumItem) => results.includes(enumItem) ? results : [...results, enumItem], [])
+        enums.map(enumItem => enumItem.enum_name).reduce((results, enumItem) => results.includes(enumItem) ? results : [...results, intelliwaketsfoundation.ReplaceAll('[]', '', enumItem)], [])
             .forEach(enumItem => {
             text += `import {${enumItem}} from "../Enums/${enumItem}"${TS_EOL$1}`;
         });
         if (enums.length > 0) {
             text += TS_EOL$1;
         }
-        interfaces.map(interfaceItem => interfaceItem.interface_name).reduce((results, enumItem) => results.includes(enumItem) ? results : [...results, enumItem], [])
+        interfaces.map(interfaceItem => interfaceItem.interface_name).reduce((results, enumItem) => results.includes(enumItem) ? results : [...results, intelliwaketsfoundation.ReplaceAll('[]', '', enumItem)], [])
             .forEach(interfaceItem => {
             text += `import {${interfaceItem}} from "../Interfaces/${interfaceItem}"${TS_EOL$1}`;
         });
@@ -846,7 +846,7 @@ class PGTable {
             text += '\t';
             text += pgColumn.column_name;
             text += ': ';
-            text += (_d = (_b = (_a = enums.find(enumItem => enumItem.column_name === pgColumn.column_name)) === null || _a === void 0 ? void 0 : _a.enum_name) !== null && _b !== void 0 ? _b : (_c = interfaces.find(interfaceItem => interfaceItem.column_name === pgColumn.column_name)) === null || _c === void 0 ? void 0 : _c.interface_name) !== null && _d !== void 0 ? _d : pgColumn.jsType();
+            text += intelliwaketsfoundation.ReplaceAll('[]', '', (_d = (_b = (_a = enums.find(enumItem => enumItem.column_name === pgColumn.column_name)) === null || _a === void 0 ? void 0 : _a.enum_name) !== null && _b !== void 0 ? _b : (_c = interfaces.find(interfaceItem => interfaceItem.column_name === pgColumn.column_name)) === null || _c === void 0 ? void 0 : _c.interface_name) !== null && _d !== void 0 ? _d : pgColumn.jsType()).trim();
             if (pgColumn.array_dimensions.length > 0) {
                 text += `[${pgColumn.array_dimensions.map(() => '').join('],[')}]`;
             }

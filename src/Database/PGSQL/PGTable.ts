@@ -1,7 +1,7 @@
 import {PGColumn} from './PGColumn'
 import {PGIndex} from './PGIndex'
 import {PGForeignKey} from './PGForeignKey'
-import {IsOn, YYYY_MM_DD_HH_mm_ss} from '@solidbasisventures/intelliwaketsfoundation'
+import {IsOn, ReplaceAll, YYYY_MM_DD_HH_mm_ss} from '@solidbasisventures/intelliwaketsfoundation'
 import {PGEnum} from './PGEnum'
 
 const TS_EOL = '\n' // was \r\n
@@ -276,7 +276,7 @@ export class PGTable {
 			)
 		)
 		
-		enums.map(enumItem => enumItem.enum_name).reduce<string[]>((results, enumItem) => results.includes(enumItem) ? results : [...results, enumItem], [])
+		enums.map(enumItem => enumItem.enum_name).reduce<string[]>((results, enumItem) => results.includes(enumItem) ? results : [...results, ReplaceAll('[]', '', enumItem)], [])
 			.forEach(enumItem => {
 				text += `import {${enumItem}} from "../Enums/${enumItem}"${TS_EOL}`
 			})
@@ -285,7 +285,7 @@ export class PGTable {
 			text += TS_EOL
 		}
 		
-		interfaces.map(interfaceItem => interfaceItem.interface_name).reduce<string[]>((results, enumItem) => results.includes(enumItem) ? results : [...results, enumItem], [])
+		interfaces.map(interfaceItem => interfaceItem.interface_name).reduce<string[]>((results, enumItem) => results.includes(enumItem) ? results : [...results, ReplaceAll('[]', '', enumItem)], [])
 			.forEach(interfaceItem => {
 				text += `import {${interfaceItem}} from "../Interfaces/${interfaceItem}"${TS_EOL}`
 			})
@@ -313,7 +313,7 @@ export class PGTable {
 			text += '\t'
 			text += pgColumn.column_name
 			text += ': '
-			text += enums.find(enumItem => enumItem.column_name === pgColumn.column_name)?.enum_name ?? interfaces.find(interfaceItem => interfaceItem.column_name === pgColumn.column_name)?.interface_name ?? pgColumn.jsType()
+			text += ReplaceAll('[]', '', enums.find(enumItem => enumItem.column_name === pgColumn.column_name)?.enum_name ?? interfaces.find(interfaceItem => interfaceItem.column_name === pgColumn.column_name)?.interface_name ?? pgColumn.jsType()).trim()
 			if (pgColumn.array_dimensions.length > 0) {
 				text += `[${pgColumn.array_dimensions.map(() => '').join('],[')}]`
 			}
