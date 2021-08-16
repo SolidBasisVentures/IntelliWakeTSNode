@@ -237,7 +237,7 @@ export class PGTable {
 										return {
 											column_name: column.column_name,
 											enum_name: ((items[1] ?? '').split('.')[0] ?? '').trim(),
-											default_value: column.array_dimensions.length > 0 ? '[]' : (items[2] ?? '').includes('.') ? items[2] : ((items[1] ?? '').split('.')[0] ?? '').trim() + '.' + (items[2] ?? ((items[1] ?? '').split('.')[1] ?? '')).trim()
+											default_value: (column.array_dimensions.length > 0 ? (IsOn(column.is_nullable) ? 'null' : '[]') : (items[2] ?? '').includes('.') ? items[2] : ((items[1] ?? '').split('.')[0] ?? '').trim() + '.' + (items[2] ?? ((items[1] ?? '').split('.')[1] ?? ''))).trim()
 										}
 									}
 								}
@@ -338,11 +338,11 @@ export class PGTable {
 			text += ': '
 			const itemDefault = enums.find(enumItem => enumItem.column_name === pgColumn.column_name)?.default_value ?? interfaces.find(interfaceItem => interfaceItem.column_name === pgColumn.column_name)?.default_value
 			
-			if (pgColumn.column_name === 'inspect_roles') {
-				console.log('Column', pgColumn)
-				console.log('ItemDefault', itemDefault)
-				console.log('Arry Len', pgColumn.array_dimensions.length)
-			}
+			// if (pgColumn.column_name === 'inspect_roles') {
+			// 	console.log('Column', pgColumn)
+			// 	console.log('ItemDefault', itemDefault)
+			// 	console.log('Arry Len', pgColumn.array_dimensions.length)
+			// }
 			
 			if (!!itemDefault) {
 				// console.log('HERE', enums.find(enumItem => enumItem.column_name === pgColumn.column_name))
