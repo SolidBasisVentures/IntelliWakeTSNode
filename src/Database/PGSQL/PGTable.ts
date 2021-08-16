@@ -340,6 +340,8 @@ export class PGTable {
 			
 			if (pgColumn.column_name === 'inspect_roles') {
 				console.log('Column', pgColumn)
+				console.log('ItemDefault', itemDefault)
+				console.log('Arry Len', pgColumn.array_dimensions.length)
 			}
 			
 			if (!!itemDefault) {

@@ -872,6 +872,8 @@ class PGTable {
             const itemDefault = (_g = (_f = enums.find(enumItem => enumItem.column_name === pgColumn.column_name)) === null || _f === void 0 ? void 0 : _f.default_value) !== null && _g !== void 0 ? _g : (_h = interfaces.find(interfaceItem => interfaceItem.column_name === pgColumn.column_name)) === null || _h === void 0 ? void 0 : _h.default_value;
             if (pgColumn.column_name === 'inspect_roles') {
                 console.log('Column', pgColumn);
+                console.log('ItemDefault', itemDefault);
+                console.log('Arry Len', pgColumn.array_dimensions.length);
             }
             if (!!itemDefault) {
                 // console.log('HERE', enums.find(enumItem => enumItem.column_name === pgColumn.column_name))
