@@ -683,17 +683,17 @@ export namespace PGSQL {
 	}
 	
 	export const CalcOffsetFromPage = (page: number, pageSize: number, totalRecords: number): number => {
-		if (totalRecords > 0) {
-			const pages = CalcPageCount(+pageSize, +totalRecords)
+		if (CleanNumber(totalRecords) > 0) {
+			const pages = CalcPageCount(pageSize, totalRecords)
 			
-			if (page < 1) {
+			if (CleanNumber(page) < 1) {
 				page = 1
 			}
-			if (page > pages) {
+			if (CleanNumber(page) > CleanNumber(pages)) {
 				page = pages
 			}
 			
-			return (page - 1) * pageSize
+			return (CleanNumber(page) - 1) * CleanNumber(pageSize)
 		} else {
 			// noinspection JSUnusedAssignment
 			page = 1
@@ -703,8 +703,8 @@ export namespace PGSQL {
 	}
 	
 	export const CalcPageCount = (pageSize: number, totalRecords: number): number => {
-		if (totalRecords > 0) {
-			return Math.floor((totalRecords + (pageSize - 1)) / pageSize)
+		if (CleanNumber(totalRecords) > 0) {
+			return Math.floor((CleanNumber(totalRecords) + (CleanNumber(pageSize) - 1)) / CleanNumber(pageSize))
 		} else {
 			return 0
 		}

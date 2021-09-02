@@ -3020,15 +3020,15 @@ exports.PGSQL = void 0;
         }
     };
     PGSQL.CalcOffsetFromPage = (page, pageSize, totalRecords) => {
-        if (totalRecords > 0) {
-            const pages = PGSQL.CalcPageCount(+pageSize, +totalRecords);
-            if (page < 1) {
+        if (intelliwaketsfoundation.CleanNumber(totalRecords) > 0) {
+            const pages = PGSQL.CalcPageCount(pageSize, totalRecords);
+            if (intelliwaketsfoundation.CleanNumber(page) < 1) {
                 page = 1;
             }
-            if (page > pages) {
+            if (intelliwaketsfoundation.CleanNumber(page) > intelliwaketsfoundation.CleanNumber(pages)) {
                 page = pages;
             }
-            return (page - 1) * pageSize;
+            return (intelliwaketsfoundation.CleanNumber(page) - 1) * intelliwaketsfoundation.CleanNumber(pageSize);
         }
         else {
             // noinspection JSUnusedAssignment
@@ -3037,8 +3037,8 @@ exports.PGSQL = void 0;
         }
     };
     PGSQL.CalcPageCount = (pageSize, totalRecords) => {
-        if (totalRecords > 0) {
-            return Math.floor((totalRecords + (pageSize - 1)) / pageSize);
+        if (intelliwaketsfoundation.CleanNumber(totalRecords) > 0) {
+            return Math.floor((intelliwaketsfoundation.CleanNumber(totalRecords) + (intelliwaketsfoundation.CleanNumber(pageSize) - 1)) / intelliwaketsfoundation.CleanNumber(pageSize));
         }
         else {
             return 0;
