@@ -34,6 +34,11 @@ export declare namespace PGSQL {
     const GetByID: <T>(connection: TConnection, table: string, id: number | null) => Promise<T | null>;
     /**
      * Returns a number from the sql who's only column returned is "count"
+     *
+     * @param connection
+     * @param sql
+     * @param values
+     * @constructor
      */
     const GetCountSQL: (connection: TConnection, sql: string, values?: any) => Promise<number>;
     const FetchOne: <T>(connection: TConnection, sql: string, values?: any) => Promise<T | null>;

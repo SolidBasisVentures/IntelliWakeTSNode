@@ -2715,6 +2715,11 @@ exports.PGSQL = void 0;
     });
     /**
      * Returns a number from the sql who's only column returned is "count"
+     *
+     * @param connection
+     * @param sql
+     * @param values
+     * @constructor
      */
     PGSQL.GetCountSQL = (connection, sql, values) => __awaiter(this, void 0, void 0, function* () {
         var _w, _x;
