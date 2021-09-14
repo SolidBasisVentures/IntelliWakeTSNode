@@ -2744,8 +2744,14 @@ exports.PGSQL = void 0;
         const data = yield PGSQL.query(connection, sql, values);
         return ((_1 = data.rows) !== null && _1 !== void 0 ? _1 : []).map((row) => row[Object.keys(row)[0]]);
     });
+    PGSQL.FetchExists = (connection, sql, values) => __awaiter(this, void 0, void 0, function* () {
+        var _2, _3;
+        // noinspection SqlResolve
+        const data = yield PGSQL.query(connection, `SELECT EXISTS (${sql}) as does_exist`, values);
+        return !!((_3 = ((_2 = data.rows) !== null && _2 !== void 0 ? _2 : [])[0]) === null || _3 === void 0 ? void 0 : _3.does_exist);
+    });
     PGSQL.InsertAndGetReturning = (connection, table, values) => __awaiter(this, void 0, void 0, function* () {
-        var _2;
+        var _4;
         let newValues = Object.assign({}, values);
         if (!newValues.id) {
             delete newValues.id;
@@ -2761,7 +2767,7 @@ exports.PGSQL = void 0;
             .join(',')})
         RETURNING *`;
         const results = yield PGSQL.query(connection, sql, params.values);
-        return ((_2 = results.rows) !== null && _2 !== void 0 ? _2 : [])[0];
+        return ((_4 = results.rows) !== null && _4 !== void 0 ? _4 : [])[0];
     });
     PGSQL.InsertBulk = (connection, table, values) => __awaiter(this, void 0, void 0, function* () {
         let params = new PGParams();
@@ -2947,19 +2953,19 @@ exports.PGSQL = void 0;
               OR indexdef ILIKE '%(%,%)%')`, [table]);
     });
     PGSQL.ViewData = (connection, view) => __awaiter(this, void 0, void 0, function* () {
-        var _3, _4;
-        return ((_4 = (_3 = (yield PGSQL.FetchOne(connection, `
-          select pg_get_viewdef($1, true) as viewd`, [view]))) === null || _3 === void 0 ? void 0 : _3.viewd) !== null && _4 !== void 0 ? _4 : null);
-    });
-    PGSQL.ViewsMatData = (connection, viewMat) => __awaiter(this, void 0, void 0, function* () {
         var _5, _6;
         return ((_6 = (_5 = (yield PGSQL.FetchOne(connection, `
-          select pg_get_viewdef($1, true) as viewd`, [viewMat]))) === null || _5 === void 0 ? void 0 : _5.viewd) !== null && _6 !== void 0 ? _6 : null);
+          select pg_get_viewdef($1, true) as viewd`, [view]))) === null || _5 === void 0 ? void 0 : _5.viewd) !== null && _6 !== void 0 ? _6 : null);
     });
-    PGSQL.FunctionData = (connection, func) => __awaiter(this, void 0, void 0, function* () {
+    PGSQL.ViewsMatData = (connection, viewMat) => __awaiter(this, void 0, void 0, function* () {
         var _7, _8;
         return ((_8 = (_7 = (yield PGSQL.FetchOne(connection, `
-          select pg_get_functiondef($1) as viewd`, [func]))) === null || _7 === void 0 ? void 0 : _7.viewd) !== null && _8 !== void 0 ? _8 : null);
+          select pg_get_viewdef($1, true) as viewd`, [viewMat]))) === null || _7 === void 0 ? void 0 : _7.viewd) !== null && _8 !== void 0 ? _8 : null);
+    });
+    PGSQL.FunctionData = (connection, func) => __awaiter(this, void 0, void 0, function* () {
+        var _9, _10;
+        return ((_10 = (_9 = (yield PGSQL.FetchOne(connection, `
+          select pg_get_functiondef($1) as viewd`, [func]))) === null || _9 === void 0 ? void 0 : _9.viewd) !== null && _10 !== void 0 ? _10 : null);
     });
     PGSQL.TypeData = (connection, type) => __awaiter(this, void 0, void 0, function* () {
         return PGSQL.FetchArray(connection, `
@@ -3084,13 +3090,13 @@ exports.PGSQL = void 0;
           AND cols.table_name = '${table}'`);
     });
     PGSQL.GetPGTable = (connection, table, schema) => __awaiter(this, void 0, void 0, function* () {
-        var _9, _10, _11, _12, _13;
+        var _11, _12, _13, _14, _15;
         const pgTable = new PGTable();
         pgTable.name = table;
         const columnComments = yield PGSQL.TableColumnComments(connection, table, schema);
         const columns = yield PGSQL.TableColumnsData(connection, table, schema);
         for (const column of columns) {
-            const pgColumn = new PGColumn(Object.assign(Object.assign({}, column), { isAutoIncrement: intelliwaketsfoundation.IsOn(column.identity_increment), udt_name: column.udt_name.toString().startsWith('_') ? column.udt_name.toString().substr(1) : column.udt_name, array_dimensions: column.udt_name.toString().startsWith('_') ? [null] : [], column_default: (((_9 = column.column_default) !== null && _9 !== void 0 ? _9 : '').toString().startsWith('\'NULL\'') || ((_10 = column.column_default) !== null && _10 !== void 0 ? _10 : '').toString().startsWith('NULL::')) ? null : ((_11 = column.column_default) !== null && _11 !== void 0 ? _11 : '').toString().startsWith('\'\'::') ? '' : column.column_default, column_comment: (_13 = (_12 = columnComments.find(col => col.column_name === column.column_name)) === null || _12 === void 0 ? void 0 : _12.column_comment) !== null && _13 !== void 0 ? _13 : '' }));
+            const pgColumn = new PGColumn(Object.assign(Object.assign({}, column), { isAutoIncrement: intelliwaketsfoundation.IsOn(column.identity_increment), udt_name: column.udt_name.toString().startsWith('_') ? column.udt_name.toString().substr(1) : column.udt_name, array_dimensions: column.udt_name.toString().startsWith('_') ? [null] : [], column_default: (((_11 = column.column_default) !== null && _11 !== void 0 ? _11 : '').toString().startsWith('\'NULL\'') || ((_12 = column.column_default) !== null && _12 !== void 0 ? _12 : '').toString().startsWith('NULL::')) ? null : ((_13 = column.column_default) !== null && _13 !== void 0 ? _13 : '').toString().startsWith('\'\'::') ? '' : column.column_default, column_comment: (_15 = (_14 = columnComments.find(col => col.column_name === column.column_name)) === null || _14 === void 0 ? void 0 : _14.column_comment) !== null && _15 !== void 0 ? _15 : '' }));
             pgTable.columns.push(pgColumn);
         }
         const fks = yield PGSQL.TableFKsData(connection, table);
