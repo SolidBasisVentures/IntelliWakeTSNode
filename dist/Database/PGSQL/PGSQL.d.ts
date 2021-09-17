@@ -44,6 +44,7 @@ export declare namespace PGSQL {
     const FetchOne: <T>(connection: TConnection, sql: string, values?: any) => Promise<T | null>;
     const FetchMany: <T>(connection: TConnection, sql: string, values?: any) => Promise<T[]>;
     const FetchArray: <T>(connection: TConnection, sql: string, values?: any) => Promise<T[]>;
+    const FetchExists: (connection: TConnection, sql: string, values?: any) => Promise<boolean>;
     const InsertAndGetReturning: (connection: TConnection, table: string, values: any) => Promise<any | null>;
     const InsertBulk: (connection: TConnection, table: string, values: any) => Promise<void>;
     const UpdateAndGetReturning: (connection: TConnection, table: string, whereValues: any, updateValues: any) => Promise<any | null>;
