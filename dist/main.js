@@ -2515,7 +2515,7 @@ exports.PGSQL = void 0;
     PGSQL.query = (connection, sql, values) => __awaiter(this, void 0, void 0, function* () {
         try {
             if (!process.env.DB_MS_ALERT) {
-                return connection.query(sql, values);
+                return yield connection.query(sql, values);
             }
             else {
                 const start = Date.now();
@@ -2817,7 +2817,7 @@ exports.PGSQL = void 0;
     PGSQL.Execute = (connection, sql, values) => __awaiter(this, void 0, void 0, function* () {
         try {
             if (!process.env.DB_MS_ALERT) {
-                return connection.query(sql, values);
+                return yield connection.query(sql, values);
             }
             else {
                 const start = Date.now();

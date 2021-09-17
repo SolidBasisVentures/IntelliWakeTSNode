@@ -395,7 +395,7 @@ export namespace PGSQL {
 	export const Execute = async (connection: TConnection, sql: string, values?: any) => {
 		try {
 			if (!process.env.DB_MS_ALERT) {
-				return connection.query(sql, values)
+				return await connection.query(sql, values)
 			} else {
 				const start = Date.now()
 				const response = await connection.query(sql, values)
