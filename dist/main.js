@@ -978,10 +978,9 @@ class PGTable {
         var _a, _b, _c;
         const usePaths = {
             initials: intelliwaketsfoundation.RemoveEnding('/', (_a = relativePaths === null || relativePaths === void 0 ? void 0 : relativePaths.initials) !== null && _a !== void 0 ? _a : '@Common/Tables', true),
-            tTables: intelliwaketsfoundation.RemoveEnding('/', (_b = relativePaths === null || relativePaths === void 0 ? void 0 : relativePaths.initials) !== null && _b !== void 0 ? _b : '../Database', true),
-            responseContext: intelliwaketsfoundation.RemoveEnding('/', (_c = relativePaths === null || relativePaths === void 0 ? void 0 : relativePaths.initials) !== null && _c !== void 0 ? _c : '../MiddleWare', true)
+            tTables: intelliwaketsfoundation.RemoveEnding('/', (_b = relativePaths === null || relativePaths === void 0 ? void 0 : relativePaths.tTables) !== null && _b !== void 0 ? _b : '../Database', true),
+            responseContext: intelliwaketsfoundation.RemoveEnding('/', (_c = relativePaths === null || relativePaths === void 0 ? void 0 : relativePaths.responseContext) !== null && _c !== void 0 ? _c : '../MiddleWare', true)
         };
-        console.log(usePaths);
         let text = this.tableHeaderText('Table Class for');
         text += `import {initial_${this.name}, I${this.name}} from '${usePaths.initials}/I${this.name}'` + TS_EOL$1;
         text += `import {TTables} from '${usePaths.tTables}/TTables'` + TS_EOL$1;

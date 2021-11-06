@@ -440,11 +440,9 @@ export class PGTable {
 	public tsTextTable(relativePaths?: ICTableRelativePaths): string {
 		const usePaths: Required<ICTableRelativePaths> = {
 			initials: RemoveEnding('/', relativePaths?.initials ?? '@Common/Tables', true),
-			tTables: RemoveEnding('/', relativePaths?.initials ?? '../Database', true),
-			responseContext: RemoveEnding('/', relativePaths?.initials ?? '../MiddleWare', true)
+			tTables: RemoveEnding('/', relativePaths?.tTables ?? '../Database', true),
+			responseContext: RemoveEnding('/', relativePaths?.responseContext ?? '../MiddleWare', true)
 		}
-		
-		console.log(usePaths)
 		
 		let text = this.tableHeaderText('Table Class for')
 		text += `import {initial_${this.name}, I${this.name}} from '${usePaths.initials}/I${this.name}'` + TS_EOL
