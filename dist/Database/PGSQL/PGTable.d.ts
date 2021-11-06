@@ -1,6 +1,13 @@
 import { PGColumn } from './PGColumn';
 import { PGIndex } from './PGIndex';
 import { PGForeignKey } from './PGForeignKey';
+export interface ICTableRelativePaths {
+    /** @Common/Tables */
+    initials?: string;
+    /** ../Database */
+    tTables?: string;
+    responseContext?: string;
+}
 export declare class PGTable {
     name: string;
     description: string;
@@ -27,7 +34,7 @@ export declare class PGTable {
     addIndex(pgIndex: PGIndex): void;
     tableHeaderText(forTableText: string): string;
     tsText(): string;
-    tsTextTable(): string;
+    tsTextTable(relativePaths?: ICTableRelativePaths): string;
     ddlPrimaryKey(): string | null;
     ddlCreateTableText(createForeignKeys: boolean, createIndexes: boolean, dropFirst?: boolean): string;
     ddlCreateIndexes(): string;

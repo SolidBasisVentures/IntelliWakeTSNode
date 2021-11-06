@@ -1,10 +1,18 @@
 import {PGColumn} from './PGColumn'
 import {PGIndex} from './PGIndex'
 import {PGForeignKey} from './PGForeignKey'
-import {IsOn, ReplaceAll, YYYY_MM_DD_HH_mm_ss} from '@solidbasisventures/intelliwaketsfoundation'
+import {IsOn, RemoveEnding, ReplaceAll, YYYY_MM_DD_HH_mm_ss} from '@solidbasisventures/intelliwaketsfoundation'
 import {PGEnum} from './PGEnum'
 
 const TS_EOL = '\n' // was \r\n
+
+export interface ICTableRelativePaths {
+	/** @Common/Tables */
+	initials?: string
+	/** ../Database */
+	tTables?: string
+	responseContext?: string
+}
 
 export class PGTable {
 	public name = ''
@@ -429,12 +437,20 @@ export class PGTable {
 	}
 }*/
 	
-	public tsTextTable(): string {
+	public tsTextTable(relativePaths?: ICTableRelativePaths): string {
+		const usePaths: Required<ICTableRelativePaths> = {
+			initials: RemoveEnding('/', relativePaths?.initials ?? '@Common/Tables', true),
+			tTables: RemoveEnding('/', relativePaths?.initials ?? '../Database', true),
+			responseContext: RemoveEnding('/', relativePaths?.initials ?? '../MiddleWare', true)
+		}
+		
+		console.log(usePaths)
+		
 		let text = this.tableHeaderText('Table Class for')
-		text += `import {initial_${this.name}, I${this.name}} from '@Common/Tables/I${this.name}'` + TS_EOL
-		text += `import {TTables} from '../Database/Tables'` + TS_EOL
+		text += `import {initial_${this.name}, I${this.name}} from '${usePaths.initials}/I${this.name}'` + TS_EOL
+		text += `import {TTables} from '${usePaths.tTables}/TTables'` + TS_EOL
 		text += `import {_CTable} from './_CTable'` + TS_EOL
-		text += `import {ResponseContext} from '../MiddleWare/ResponseContext'` + TS_EOL
+		text += `import {ResponseContext} from '${usePaths.responseContext}/ResponseContext'` + TS_EOL
 		for (const inherit of this.inherits) {
 			text += `import {_C${inherit}} from "./_C${inherit}"` + TS_EOL
 		}
@@ -446,8 +462,8 @@ export class PGTable {
 		text += ` {` + TS_EOL
 		text += `\tpublic readonly table: TTables` + TS_EOL
 		text += TS_EOL
-		text += `\tconstructor(responseContext: ResponseContext, initialValues?: Partial<I${this.name}>) {` + TS_EOL
-		text += `\t\tsuper(responseContext, initialValues, {...initial_${this.name}})` + TS_EOL
+		text += `\tconstructor(responseContext: ResponseContext) {` + TS_EOL
+		text += `\t\tsuper(responseContext, {...initial_${this.name}})` + TS_EOL
 		text += TS_EOL
 		text += `\t\tthis.table = '${this.name}'` + TS_EOL
 		text += `\t}` + TS_EOL
@@ -488,7 +504,7 @@ export class PGTable {
 			ddl += `DROP TABLE IF EXISTS ${this.name} CASCADE;` + TS_EOL
 		}
 		ddl += `CREATE TABLE ${this.name}
-    (` + TS_EOL
+            (` + TS_EOL
 		
 		let prevColumn: PGColumn | null = null
 		for (const pgColumn of this.columns) {

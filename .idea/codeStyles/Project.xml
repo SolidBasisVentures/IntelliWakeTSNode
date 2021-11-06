@@ -4,7 +4,7 @@
     <CssCodeStyleSettings>
       <option name="VALUE_ALIGNMENT" value="2" />
     </CssCodeStyleSettings>
-    <DB2CodeStyleSettings version="5">
+    <DB2CodeStyleSettings version="6">
       <option name="USE_GENERAL_STYLE" value="false" />
       <option name="KEYWORD_CASE" value="2" />
       <option name="TYPE_CASE" value="2" />
@@ -13,7 +13,7 @@
       <option name="CONSTRAINT_WRAP_3" value="true" />
       <option name="VIEW_INDENT_QUERY" value="true" />
     </DB2CodeStyleSettings>
-    <DerbyCodeStyleSettings version="5">
+    <DerbyCodeStyleSettings version="6">
       <option name="USE_GENERAL_STYLE" value="false" />
       <option name="KEYWORD_CASE" value="2" />
       <option name="TYPE_CASE" value="2" />
@@ -22,7 +22,7 @@
       <option name="CONSTRAINT_WRAP_3" value="true" />
       <option name="VIEW_INDENT_QUERY" value="true" />
     </DerbyCodeStyleSettings>
-    <H2CodeStyleSettings version="5">
+    <H2CodeStyleSettings version="6">
       <option name="USE_GENERAL_STYLE" value="false" />
       <option name="KEYWORD_CASE" value="2" />
       <option name="TYPE_CASE" value="2" />
@@ -31,7 +31,7 @@
       <option name="CONSTRAINT_WRAP_3" value="true" />
       <option name="VIEW_INDENT_QUERY" value="true" />
     </H2CodeStyleSettings>
-    <H2CodeStyleSettings version="5">
+    <H2CodeStyleSettings version="6">
       <option name="USE_GENERAL_STYLE" value="false" />
       <option name="KEYWORD_CASE" value="2" />
       <option name="TYPE_CASE" value="2" />
@@ -40,7 +40,7 @@
       <option name="CONSTRAINT_WRAP_3" value="true" />
       <option name="VIEW_INDENT_QUERY" value="true" />
     </H2CodeStyleSettings>
-    <HSQLCodeStyleSettings version="5">
+    <HSQLCodeStyleSettings version="6">
       <option name="USE_GENERAL_STYLE" value="false" />
       <option name="KEYWORD_CASE" value="2" />
       <option name="TYPE_CASE" value="2" />
@@ -64,7 +64,7 @@
       <option name="ENFORCE_TRAILING_COMMA" value="Remove" />
       <option name="SPACES_WITHIN_OBJECT_TYPE_BRACES" value="false" />
     </JSCodeStyleSettings>
-    <MSSQLCodeStyleSettings version="5">
+    <MSSQLCodeStyleSettings version="6">
       <option name="USE_GENERAL_STYLE" value="false" />
       <option name="KEYWORD_CASE" value="2" />
       <option name="TYPE_CASE" value="2" />
@@ -73,13 +73,13 @@
       <option name="CONSTRAINT_WRAP_3" value="true" />
       <option name="VIEW_INDENT_QUERY" value="true" />
     </MSSQLCodeStyleSettings>
-    <MySQLCodeStyleSettings version="5">
+    <MySQLCodeStyleSettings version="6">
       <option name="USE_GENERAL_STYLE" value="false" />
       <option name="KEYWORD_CASE" value="2" />
       <option name="TYPE_CASE" value="2" />
       <option name="CUSTOM_TYPE_CASE" value="2" />
     </MySQLCodeStyleSettings>
-    <OracleCodeStyleSettings version="5">
+    <OracleCodeStyleSettings version="6">
       <option name="USE_GENERAL_STYLE" value="false" />
       <option name="KEYWORD_CASE" value="2" />
       <option name="TYPE_CASE" value="2" />
@@ -99,7 +99,7 @@
       <option name="VARIABLE_NAMING_STYLE" value="CAMEL_CASE" />
       <option name="BLANK_LINES_BEFORE_RETURN_STATEMENT" value="1" />
     </PHPCodeStyleSettings>
-    <PostgresCodeStyleSettings version="5">
+    <PostgresCodeStyleSettings version="6">
       <option name="USE_GENERAL_STYLE" value="false" />
       <option name="KEYWORD_CASE" value="2" />
       <option name="TYPE_CASE" value="2" />
@@ -108,7 +108,7 @@
       <option name="CONSTRAINT_WRAP_3" value="true" />
       <option name="VIEW_INDENT_QUERY" value="true" />
     </PostgresCodeStyleSettings>
-    <SQLiteCodeStyleSettings version="5">
+    <SQLiteCodeStyleSettings version="6">
       <option name="USE_GENERAL_STYLE" value="false" />
       <option name="KEYWORD_CASE" value="2" />
       <option name="TYPE_CASE" value="2" />
@@ -117,7 +117,7 @@
       <option name="CONSTRAINT_WRAP_3" value="true" />
       <option name="VIEW_INDENT_QUERY" value="true" />
     </SQLiteCodeStyleSettings>
-    <SqlCodeStyleSettings version="5">
+    <SqlCodeStyleSettings version="6">
       <option name="KEYWORD_CASE" value="2" />
       <option name="TYPE_CASE" value="2" />
       <option name="CUSTOM_TYPE_CASE" value="2" />
@@ -125,7 +125,7 @@
       <option name="CONSTRAINT_WRAP_3" value="true" />
       <option name="VIEW_INDENT_QUERY" value="true" />
     </SqlCodeStyleSettings>
-    <SybaseCodeStyleSettings version="5">
+    <SybaseCodeStyleSettings version="6">
       <option name="USE_GENERAL_STYLE" value="false" />
       <option name="KEYWORD_CASE" value="2" />
       <option name="TYPE_CASE" value="2" />
