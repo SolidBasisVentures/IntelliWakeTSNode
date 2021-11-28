@@ -150,7 +150,7 @@ export class MyTable {
 
     public tableHeaderText(forTableText: string): string {
         let text = "/**" + TS_EOL;
-        text += " * Automatically generated: " + YYYY_MM_DD_HH_mm_ss() + TS_EOL;
+        text += " * Automatically generated: " + YYYY_MM_DD_HH_mm_ss('now') + TS_EOL;
         text += " * © " + (new Date()).getFullYear() + ", Solid Basis Ventures, LLC." + TS_EOL; // Must come after generated date so it doesn't keep regenerating
         text += " * DO NOT MODIFY" + TS_EOL;
         text += " *" + TS_EOL;
