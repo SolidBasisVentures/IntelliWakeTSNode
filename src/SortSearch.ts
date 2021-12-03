@@ -10,7 +10,7 @@ export const PaginatorInitializeResponseFromRequest = <T = any>(paginatorRequest
 })
 
 export const PaginatorApplyRowCount = (paginatorResponse: IPaginatorResponse, rowCount: number) => {
-	console.warn('Will deprecate for "PaginatorReturnRowCount"')
+	console.warn('"PaginatorApplyRowCount" will deprecate for "PaginatorReturnRowCount"')
 	paginatorResponse.rowCount = +rowCount
 	
 	if (+rowCount > 0) {
