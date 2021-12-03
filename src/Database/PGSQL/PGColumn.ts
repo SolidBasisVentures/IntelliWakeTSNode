@@ -225,13 +225,12 @@ export class PGColumn implements IPGColumn {
 			}
 		}
 		
+		if (!IsOn(this.is_nullable)) {
+			ddl += 'NOT NULL '
+		}
 		if (!!this.generatedAlwaysAs) {
 			ddl += `GENERATED ALWAYS AS ${PGColumn.CleanComment(this.generatedAlwaysAs)} STORED `
 		} else {
-			if (!IsOn(this.is_nullable)) {
-				ddl += 'NOT NULL '
-			}
-			
 			if (typeof this.column_default === 'string' && this.column_default.toLowerCase().includes('null')) {
 				this.column_default = null
 			}

@@ -80,6 +80,7 @@ const PaginatorInitializeResponseFromRequest = (paginatorRequest) => ({
     rows: []
 });
 const PaginatorApplyRowCount = (paginatorResponse, rowCount) => {
+    console.warn('"PaginatorApplyRowCount" will deprecate for "PaginatorReturnRowCount"');
     paginatorResponse.rowCount = +rowCount;
     if (+rowCount > 0) {
         paginatorResponse.pageCount = Math.floor((+rowCount + (+paginatorResponse.countPerPage - 1)) / +paginatorResponse.countPerPage);
@@ -87,13 +88,32 @@ const PaginatorApplyRowCount = (paginatorResponse, rowCount) => {
             paginatorResponse.page = 1;
         if (+paginatorResponse.page > +paginatorResponse.pageCount)
             paginatorResponse.page = +paginatorResponse.pageCount;
-        paginatorResponse.currentOffset = (+paginatorResponse.page - 1) * +paginatorResponse.pageCount;
+        paginatorResponse.currentOffset = (+paginatorResponse.page - 1) * +paginatorResponse.countPerPage;
     }
     else {
         paginatorResponse.pageCount = 0;
         paginatorResponse.currentOffset = 0;
         paginatorResponse.page = 1;
     }
+};
+const PaginatorReturnRowCount = (paginatorResponse, rowCount) => {
+    let response = Object.assign({}, paginatorResponse);
+    response.rowCount = intelliwaketsfoundation.CleanNumber(rowCount);
+    response.page = intelliwaketsfoundation.CleanNumber(response.page);
+    if (response.rowCount > 0) {
+        response.pageCount = Math.floor((intelliwaketsfoundation.CleanNumber(rowCount) + (intelliwaketsfoundation.CleanNumber(response.countPerPage) - 1)) / intelliwaketsfoundation.CleanNumber(response.countPerPage));
+        if (response.page < 1)
+            response.page = 1;
+        if (response.page > response.pageCount)
+            response.page = response.pageCount;
+        response.currentOffset = (response.page - 1) * response.countPerPage;
+    }
+    else {
+        response.pageCount = 0;
+        response.currentOffset = 0;
+        response.page = 1;
+    }
+    return response;
 };
 
 class PGEnum {
@@ -272,13 +292,13 @@ class PGColumn {
                 ddl += ' ';
             }
         }
+        if (!intelliwaketsfoundation.IsOn(this.is_nullable)) {
+            ddl += 'NOT NULL ';
+        }
         if (!!this.generatedAlwaysAs) {
             ddl += `GENERATED ALWAYS AS ${PGColumn.CleanComment(this.generatedAlwaysAs)} STORED `;
         }
         else {
-            if (!intelliwaketsfoundation.IsOn(this.is_nullable)) {
-                ddl += 'NOT NULL ';
-            }
             if (typeof this.column_default === 'string' && this.column_default.toLowerCase().includes('null')) {
                 this.column_default = null;
             }
@@ -736,7 +756,7 @@ class PGTable {
     }
     tableHeaderText(forTableText) {
         let text = '/**' + TS_EOL$1;
-        text += ' * Automatically generated: ' + intelliwaketsfoundation.YYYY_MM_DD_HH_mm_ss() + TS_EOL$1;
+        text += ' * Automatically generated: ' + intelliwaketsfoundation.YYYY_MM_DD_HH_mm_ss('now') + TS_EOL$1;
         text += ' * © ' + (new Date()).getFullYear() + ', Solid Basis Ventures, LLC.' + TS_EOL$1; // Must come after generated date so it doesn't keep regenerating
         text += ' * DO NOT MODIFY' + TS_EOL$1;
         text += ' *' + TS_EOL$1;
@@ -1505,7 +1525,7 @@ class MyTable {
     }
     tableHeaderText(forTableText) {
         let text = "/**" + TS_EOL;
-        text += " * Automatically generated: " + intelliwaketsfoundation.YYYY_MM_DD_HH_mm_ss() + TS_EOL;
+        text += " * Automatically generated: " + intelliwaketsfoundation.YYYY_MM_DD_HH_mm_ss('now') + TS_EOL;
         text += " * © " + (new Date()).getFullYear() + ", Solid Basis Ventures, LLC." + TS_EOL; // Must come after generated date so it doesn't keep regenerating
         text += " * DO NOT MODIFY" + TS_EOL;
         text += " *" + TS_EOL;
@@ -3102,7 +3122,7 @@ exports.PGSQL = void 0;
         const columnComments = yield PGSQL.TableColumnComments(connection, table, schema);
         const columns = yield PGSQL.TableColumnsData(connection, table, schema);
         for (const column of columns) {
-            const pgColumn = new PGColumn(Object.assign(Object.assign({}, column), { isAutoIncrement: intelliwaketsfoundation.IsOn(column.identity_increment), udt_name: column.udt_name.toString().startsWith('_') ? column.udt_name.toString().substr(1) : column.udt_name, array_dimensions: column.udt_name.toString().startsWith('_') ? [null] : [], column_default: (((_11 = column.column_default) !== null && _11 !== void 0 ? _11 : '').toString().startsWith('\'NULL\'') || ((_12 = column.column_default) !== null && _12 !== void 0 ? _12 : '').toString().startsWith('NULL::')) ? null : ((_13 = column.column_default) !== null && _13 !== void 0 ? _13 : '').toString().startsWith('\'\'::') ? '' : column.column_default, column_comment: (_15 = (_14 = columnComments.find(col => col.column_name === column.column_name)) === null || _14 === void 0 ? void 0 : _14.column_comment) !== null && _15 !== void 0 ? _15 : '' }));
+            const pgColumn = new PGColumn(Object.assign(Object.assign({}, column), { generatedAlwaysAs: column.generation_expression, isAutoIncrement: intelliwaketsfoundation.IsOn(column.identity_increment), udt_name: column.udt_name.toString().startsWith('_') ? column.udt_name.toString().substr(1) : column.udt_name, array_dimensions: column.udt_name.toString().startsWith('_') ? [null] : [], column_default: (((_11 = column.column_default) !== null && _11 !== void 0 ? _11 : '').toString().startsWith('\'NULL\'') || ((_12 = column.column_default) !== null && _12 !== void 0 ? _12 : '').toString().startsWith('NULL::')) ? null : ((_13 = column.column_default) !== null && _13 !== void 0 ? _13 : '').toString().startsWith('\'\'::') ? '' : column.column_default, column_comment: (_15 = (_14 = columnComments.find(col => col.column_name === column.column_name)) === null || _14 === void 0 ? void 0 : _14.column_comment) !== null && _15 !== void 0 ? _15 : '' }));
             pgTable.columns.push(pgColumn);
         }
         const fks = yield PGSQL.TableFKsData(connection, table);
@@ -3276,3 +3296,4 @@ exports.PGView = PGView;
 exports.PGWhereSearchClause = PGWhereSearchClause;
 exports.PaginatorApplyRowCount = PaginatorApplyRowCount;
 exports.PaginatorInitializeResponseFromRequest = PaginatorInitializeResponseFromRequest;
+exports.PaginatorReturnRowCount = PaginatorReturnRowCount;

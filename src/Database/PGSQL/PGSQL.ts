@@ -775,6 +775,7 @@ export namespace PGSQL {
 		for (const column of columns) {
 			const pgColumn = new PGColumn({
 				...column,
+				generatedAlwaysAs: column.generation_expression,
 				isAutoIncrement: IsOn(column.identity_increment),
 				udt_name: column.udt_name.toString().startsWith('_') ? column.udt_name.toString().substr(1) : column.udt_name,
 				array_dimensions: column.udt_name.toString().startsWith('_') ? [null] : [],
