@@ -23,7 +23,7 @@
   },
   "peerDependencies": {},
   "devDependencies": {
-    "@solidbasisventures/intelliwaketsfoundation": "^5.0.83",
+    "@solidbasisventures/intelliwaketsfoundation": "^5.0.86",
     "@types/jest": "^26.0.15",
     "@types/mssql": "^6.0.2",
     "@types/mysql": "^2.15.15",
