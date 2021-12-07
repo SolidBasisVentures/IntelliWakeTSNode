@@ -2557,6 +2557,7 @@ exports.PGSQL = void 0;
         }
         catch (err) {
             console.log('------------ SQL Query');
+            console.log(intelliwaketsfoundation.DateFormat('LocalDateTime', 'now', 'America/New_York'));
             console.log(err.message);
             console.log(sql);
             console.log(values);

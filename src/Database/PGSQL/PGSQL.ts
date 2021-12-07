@@ -1,7 +1,7 @@
 // noinspection SqlNoDataSourceInspection
 
 import {
-	CleanNumber,
+	CleanNumber, DateFormat,
 	IPaginatorRequest,
 	IPaginatorResponse,
 	IsOn,
@@ -51,6 +51,7 @@ export namespace PGSQL {
 			}
 		} catch (err) {
 			console.log('------------ SQL Query')
+			console.log(DateFormat('LocalDateTime', 'now', 'America/New_York'))
 			console.log(err.message)
 			console.log(sql)
 			console.log(values)
