@@ -3,7 +3,21 @@ import { PGTable } from './PGTable';
 import { PGParams } from './PGParams';
 import { PGEnum } from './PGEnum';
 import { Client, FieldDef, Pool, PoolClient } from 'pg';
-export declare type TConnection = Pool | PoolClient | Client;
+declare function transact<TResult>(fn: (client: PoolClient) => Promise<TResult>): Promise<TResult>;
+declare function transact<TResult>(fn: (client: PoolClient) => Promise<TResult>, cb: (error: Error | null, result?: TResult) => void): void;
+export declare type TConnection = Pool | PoolClient | Client | {
+    pool: Pool;
+    Client: Client;
+    query: Pool['query'];
+    connect: Pool['connect'];
+    transact: typeof transact;
+} & Record<string, {
+    pool: Pool;
+    Client: Client;
+    query: Pool['query'];
+    connect: Pool['connect'];
+    transact: typeof transact;
+}>;
 export declare namespace PGSQL {
     interface IOffsetAndCount {
         offset: number;
@@ -85,3 +99,4 @@ export declare namespace PGSQL {
     }[]>;
     const GetPGTable: (connection: TConnection, table: string, schema?: string | undefined) => Promise<PGTable>;
 }
+export {};
