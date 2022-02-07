@@ -16,7 +16,28 @@ import {PGForeignKey} from './PGForeignKey'
 import {Client, FieldDef, Pool, PoolClient} from 'pg'
 // import QueryStream from 'pg-query-stream'
 
-export type TConnection = Pool | PoolClient | Client
+declare function transact<TResult>(
+	fn: (client: PoolClient) => Promise<TResult>
+): Promise<TResult>;
+
+declare function transact<TResult>(
+	fn: (client: PoolClient) => Promise<TResult>,
+	cb: (error: Error | null, result?: TResult) => void
+): void;
+
+export type TConnection = Pool | PoolClient | Client | {
+	pool: Pool;
+	Client: Client;
+	query: Pool['query'];
+	connect: Pool['connect'];
+	transact: typeof transact;
+} & Record<string, {
+	pool: Pool;
+	Client: Client;
+	query: Pool['query'];
+	connect: Pool['connect'];
+	transact: typeof transact;
+}>
 
 export namespace PGSQL {
 	export interface IOffsetAndCount {
