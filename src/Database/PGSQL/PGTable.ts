@@ -1,7 +1,13 @@
 import {PGColumn} from './PGColumn'
 import {PGIndex} from './PGIndex'
 import {PGForeignKey} from './PGForeignKey'
-import {IsOn, RemoveEnding, ReplaceAll, YYYY_MM_DD_HH_mm_ss} from '@solidbasisventures/intelliwaketsfoundation'
+import {
+	IsOn,
+	RemoveEnding,
+	ReplaceAll,
+	SortCompare,
+	YYYY_MM_DD_HH_mm_ss
+} from '@solidbasisventures/intelliwaketsfoundation'
 import {PGEnum} from './PGEnum'
 
 const TS_EOL = '\n' // was \r\n
@@ -436,6 +442,20 @@ export class PGTable {
 		this.table = 'progress_report_test'
 	}
 }*/
+	
+	public static TSTables(tables: string[]): string {
+		let text = `export type TTables =`
+		text += TS_EOL
+		text += '\t'
+		text += tables
+			.filter(table => !!table)
+			.sort((a, b) => SortCompare(a, b))
+			.map(table => `'${table}'`)
+			.join(TS_EOL + '\t| ')
+		text += TS_EOL
+		
+		return text
+	}
 	
 	public tsTextTable(relativePaths?: ICTableRelativePaths): string {
 		const usePaths: Required<ICTableRelativePaths> = {
