@@ -994,6 +994,18 @@ class PGTable {
         this.table = 'progress_report_test'
     }
 }*/
+    static TSTables(tables) {
+        let text = `export type TTables =`;
+        text += TS_EOL$1;
+        text += '\t';
+        text += tables
+            .filter(table => !!table)
+            .sort((a, b) => intelliwaketsfoundation.SortCompare(a, b))
+            .map(table => `'${table}'`)
+            .join(TS_EOL$1 + '\t| ');
+        text += TS_EOL$1;
+        return text;
+    }
     tsTextTable(relativePaths) {
         var _a, _b, _c;
         const usePaths = {
@@ -1421,12 +1433,12 @@ class MyIndex {
 const TS_EOL = '\r\n';
 class MyTable {
     constructor(instanceData) {
-        this.name = "";
-        this.description = "";
-        this.ENGINE = "InnoDB";
-        this.CHARSET = "utf8mb4";
-        this.COLLATE = "utf8mb4_unicode_ci";
-        this.ROW_FORMAT = "COMPACT";
+        this.name = '';
+        this.description = '';
+        this.ENGINE = 'InnoDB';
+        this.CHARSET = 'utf8mb4';
+        this.COLLATE = 'utf8mb4_unicode_ci';
+        this.ROW_FORMAT = 'COMPACT';
         this.columns = [];
         this.indexes = [];
         this.foreignKeys = [];
@@ -1524,105 +1536,105 @@ class MyTable {
         this.indexes.push(myIndex);
     }
     tableHeaderText(forTableText) {
-        let text = "/**" + TS_EOL;
-        text += " * Automatically generated: " + intelliwaketsfoundation.YYYY_MM_DD_HH_mm_ss('now') + TS_EOL;
-        text += " * © " + (new Date()).getFullYear() + ", Solid Basis Ventures, LLC." + TS_EOL; // Must come after generated date so it doesn't keep regenerating
-        text += " * DO NOT MODIFY" + TS_EOL;
-        text += " *" + TS_EOL;
-        text += " * " + forTableText + ": " + this.name + TS_EOL;
+        let text = '/**' + TS_EOL;
+        text += ' * Automatically generated: ' + intelliwaketsfoundation.YYYY_MM_DD_HH_mm_ss('now') + TS_EOL;
+        text += ' * © ' + (new Date()).getFullYear() + ', Solid Basis Ventures, LLC.' + TS_EOL; // Must come after generated date so it doesn't keep regenerating
+        text += ' * DO NOT MODIFY' + TS_EOL;
+        text += ' *' + TS_EOL;
+        text += ' * ' + forTableText + ': ' + this.name + TS_EOL;
         if (!!this.description) {
-            text += " *" + TS_EOL;
-            text += " * " + MyTable.CleanComment(this.description) + TS_EOL;
+            text += ' *' + TS_EOL;
+            text += ' * ' + MyTable.CleanComment(this.description) + TS_EOL;
         }
-        text += " */" + TS_EOL;
+        text += ' */' + TS_EOL;
         text += TS_EOL;
         return text;
     }
     tsText() {
         var _a;
-        let text = this.tableHeaderText("Table Manager for");
+        let text = this.tableHeaderText('Table Manager for');
         text += `export interface I${this.name} {` + TS_EOL;
         let addComma = false;
-        let addComment = "";
+        let addComment = '';
         for (const myColumn of this.columns) {
             if (addComma) {
-                text += "," + addComment + TS_EOL;
+                text += ',' + addComment + TS_EOL;
             }
-            text += "\t";
+            text += '\t';
             text += myColumn.COLUMN_NAME;
-            text += ": ";
+            text += ': ';
             text += myColumn.jsType();
             if (intelliwaketsfoundation.IsOn((_a = myColumn.IS_NULLABLE) !== null && _a !== void 0 ? _a : 'YES')) {
                 text += ' | null';
             }
             if (!!myColumn.COLUMN_COMMENT) {
-                addComment = " // " + MyTable.CleanComment(myColumn.COLUMN_COMMENT);
+                addComment = ' // ' + MyTable.CleanComment(myColumn.COLUMN_COMMENT);
             }
             else {
-                addComment = "";
+                addComment = '';
             }
             addComma = true;
         }
         text += addComment + TS_EOL;
-        text += "}" + TS_EOL;
+        text += '}' + TS_EOL;
         text += TS_EOL;
         text += `export const initial_${this.name}: I${this.name} = {` + TS_EOL;
         addComma = false;
-        addComment = "";
+        addComment = '';
         for (const myColumn of this.columns) {
             if (addComma) {
-                text += "," + TS_EOL;
+                text += ',' + TS_EOL;
             }
-            text += "\t";
+            text += '\t';
             text += myColumn.COLUMN_NAME;
-            text += ": ";
+            text += ': ';
             if (!myColumn.blobType()) {
                 if (myColumn.isAutoIncrement || myColumn.EXTRA === 'auto_increment') {
-                    text += "0";
+                    text += '0';
                 }
                 else if (!!myColumn.COLUMN_DEFAULT) {
                     if (myColumn.booleanType()) {
                         text += (intelliwaketsfoundation.IsOn(myColumn.COLUMN_DEFAULT) ? 'true' : 'false');
                     }
                     else if (myColumn.dateType()) {
-                        text += "''";
+                        text += '\'\'';
                     }
                     else if (myColumn.integerFloatType() || myColumn.dateType()) {
                         text += myColumn.COLUMN_DEFAULT;
                     }
                     else {
-                        text += "'" + myColumn.COLUMN_DEFAULT + "'";
+                        text += '\'' + myColumn.COLUMN_DEFAULT + '\'';
                     }
                 }
                 else if (intelliwaketsfoundation.IsOn(myColumn.IS_NULLABLE)) {
-                    text += "null";
+                    text += 'null';
                 }
                 else {
                     if (myColumn.booleanType()) {
-                        text += "true";
+                        text += 'true';
                     }
                     else if (myColumn.integerFloatType()) {
-                        text += "0";
+                        text += '0';
                     }
                     else if (myColumn.dateType()) {
-                        text += "''";
+                        text += '\'\'';
                     }
                     else {
-                        text += "''";
+                        text += '\'\'';
                     }
                 }
             }
             else {
-                text += "''";
+                text += '\'\'';
             }
             addComma = true;
         }
         text += addComment + TS_EOL;
-        text += "};" + TS_EOL;
+        text += '};' + TS_EOL;
         return text;
     }
     tsTextTable() {
-        let text = this.tableHeaderText("Table Class for");
+        let text = this.tableHeaderText('Table Class for');
         text += `import {initial_${this.name}, I${this.name}} from "../../../app/src/Common/Tables/${this.name}";` + TS_EOL;
         text += `import {TTables} from "../Database/Tables";` + TS_EOL;
         text += `import {TConnection} from "../Database/mysqlConnection";` + TS_EOL;
@@ -1641,18 +1653,18 @@ class MyTable {
     }
     ddlPrimaryKey(_altering) {
         let found = false;
-        let ddl = "PRIMARY KEY (`";
+        let ddl = 'PRIMARY KEY (`';
         for (const column of this.columns) {
             if (column.isPK) {
                 if (found) {
-                    ddl += "`,`";
+                    ddl += '`,`';
                 }
                 ddl += column.COLUMN_NAME;
                 found = true;
             }
         }
         if (found) {
-            ddl += "`)";
+            ddl += '`)';
             return ddl;
         }
         return null;
@@ -1660,34 +1672,35 @@ class MyTable {
     ddlText(process, includeFKs, altering = false) {
         var _a, _b, _c, _d;
         return __awaiter(this, void 0, void 0, function* () {
-            let ddl = "";
+            let ddl = '';
             if (!altering) {
                 if (altering) {
                     /** @noinspection SqlResolve */
                     ddl += `DROP TABLE ${this.name} CASCADE;` + TS_EOL;
                 }
-                ddl += `CREATE TABLE ${this.name} (` + TS_EOL;
+                ddl += `CREATE TABLE ${this.name}
+              (` + TS_EOL;
                 let prevColumn = null;
                 for (const myColumn of this.columns) {
                     if (prevColumn !== null) {
-                        ddl += "," + TS_EOL;
+                        ddl += ',' + TS_EOL;
                     }
-                    ddl += "\t" + myColumn.ddlDefinition(this, prevColumn, altering);
+                    ddl += '\t' + myColumn.ddlDefinition(this, prevColumn, altering);
                     prevColumn = myColumn;
                 }
                 const pk = this.ddlPrimaryKey(altering);
                 if (!!pk) {
-                    ddl += "," + TS_EOL + "\t" + pk;
+                    ddl += ',' + TS_EOL + '\t' + pk;
                 }
                 for (const index of this.indexes) {
-                    ddl += "," + TS_EOL + "\t" + index.ddlDefinition(this, altering);
+                    ddl += ',' + TS_EOL + '\t' + index.ddlDefinition(this, altering);
                 }
                 if (includeFKs) {
                     for (const foreignKey of this.foreignKeys) {
-                        ddl += "," + TS_EOL + "\t" + foreignKey.ddlKeyDefinition(this, altering);
+                        ddl += ',' + TS_EOL + '\t' + foreignKey.ddlKeyDefinition(this, altering);
                     }
                     for (const foreignKey of this.foreignKeys) {
-                        ddl += "," + TS_EOL + "\t" + foreignKey.ddlConstraintDefinition(this, altering);
+                        ddl += ',' + TS_EOL + '\t' + foreignKey.ddlConstraintDefinition(this, altering);
                     }
                 }
                 ddl += TS_EOL;
@@ -1705,28 +1718,28 @@ class MyTable {
                     for (const index of this.indexes) {
                         // if (!await SQL.IndexExists(connection, this.name, index.name(this))) {
                         if (needsComma) {
-                            ddl += "," + TS_EOL;
+                            ddl += ',' + TS_EOL;
                         }
                         needsComma = true;
-                        ddl += "\t" + index.ddlDefinition(this, altering);
+                        ddl += '\t' + index.ddlDefinition(this, altering);
                         // }
                     }
                     for (const foreignKey of this.foreignKeys) {
                         // if (!await SQL.IndexExists(connection, this.name, foreignKey.fkName(this, 'idx'))) {
                         if (needsComma) {
-                            ddl += "," + TS_EOL;
+                            ddl += ',' + TS_EOL;
                         }
                         needsComma = true;
-                        ddl += "\t" + foreignKey.ddlKeyDefinition(this, altering);
+                        ddl += '\t' + foreignKey.ddlKeyDefinition(this, altering);
                         // }
                     }
                     for (const foreignKey of this.foreignKeys) {
                         // if (!await SQL.ConstraintExists(connection, this.name, foreignKey.fkName(this, 'fk'))) {
                         if (needsComma) {
-                            ddl += "," + TS_EOL;
+                            ddl += ',' + TS_EOL;
                         }
                         needsComma = true;
-                        ddl += "\t" + foreignKey.ddlConstraintDefinition(this, altering);
+                        ddl += '\t' + foreignKey.ddlConstraintDefinition(this, altering);
                         // }
                     }
                 }
@@ -1772,11 +1785,11 @@ class MyTable {
             return;
         }
         if (useSBVCheck) {
-            let newSBVPos = data.indexOf("Solid Basis Ventures");
+            let newSBVPos = data.indexOf('Solid Basis Ventures');
             if (newSBVPos) {
                 if (fs__default['default'].existsSync(fileName.replace('/New/', '/')) && (!fileName.includes('/New/') || !fs__default['default'].existsSync(fileName))) {
                     const originalData = fs__default['default'].readFileSync(fileName.replace('/New/', '/'), 'utf8');
-                    const originalSBVPos = originalData.indexOf("Solid Basis Ventures");
+                    const originalSBVPos = originalData.indexOf('Solid Basis Ventures');
                     const originalCheck = originalData.substr(originalSBVPos);
                     const newCheck = data.substr(newSBVPos);
                     if (originalCheck === newCheck) {
@@ -1819,7 +1832,7 @@ class MyTable {
             calcFileName += '.json';
         }
         if (!calcFileName.startsWith(MyTable.DEFINITIONS_DIR)) {
-            calcFileName = MyTable.DEFINITIONS_DIR + "/" + calcFileName;
+            calcFileName = MyTable.DEFINITIONS_DIR + '/' + calcFileName;
         }
         return new MyTable(JSON.parse(fs__default['default'].readFileSync(calcFileName)));
     }
@@ -1843,13 +1856,13 @@ class MyTable {
         let files = fs__default['default'].readdirSync(MyTable.DEFINITIONS_DIR);
         for (const file of files) {
             if (file.endsWith('.json')) {
-                fs__default['default'].unlinkSync(MyTable.DEFINITIONS_DIR + "/" + file);
+                fs__default['default'].unlinkSync(MyTable.DEFINITIONS_DIR + '/' + file);
             }
         }
         files = fs__default['default'].readdirSync(MyTable.TS_INTERFACE_DIR);
         for (const file of files) {
             if (file.endsWith('.json')) {
-                fs__default['default'].unlinkSync(MyTable.TS_INTERFACE_DIR + "/" + file);
+                fs__default['default'].unlinkSync(MyTable.TS_INTERFACE_DIR + '/' + file);
             }
         }
     }
@@ -1871,9 +1884,9 @@ class MyTable {
         return comment.replace(/[\n\r]/g, ' ');
     }
 }
-MyTable.DEFINITIONS_DIR = path__default['default'].resolve("./") + "/src/Assets/Tables";
-MyTable.TS_INTERFACE_DIR = path__default['default'].resolve("./") + "/../app/src/Common/Tables";
-MyTable.TS_CLASS_DIR = path__default['default'].resolve("./") + "/src/Tables";
+MyTable.DEFINITIONS_DIR = path__default['default'].resolve('./') + '/src/Assets/Tables';
+MyTable.TS_INTERFACE_DIR = path__default['default'].resolve('./') + '/../app/src/Common/Tables';
+MyTable.TS_CLASS_DIR = path__default['default'].resolve('./') + '/src/Tables';
 
 exports.MySQL = void 0;
 (function (MySQL) {

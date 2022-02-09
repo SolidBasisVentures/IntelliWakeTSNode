@@ -34,6 +34,7 @@ export declare class PGTable {
     addIndex(pgIndex: PGIndex): void;
     tableHeaderText(forTableText: string): string;
     tsText(): string;
+    static TSTables(tables: string[]): string;
     tsTextTable(relativePaths?: ICTableRelativePaths): string;
     ddlPrimaryKey(): string | null;
     ddlCreateTableText(createForeignKeys: boolean, createIndexes: boolean, dropFirst?: boolean): string;
