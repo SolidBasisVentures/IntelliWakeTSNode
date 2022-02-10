@@ -18,6 +18,8 @@ export interface ICTableRelativePaths {
 	/** ../Database */
 	tTables?: string
 	responseContext?: string
+	responseContextName?: string
+	responseContextClass?: string
 }
 
 export class PGTable {
@@ -461,14 +463,16 @@ export class PGTable {
 		const usePaths: Required<ICTableRelativePaths> = {
 			initials: RemoveEnding('/', relativePaths?.initials ?? '@Common/Tables', true),
 			tTables: RemoveEnding('/', relativePaths?.tTables ?? '../Database', true),
-			responseContext: RemoveEnding('/', relativePaths?.responseContext ?? '../MiddleWare', true)
+			responseContext: RemoveEnding('/', relativePaths?.responseContext ?? '../MiddleWare', true),
+			responseContextName: relativePaths?.responseContextName ?? 'responseContext',
+			responseContextClass: relativePaths?.responseContextClass ?? 'ResponseContext'
 		}
 		
 		let text = this.tableHeaderText('Table Class for')
 		text += `import {initial_${this.name}, I${this.name}} from '${usePaths.initials}/I${this.name}'` + TS_EOL
 		text += `import {TTables} from '${usePaths.tTables}/TTables'` + TS_EOL
 		text += `import {_CTable} from './_CTable'` + TS_EOL
-		text += `import {ResponseContext} from '${usePaths.responseContext}/ResponseContext'` + TS_EOL
+		text += `import {${usePaths.responseContextClass}} from '${usePaths.responseContext}/ResponseContext'` + TS_EOL
 		for (const inherit of this.inherits) {
 			text += `import {_C${inherit}} from "./_C${inherit}"` + TS_EOL
 		}
@@ -480,8 +484,8 @@ export class PGTable {
 		text += ` {` + TS_EOL
 		text += `\tpublic readonly table: TTables` + TS_EOL
 		text += TS_EOL
-		text += `\tconstructor(responseContext: ResponseContext) {` + TS_EOL
-		text += `\t\tsuper(responseContext, {...initial_${this.name}})` + TS_EOL
+		text += `\tconstructor(${usePaths.responseContextName}: ${usePaths.responseContextClass}) {` + TS_EOL
+		text += `\t\tsuper(${usePaths.responseContextName}, {...initial_${this.name}})` + TS_EOL
 		text += TS_EOL
 		text += `\t\tthis.table = '${this.name}'` + TS_EOL
 		text += `\t}` + TS_EOL

@@ -1007,17 +1007,19 @@ class PGTable {
         return text;
     }
     tsTextTable(relativePaths) {
-        var _a, _b, _c;
+        var _a, _b, _c, _d, _e;
         const usePaths = {
             initials: intelliwaketsfoundation.RemoveEnding('/', (_a = relativePaths === null || relativePaths === void 0 ? void 0 : relativePaths.initials) !== null && _a !== void 0 ? _a : '@Common/Tables', true),
             tTables: intelliwaketsfoundation.RemoveEnding('/', (_b = relativePaths === null || relativePaths === void 0 ? void 0 : relativePaths.tTables) !== null && _b !== void 0 ? _b : '../Database', true),
-            responseContext: intelliwaketsfoundation.RemoveEnding('/', (_c = relativePaths === null || relativePaths === void 0 ? void 0 : relativePaths.responseContext) !== null && _c !== void 0 ? _c : '../MiddleWare', true)
+            responseContext: intelliwaketsfoundation.RemoveEnding('/', (_c = relativePaths === null || relativePaths === void 0 ? void 0 : relativePaths.responseContext) !== null && _c !== void 0 ? _c : '../MiddleWare', true),
+            responseContextName: (_d = relativePaths === null || relativePaths === void 0 ? void 0 : relativePaths.responseContextName) !== null && _d !== void 0 ? _d : 'responseContext',
+            responseContextClass: (_e = relativePaths === null || relativePaths === void 0 ? void 0 : relativePaths.responseContextClass) !== null && _e !== void 0 ? _e : 'ResponseContext'
         };
         let text = this.tableHeaderText('Table Class for');
         text += `import {initial_${this.name}, I${this.name}} from '${usePaths.initials}/I${this.name}'` + TS_EOL$1;
         text += `import {TTables} from '${usePaths.tTables}/TTables'` + TS_EOL$1;
         text += `import {_CTable} from './_CTable'` + TS_EOL$1;
-        text += `import {ResponseContext} from '${usePaths.responseContext}/ResponseContext'` + TS_EOL$1;
+        text += `import {${usePaths.responseContextClass}} from '${usePaths.responseContext}/ResponseContext'` + TS_EOL$1;
         for (const inherit of this.inherits) {
             text += `import {_C${inherit}} from "./_C${inherit}"` + TS_EOL$1;
         }
@@ -1029,8 +1031,8 @@ class PGTable {
         text += ` {` + TS_EOL$1;
         text += `\tpublic readonly table: TTables` + TS_EOL$1;
         text += TS_EOL$1;
-        text += `\tconstructor(responseContext: ResponseContext) {` + TS_EOL$1;
-        text += `\t\tsuper(responseContext, {...initial_${this.name}})` + TS_EOL$1;
+        text += `\tconstructor(${usePaths.responseContextName}: ${usePaths.responseContextClass}) {` + TS_EOL$1;
+        text += `\t\tsuper(${usePaths.responseContextName}, {...initial_${this.name}})` + TS_EOL$1;
         text += TS_EOL$1;
         text += `\t\tthis.table = '${this.name}'` + TS_EOL$1;
         text += `\t}` + TS_EOL$1;

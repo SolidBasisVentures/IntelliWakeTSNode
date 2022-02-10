@@ -7,6 +7,8 @@ export interface ICTableRelativePaths {
     /** ../Database */
     tTables?: string;
     responseContext?: string;
+    responseContextName?: string;
+    responseContextClass?: string;
 }
 export declare class PGTable {
     name: string;
