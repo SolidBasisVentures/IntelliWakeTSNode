@@ -2811,6 +2811,25 @@ exports.PGSQL = void 0;
         const results = yield PGSQL.query(connection, sql, params.values);
         return ((_4 = results.rows) !== null && _4 !== void 0 ? _4 : [])[0];
     });
+    PGSQL.InsertAndGetID = (connection, table, values) => __awaiter(this, void 0, void 0, function* () {
+        var _5;
+        let newValues = Object.assign({}, values);
+        if (!newValues.id) {
+            delete newValues.id;
+            // delete newValues.added_date;
+            // delete newValues.modified_date;
+        }
+        let params = new PGParams();
+        const sql = `
+        INSERT INTO ${table}
+            ("${Object.keys(newValues).join('","')}")
+        VALUES (${Object.values(newValues)
+            .map(value => params.add(value))
+            .join(',')})
+        RETURNING id`;
+        const results = yield PGSQL.query(connection, sql, params.values);
+        return ((_5 = results.rows) !== null && _5 !== void 0 ? _5 : [])[0][0];
+    });
     PGSQL.InsertBulk = (connection, table, values) => __awaiter(this, void 0, void 0, function* () {
         let params = new PGParams();
         const sql = `
@@ -2995,19 +3014,19 @@ exports.PGSQL = void 0;
               OR indexdef ILIKE '%(%,%)%')`, [table]);
     });
     PGSQL.ViewData = (connection, view) => __awaiter(this, void 0, void 0, function* () {
-        var _5, _6;
-        return ((_6 = (_5 = (yield PGSQL.FetchOne(connection, `
-          select pg_get_viewdef($1, true) as viewd`, [view]))) === null || _5 === void 0 ? void 0 : _5.viewd) !== null && _6 !== void 0 ? _6 : null);
+        var _6, _7;
+        return ((_7 = (_6 = (yield PGSQL.FetchOne(connection, `
+          select pg_get_viewdef($1, true) as viewd`, [view]))) === null || _6 === void 0 ? void 0 : _6.viewd) !== null && _7 !== void 0 ? _7 : null);
     });
     PGSQL.ViewsMatData = (connection, viewMat) => __awaiter(this, void 0, void 0, function* () {
-        var _7, _8;
-        return ((_8 = (_7 = (yield PGSQL.FetchOne(connection, `
-          select pg_get_viewdef($1, true) as viewd`, [viewMat]))) === null || _7 === void 0 ? void 0 : _7.viewd) !== null && _8 !== void 0 ? _8 : null);
+        var _8, _9;
+        return ((_9 = (_8 = (yield PGSQL.FetchOne(connection, `
+          select pg_get_viewdef($1, true) as viewd`, [viewMat]))) === null || _8 === void 0 ? void 0 : _8.viewd) !== null && _9 !== void 0 ? _9 : null);
     });
     PGSQL.FunctionData = (connection, func) => __awaiter(this, void 0, void 0, function* () {
-        var _9, _10;
-        return ((_10 = (_9 = (yield PGSQL.FetchOne(connection, `
-          select pg_get_functiondef($1) as viewd`, [func]))) === null || _9 === void 0 ? void 0 : _9.viewd) !== null && _10 !== void 0 ? _10 : null);
+        var _10, _11;
+        return ((_11 = (_10 = (yield PGSQL.FetchOne(connection, `
+          select pg_get_functiondef($1) as viewd`, [func]))) === null || _10 === void 0 ? void 0 : _10.viewd) !== null && _11 !== void 0 ? _11 : null);
     });
     PGSQL.TypeData = (connection, type) => __awaiter(this, void 0, void 0, function* () {
         return PGSQL.FetchArray(connection, `
@@ -3132,13 +3151,13 @@ exports.PGSQL = void 0;
           AND cols.table_name = '${table}'`);
     });
     PGSQL.GetPGTable = (connection, table, schema) => __awaiter(this, void 0, void 0, function* () {
-        var _11, _12, _13, _14, _15;
+        var _12, _13, _14, _15, _16;
         const pgTable = new PGTable();
         pgTable.name = table;
         const columnComments = yield PGSQL.TableColumnComments(connection, table, schema);
         const columns = yield PGSQL.TableColumnsData(connection, table, schema);
         for (const column of columns) {
-            const pgColumn = new PGColumn(Object.assign(Object.assign({}, column), { generatedAlwaysAs: column.generation_expression, isAutoIncrement: intelliwaketsfoundation.IsOn(column.identity_increment), udt_name: column.udt_name.toString().startsWith('_') ? column.udt_name.toString().substr(1) : column.udt_name, array_dimensions: column.udt_name.toString().startsWith('_') ? [null] : [], column_default: (((_11 = column.column_default) !== null && _11 !== void 0 ? _11 : '').toString().startsWith('\'NULL\'') || ((_12 = column.column_default) !== null && _12 !== void 0 ? _12 : '').toString().startsWith('NULL::')) ? null : ((_13 = column.column_default) !== null && _13 !== void 0 ? _13 : '').toString().startsWith('\'\'::') ? '' : column.column_default, column_comment: (_15 = (_14 = columnComments.find(col => col.column_name === column.column_name)) === null || _14 === void 0 ? void 0 : _14.column_comment) !== null && _15 !== void 0 ? _15 : '' }));
+            const pgColumn = new PGColumn(Object.assign(Object.assign({}, column), { generatedAlwaysAs: column.generation_expression, isAutoIncrement: intelliwaketsfoundation.IsOn(column.identity_increment), udt_name: column.udt_name.toString().startsWith('_') ? column.udt_name.toString().substr(1) : column.udt_name, array_dimensions: column.udt_name.toString().startsWith('_') ? [null] : [], column_default: (((_12 = column.column_default) !== null && _12 !== void 0 ? _12 : '').toString().startsWith('\'NULL\'') || ((_13 = column.column_default) !== null && _13 !== void 0 ? _13 : '').toString().startsWith('NULL::')) ? null : ((_14 = column.column_default) !== null && _14 !== void 0 ? _14 : '').toString().startsWith('\'\'::') ? '' : column.column_default, column_comment: (_16 = (_15 = columnComments.find(col => col.column_name === column.column_name)) === null || _15 === void 0 ? void 0 : _15.column_comment) !== null && _16 !== void 0 ? _16 : '' }));
             pgTable.columns.push(pgColumn);
         }
         const fks = yield PGSQL.TableFKsData(connection, table);

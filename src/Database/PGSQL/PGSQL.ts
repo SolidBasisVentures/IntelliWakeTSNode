@@ -348,6 +348,33 @@ export namespace PGSQL {
 		return ((results.rows as any[]) ?? [])[0]
 	}
 	
+	export const InsertAndGetID = async (
+		connection: TConnection,
+		table: string,
+		values: any
+	): Promise<number | null> => {
+		let newValues = {...values}
+		if (!newValues.id) {
+			delete newValues.id
+			// delete newValues.added_date;
+			// delete newValues.modified_date;
+		}
+		
+		let params = new PGParams()
+		
+		const sql = `
+        INSERT INTO ${table}
+            ("${Object.keys(newValues).join('","')}")
+        VALUES (${Object.values(newValues)
+                .map(value => params.add(value))
+                .join(',')})
+        RETURNING id`
+		
+		const results = await query(connection, sql, params.values)
+		
+		return ((results.rows as any[]) ?? [])[0][0]
+	}
+	
 	export const InsertBulk = async (connection: TConnection, table: string, values: any): Promise<void> => {
 		let params = new PGParams()
 		
