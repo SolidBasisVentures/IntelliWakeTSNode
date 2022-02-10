@@ -463,7 +463,7 @@ export class PGTable {
 		const usePaths: Required<ICTableRelativePaths> = {
 			initials: RemoveEnding('/', relativePaths?.initials ?? '@Common/Tables', true),
 			tTables: RemoveEnding('/', relativePaths?.tTables ?? '../Database', true),
-			responseContext: RemoveEnding('/', relativePaths?.responseContext ?? '../MiddleWare', true),
+			responseContext: RemoveEnding('/', relativePaths?.responseContext ?? '../MiddleWare/ResponseContext', true),
 			responseContextName: relativePaths?.responseContextName ?? 'responseContext',
 			responseContextClass: relativePaths?.responseContextClass ?? 'ResponseContext'
 		}
@@ -472,7 +472,7 @@ export class PGTable {
 		text += `import {initial_${this.name}, I${this.name}} from '${usePaths.initials}/I${this.name}'` + TS_EOL
 		text += `import {TTables} from '${usePaths.tTables}/TTables'` + TS_EOL
 		text += `import {_CTable} from './_CTable'` + TS_EOL
-		text += `import {${usePaths.responseContextClass}} from '${usePaths.responseContext}/ResponseContext'` + TS_EOL
+		text += `import {${usePaths.responseContextClass}} from '${usePaths.responseContext}'` + TS_EOL
 		for (const inherit of this.inherits) {
 			text += `import {_C${inherit}} from "./_C${inherit}"` + TS_EOL
 		}

@@ -1011,7 +1011,7 @@ class PGTable {
         const usePaths = {
             initials: intelliwaketsfoundation.RemoveEnding('/', (_a = relativePaths === null || relativePaths === void 0 ? void 0 : relativePaths.initials) !== null && _a !== void 0 ? _a : '@Common/Tables', true),
             tTables: intelliwaketsfoundation.RemoveEnding('/', (_b = relativePaths === null || relativePaths === void 0 ? void 0 : relativePaths.tTables) !== null && _b !== void 0 ? _b : '../Database', true),
-            responseContext: intelliwaketsfoundation.RemoveEnding('/', (_c = relativePaths === null || relativePaths === void 0 ? void 0 : relativePaths.responseContext) !== null && _c !== void 0 ? _c : '../MiddleWare', true),
+            responseContext: intelliwaketsfoundation.RemoveEnding('/', (_c = relativePaths === null || relativePaths === void 0 ? void 0 : relativePaths.responseContext) !== null && _c !== void 0 ? _c : '../MiddleWare/ResponseContext', true),
             responseContextName: (_d = relativePaths === null || relativePaths === void 0 ? void 0 : relativePaths.responseContextName) !== null && _d !== void 0 ? _d : 'responseContext',
             responseContextClass: (_e = relativePaths === null || relativePaths === void 0 ? void 0 : relativePaths.responseContextClass) !== null && _e !== void 0 ? _e : 'ResponseContext'
         };
@@ -1019,7 +1019,7 @@ class PGTable {
         text += `import {initial_${this.name}, I${this.name}} from '${usePaths.initials}/I${this.name}'` + TS_EOL$1;
         text += `import {TTables} from '${usePaths.tTables}/TTables'` + TS_EOL$1;
         text += `import {_CTable} from './_CTable'` + TS_EOL$1;
-        text += `import {${usePaths.responseContextClass}} from '${usePaths.responseContext}/ResponseContext'` + TS_EOL$1;
+        text += `import {${usePaths.responseContextClass}} from '${usePaths.responseContext}'` + TS_EOL$1;
         for (const inherit of this.inherits) {
             text += `import {_C${inherit}} from "./_C${inherit}"` + TS_EOL$1;
         }
