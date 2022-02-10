@@ -68,8 +68,8 @@ export declare namespace PGSQL {
     const Delete: (connection: TConnection, table: string, whereValues: any) => Promise<void>;
     const ExecuteRaw: (connection: TConnection, sql: string) => Promise<import("pg").QueryResult<any>>;
     const Execute: (connection: TConnection, sql: string, values?: any) => Promise<import("pg").QueryResult<any>>;
-    const TruncateAllTables: (connection: TConnection, exceptions?: string[]) => Promise<boolean>;
-    const TruncateTables: (connection: TConnection, tables: string[]) => Promise<void>;
+    const TruncateAllTables: (connection: TConnection, exceptions?: string[], includeCascade?: boolean) => Promise<boolean>;
+    const TruncateTables: (connection: TConnection, tables: string[], includeCascade?: boolean) => Promise<void>;
     const TablesArray: (connection: TConnection, schema?: string | undefined) => Promise<string[]>;
     const ViewsArray: (connection: TConnection, schema?: string | undefined) => Promise<string[]>;
     const ViewsMatArray: (connection: TConnection, schema?: string | undefined) => Promise<string[]>;

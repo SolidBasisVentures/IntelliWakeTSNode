@@ -438,23 +438,23 @@ export namespace PGSQL {
 		}
 	}
 	
-	export const TruncateAllTables = async (connection: TConnection, exceptions: string[] = []) => {
+	export const TruncateAllTables = async (connection: TConnection, exceptions: string[] = [], includeCascade = false) => {
 		let tables = await TablesArray(connection)
 		
 		await Execute(connection, 'SET CONSTRAINTS ALL DEFERRED', undefined)
 		
 		for (const table of tables) {
 			if (exceptions.includes(table)) {
-				await Execute(connection, `TRUNCATE TABLE ${table} RESTART IDENTITY`, undefined)
+				await Execute(connection, `TRUNCATE TABLE ${table} RESTART IDENTITY` + (includeCascade ? ' CASCADE' : ''), undefined)
 			}
 		}
 		
 		return true
 	}
 	
-	export const TruncateTables = async (connection: TConnection, tables: string[]) => {
+	export const TruncateTables = async (connection: TConnection, tables: string[], includeCascade = false) => {
 		for (const table of tables) {
-			await Execute(connection, `TRUNCATE TABLE ${table} RESTART IDENTITY`)
+			await Execute(connection, `TRUNCATE TABLE ${table} RESTART IDENTITY` + (includeCascade ? ' CASCADE' : ''))
 		}
 	}
 	

@@ -2879,19 +2879,19 @@ exports.PGSQL = void 0;
             throw err;
         }
     });
-    PGSQL.TruncateAllTables = (connection, exceptions = []) => __awaiter(this, void 0, void 0, function* () {
+    PGSQL.TruncateAllTables = (connection, exceptions = [], includeCascade = false) => __awaiter(this, void 0, void 0, function* () {
         let tables = yield PGSQL.TablesArray(connection);
         yield PGSQL.Execute(connection, 'SET CONSTRAINTS ALL DEFERRED', undefined);
         for (const table of tables) {
             if (exceptions.includes(table)) {
-                yield PGSQL.Execute(connection, `TRUNCATE TABLE ${table} RESTART IDENTITY`, undefined);
+                yield PGSQL.Execute(connection, `TRUNCATE TABLE ${table} RESTART IDENTITY` + (includeCascade ? ' CASCADE' : ''), undefined);
             }
         }
         return true;
     });
-    PGSQL.TruncateTables = (connection, tables) => __awaiter(this, void 0, void 0, function* () {
+    PGSQL.TruncateTables = (connection, tables, includeCascade = false) => __awaiter(this, void 0, void 0, function* () {
         for (const table of tables) {
-            yield PGSQL.Execute(connection, `TRUNCATE TABLE ${table} RESTART IDENTITY`);
+            yield PGSQL.Execute(connection, `TRUNCATE TABLE ${table} RESTART IDENTITY` + (includeCascade ? ' CASCADE' : ''));
         }
     });
     PGSQL.TablesArray = (connection, schema) => __awaiter(this, void 0, void 0, function* () {
