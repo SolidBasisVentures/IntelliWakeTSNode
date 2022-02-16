@@ -14,6 +14,7 @@ import {PGEnum} from './PGEnum'
 import {PGIndex} from './PGIndex'
 import {PGForeignKey} from './PGForeignKey'
 import {Client, FieldDef, Pool, PoolClient} from 'pg'
+
 // import QueryStream from 'pg-query-stream'
 
 declare function transact<TResult>(
@@ -352,7 +353,7 @@ export namespace PGSQL {
 		connection: TConnection,
 		table: string,
 		values: any
-	): Promise<number | null> => {
+	): Promise<number> => {
 		let newValues = {...values}
 		if (!newValues.id) {
 			delete newValues.id
@@ -372,7 +373,11 @@ export namespace PGSQL {
 		
 		const results = await query(connection, sql, params.values)
 		
-		return ((results.rows as any[]) ?? [])[0][0]
+		const id = (results.rows as any)[0]?.id
+		
+		if (!id) throw new Error('Could not load ID')
+		
+		return id
 	}
 	
 	export const InsertBulk = async (connection: TConnection, table: string, values: any): Promise<void> => {
