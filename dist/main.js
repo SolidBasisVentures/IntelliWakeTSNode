@@ -2828,7 +2828,10 @@ exports.PGSQL = void 0;
             .join(',')})
         RETURNING id`;
         const results = yield PGSQL.query(connection, sql, params.values);
-        return ((_5 = results.rows) !== null && _5 !== void 0 ? _5 : [])[0][0];
+        const id = (_5 = results.rows[0]) === null || _5 === void 0 ? void 0 : _5.id;
+        if (!id)
+            throw new Error('Could not load ID');
+        return id;
     });
     PGSQL.InsertBulk = (connection, table, values) => __awaiter(this, void 0, void 0, function* () {
         let params = new PGParams();
