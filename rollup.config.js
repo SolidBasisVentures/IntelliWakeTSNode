@@ -1,7 +1,5 @@
 import pkg from './package.json'
 import typescript from 'rollup-plugin-typescript2'
-import legacy from 'rollup-plugin-legacy'
-import copy from 'rollup-plugin-copy'
 
 export default {
 	input: [
@@ -16,15 +14,7 @@ export default {
 		}
 	],
 	plugins: [
-		typescript({objectHashIgnoreUnknownHack: false}),
-		legacy({
-			'SFTP/index.js': 'SFTP'
-		}),
-		copy({
-			targets: [
-				{src: 'src/SFTP/**/*', dest: 'dist/SFTP'}
-			]
-		})
+		typescript({objectHashIgnoreUnknownHack: false})
 	],
 	external: ['path', 'fs', 'moment-timezone', 'readline', '@solidbasisventures/intelliwaketsfoundation']
 }
