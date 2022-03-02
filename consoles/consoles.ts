@@ -1,5 +1,5 @@
-import {KeyboardKey, KeyboardLine} from '../src/Functions'
-import {PGIndex} from '../src/Database/PGSQL/PGIndex'
+import SFTP from '../src/SFTP'
+
 
 const processScript = async() => {
 	// const val = await KeyboardKey('True or False?', (key) => key === 't')
@@ -22,21 +22,25 @@ const processScript = async() => {
 	// }
 	// console.log('Not Found')
 	
-	const indexDef = `CREATE INDEX "idx_appointment_pleted_date_time IS NULL)" ON public.appointment USING btree (intake_review_needed_date_time) WHERE ((intake_review_needed_date_time IS NOT NULL) AND (intake_review_completed_date_time IS NULL))`
+	// const indexDef = `CREATE INDEX "idx_appointment_pleted_date_time IS NULL)" ON public.appointment USING btree (intake_review_needed_date_time) WHERE ((intake_review_needed_date_time IS NOT NULL) AND (intake_review_completed_date_time IS NULL))`
+	//
+	// const wherePos = indexDef.toUpperCase().indexOf(' WHERE ')
+	//
+	// const pgIndex = new PGIndex({
+	// 	columns: indexDef
+	// 		.substring(indexDef.indexOf('(') + 1, wherePos > 0 ? wherePos - 1 : indexDef.length - 1)
+	// 		.split(',')
+	// 		.map(idx => idx.trim())
+	// 		.filter(idx => !!idx),
+	// 	isUnique: indexDef.includes(' UNIQUE '),
+	// 	where: wherePos > 0 ? indexDef.substring(wherePos + 7).trim() : undefined
+	// } as any)
+	//
+	// console.log(pgIndex)
 	
-	const wherePos = indexDef.toUpperCase().indexOf(' WHERE ')
+	const conn = new SFTP.Client()
 	
-	const pgIndex = new PGIndex({
-		columns: indexDef
-			.substring(indexDef.indexOf('(') + 1, wherePos > 0 ? wherePos - 1 : indexDef.length - 1)
-			.split(',')
-			.map(idx => idx.trim())
-			.filter(idx => !!idx),
-		isUnique: indexDef.includes(' UNIQUE '),
-		where: wherePos > 0 ? indexDef.substring(wherePos + 7).trim() : undefined
-	} as any)
-	
-	console.log(pgIndex)
+	console.log(conn)
 	
 }
 

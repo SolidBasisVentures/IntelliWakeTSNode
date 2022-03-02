@@ -18,4 +18,5 @@ export * from './Database/PGSQL/PGForeignKey';
 export * from './Database/PGSQL/PGIndex';
 export * from './Database/PGSQL/PGParams';
 export * from './Database/PGSQL/PGWhereSearchClause';
+export * from './SFTP/index';
 export { TConnection } from './Database/PGSQL/PGSQL';
