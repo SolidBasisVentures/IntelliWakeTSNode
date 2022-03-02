@@ -3356,6 +3356,10 @@ module.exports = {
 	}
 };
 
+var index = /*#__PURE__*/Object.freeze({
+    __proto__: null
+});
+
 exports.ColumnDefinition = ColumnDefinition;
 exports.KeyboardKey = KeyboardKey;
 exports.KeyboardLine = KeyboardLine;
@@ -3377,3 +3381,4 @@ exports.PGWhereSearchClause = PGWhereSearchClause;
 exports.PaginatorApplyRowCount = PaginatorApplyRowCount;
 exports.PaginatorInitializeResponseFromRequest = PaginatorInitializeResponseFromRequest;
 exports.PaginatorReturnRowCount = PaginatorReturnRowCount;
+exports.SFTP = index;
