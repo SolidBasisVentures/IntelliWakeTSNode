@@ -739,7 +739,7 @@ export namespace PGSQL {
 	
 	export const PaginatorLimitOffset = (paginatorResponse: IPaginatorResponse): string => LimitOffset(paginatorResponse.countPerPage, paginatorResponse.currentOffset)
 	
-	const AltColumn = (column: string): string => {
+	const AltColumn = (column: any): string => {
 		if (column === 'appointment_date') {
 			return `concat_ws(' ', appointment_date, appointment_time)`
 		} else {
