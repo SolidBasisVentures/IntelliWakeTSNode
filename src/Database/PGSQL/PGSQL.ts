@@ -466,7 +466,7 @@ export namespace PGSQL {
 			console.log(err.message)
 			console.log(sql)
 			console.log(values)
-			throw err
+			throw new Error(err.message)
 		}
 	}
 	

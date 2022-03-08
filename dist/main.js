@@ -2900,7 +2900,7 @@ exports.PGSQL = void 0;
             console.log(err.message);
             console.log(sql);
             console.log(values);
-            throw err;
+            throw new Error(err.message);
         }
     });
     PGSQL.TruncateAllTables = (connection, exceptions = [], includeCascade = false) => __awaiter(this, void 0, void 0, function* () {
