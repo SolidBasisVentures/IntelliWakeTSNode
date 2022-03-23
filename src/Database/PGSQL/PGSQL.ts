@@ -317,7 +317,7 @@ export namespace PGSQL {
 	}
 	
 	/**
-	 * Must return a "does_exist" columns
+	 * Must return a "does_exist" column
 	 * @param connection
 	 * @param sql
 	 * @param values
