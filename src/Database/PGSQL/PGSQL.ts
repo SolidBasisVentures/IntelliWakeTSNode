@@ -317,7 +317,8 @@ export namespace PGSQL {
 	}
 	
 	/**
-	 * Must return a "does_exist" column
+	 * Pass a SQL command with a "SELECT 1 FROM..." and it will check if it exists
+	 *
 	 * @param connection
 	 * @param sql
 	 * @param values

@@ -59,7 +59,8 @@ export declare namespace PGSQL {
     const FetchMany: <T>(connection: TConnection, sql: string, values?: any) => Promise<T[]>;
     const FetchArray: <T>(connection: TConnection, sql: string, values?: any) => Promise<T[]>;
     /**
-     * Must return a "does_exist" columns
+     * Pass a SQL command with a "SELECT 1 FROM..." and it will check if it exists
+     *
      * @param connection
      * @param sql
      * @param values

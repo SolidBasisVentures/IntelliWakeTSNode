@@ -2787,7 +2787,8 @@ exports.PGSQL = void 0;
         return ((_1 = data.rows) !== null && _1 !== void 0 ? _1 : []).map((row) => row[Object.keys(row)[0]]);
     });
     /**
-     * Must return a "does_exist" columns
+     * Pass a SQL command with a "SELECT 1 FROM..." and it will check if it exists
+     *
      * @param connection
      * @param sql
      * @param values
