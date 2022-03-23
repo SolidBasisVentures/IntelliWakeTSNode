@@ -2786,6 +2786,13 @@ exports.PGSQL = void 0;
         const data = yield PGSQL.query(connection, sql, values);
         return ((_1 = data.rows) !== null && _1 !== void 0 ? _1 : []).map((row) => row[Object.keys(row)[0]]);
     });
+    /**
+     * Must return a "does_exist" columns
+     * @param connection
+     * @param sql
+     * @param values
+     * @constructor
+     */
     PGSQL.FetchExists = (connection, sql, values) => __awaiter(this, void 0, void 0, function* () {
         var _2, _3;
         // noinspection SqlResolve

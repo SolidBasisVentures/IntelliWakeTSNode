@@ -316,6 +316,13 @@ export namespace PGSQL {
 		return (data.rows ?? []).map((row: any) => (row as any)[Object.keys(row as any)[0]] as T)
 	}
 	
+	/**
+	 * Must return a "does_exist" columns
+	 * @param connection
+	 * @param sql
+	 * @param values
+	 * @constructor
+	 */
 	export const FetchExists = async (connection: TConnection, sql: string, values?: any): Promise<boolean> => {
 		// noinspection SqlResolve
 		const data = await query<{does_exist: boolean}>(connection, `SELECT EXISTS (${sql}) as does_exist`, values)
