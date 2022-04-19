@@ -253,7 +253,11 @@ export class PGTable {
 										return {
 											column_name: column.column_name,
 											enum_name: ((items[1] ?? '').split('.')[0] ?? '').trim(),
-											default_value: (column.array_dimensions.length > 0 ? (IsOn(column.is_nullable) ? 'null' : '[]') : (items[2] ?? '').includes('.') ? items[2] : ((items[1] ?? '').split('.')[0] ?? '').trim() + '.' + (items[2] ?? ((items[1] ?? '').split('.')[1] ?? ''))).trim()
+											default_value: (column.array_dimensions.length > 0 ?
+												(IsOn(column.is_nullable) ? 'null' : '[]') :
+												(items[2] ?? '').includes('.') ?
+													items[2] :
+													((items[1] ?? '').split('.')[0] ?? '').trim() + '.' + (items[2] ?? ((items[1] ?? '').split('.')[1] ?? ''))).trim()
 										}
 									}
 								}
@@ -363,7 +367,7 @@ export class PGTable {
 			if (!!itemDefault) {
 				// console.log('HERE', enums.find(enumItem => enumItem.column_name === pgColumn.column_name))
 				// console.log('THERE', pgColumn)
-				if (itemDefault.endsWith('.') && pgColumn.is_nullable === 'YES' && !pgColumn.column_default) {
+				if (itemDefault.endsWith('.') && pgColumn.is_nullable === 'YES' /*&& !pgColumn.column_default*/) {
 					text += 'null'
 				} else {
 					text += itemDefault
