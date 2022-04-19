@@ -366,8 +366,8 @@ export class PGTable {
 			
 			if (!!itemDefault) {
 				// console.log('HERE', enums.find(enumItem => enumItem.column_name === pgColumn.column_name))
-				// console.log('THERE', pgColumn)
-				if (itemDefault.endsWith('.') && pgColumn.is_nullable === 'YES' /*&& !pgColumn.column_default*/) {
+				console.log('THERE', itemDefault, pgColumn)
+				if (itemDefault.endsWith('.') && IsOn(pgColumn.is_nullable) /*&& !pgColumn.column_default*/) {
 					text += 'null'
 				} else {
 					text += itemDefault

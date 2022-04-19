@@ -801,7 +801,11 @@ class PGTable {
                             return {
                                 column_name: column.column_name,
                                 enum_name: ((_c = ((_b = items[1]) !== null && _b !== void 0 ? _b : '').split('.')[0]) !== null && _c !== void 0 ? _c : '').trim(),
-                                default_value: (column.array_dimensions.length > 0 ? (intelliwaketsfoundation.IsOn(column.is_nullable) ? 'null' : '[]') : ((_d = items[2]) !== null && _d !== void 0 ? _d : '').includes('.') ? items[2] : ((_f = ((_e = items[1]) !== null && _e !== void 0 ? _e : '').split('.')[0]) !== null && _f !== void 0 ? _f : '').trim() + '.' + ((_g = items[2]) !== null && _g !== void 0 ? _g : ((_j = ((_h = items[1]) !== null && _h !== void 0 ? _h : '').split('.')[1]) !== null && _j !== void 0 ? _j : ''))).trim()
+                                default_value: (column.array_dimensions.length > 0 ?
+                                    (intelliwaketsfoundation.IsOn(column.is_nullable) ? 'null' : '[]') :
+                                    ((_d = items[2]) !== null && _d !== void 0 ? _d : '').includes('.') ?
+                                        items[2] :
+                                        ((_f = ((_e = items[1]) !== null && _e !== void 0 ? _e : '').split('.')[0]) !== null && _f !== void 0 ? _f : '').trim() + '.' + ((_g = items[2]) !== null && _g !== void 0 ? _g : ((_j = ((_h = items[1]) !== null && _h !== void 0 ? _h : '').split('.')[1]) !== null && _j !== void 0 ? _j : ''))).trim()
                             };
                         }
                     }
@@ -897,8 +901,8 @@ class PGTable {
             // }
             if (!!itemDefault) {
                 // console.log('HERE', enums.find(enumItem => enumItem.column_name === pgColumn.column_name))
-                // console.log('THERE', pgColumn)
-                if (itemDefault.endsWith('.') && pgColumn.is_nullable === 'YES' && !pgColumn.column_default) {
+                console.log('THERE', itemDefault, pgColumn);
+                if (itemDefault.endsWith('.') && intelliwaketsfoundation.IsOn(pgColumn.is_nullable) /*&& !pgColumn.column_default*/) {
                     text += 'null';
                 }
                 else {
