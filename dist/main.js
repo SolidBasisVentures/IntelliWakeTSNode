@@ -901,8 +901,8 @@ class PGTable {
             // }
             if (!!itemDefault) {
                 // console.log('HERE', enums.find(enumItem => enumItem.column_name === pgColumn.column_name))
-                console.log('THERE', itemDefault, pgColumn);
-                if (itemDefault.endsWith('.') && intelliwaketsfoundation.IsOn(pgColumn.is_nullable) /*&& !pgColumn.column_default*/) {
+                // console.log('THERE', pgColumn)
+                if (itemDefault.endsWith('.') && intelliwaketsfoundation.IsOn(pgColumn.is_nullable) && !pgColumn.column_default) {
                     text += 'null';
                 }
                 else {
