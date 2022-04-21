@@ -3154,12 +3154,10 @@ exports.PGSQL = void 0;
     PGSQL.TableColumnComments = (connection, table, schema) => __awaiter(this, void 0, void 0, function* () {
         return PGSQL.FetchMany(connection, `
         SELECT cols.column_name,
-               (
-                   SELECT pg_catalog.COL_DESCRIPTION(c.oid, cols.ordinal_position::INT)
-                   FROM pg_catalog.pg_class c
-                   WHERE c.oid = (SELECT cols.table_name::REGCLASS::OID)
-                     AND c.relname = cols.table_name
-               ) AS column_comment
+               (SELECT pg_catalog.COL_DESCRIPTION(c.oid, cols.ordinal_position::INT)
+                FROM pg_catalog.pg_class c
+                WHERE c.oid = (SELECT cols.table_name::REGCLASS::OID)
+                  AND c.relname = cols.table_name) AS column_comment
 
         FROM information_schema.columns cols
         WHERE cols.table_schema = '${PGSQL.CurrentSchema(schema)}'

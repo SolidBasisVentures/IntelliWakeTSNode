@@ -1,7 +1,8 @@
 // noinspection SqlNoDataSourceInspection
 
 import {
-	CleanNumber, DateFormat,
+	CleanNumber,
+	DateFormat,
 	IPaginatorRequest,
 	IPaginatorResponse,
 	IsOn,
@@ -814,12 +815,10 @@ export namespace PGSQL {
 	export const TableColumnComments = async (connection: TConnection, table: string, schema?: string): Promise<{column_name: string, column_comment: string | null}[]> => {
 		return PGSQL.FetchMany<{column_name: string, column_comment: string | null}>(connection, `
         SELECT cols.column_name,
-               (
-                   SELECT pg_catalog.COL_DESCRIPTION(c.oid, cols.ordinal_position::INT)
-                   FROM pg_catalog.pg_class c
-                   WHERE c.oid = (SELECT cols.table_name::REGCLASS::OID)
-                     AND c.relname = cols.table_name
-               ) AS column_comment
+               (SELECT pg_catalog.COL_DESCRIPTION(c.oid, cols.ordinal_position::INT)
+                FROM pg_catalog.pg_class c
+                WHERE c.oid = (SELECT cols.table_name::REGCLASS::OID)
+                  AND c.relname = cols.table_name) AS column_comment
 
         FROM information_schema.columns cols
         WHERE cols.table_schema = '${CurrentSchema(schema)}'
