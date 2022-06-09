@@ -1,47 +1,54 @@
-import SFTP from '../src/SFTP'
+import {PGTable} from '../src/Database/PGSQL/PGTable'
+import {PGColumn} from '../src/Database/PGSQL/PGColumn'
 
 
-const processScript = async() => {
-	// const val = await KeyboardKey('True or False?', (key) => key === 't')
-	// console.log('Answer:', val)
-	//
-	// const valLine = await KeyboardLine('Question?')
-	// console.log('Answered:', valLine)
+const processScript = async () => {
+	const pgTable = new PGTable()
+	pgTable.addColumn({
+		column_name: 'id',
+		udt_name: PGColumn.TYPE_INTEGER,
+		is_nullable: 'NO'
+	})
+	pgTable.addColumn({
+		column_name: 'added_id',
+		udt_name: PGColumn.TYPE_INTEGER,
+		is_nullable: 'YES'
+	})
+	pgTable.addColumn({
+		column_name: 'name',
+		udt_name: PGColumn.TYPE_VARCHAR,
+		is_nullable: 'YES',
+		character_maximum_length: 20
+	})
+	pgTable.addColumn({
+		column_name: 'description',
+		udt_name: PGColumn.TYPE_VARCHAR,
+		is_nullable: 'YES',
+		character_maximum_length: 30
+	})
+	pgTable.addColumn({
+		column_name: 'address',
+		udt_name: PGColumn.TYPE_VARCHAR,
+		is_nullable: 'YES',
+		character_maximum_length: 15
+	})
+	pgTable.addColumn({
+		column_name: 'phone',
+		udt_name: PGColumn.TYPE_VARCHAR,
+		is_nullable: 'YES',
+		character_maximum_length: 9
+	})
+	pgTable.addColumn({
+		column_name: 'added_date',
+		udt_name: PGColumn.TYPE_DATE
+	})
 	
-	// const test = 'Blah {EnUm: ETestEnum} Blah'
-	//
-	// const regExp = /{([^}]*)}/;
-	// const results = regExp.exec(test)
-	// if (!!results) {
-	// 	console.log('R', results)
-	// 	const items = results[1].split(':')
-	// 	console.log('Is', items)
-	// 	if ((items[0] ?? '').toLowerCase().trim() === 'enum') {
-	// 		console.log('Found', (items[1] ?? '').trim())
-	// 	}
-	// }
-	// console.log('Not Found')
+	const json = pgTable.fixedWidthMap({
+		startColumnName: 'name',
+		lastColumnName: 'phone'
+	})
 	
-	// const indexDef = `CREATE INDEX "idx_appointment_pleted_date_time IS NULL)" ON public.appointment USING btree (intake_review_needed_date_time) WHERE ((intake_review_needed_date_time IS NOT NULL) AND (intake_review_completed_date_time IS NULL))`
-	//
-	// const wherePos = indexDef.toUpperCase().indexOf(' WHERE ')
-	//
-	// const pgIndex = new PGIndex({
-	// 	columns: indexDef
-	// 		.substring(indexDef.indexOf('(') + 1, wherePos > 0 ? wherePos - 1 : indexDef.length - 1)
-	// 		.split(',')
-	// 		.map(idx => idx.trim())
-	// 		.filter(idx => !!idx),
-	// 	isUnique: indexDef.includes(' UNIQUE '),
-	// 	where: wherePos > 0 ? indexDef.substring(wherePos + 7).trim() : undefined
-	// } as any)
-	//
-	// console.log(pgIndex)
-	
-	const conn = new SFTP.Client()
-	
-	console.log(conn)
-	
+	console.log(json)
 }
 
 processScript().then(() => console.log('Done!'))

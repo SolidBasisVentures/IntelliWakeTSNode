@@ -22,6 +22,23 @@ export interface ICTableRelativePaths {
 	responseContextClass?: string
 }
 
+export interface IFixedWidthMapOptions {
+	startColumnName?: string
+	startPosition: number
+	lastColumnName?: string
+	stopBeforeColumnName?: string
+}
+
+export interface IFixedWidthMap<T> {
+	column_name: keyof T,
+	startPosition: number
+	positionWidth: number
+}
+
+export const initialFixedWidthMapOptions: IFixedWidthMapOptions = {
+	startPosition: 0
+}
+
 export class PGTable {
 	public name = ''
 	public description = ''
@@ -168,7 +185,7 @@ export class PGTable {
 		}
 	}
 	
-	public addColumn(pgColumn: PGColumn) {
+	public addColumn(pgColumn: Partial<PGColumn>) {
 		const pgColumnToAdd = new PGColumn(pgColumn)
 		
 		if (!pgColumnToAdd.ordinal_position) {
@@ -606,5 +623,45 @@ export class PGTable {
 		
 		// noinspection RegExpRedundantEscape
 		return stripBrackets ? comment.replace(/[\n\r]/g, ' ').replace(/\{(.+?)\}/g, '').trim() : comment.replace(/[\n\r]/g, ' ').trim()
+	}
+	
+	public fixedWidthMap<T>(options?: Partial<IFixedWidthMapOptions>): IFixedWidthMap<T>[] {
+		const useOptions: IFixedWidthMapOptions = {...initialFixedWidthMapOptions, ...options}
+		
+		let currentPosition = useOptions.startPosition
+		let validColumn = !useOptions.startColumnName
+		
+		let fixedWidthMaps: IFixedWidthMap<T>[] = []
+		
+		for (const column of this.columns) {
+			if (useOptions.stopBeforeColumnName && column.column_name.toLowerCase() === useOptions.stopBeforeColumnName.toLowerCase()) {
+				break
+			}
+			
+			if (!validColumn) {
+				if (column.column_name.toLowerCase() === useOptions.startColumnName) {
+					validColumn = true
+				}
+			}
+			
+			if (validColumn) {
+				const colLength = column.character_maximum_length ?? 0
+				if (!colLength) {
+					console.warn('Could not determine length for FixedWidthMap', column.column_name, column.udt_name)
+				}
+				fixedWidthMaps.push({
+					column_name: column.column_name as any,
+					startPosition: currentPosition,
+					positionWidth: colLength
+				})
+				currentPosition += colLength
+			}
+			
+			if (useOptions.lastColumnName && column.column_name.toLowerCase() === useOptions.lastColumnName.toLowerCase()) {
+				break
+			}
+		}
+		
+		return fixedWidthMaps
 	}
 }

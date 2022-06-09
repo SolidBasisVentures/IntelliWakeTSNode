@@ -10,6 +10,18 @@ export interface ICTableRelativePaths {
     responseContextName?: string;
     responseContextClass?: string;
 }
+export interface IFixedWidthMapOptions {
+    startColumnName?: string;
+    startPosition: number;
+    lastColumnName?: string;
+    stopBeforeColumnName?: string;
+}
+export interface IFixedWidthMap<T> {
+    column_name: keyof T;
+    startPosition: number;
+    positionWidth: number;
+}
+export declare const initialFixedWidthMapOptions: IFixedWidthMapOptions;
 export declare class PGTable {
     name: string;
     description: string;
@@ -31,7 +43,7 @@ export declare class PGTable {
     getColumn(columnName: string): PGColumn | null;
     removeColumn(columnName: string): void;
     renameColumn(fromName: string, toName: string, pgTables?: PGTable[]): void;
-    addColumn(pgColumn: PGColumn): void;
+    addColumn(pgColumn: Partial<PGColumn>): void;
     reOrderColumns(): void;
     addIndex(pgIndex: PGIndex): void;
     tableHeaderText(forTableText: string): string;
@@ -43,4 +55,5 @@ export declare class PGTable {
     ddlCreateIndexes(): string;
     ddlCreateForeignKeysText(): string;
     static CleanComment(comment: string, stripBrackets?: boolean): string;
+    fixedWidthMap<T>(options?: Partial<IFixedWidthMapOptions>): IFixedWidthMap<T>[];
 }

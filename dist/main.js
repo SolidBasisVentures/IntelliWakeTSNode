@@ -613,6 +613,9 @@ class PGIndex {
 }
 
 const TS_EOL$1 = '\n'; // was \r\n
+const initialFixedWidthMapOptions = {
+    startPosition: 0
+};
 class PGTable {
     constructor(instanceData) {
         this.name = '';
@@ -1124,6 +1127,39 @@ class PGTable {
         }
         // noinspection RegExpRedundantEscape
         return stripBrackets ? comment.replace(/[\n\r]/g, ' ').replace(/\{(.+?)\}/g, '').trim() : comment.replace(/[\n\r]/g, ' ').trim();
+    }
+    fixedWidthMap(options) {
+        var _a;
+        const useOptions = Object.assign(Object.assign({}, initialFixedWidthMapOptions), options);
+        let currentPosition = useOptions.startPosition;
+        let validColumn = !useOptions.startColumnName;
+        let fixedWidthMaps = [];
+        for (const column of this.columns) {
+            if (useOptions.stopBeforeColumnName && column.column_name.toLowerCase() === useOptions.stopBeforeColumnName.toLowerCase()) {
+                break;
+            }
+            if (!validColumn) {
+                if (column.column_name.toLowerCase() === useOptions.startColumnName) {
+                    validColumn = true;
+                }
+            }
+            if (validColumn) {
+                const colLength = (_a = column.character_maximum_length) !== null && _a !== void 0 ? _a : 0;
+                if (!colLength) {
+                    console.warn('Could not determine length for FixedWidthMap', column.column_name, column.udt_name);
+                }
+                fixedWidthMaps.push({
+                    column_name: column.column_name,
+                    startPosition: currentPosition,
+                    positionWidth: colLength
+                });
+                currentPosition += colLength;
+            }
+            if (useOptions.lastColumnName && column.column_name.toLowerCase() === useOptions.lastColumnName.toLowerCase()) {
+                break;
+            }
+        }
+        return fixedWidthMaps;
     }
 }
 
@@ -3345,3 +3381,4 @@ exports.PGWhereSearchClause = PGWhereSearchClause;
 exports.PaginatorApplyRowCount = PaginatorApplyRowCount;
 exports.PaginatorInitializeResponseFromRequest = PaginatorInitializeResponseFromRequest;
 exports.PaginatorReturnRowCount = PaginatorReturnRowCount;
+exports.initialFixedWidthMapOptions = initialFixedWidthMapOptions;
