@@ -2903,7 +2903,7 @@ exports.PGSQL = void 0;
         return data.rows[0];
     });
     PGSQL.BuildWhereComponents = (whereValues, params) => Object.keys(whereValues)
-        .map(key => `"${key}"=${params.add(whereValues[key])}`)
+        .map(key => (whereValues[key] === undefined || whereValues[key] === null) ? `"${key}" IS NULL` : `"${key}"=${params.add(whereValues[key])}`)
         .join(' AND ');
     PGSQL.BuildSetComponents = (setValues, params) => Object.keys(setValues)
         .map(key => `"${key}"=${params.add(setValues[key])}`)

@@ -425,7 +425,7 @@ export namespace PGSQL {
 	
 	export const BuildWhereComponents = (whereValues: any, params: PGParams): string =>
 		Object.keys(whereValues)
-			.map(key => `"${key}"=${params.add(whereValues[key])}`)
+			.map(key => (whereValues[key] === undefined || whereValues[key] === null) ? `"${key}" IS NULL` : `"${key}"=${params.add(whereValues[key])}`)
 			.join(' AND ')
 	
 	export const BuildSetComponents = (setValues: any, params: PGParams): string =>
