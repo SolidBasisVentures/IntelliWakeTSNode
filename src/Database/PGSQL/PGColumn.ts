@@ -229,7 +229,7 @@ export class PGColumn implements IPGColumn {
 			ddl += 'NOT NULL '
 		}
 		if (!!this.generatedAlwaysAs) {
-			ddl += `GENERATED ALWAYS AS ${PGColumn.CleanComment(this.generatedAlwaysAs)} STORED `
+			ddl += `GENERATED ALWAYS AS (${PGColumn.CleanComment(this.generatedAlwaysAs)}) STORED `
 		} else {
 			if (typeof this.column_default === 'string' && this.column_default.toLowerCase().includes('null')) {
 				this.column_default = null
