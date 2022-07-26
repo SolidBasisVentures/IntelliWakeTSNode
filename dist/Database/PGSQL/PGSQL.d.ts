@@ -94,7 +94,7 @@ export declare namespace PGSQL {
     const ViewsMatData: (connection: TConnection, viewMat: string) => Promise<any>;
     const FunctionData: (connection: TConnection, func: string) => Promise<any>;
     const TypeData: (connection: TConnection, type: string) => Promise<string[]>;
-    const SortColumnSort: (sortColumn: ISortColumn) => string;
+    const SortColumnSort: <T = Record<string, any>>(sortColumn: ISortColumn<T>) => string;
     const PaginatorOrderBy: (paginatorRequest: IPaginatorRequest) => string;
     const LimitOffset: (limit: number, offset: number) => string;
     const PaginatorLimitOffset: (paginatorResponse: IPaginatorResponse) => string;

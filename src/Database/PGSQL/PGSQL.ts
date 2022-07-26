@@ -692,7 +692,7 @@ export namespace PGSQL {
 		)
 	}
 	
-	export const SortColumnSort = (sortColumn: ISortColumn): string => {
+	export const SortColumnSort = <T = Record<string, any>>(sortColumn: ISortColumn<T>): string => {
 		let sort = ''
 		
 		if (!!sortColumn.primarySort) {
@@ -702,10 +702,10 @@ export namespace PGSQL {
 			} else {
 				switch (sortColumn.primaryEmptyToBottom) {
 					case 'string':
-						sort += `NULLIF(${sortColumn.primarySort}, '')`
+						sort += `NULLIF(${sortColumn.primarySort as any}, '')`
 						break
 					case 'number':
-						sort += `NULLIF(${sortColumn.primarySort}, 0)`
+						sort += `NULLIF(${sortColumn.primarySort as any}, 0)`
 						break
 					default:
 						// null, so do not empty to bottom
@@ -723,10 +723,10 @@ export namespace PGSQL {
 				} else {
 					switch (sortColumn.secondaryEmptyToBottom) {
 						case 'string':
-							sort += `NULLIF(${sortColumn.secondarySort}, '')`
+							sort += `NULLIF(${sortColumn.secondarySort as any}, '')`
 							break
 						case 'number':
-							sort += `NULLIF(${sortColumn.secondarySort}, 0)`
+							sort += `NULLIF(${sortColumn.secondarySort as any}, 0)`
 							break
 						default:
 							// null, so do not empty to bottom
