@@ -2552,6 +2552,10 @@ class PGParams {
         this.lastPosition = 0;
         this.values = [];
     }
+    reset() {
+        this.lastPosition = 0;
+        this.values = [];
+    }
     add(value) {
         // const idx = this.values.indexOf(value)
         //
