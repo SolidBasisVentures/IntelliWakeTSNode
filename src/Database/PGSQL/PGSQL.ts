@@ -296,8 +296,8 @@ export namespace PGSQL {
 	export const GetCountSQL = async (connection: TConnection, sql: string, values?: any): Promise<number> => {
 		const data = await query(connection, sql, values)
 		
-		const value = (((data.rows ?? [])[0] ?? {}) as any)['count']
-		return isNaN(value) ? 0 : parseInt(value)
+		return CleanNumber((((data.rows ?? [])[0] ?? {}) as any)['count'] ?? (((data.rows ?? [])[0] ?? {}) as any)[0], 0)
+		// return isNaN(value) ? 0 : parseInt(value)
 	}
 	
 	export const FetchOne = async <T>(connection: TConnection, sql: string, values?: any): Promise<T | null> => {
