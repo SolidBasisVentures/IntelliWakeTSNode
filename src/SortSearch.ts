@@ -1,5 +1,8 @@
 import {CleanNumber, IPaginatorRequest, IPaginatorResponse} from '@solidbasisventures/intelliwaketsfoundation'
 
+export const PaginatorResponseFromRequestCount = <T = Record<string, any>>(paginatorRequest: IPaginatorRequest<T>, rowCount: number) =>
+	PaginatorReturnRowCount(PaginatorInitializeResponseFromRequest(paginatorRequest), CleanNumber(rowCount))
+
 export const PaginatorInitializeResponseFromRequest = <T = Record<string, any>>(paginatorRequest: IPaginatorRequest<T>): IPaginatorResponse<T> => ({
 	page: paginatorRequest.page < 1 ? 1 : paginatorRequest.page,
 	pageCount: 1,

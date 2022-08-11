@@ -71,6 +71,7 @@ const KeyboardKey = (question, validKeys) => __awaiter(void 0, void 0, void 0, f
     });
 });
 
+const PaginatorResponseFromRequestCount = (paginatorRequest, rowCount) => PaginatorReturnRowCount(PaginatorInitializeResponseFromRequest(paginatorRequest), intelliwaketsfoundation.CleanNumber(rowCount));
 const PaginatorInitializeResponseFromRequest = (paginatorRequest) => ({
     page: paginatorRequest.page < 1 ? 1 : paginatorRequest.page,
     pageCount: 1,
@@ -3384,5 +3385,6 @@ exports.PGView = PGView;
 exports.PGWhereSearchClause = PGWhereSearchClause;
 exports.PaginatorApplyRowCount = PaginatorApplyRowCount;
 exports.PaginatorInitializeResponseFromRequest = PaginatorInitializeResponseFromRequest;
+exports.PaginatorResponseFromRequestCount = PaginatorResponseFromRequestCount;
 exports.PaginatorReturnRowCount = PaginatorReturnRowCount;
 exports.initialFixedWidthMapOptions = initialFixedWidthMapOptions;
