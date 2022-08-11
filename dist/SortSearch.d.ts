@@ -1,4 +1,4 @@
 import { IPaginatorRequest, IPaginatorResponse } from '@solidbasisventures/intelliwaketsfoundation';
-export declare const PaginatorInitializeResponseFromRequest: <T = any>(paginatorRequest: IPaginatorRequest) => IPaginatorResponse<T>;
-export declare const PaginatorApplyRowCount: (paginatorResponse: IPaginatorResponse, rowCount: number) => void;
-export declare const PaginatorReturnRowCount: (paginatorResponse: IPaginatorResponse, rowCount: number) => IPaginatorResponse;
+export declare const PaginatorInitializeResponseFromRequest: <T = Record<string, any>>(paginatorRequest: IPaginatorRequest<T>) => IPaginatorResponse<T>;
+export declare const PaginatorApplyRowCount: <T = Record<string, any>>(paginatorResponse: IPaginatorResponse<T>, rowCount: number) => void;
+export declare const PaginatorReturnRowCount: <T = Record<string, any>>(paginatorResponse: IPaginatorResponse<T>, rowCount: number) => IPaginatorResponse<T>;

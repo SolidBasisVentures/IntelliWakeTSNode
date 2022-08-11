@@ -81,13 +81,13 @@ const PaginatorInitializeResponseFromRequest = (paginatorRequest) => ({
 });
 const PaginatorApplyRowCount = (paginatorResponse, rowCount) => {
     console.warn('"PaginatorApplyRowCount" will deprecate for "PaginatorReturnRowCount"');
-    paginatorResponse.rowCount = +rowCount;
+    paginatorResponse.rowCount = intelliwaketsfoundation.CleanNumber(rowCount);
     if (+rowCount > 0) {
-        paginatorResponse.pageCount = Math.floor((+rowCount + (+paginatorResponse.countPerPage - 1)) / +paginatorResponse.countPerPage);
-        if (+paginatorResponse.page < 1)
+        paginatorResponse.pageCount = Math.floor((intelliwaketsfoundation.CleanNumber(rowCount) + (intelliwaketsfoundation.CleanNumber(paginatorResponse.countPerPage - 1))) / intelliwaketsfoundation.CleanNumber(paginatorResponse.countPerPage));
+        if (intelliwaketsfoundation.CleanNumber(paginatorResponse.page) < 1)
             paginatorResponse.page = 1;
-        if (+paginatorResponse.page > +paginatorResponse.pageCount)
-            paginatorResponse.page = +paginatorResponse.pageCount;
+        if (intelliwaketsfoundation.CleanNumber(paginatorResponse.page) > intelliwaketsfoundation.CleanNumber(paginatorResponse.pageCount))
+            paginatorResponse.page = intelliwaketsfoundation.CleanNumber(paginatorResponse.pageCount);
         paginatorResponse.currentOffset = (+paginatorResponse.page - 1) * +paginatorResponse.countPerPage;
     }
     else {
