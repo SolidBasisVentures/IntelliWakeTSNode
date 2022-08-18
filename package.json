@@ -1,6 +1,6 @@
 {
   "name": "@solidbasisventures/intelliwaketsnode",
-  "version": "2.0.241",
+  "version": "2.0.242",
   "description": "NPM package for IntelliWake Node Components",
   "main": "dist/main.js",
   "types": "dist/main.d.ts",
@@ -23,7 +23,7 @@
   },
   "peerDependencies": {},
   "devDependencies": {
-    "@solidbasisventures/intelliwaketsfoundation": "^5.0.200",
+    "@solidbasisventures/intelliwaketsfoundation": "^5.0.201",
     "@types/jest": "^26.0.15",
     "@types/mssql": "^6.0.2",
     "@types/mysql": "^2.15.15",

@@ -1,9 +1,9 @@
 import {CleanNumber, IPaginatorRequest, IPaginatorResponse} from '@solidbasisventures/intelliwaketsfoundation'
 
-export const PaginatorResponseFromRequestCount = <T = Record<string, any>>(paginatorRequest: IPaginatorRequest<T>, rowCount: number) =>
+export const PaginatorResponseFromRequestCount = <SORT = Record<string, any>, FILTER = Record<string, any>>(paginatorRequest: IPaginatorRequest<SORT, FILTER>, rowCount: number) =>
 	PaginatorReturnRowCount(PaginatorInitializeResponseFromRequest(paginatorRequest), CleanNumber(rowCount))
 
-export const PaginatorInitializeResponseFromRequest = <T = Record<string, any>>(paginatorRequest: IPaginatorRequest<T>): IPaginatorResponse<T> => ({
+export const PaginatorInitializeResponseFromRequest = <SORT = Record<string, any>, FILTER = Record<string, any>, RES = Record<string, any>>(paginatorRequest: IPaginatorRequest<SORT, FILTER>): IPaginatorResponse<RES> => ({
 	page: paginatorRequest.page < 1 ? 1 : paginatorRequest.page,
 	pageCount: 1,
 	rowCount: 0,
