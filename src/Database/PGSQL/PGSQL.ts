@@ -306,6 +306,10 @@ export namespace PGSQL {
 		return !!(data.rows ?? [])[0] ? {...(data.rows ?? [])[0]} : null
 	}
 	
+	export const FetchOneValue = async <T>(connection: TConnection, sql: string, values?: any): Promise<T | null> => {
+		return (await FetchOne<any>(connection, sql, values))[0] ?? null
+	}
+	
 	export const FetchMany = async <T>(connection: TConnection, sql: string, values?: any): Promise<Array<T>> => {
 		// noinspection SqlResolve
 		const data = await query<T>(connection, sql, values)

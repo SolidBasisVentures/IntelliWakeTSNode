@@ -56,6 +56,7 @@ export declare namespace PGSQL {
      */
     const GetCountSQL: (connection: TConnection, sql: string, values?: any) => Promise<number>;
     const FetchOne: <T>(connection: TConnection, sql: string, values?: any) => Promise<T | null>;
+    const FetchOneValue: <T>(connection: TConnection, sql: string, values?: any) => Promise<T | null>;
     const FetchMany: <T>(connection: TConnection, sql: string, values?: any) => Promise<T[]>;
     const FetchArray: <T>(connection: TConnection, sql: string, values?: any) => Promise<T[]>;
     /**

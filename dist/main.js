@@ -2820,16 +2820,20 @@ exports.PGSQL = void 0;
         const data = yield PGSQL.query(connection, sql, values);
         return !!((_1 = data.rows) !== null && _1 !== void 0 ? _1 : [])[0] ? Object.assign({}, ((_2 = data.rows) !== null && _2 !== void 0 ? _2 : [])[0]) : null;
     });
-    PGSQL.FetchMany = (connection, sql, values) => __awaiter(this, void 0, void 0, function* () {
+    PGSQL.FetchOneValue = (connection, sql, values) => __awaiter(this, void 0, void 0, function* () {
         var _3;
+        return (_3 = (yield PGSQL.FetchOne(connection, sql, values))[0]) !== null && _3 !== void 0 ? _3 : null;
+    });
+    PGSQL.FetchMany = (connection, sql, values) => __awaiter(this, void 0, void 0, function* () {
+        var _4;
         // noinspection SqlResolve
         const data = yield PGSQL.query(connection, sql, values);
-        return (_3 = data.rows) !== null && _3 !== void 0 ? _3 : [];
+        return (_4 = data.rows) !== null && _4 !== void 0 ? _4 : [];
     });
     PGSQL.FetchArray = (connection, sql, values) => __awaiter(this, void 0, void 0, function* () {
-        var _4;
+        var _5;
         const data = yield PGSQL.query(connection, sql, values);
-        return ((_4 = data.rows) !== null && _4 !== void 0 ? _4 : []).map((row) => row[Object.keys(row)[0]]);
+        return ((_5 = data.rows) !== null && _5 !== void 0 ? _5 : []).map((row) => row[Object.keys(row)[0]]);
     });
     /**
      * Pass a SQL command with a "SELECT 1 FROM..." and it will check if it exists
@@ -2840,13 +2844,13 @@ exports.PGSQL = void 0;
      * @constructor
      */
     PGSQL.FetchExists = (connection, sql, values) => __awaiter(this, void 0, void 0, function* () {
-        var _5, _6;
+        var _6, _7;
         // noinspection SqlResolve
         const data = yield PGSQL.query(connection, `SELECT EXISTS (${sql}) as does_exist`, values);
-        return !!((_6 = ((_5 = data.rows) !== null && _5 !== void 0 ? _5 : [])[0]) === null || _6 === void 0 ? void 0 : _6.does_exist);
+        return !!((_7 = ((_6 = data.rows) !== null && _6 !== void 0 ? _6 : [])[0]) === null || _7 === void 0 ? void 0 : _7.does_exist);
     });
     PGSQL.InsertAndGetReturning = (connection, table, values) => __awaiter(this, void 0, void 0, function* () {
-        var _7;
+        var _8;
         let newValues = Object.assign({}, values);
         if (!newValues.id) {
             delete newValues.id;
@@ -2862,10 +2866,10 @@ exports.PGSQL = void 0;
             .join(',')})
         RETURNING *`;
         const results = yield PGSQL.query(connection, sql, params.values);
-        return ((_7 = results.rows) !== null && _7 !== void 0 ? _7 : [])[0];
+        return ((_8 = results.rows) !== null && _8 !== void 0 ? _8 : [])[0];
     });
     PGSQL.InsertAndGetID = (connection, table, values) => __awaiter(this, void 0, void 0, function* () {
-        var _8;
+        var _9;
         let newValues = Object.assign({}, values);
         if (!newValues.id) {
             delete newValues.id;
@@ -2881,7 +2885,7 @@ exports.PGSQL = void 0;
             .join(',')})
         RETURNING id`;
         const results = yield PGSQL.query(connection, sql, params.values);
-        const id = (_8 = results.rows[0]) === null || _8 === void 0 ? void 0 : _8.id;
+        const id = (_9 = results.rows[0]) === null || _9 === void 0 ? void 0 : _9.id;
         if (!id)
             throw new Error('Could not load ID');
         return id;
@@ -3070,19 +3074,19 @@ exports.PGSQL = void 0;
               OR indexdef ILIKE '%(%,%)%')`, [table]);
     });
     PGSQL.ViewData = (connection, view) => __awaiter(this, void 0, void 0, function* () {
-        var _9, _10;
-        return ((_10 = (_9 = (yield PGSQL.FetchOne(connection, `
-          select pg_get_viewdef($1, true) as viewd`, [view]))) === null || _9 === void 0 ? void 0 : _9.viewd) !== null && _10 !== void 0 ? _10 : null);
+        var _10, _11;
+        return ((_11 = (_10 = (yield PGSQL.FetchOne(connection, `
+          select pg_get_viewdef($1, true) as viewd`, [view]))) === null || _10 === void 0 ? void 0 : _10.viewd) !== null && _11 !== void 0 ? _11 : null);
     });
     PGSQL.ViewsMatData = (connection, viewMat) => __awaiter(this, void 0, void 0, function* () {
-        var _11, _12;
-        return ((_12 = (_11 = (yield PGSQL.FetchOne(connection, `
-          select pg_get_viewdef($1, true) as viewd`, [viewMat]))) === null || _11 === void 0 ? void 0 : _11.viewd) !== null && _12 !== void 0 ? _12 : null);
+        var _12, _13;
+        return ((_13 = (_12 = (yield PGSQL.FetchOne(connection, `
+          select pg_get_viewdef($1, true) as viewd`, [viewMat]))) === null || _12 === void 0 ? void 0 : _12.viewd) !== null && _13 !== void 0 ? _13 : null);
     });
     PGSQL.FunctionData = (connection, func) => __awaiter(this, void 0, void 0, function* () {
-        var _13, _14;
-        return ((_14 = (_13 = (yield PGSQL.FetchOne(connection, `
-          select pg_get_functiondef($1) as viewd`, [func]))) === null || _13 === void 0 ? void 0 : _13.viewd) !== null && _14 !== void 0 ? _14 : null);
+        var _14, _15;
+        return ((_15 = (_14 = (yield PGSQL.FetchOne(connection, `
+          select pg_get_functiondef($1) as viewd`, [func]))) === null || _14 === void 0 ? void 0 : _14.viewd) !== null && _15 !== void 0 ? _15 : null);
     });
     PGSQL.TypeData = (connection, type) => __awaiter(this, void 0, void 0, function* () {
         return PGSQL.FetchArray(connection, `
@@ -3205,13 +3209,13 @@ exports.PGSQL = void 0;
           AND cols.table_name = '${table}'`);
     });
     PGSQL.GetPGTable = (connection, table, schema) => __awaiter(this, void 0, void 0, function* () {
-        var _15, _16, _17, _18, _19;
+        var _16, _17, _18, _19, _20;
         const pgTable = new PGTable();
         pgTable.name = table;
         const columnComments = yield PGSQL.TableColumnComments(connection, table, schema);
         const columns = yield PGSQL.TableColumnsData(connection, table, schema);
         for (const column of columns) {
-            const pgColumn = new PGColumn(Object.assign(Object.assign({}, column), { generatedAlwaysAs: column.generation_expression, isAutoIncrement: intelliwaketsfoundation.IsOn(column.identity_increment), udt_name: column.udt_name.toString().startsWith('_') ? column.udt_name.toString().substr(1) : column.udt_name, array_dimensions: column.udt_name.toString().startsWith('_') ? [null] : [], column_default: (((_15 = column.column_default) !== null && _15 !== void 0 ? _15 : '').toString().startsWith('\'NULL\'') || ((_16 = column.column_default) !== null && _16 !== void 0 ? _16 : '').toString().startsWith('NULL::')) ? null : ((_17 = column.column_default) !== null && _17 !== void 0 ? _17 : '').toString().startsWith('\'\'::') ? '' : column.column_default, column_comment: (_19 = (_18 = columnComments.find(col => col.column_name === column.column_name)) === null || _18 === void 0 ? void 0 : _18.column_comment) !== null && _19 !== void 0 ? _19 : '' }));
+            const pgColumn = new PGColumn(Object.assign(Object.assign({}, column), { generatedAlwaysAs: column.generation_expression, isAutoIncrement: intelliwaketsfoundation.IsOn(column.identity_increment), udt_name: column.udt_name.toString().startsWith('_') ? column.udt_name.toString().substr(1) : column.udt_name, array_dimensions: column.udt_name.toString().startsWith('_') ? [null] : [], column_default: (((_16 = column.column_default) !== null && _16 !== void 0 ? _16 : '').toString().startsWith('\'NULL\'') || ((_17 = column.column_default) !== null && _17 !== void 0 ? _17 : '').toString().startsWith('NULL::')) ? null : ((_18 = column.column_default) !== null && _18 !== void 0 ? _18 : '').toString().startsWith('\'\'::') ? '' : column.column_default, column_comment: (_20 = (_19 = columnComments.find(col => col.column_name === column.column_name)) === null || _19 === void 0 ? void 0 : _19.column_comment) !== null && _20 !== void 0 ? _20 : '' }));
             pgTable.columns.push(pgColumn);
         }
         const fks = yield PGSQL.TableFKsData(connection, table);
