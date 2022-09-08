@@ -1,4 +1,5 @@
 import readline from 'readline'
+import {exec, ExecException} from 'child_process'
 
 export const KeyboardLine = async (question: string, validAnswers?: string[]): Promise<string> => {
 	const rl = readline.createInterface({
@@ -39,3 +40,18 @@ export const KeyboardKey = async (question?: string, validKeys?: string[] | ((ke
 		process.stdin.on('data', getData)
 	})
 }
+
+export const ExecuteScript = async (script: string): Promise<string> =>
+	new Promise<string>((resolve, reject) => {
+		exec(script, async (error: ExecException | null, stdout: string, stderr: string) => {
+			if (error) {
+				reject(error)
+			} else {
+				if (stderr) {
+					console.log(`stderr: ${stderr}`)
+				}
+				
+				resolve(stdout)
+			}
+		})
+	})
