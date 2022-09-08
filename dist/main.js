@@ -3,6 +3,7 @@
 Object.defineProperty(exports, '__esModule', { value: true });
 
 var readline = require('readline');
+var child_process = require('child_process');
 var intelliwaketsfoundation = require('@solidbasisventures/intelliwaketsfoundation');
 var path = require('path');
 var fs = require('fs');
@@ -68,6 +69,21 @@ const KeyboardKey = (question, validKeys) => __awaiter(void 0, void 0, void 0, f
             }
         };
         process.stdin.on('data', getData);
+    });
+});
+const ExecuteScript = (script) => __awaiter(void 0, void 0, void 0, function* () {
+    return new Promise((resolve, reject) => {
+        child_process.exec(script, (error, stdout, stderr) => __awaiter(void 0, void 0, void 0, function* () {
+            if (error) {
+                reject(error);
+            }
+            else {
+                if (stderr) {
+                    console.log(`stderr: ${stderr}`);
+                }
+                resolve(stdout);
+            }
+        }));
     });
 });
 
@@ -3370,6 +3386,7 @@ const PGWhereSearchClause = (search, params, fields, startWithAnd = true) => {
 };
 
 exports.ColumnDefinition = ColumnDefinition;
+exports.ExecuteScript = ExecuteScript;
 exports.KeyboardKey = KeyboardKey;
 exports.KeyboardLine = KeyboardLine;
 exports.MyColumn = MyColumn;
