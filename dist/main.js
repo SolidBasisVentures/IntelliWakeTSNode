@@ -198,7 +198,7 @@ class PGColumn {
                 return this.udt_name.enumName;
             }
             else if (this.jsonType()) {
-                return 'object';
+                return 'any';
             }
             else if (this.booleanType()) {
                 return 'boolean';

@@ -106,7 +106,7 @@ export class PGColumn implements IPGColumn {
 		if (typeof this.udt_name !== 'string') {
 			return (this.udt_name as any).enumName
 		} else if (this.jsonType()) {
-			return 'object'
+			return 'any'
 		} else if (this.booleanType()) {
 			return 'boolean'
 		} else if (this.integerFloatType()) {
