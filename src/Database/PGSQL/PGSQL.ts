@@ -307,7 +307,7 @@ export namespace PGSQL {
 	}
 	
 	export const FetchOneValue = async <T>(connection: TConnection, sql: string, values?: any): Promise<T | null> => {
-		return (await FetchOne<any>(connection, sql, values))[0] ?? null
+		return (Object.values((await FetchOne<any>(connection, sql, values)) ?? {}) as any)[0] ?? null
 	}
 	
 	export const FetchMany = async <T>(connection: TConnection, sql: string, values?: any): Promise<Array<T>> => {
