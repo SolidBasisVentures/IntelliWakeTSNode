@@ -581,10 +581,10 @@
   dependencies:
     "@sinonjs/commons" "^1.7.0"
 
-"@solidbasisventures/intelliwaketsfoundation@^5.0.230":
-  version "5.0.230"
-  resolved "https://registry.yarnpkg.com/@solidbasisventures/intelliwaketsfoundation/-/intelliwaketsfoundation-5.0.230.tgz#286313afba91f19ae8a4b0f7ad935d494c203551"
-  integrity sha512-poMFwUIQaKpyfkuuo1FGqvluHHTwLI8KUhO3ETS/3L+i2QvHV3VBLdfceN+L+hWYwULTNWxCZwkGW852Mo3+aA==
+"@solidbasisventures/intelliwaketsfoundation@^5.0.234":
+  version "5.0.234"
+  resolved "https://registry.yarnpkg.com/@solidbasisventures/intelliwaketsfoundation/-/intelliwaketsfoundation-5.0.234.tgz#d0e4adfab57227abdbf82db01332e87d32552021"
+  integrity sha512-gFxsW3IobZlILqdV0PuT5EsqpWvv2nOzsbyn2z/kK1hRuiD6TtbwQxqIuxJnDu8UBjZlFu/ibdD+aUK2Mf4wlA==
 
 "@tootallnate/once@1":
   version "1.1.2"
