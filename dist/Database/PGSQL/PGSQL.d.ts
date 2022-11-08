@@ -108,5 +108,6 @@ export declare namespace PGSQL {
         column_comment: string | null;
     }[]>;
     const GetPGTable: (connection: TConnection, table: string, schema?: string) => Promise<PGTable>;
+    const CleanSQL: (sql: string) => string;
 }
 export {};

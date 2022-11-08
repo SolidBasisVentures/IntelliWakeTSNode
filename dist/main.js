@@ -3260,6 +3260,7 @@ exports.PGSQL = void 0;
         }
         return pgTable;
     });
+    PGSQL.CleanSQL = (sql) => intelliwaketsfoundation.ReplaceAll(';', '', sql);
 })(exports.PGSQL || (exports.PGSQL = {}));
 
 class PGView {
