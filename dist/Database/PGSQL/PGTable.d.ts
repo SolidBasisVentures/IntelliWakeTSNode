@@ -46,7 +46,7 @@ export declare class PGTable {
     addColumn(pgColumn: Partial<PGColumn>): void;
     reOrderColumns(): void;
     addIndex(pgIndex: PGIndex): void;
-    tableHeaderText(forTableText: string): string;
+    tableHeaderText(forTableText: string, modifyStatement?: string): string;
     tsText(): string;
     static TSTables(tables: string[]): string;
     tsTextTable(relativePaths?: ICTableRelativePaths): string;

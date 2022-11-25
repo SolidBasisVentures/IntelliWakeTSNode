@@ -2,6 +2,7 @@ import {PGColumn} from './PGColumn'
 import {PGIndex} from './PGIndex'
 import {PGForeignKey} from './PGForeignKey'
 import {
+	CoalesceFalsey,
 	IsOn,
 	RemoveEnding,
 	ReplaceAll,
@@ -43,24 +44,24 @@ export class PGTable {
 	public name = ''
 	public description = ''
 	public check: string | string[] | null = null
-	
+
 	public inherits: string[] = []
-	
+
 	public columns: PGColumn[] = []
-	
+
 	public indexes: PGIndex[] = []
-	
+
 	public foreignKeys: PGForeignKey[] = []
-	
+
 	constructor(instanceData?: Partial<PGTable>) {
 		if (instanceData) {
 			this.deserialize(instanceData)
 		}
 	}
-	
+
 	protected deserialize(instanceData: Partial<PGTable>) {
 		const keys = Object.keys(this)
-		
+
 		for (const key of keys) {
 			if (instanceData.hasOwnProperty(key)) {
 				switch (key) {
@@ -86,48 +87,48 @@ export class PGTable {
 			}
 		}
 	}
-	
+
 	public indexOfColumn(columnName: string): number {
 		return this.columns.findIndex((column) => column.column_name === columnName)
 	}
-	
+
 	public indexesOfForeignKeyByColumn(columnName: string): number[] {
 		let indexes: number[] = []
-		
+
 		for (let i = 0; i < this.foreignKeys.length; i++) {
 			if (this.foreignKeys[i].columnNames.includes(columnName)) {
 				indexes.push(i)
 			}
 		}
-		
+
 		return indexes
 	}
-	
+
 	public getForeignKeysByColumn(columnName: string): PGForeignKey[] {
 		let fks: PGForeignKey[] = []
-		
+
 		const indexes = this.indexesOfForeignKeyByColumn(columnName)
-		
+
 		for (const index of indexes) {
 			fks.push(this.foreignKeys[index])
 		}
-		
+
 		return fks
 	}
-	
+
 	public removeForeignKeysByColumn(columnName: string) {
 		this.foreignKeys = this.foreignKeys.filter((foreignKey) => !foreignKey.columnNames.includes(columnName))
 	}
-	
+
 	public renameForeignKeysByColumn(fromName: string, toName: string, pgTables?: PGTable[]) {
 		const thisObject = this
-		
+
 		this.foreignKeys.forEach(fk => {
 			if (fk.columnNames.includes(fromName)) {
 				fk.columnNames = [...fk.columnNames.filter(cN => cN !== fromName), toName]
 			}
 		})
-		
+
 		if (pgTables) {
 			pgTables.filter(pgTable => pgTable.name !== thisObject.name).forEach(pgTable => {
 				pgTable.foreignKeys.forEach(fk => {
@@ -140,11 +141,11 @@ export class PGTable {
 			})
 		}
 	}
-	
+
 	public removeIndexsByColumn(columnName: string) {
 		this.indexes = this.indexes.filter((index) => !index.columns.includes(columnName))
 	}
-	
+
 	public renameIndexsByColumn(fromName: string, toName: string) {
 		this.indexes.forEach(idx => {
 			if (idx.columns.includes(fromName)) {
@@ -152,79 +153,79 @@ export class PGTable {
 			}
 		})
 	}
-	
+
 	public addForeignKey(pgForeignKey: PGForeignKey) {
 		this.foreignKeys.push(pgForeignKey)
 	}
-	
+
 	public getColumn(columnName: string): PGColumn | null {
 		return this.columns.find((column) => column.column_name === columnName) ?? null
 	}
-	
+
 	public removeColumn(columnName: string) {
 		const column = this.getColumn(columnName)
-		
+
 		if (!!column) {
 			this.removeForeignKeysByColumn(columnName)
 			this.removeIndexsByColumn(columnName)
-			
+
 			this.columns = this.columns.filter((column) => column.column_name !== columnName)
-			
+
 			this.reOrderColumns()
 		}
 	}
-	
+
 	public renameColumn(fromName: string, toName: string, pgTables?: PGTable[]) {
 		const column = this.getColumn(fromName)
-		
+
 		if (!!column) {
 			column.column_name = toName
-			
+
 			this.renameForeignKeysByColumn(fromName, toName, pgTables)
 			this.renameIndexsByColumn(fromName, toName)
 		}
 	}
-	
+
 	public addColumn(pgColumn: Partial<PGColumn>) {
 		const pgColumnToAdd = new PGColumn(pgColumn)
-		
+
 		if (!pgColumnToAdd.ordinal_position) {
 			pgColumnToAdd.ordinal_position = 999999
 		}
-		
+
 		this.columns = this.columns.filter((column) => column.column_name !== pgColumnToAdd.column_name)
-		
+
 		for (let i = 0; i < this.columns.length; i++) {
 			if (this.columns[i].ordinal_position >= pgColumnToAdd.ordinal_position) {
 				this.columns[i].ordinal_position++
 			}
 		}
-		
+
 		this.columns.push(pgColumnToAdd)
-		
+
 		this.reOrderColumns()
 	}
-	
+
 	public reOrderColumns() {
 		this.columns = this.columns.sort((a, b) => a.ordinal_position - b.ordinal_position)
-		
+
 		let position = 0
-		
+
 		for (let i = 0; i < this.columns.length; i++) {
 			position++
 			this.columns[i].ordinal_position = position
 		}
 	}
-	
+
 	public addIndex(pgIndex: PGIndex) {
 		this.indexes.push(pgIndex)
 	}
-	
-	public tableHeaderText(forTableText: string): string {
+
+	public tableHeaderText(forTableText: string, modifyStatement = 'DO NOT MODIFY'): string {
 		let text = '/**' + TS_EOL
 		text += ' * Automatically generated: ' + YYYY_MM_DD_HH_mm_ss('now') + TS_EOL
 		text += ' * © ' + (new Date()).getFullYear() + ', Solid Basis Ventures, LLC.' + TS_EOL // Must come after generated date so it doesn't keep regenerating
-		text += ' * DO NOT MODIFY' + TS_EOL
+		text += ` * ${modifyStatement}` + TS_EOL
 		text += ' *' + TS_EOL
 		text += ' * ' + forTableText + ': ' + this.name + TS_EOL
 		if (!!this.description) {
@@ -233,10 +234,10 @@ export class PGTable {
 		}
 		text += ' */' + TS_EOL
 		text += TS_EOL
-		
+
 		return text
 	}
-	
+
 	public tsText(): string {
 		let text = this.tableHeaderText('Table Manager for')
 		if (this.inherits.length > 0) {
@@ -244,93 +245,113 @@ export class PGTable {
 				text += `import {I${inherit}, initial_${inherit}} from "./I${inherit}"${TS_EOL}`
 			}
 		}
-		
-		const enums: {column_name: string, enum_name: string, default_value?: string}[] = Array.from(
+
+		const enums: { column_name: string, enum_name: string, default_value?: string }[] = Array.from(
 			new Set(
 				[
 					...this.columns
-						.map((column) => ({
-							column_name: column.column_name,
-							enum_name: (typeof column.udt_name !== 'string' ? column.udt_name.enumName : '')
-						})),
+					       .map((column) => ({
+						       column_name: column.column_name,
+						       enum_name: (typeof column.udt_name !== 'string' ? column.udt_name.enumName : '')
+					       })),
 					...this.columns
-						.map((column) => ({
-							column_name: column.column_name,
-							enum_name: (typeof column.udt_name === 'string' && column.udt_name.startsWith('e_') ? PGEnum.TypeName(column.udt_name) : '')
-						})),
+					       .map((column) => ({
+						       column_name: column.column_name,
+						       enum_name: (typeof column.udt_name === 'string' && column.udt_name.startsWith('e_') ? PGEnum.TypeName(column.udt_name) : '')
+					       })),
 					...this.columns
-						.map(column => {
-							const regExp = /{([^}]*)}/
-							const results = regExp.exec(column.column_comment)
-							if (!!results && !!results[1]) {
-								const commaItems = results[1].split(',')
-								for (const commaItem of commaItems) {
-									const items = commaItem.split(':')
-									if ((items[0] ?? '').toLowerCase().trim() === 'enum') {
-										return {
-											column_name: column.column_name,
-											enum_name: ((items[1] ?? '').split('.')[0] ?? '').trim(),
-											default_value: (column.array_dimensions.length > 0 ?
-												(IsOn(column.is_nullable) ? 'null' : '[]') :
-												(items[2] ?? '').includes('.') ?
-													items[2] :
-													((items[1] ?? '').split('.')[0] ?? '').trim() + '.' + (items[2] ?? ((items[1] ?? '').split('.')[1] ?? ''))).trim()
-										}
-									}
-								}
-							}
-							return {column_name: column.column_name, enum_name: ''}
-						})
+					       .map(column => {
+						       const regExp = /{([^}]*)}/
+						       const results = regExp.exec(column.column_comment)
+						       if (!!results && !!results[1]) {
+							       const commaItems = results[1].split(',')
+							       for (const commaItem of commaItems) {
+								       const items = commaItem.split(':')
+								       if ((items[0] ?? '').toLowerCase().trim() === 'enum') {
+									       const enumName = items[1]?.split('.')[0]?.trim()
+									       const enumDefault = CoalesceFalsey(items[1]?.split('.')[1], items[2], column.column_default)?.toString()?.trim()
+
+									       // console.info(column.column_name, enumName, enumDefault)
+
+									       if (!enumName) {
+										       throw new Error('Enum requested in comment, but not specified  - Format {Enum: ETest} for nullable or {Enum: ETest.FirstValue}')
+									       }
+									       if (!IsOn(column.is_nullable) && !enumDefault) {
+										       throw new Error('Not Nullable Enum requested in comment, but no default value specified - Format {Enum: ETest.FirstValue}')
+									       }
+									       return {
+										       column_name: column.column_name,
+										       enum_name: enumName,
+										       default_value: column.array_dimensions.length > 0 ?
+											       (IsOn(column.is_nullable) ? 'null' : enumDefault ?? '[]') :
+											       (!enumDefault ? 'null' : `${enumName}.${enumDefault}`)
+									       }
+								       }
+							       }
+						       }
+						       return {column_name: column.column_name, enum_name: ''}
+					       })
 				]
 					.filter(enumName => !!enumName.enum_name)
 			)
 		)
-		
-		const interfaces: {column_name: string, interface_name: string, default_value?: string}[] = Array.from(
+
+		type TInterfaceBuild = { column_name: string, interface_name: string, default_value?: string, otherImportItem?: string | null }
+		const interfaces: TInterfaceBuild[] = Array.from(
 			new Set(
 				[
 					...this.columns
-						.map(column => {
-							const regExp = /{([^}]*)}/
-							const results = regExp.exec(column.column_comment)
-							if (!!results && !!results[1]) {
-								const commaItems = results[1].split(',')
-								for (const commaItem of commaItems) {
-									const items = commaItem.split(':')
-									if ((items[0] ?? '').toLowerCase().trim() === 'interface') {
-										return {
-											column_name: column.column_name,
-											interface_name: ((items[1] ?? '').split('.')[0] ?? '').trim(),
-											default_value: column.array_dimensions.length > 0 ? '[]' : (items[2] ?? '').includes('.') ? items[2] : ((items[1] ?? '').split('.')[0] ?? '').trim() + '.' + (items[2] ?? ((items[1] ?? '').split('.')[1] ?? '')).trim()
-										}
-									}
-								}
-							}
-							return {column_name: column.column_name, interface_name: ''}
-						})
+					       .map(column => {
+						       const regExp = /{([^}]*)}/
+						       const results = regExp.exec(column.column_comment)
+						       if (!!results && !!results[1]) {
+							       const commaItems = results[1].split(',')
+							       for (const commaItem of commaItems) {
+								       const items = commaItem.split(':')
+								       if ((items[0] ?? '').toLowerCase().trim() === 'interface') {
+									       const interfaceName = items[1]?.split('.')[0]?.trim()
+									       const interfaceDefault = (CoalesceFalsey(items[1]?.split('.')[1], items[2], column.column_default)?.toString()?.trim()) ?? (IsOn(column.is_nullable) ? 'null' : '{}')
+
+									       if (!interfaceName) {
+										       throw new Error('Interface requested in comment, but not specified  - Format {Interface: ITest} for nullable or {Interface: ITest.initialValue}')
+									       }
+
+									       return {
+										       column_name: column.column_name,
+										       interface_name: interfaceName,
+										       otherImportItem: interfaceDefault,
+										       default_value: column.array_dimensions.length > 0 ?
+											       (IsOn(column.is_nullable) ? 'null' : interfaceDefault ?? '[]') :
+											       interfaceDefault
+									       }
+								       }
+							       }
+						       }
+						       return {column_name: column.column_name, interface_name: ''}
+					       })
 				]
 					.filter(enumName => !!enumName.interface_name)
 			)
 		)
-		
+
 		enums.map(enumItem => enumItem.enum_name).reduce<string[]>((results, enumItem) => results.includes(enumItem) ? results : [...results, ReplaceAll('[]', '', enumItem)], [])
-			.forEach(enumItem => {
-				text += `import {${enumItem}} from "../Enums/${enumItem}"${TS_EOL}`
-			})
-		
+		     .forEach(enumItem => {
+			     text += `import {${enumItem}} from "../Enums/${enumItem}"${TS_EOL}`
+		     })
+
 		if (enums.length > 0) {
 			text += TS_EOL
 		}
-		
-		interfaces.map(interfaceItem => interfaceItem.interface_name).reduce<string[]>((results, enumItem) => results.includes(enumItem) ? results : [...results, ReplaceAll('[]', '', enumItem)], [])
-			.forEach(interfaceItem => {
-				text += `import {${interfaceItem}} from "../Interfaces/${interfaceItem}"${TS_EOL}`
-			})
-		
+
+		interfaces.map(interfaceItem => interfaceItem).reduce<TInterfaceBuild[]>((results, interfaceItem) => results.some(result => result.interface_name === interfaceItem.interface_name && (!!result.otherImportItem || !interfaceItem.otherImportItem)) ? results : [...results.filter(result => result.interface_name !== interfaceItem.interface_name), interfaceItem], [])
+		          .forEach(interfaceItem => {
+			          text += `import {${interfaceItem.interface_name}${!interfaceItem.otherImportItem ? '' : `, ${interfaceItem.otherImportItem}`}} from "../Interfaces/${interfaceItem.interface_name}"${TS_EOL}`
+		          })
+
 		if (interfaces.length > 0) {
 			text += TS_EOL
 		}
-		
+
 		text += `export interface I${this.name}`
 		if (this.inherits.length > 0) {
 			text += ` extends I${this.inherits.join(', I')}`
@@ -374,13 +395,13 @@ export class PGTable {
 			text += pgColumn.column_name
 			text += ': '
 			const itemDefault = enums.find(enumItem => enumItem.column_name === pgColumn.column_name)?.default_value ?? interfaces.find(interfaceItem => interfaceItem.column_name === pgColumn.column_name)?.default_value
-			
+
 			// if (pgColumn.column_name === 'inspect_roles') {
 			// 	console.log('Column', pgColumn)
 			// 	console.log('ItemDefault', itemDefault)
 			// 	console.log('Arry Len', pgColumn.array_dimensions.length)
 			// }
-			
+
 			if (!!itemDefault) {
 				// console.log('HERE', enums.find(enumItem => enumItem.column_name === pgColumn.column_name))
 				// console.log('THERE', pgColumn)
@@ -452,10 +473,10 @@ export class PGTable {
 			addComma = true
 		}
 		text += TS_EOL + '}' + TS_EOL // Removed semi
-		
+
 		return text
 	}
-	
+
 	/*export class Cprogress_report_test extends _CTable<Iprogress_report_test> {
 	public readonly table: TTables
 
@@ -465,7 +486,7 @@ export class PGTable {
 		this.table = 'progress_report_test'
 	}
 }*/
-	
+
 	public static TSTables(tables: string[]): string {
 		let text = `export type TTables =`
 		text += TS_EOL
@@ -476,10 +497,10 @@ export class PGTable {
 			.map(table => `'${table}'`)
 			.join(TS_EOL + '\t| ')
 		text += TS_EOL
-		
+
 		return text
 	}
-	
+
 	public tsTextTable(relativePaths?: ICTableRelativePaths): string {
 		const usePaths: Required<ICTableRelativePaths> = {
 			initials: RemoveEnding('/', relativePaths?.initials ?? '@Common/Tables', true),
@@ -488,8 +509,8 @@ export class PGTable {
 			responseContextName: relativePaths?.responseContextName ?? 'responseContext',
 			responseContextClass: relativePaths?.responseContextClass ?? 'ResponseContext'
 		}
-		
-		let text = this.tableHeaderText('Table Class for')
+
+		let text = this.tableHeaderText('Table Class for', 'MODIFICATIONS WILL NOT BE OVERWRITTEN')
 		text += `import {initial_${this.name}, I${this.name}} from '${usePaths.initials}/I${this.name}'` + TS_EOL
 		text += `import {TTables} from '${usePaths.tTables}/TTables'` + TS_EOL
 		text += `import {_CTable} from './_CTable'` + TS_EOL
@@ -511,15 +532,15 @@ export class PGTable {
 		text += `\t\tthis.table = '${this.name}'` + TS_EOL
 		text += `\t}` + TS_EOL
 		text += `}` + TS_EOL
-		
+
 		return text
 	}
-	
+
 	public ddlPrimaryKey(): string | null {
 		let found = false
-		
+
 		let ddl = `PRIMARY KEY ("`
-		
+
 		for (const column of this.columns) {
 			if (IsOn(column.is_identity)) {
 				if (found) {
@@ -529,121 +550,121 @@ export class PGTable {
 				found = true
 			}
 		}
-		
+
 		if (found) {
 			ddl += `")`
-			
+
 			return ddl
 		}
-		
+
 		return null
 	}
-	
+
 	public ddlCreateTableText(createForeignKeys: boolean, createIndexes: boolean, dropFirst = true): string {
 		let ddl = ''
-		
+
 		/** @noinspection SqlResolve */
 		if (dropFirst) {
 			ddl += `DROP TABLE IF EXISTS ${this.name} CASCADE;` + TS_EOL
 		}
 		ddl += `CREATE TABLE ${this.name}
-            (` + TS_EOL
-		
+				(` + TS_EOL
+
 		let prevColumn: PGColumn | null = null
 		for (const pgColumn of this.columns) {
 			if (prevColumn !== null) {
 				ddl += ',' + TS_EOL
 			}
-			
+
 			ddl += '\t' + pgColumn.ddlDefinition()
-			
+
 			prevColumn = pgColumn
 		}
 		const pk = this.ddlPrimaryKey()
 		if (!!pk) {
 			ddl += ',' + TS_EOL + '\t' + pk
 		}
-		
+
 		if (!!this.check) {
 			const checkItems = (typeof this.check === 'string' ? [this.check] : this.check).filter((item) => !!item)
-			
+
 			for (const checkItem of checkItems) {
 				ddl += `,${TS_EOL}\tCHECK (${checkItem})`
 			}
 		}
-		
+
 		ddl += TS_EOL
 		ddl += ')'
-		
+
 		if (this.inherits.length > 0) {
 			ddl += TS_EOL + `INHERITS (${this.inherits.join(',')})`
 		}
-		
+
 		ddl += ';'
-		
+
 		if (createIndexes) {
 			ddl += this.ddlCreateIndexes()
 		}
-		
+
 		if (createForeignKeys) {
 			ddl += this.ddlCreateForeignKeysText()
 		}
-		
+
 		for (const pgColumn of this.columns.filter(col => !!col.column_comment)) {
 			ddl += TS_EOL + `COMMENT ON COLUMN ${this.name}.${pgColumn.column_name} IS '${PGTable.CleanComment(pgColumn.column_comment, false)}';`
 		}
-		
+
 		return ddl
 	}
-	
+
 	public ddlCreateIndexes(): string {
 		let ddl = ''
-		
+
 		for (const index of this.indexes) {
 			ddl += TS_EOL + index.ddlDefinition(this)
 		}
-		
+
 		return ddl
 	}
-	
+
 	public ddlCreateForeignKeysText(): string {
 		let ddl = ''
-		
+
 		for (const foreignKey of this.foreignKeys) {
 			ddl += foreignKey.ddlConstraintDefinition(this) + TS_EOL
 		}
-		
+
 		return ddl
 	}
-	
+
 	public static CleanComment(comment: string, stripBrackets = true): string {
 		if (!comment) {
 			return comment
 		}
-		
+
 		// noinspection RegExpRedundantEscape
 		return stripBrackets ? comment.replace(/[\n\r]/g, ' ').replace(/\{(.+?)\}/g, '').trim() : comment.replace(/[\n\r]/g, ' ').trim()
 	}
-	
+
 	public fixedWidthMap<T>(options?: Partial<IFixedWidthMapOptions>): IFixedWidthMap<T>[] {
 		const useOptions: IFixedWidthMapOptions = {...initialFixedWidthMapOptions, ...options}
-		
+
 		let currentPosition = useOptions.startPosition
 		let validColumn = !useOptions.startColumnName
-		
+
 		let fixedWidthMaps: IFixedWidthMap<T>[] = []
-		
+
 		for (const column of this.columns) {
 			if (useOptions.stopBeforeColumnName && column.column_name.toLowerCase() === useOptions.stopBeforeColumnName.toLowerCase()) {
 				break
 			}
-			
+
 			if (!validColumn) {
 				if (column.column_name.toLowerCase() === useOptions.startColumnName) {
 					validColumn = true
 				}
 			}
-			
+
 			if (validColumn) {
 				const colLength = column.character_maximum_length ?? 0
 				if (!colLength) {
@@ -656,12 +677,12 @@ export class PGTable {
 				})
 				currentPosition += colLength
 			}
-			
+
 			if (useOptions.lastColumnName && column.column_name.toLowerCase() === useOptions.lastColumnName.toLowerCase()) {
 				break
 			}
 		}
-		
+
 		return fixedWidthMaps
 	}
 }

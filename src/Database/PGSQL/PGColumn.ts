@@ -24,7 +24,7 @@ export interface IPGColumn {
 	/** Comment on column, except for within {}'s
 	 * {} can contain comma separated values
 	 * {enum: EDeclaration: default_value} or {enum: EDeclaration.default_value} or {enum: EDeclaration}
-	 * {interface: IDeclaration} */
+	 * {interface: IDeclaration} or {interface: IDeclaration.initialDeclaration} */
 	column_comment: string
 	isAutoIncrement: boolean
 }
@@ -49,39 +49,39 @@ export class PGColumn implements IPGColumn {
 	public check: string | null = null
 	public checkStringValues: string[] = []
 	public generatedAlwaysAs: string | null = null
-	
+
 	/** Comment on column, except for within {}'s
 	 * {} can contain comma separated values
 	 * {enum: EDeclaration: default_value} or {enum: EDeclaration.default_value} or {enum: EDeclaration}
-	 * {interface: IDeclaration} */
+	 * {interface: IDeclaration} or {interface: IDeclaration.initialDeclaration} */
 	public column_comment: string = ''
 	public isAutoIncrement = true
-	
+
 	static readonly TYPE_BOOLEAN = 'bool' // Changed from boolean
 	static readonly TYPE_NUMERIC = 'numeric'
 	static readonly TYPE_FLOAT8 = 'float8'
 	static readonly TYPE_POINT = 'point'
-	
+
 	static readonly TYPE_SMALLINT = 'smallint'
 	static readonly TYPE_INTEGER = 'integer'
 	static readonly TYPE_BIGINT = 'bigint'
-	
+
 	static readonly TYPE_VARCHAR = 'varchar'
 	static readonly TYPE_TEXT = 'text'
-	
+
 	static readonly TYPE_JSON = 'json'
 	static readonly TYPE_JSONB = 'jsonb'
-	
+
 	static readonly TYPE_DATE = 'date'
 	static readonly TYPE_TIME = 'time'
 	static readonly TYPE_TIMETZ = 'timetz'
 	static readonly TYPE_TIMESTAMP = 'timestamp'
 	static readonly TYPE_TIMESTAMPTZ = 'timestamptz'
-	
+
 	static readonly TYPE_BYTEA = 'bytea'
-	
+
 	static readonly TYPE_UUID = 'uuid'
-	
+
 	static readonly TYPES_ALL = [
 		PGColumn.TYPE_BOOLEAN,
 		PGColumn.TYPE_NUMERIC,
@@ -101,7 +101,7 @@ export class PGColumn implements IPGColumn {
 		PGColumn.TYPE_TIMESTAMPTZ,
 		PGColumn.TYPE_UUID
 	]
-	
+
 	public jsType = (): string => {
 		if (typeof this.udt_name !== 'string') {
 			return (this.udt_name as any).enumName
@@ -119,35 +119,35 @@ export class PGColumn implements IPGColumn {
 			return 'string' // Date or String or Enum
 		}
 	}
-	
+
 	public enumType = (): boolean => {
 		return typeof this.udt_name !== 'string'
 	}
-	
+
 	public integerType = (): boolean => {
 		return (typeof this.udt_name === 'string') && (this.udt_name.toLowerCase().startsWith('int') || [PGColumn.TYPE_SMALLINT, PGColumn.TYPE_INTEGER, PGColumn.TYPE_BIGINT].includes(this.udt_name.toLowerCase()))
 	}
-	
+
 	public floatType = (): boolean => {
 		return (typeof this.udt_name === 'string') && [PGColumn.TYPE_NUMERIC, PGColumn.TYPE_FLOAT8].includes(this.udt_name.toLowerCase())
 	}
-	
+
 	public integerFloatType = (): boolean => {
 		return this.integerType() || this.floatType()
 	}
-	
+
 	public booleanType = (): boolean => {
 		return (typeof this.udt_name === 'string') && [PGColumn.TYPE_BOOLEAN].includes(this.udt_name.toLowerCase())
 	}
-	
+
 	public jsonType = (): boolean => {
 		return (typeof this.udt_name === 'string') && [PGColumn.TYPE_JSON, PGColumn.TYPE_JSONB].includes(this.udt_name.toLowerCase())
 	}
-	
+
 	public generalStringType = (): boolean => {
 		return (typeof this.udt_name !== 'string') || [PGColumn.TYPE_VARCHAR].includes(this.udt_name.toLowerCase())
 	}
-	
+
 	public dateType = (): boolean => {
 		return (typeof this.udt_name === 'string') && [
 			PGColumn.TYPE_DATE,
@@ -157,33 +157,33 @@ export class PGColumn implements IPGColumn {
 			PGColumn.TYPE_TIMESTAMPTZ
 		].includes(this.udt_name.toLowerCase())
 	}
-	
+
 	public blobType = (): boolean => {
 		return (typeof this.udt_name === 'string') && [PGColumn.TYPE_TEXT].includes(this.udt_name.toLowerCase())
 	}
-	
+
 	public otherType = (): boolean => {
 		return (
 			!this.integerFloatType && !this.booleanType && !this.dateType() && !this.generalStringType() && !this.blobType()
 		)
 	}
-	
+
 	constructor(instanceData?: Partial<IPGColumn>) {
 		if (instanceData) {
 			this.deserialize(instanceData)
 		}
 	}
-	
+
 	private deserialize(instanceData: Partial<IPGColumn>) {
 		const keys = Object.keys(this)
-		
+
 		for (const key of keys) {
 			if (instanceData.hasOwnProperty(key) && typeof(instanceData as any) !== 'function') {
 				;(this as any)[key] = (instanceData as any)[key]
 			}
 		}
 	}
-	
+
 	public clean() {
 		//		if (this.dateType()) {
 		//			if (IsEmpty(this.DATETIME_PRECISION) || this.DATETIME_PRECISION < 3 || this.DATETIME_PRECISION > 6) {
@@ -191,12 +191,12 @@ export class PGColumn implements IPGColumn {
 		//			}
 		//		}
 	}
-	
+
 	public ddlDefinition(): string {
 		let ddl = '"' + this.column_name + '" '
-		
+
 		ddl += (typeof this.udt_name === 'string') ? this.udt_name : this.udt_name.columnName
-		
+
 		if (this.array_dimensions.length > 0) {
 			ddl += `[${this.array_dimensions
 				.map((array_dimension) => (!!array_dimension ? array_dimension.toString() : ''))
@@ -224,7 +224,7 @@ export class PGColumn implements IPGColumn {
 				ddl += ' '
 			}
 		}
-		
+
 		if (!IsOn(this.is_nullable)) {
 			ddl += 'NOT NULL '
 		}
@@ -234,7 +234,7 @@ export class PGColumn implements IPGColumn {
 			if (typeof this.column_default === 'string' && this.column_default.toLowerCase().includes('null')) {
 				this.column_default = null
 			}
-			
+
 			if ((this.column_default !== undefined && this.column_default !== null) || this.is_identity || this.isAutoIncrement) {
 				if (!(this.dateType() && (!this.column_default || (this.column_default ?? '').toString().toUpperCase().includes('NULL')))) {
 					if (this.array_dimensions.length > 0) {
@@ -289,22 +289,22 @@ export class PGColumn implements IPGColumn {
 					}
 				}
 			}
-			
+
 			if (!!this.check) {
 				ddl += `CHECK (${this.check}) `
 			} else if (this.checkStringValues.length > 0) {
 				ddl += `CHECK (${IsOn(this.is_nullable) ? this.column_name + ' IS NULL OR ' : ''}${this.column_name} IN ('${this.checkStringValues.join('\', \'')}')) `
 			}
 		}
-		
+
 		return ddl.trim()
 	}
-	
+
 	public static CleanComment(comment: string): string {
 		if (!comment) {
 			return comment
 		}
-		
+
 		return comment.replace(/[\n\r]/g, ' ')
 	}
 }

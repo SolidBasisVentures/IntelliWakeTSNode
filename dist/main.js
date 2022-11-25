@@ -190,7 +190,7 @@ class PGColumn {
         /** Comment on column, except for within {}'s
          * {} can contain comma separated values
          * {enum: EDeclaration: default_value} or {enum: EDeclaration.default_value} or {enum: EDeclaration}
-         * {interface: IDeclaration} */
+         * {interface: IDeclaration} or {interface: IDeclaration.initialDeclaration} */
         this.column_comment = '';
         this.isAutoIncrement = true;
         this.jsType = () => {
@@ -774,11 +774,11 @@ class PGTable {
     addIndex(pgIndex) {
         this.indexes.push(pgIndex);
     }
-    tableHeaderText(forTableText) {
+    tableHeaderText(forTableText, modifyStatement = 'DO NOT MODIFY') {
         let text = '/**' + TS_EOL$1;
         text += ' * Automatically generated: ' + intelliwaketsfoundation.YYYY_MM_DD_HH_mm_ss('now') + TS_EOL$1;
         text += ' * © ' + (new Date()).getFullYear() + ', Solid Basis Ventures, LLC.' + TS_EOL$1; // Must come after generated date so it doesn't keep regenerating
-        text += ' * DO NOT MODIFY' + TS_EOL$1;
+        text += ` * ${modifyStatement}` + TS_EOL$1;
         text += ' *' + TS_EOL$1;
         text += ' * ' + forTableText + ': ' + this.name + TS_EOL$1;
         if (!!this.description) {
@@ -810,7 +810,7 @@ class PGTable {
             })),
             ...this.columns
                 .map(column => {
-                var _a, _b, _c, _d, _e, _f, _g, _h, _j;
+                var _a, _b, _c, _d, _e, _f;
                 const regExp = /{([^}]*)}/;
                 const results = regExp.exec(column.column_comment);
                 if (!!results && !!results[1]) {
@@ -818,14 +818,21 @@ class PGTable {
                     for (const commaItem of commaItems) {
                         const items = commaItem.split(':');
                         if (((_a = items[0]) !== null && _a !== void 0 ? _a : '').toLowerCase().trim() === 'enum') {
+                            const enumName = (_c = (_b = items[1]) === null || _b === void 0 ? void 0 : _b.split('.')[0]) === null || _c === void 0 ? void 0 : _c.trim();
+                            const enumDefault = (_f = (_e = intelliwaketsfoundation.CoalesceFalsey((_d = items[1]) === null || _d === void 0 ? void 0 : _d.split('.')[1], items[2], column.column_default)) === null || _e === void 0 ? void 0 : _e.toString()) === null || _f === void 0 ? void 0 : _f.trim();
+                            // console.info(column.column_name, enumName, enumDefault)
+                            if (!enumName) {
+                                throw new Error('Enum requested in comment, but not specified  - Format {Enum: ETest} for nullable or {Enum: ETest.FirstValue}');
+                            }
+                            if (!intelliwaketsfoundation.IsOn(column.is_nullable) && !enumDefault) {
+                                throw new Error('Not Nullable Enum requested in comment, but no default value specified - Format {Enum: ETest.FirstValue}');
+                            }
                             return {
                                 column_name: column.column_name,
-                                enum_name: ((_c = ((_b = items[1]) !== null && _b !== void 0 ? _b : '').split('.')[0]) !== null && _c !== void 0 ? _c : '').trim(),
-                                default_value: (column.array_dimensions.length > 0 ?
-                                    (intelliwaketsfoundation.IsOn(column.is_nullable) ? 'null' : '[]') :
-                                    ((_d = items[2]) !== null && _d !== void 0 ? _d : '').includes('.') ?
-                                        items[2] :
-                                        ((_f = ((_e = items[1]) !== null && _e !== void 0 ? _e : '').split('.')[0]) !== null && _f !== void 0 ? _f : '').trim() + '.' + ((_g = items[2]) !== null && _g !== void 0 ? _g : ((_j = ((_h = items[1]) !== null && _h !== void 0 ? _h : '').split('.')[1]) !== null && _j !== void 0 ? _j : ''))).trim()
+                                enum_name: enumName,
+                                default_value: column.array_dimensions.length > 0 ?
+                                    (intelliwaketsfoundation.IsOn(column.is_nullable) ? 'null' : enumDefault !== null && enumDefault !== void 0 ? enumDefault : '[]') :
+                                    (!enumDefault ? 'null' : `${enumName}.${enumDefault}`)
                             };
                         }
                     }
@@ -837,7 +844,7 @@ class PGTable {
         const interfaces = Array.from(new Set([
             ...this.columns
                 .map(column => {
-                var _a, _b, _c, _d, _e, _f, _g, _h, _j;
+                var _a, _b, _c, _d, _e, _f, _g;
                 const regExp = /{([^}]*)}/;
                 const results = regExp.exec(column.column_comment);
                 if (!!results && !!results[1]) {
@@ -845,10 +852,18 @@ class PGTable {
                     for (const commaItem of commaItems) {
                         const items = commaItem.split(':');
                         if (((_a = items[0]) !== null && _a !== void 0 ? _a : '').toLowerCase().trim() === 'interface') {
+                            const interfaceName = (_c = (_b = items[1]) === null || _b === void 0 ? void 0 : _b.split('.')[0]) === null || _c === void 0 ? void 0 : _c.trim();
+                            const interfaceDefault = (_g = ((_f = (_e = intelliwaketsfoundation.CoalesceFalsey((_d = items[1]) === null || _d === void 0 ? void 0 : _d.split('.')[1], items[2], column.column_default)) === null || _e === void 0 ? void 0 : _e.toString()) === null || _f === void 0 ? void 0 : _f.trim())) !== null && _g !== void 0 ? _g : (intelliwaketsfoundation.IsOn(column.is_nullable) ? 'null' : '{}');
+                            if (!interfaceName) {
+                                throw new Error('Interface requested in comment, but not specified  - Format {Interface: ITest} for nullable or {Interface: ITest.initialValue}');
+                            }
                             return {
                                 column_name: column.column_name,
-                                interface_name: ((_c = ((_b = items[1]) !== null && _b !== void 0 ? _b : '').split('.')[0]) !== null && _c !== void 0 ? _c : '').trim(),
-                                default_value: column.array_dimensions.length > 0 ? '[]' : ((_d = items[2]) !== null && _d !== void 0 ? _d : '').includes('.') ? items[2] : ((_f = ((_e = items[1]) !== null && _e !== void 0 ? _e : '').split('.')[0]) !== null && _f !== void 0 ? _f : '').trim() + '.' + ((_g = items[2]) !== null && _g !== void 0 ? _g : ((_j = ((_h = items[1]) !== null && _h !== void 0 ? _h : '').split('.')[1]) !== null && _j !== void 0 ? _j : '')).trim()
+                                interface_name: interfaceName,
+                                otherImportItem: interfaceDefault,
+                                default_value: column.array_dimensions.length > 0 ?
+                                    (intelliwaketsfoundation.IsOn(column.is_nullable) ? 'null' : interfaceDefault !== null && interfaceDefault !== void 0 ? interfaceDefault : '[]') :
+                                    interfaceDefault
                             };
                         }
                     }
@@ -864,9 +879,9 @@ class PGTable {
         if (enums.length > 0) {
             text += TS_EOL$1;
         }
-        interfaces.map(interfaceItem => interfaceItem.interface_name).reduce((results, enumItem) => results.includes(enumItem) ? results : [...results, intelliwaketsfoundation.ReplaceAll('[]', '', enumItem)], [])
+        interfaces.map(interfaceItem => interfaceItem).reduce((results, interfaceItem) => results.some(result => result.interface_name === interfaceItem.interface_name && (!!result.otherImportItem || !interfaceItem.otherImportItem)) ? results : [...results.filter(result => result.interface_name !== interfaceItem.interface_name), interfaceItem], [])
             .forEach(interfaceItem => {
-            text += `import {${interfaceItem}} from "../Interfaces/${interfaceItem}"${TS_EOL$1}`;
+            text += `import {${interfaceItem.interface_name}${!interfaceItem.otherImportItem ? '' : `, ${interfaceItem.otherImportItem}`}} from "../Interfaces/${interfaceItem.interface_name}"${TS_EOL$1}`;
         });
         if (interfaces.length > 0) {
             text += TS_EOL$1;
@@ -1039,7 +1054,7 @@ class PGTable {
             responseContextName: (_d = relativePaths === null || relativePaths === void 0 ? void 0 : relativePaths.responseContextName) !== null && _d !== void 0 ? _d : 'responseContext',
             responseContextClass: (_e = relativePaths === null || relativePaths === void 0 ? void 0 : relativePaths.responseContextClass) !== null && _e !== void 0 ? _e : 'ResponseContext'
         };
-        let text = this.tableHeaderText('Table Class for');
+        let text = this.tableHeaderText('Table Class for', 'MODIFICATIONS WILL NOT BE OVERWRITTEN');
         text += `import {initial_${this.name}, I${this.name}} from '${usePaths.initials}/I${this.name}'` + TS_EOL$1;
         text += `import {TTables} from '${usePaths.tTables}/TTables'` + TS_EOL$1;
         text += `import {_CTable} from './_CTable'` + TS_EOL$1;
@@ -1088,7 +1103,7 @@ class PGTable {
             ddl += `DROP TABLE IF EXISTS ${this.name} CASCADE;` + TS_EOL$1;
         }
         ddl += `CREATE TABLE ${this.name}
-            (` + TS_EOL$1;
+				(` + TS_EOL$1;
         let prevColumn = null;
         for (const pgColumn of this.columns) {
             if (prevColumn !== null) {

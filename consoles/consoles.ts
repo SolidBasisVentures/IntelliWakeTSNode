@@ -4,6 +4,9 @@ import {PGColumn} from '../src/Database/PGSQL/PGColumn'
 
 const processScript = async () => {
 	const pgTable = new PGTable()
+
+	pgTable.name = 'test_table'
+
 	pgTable.addColumn({
 		column_name: 'id',
 		udt_name: PGColumn.TYPE_INTEGER,
@@ -40,15 +43,54 @@ const processScript = async () => {
 	})
 	pgTable.addColumn({
 		column_name: 'added_date',
+		is_nullable: 'NO',
 		udt_name: PGColumn.TYPE_DATE
 	})
-	
-	const json = pgTable.fixedWidthMap({
-		startColumnName: 'name',
-		lastColumnName: 'phone'
+	pgTable.addColumn({
+		column_name: 'enum_test_null',
+		udt_name: PGColumn.TYPE_VARCHAR,
+		character_maximum_length: 64,
+		is_nullable: 'YES',
+		column_comment: '{enum: ETest}'
 	})
-	
-	console.log(json)
+	pgTable.addColumn({
+		column_name: 'enum_test_null_default',
+		udt_name: PGColumn.TYPE_VARCHAR,
+		character_maximum_length: 64,
+		is_nullable: 'YES',
+		column_default: 'FirstValue',
+		column_comment: '{enum: ETest}'
+	})
+	pgTable.addColumn({
+		column_name: 'enum_test_null_default_comment',
+		udt_name: PGColumn.TYPE_VARCHAR,
+		character_maximum_length: 64,
+		is_nullable: 'YES',
+		column_comment: '{enum: ETest.FirstValue}'
+	})
+	pgTable.addColumn({
+		column_name: 'enum_test_default',
+		udt_name: PGColumn.TYPE_VARCHAR,
+		character_maximum_length: 64,
+		is_nullable: 'NO',
+		column_default: 'FirstValue',
+		column_comment: '{enum: ETest}'
+	})
+	pgTable.addColumn({
+		column_name: 'enum_test_default_comment',
+		udt_name: PGColumn.TYPE_VARCHAR,
+		character_maximum_length: 64,
+		is_nullable: 'NO',
+		column_comment: '{enum: ETest.FirstValue}'
+	})
+	pgTable.addColumn({
+		column_name: 'interface_test_null',
+		udt_name: PGColumn.TYPE_JSON,
+		is_nullable: 'YES',
+		column_comment: '{interface: ITest}'
+	})
+
+	console.log(pgTable.tsText())
 }
 
 processScript().then(() => console.log('Done!'))

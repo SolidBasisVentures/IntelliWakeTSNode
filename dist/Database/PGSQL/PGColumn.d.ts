@@ -22,7 +22,7 @@ export interface IPGColumn {
     /** Comment on column, except for within {}'s
      * {} can contain comma separated values
      * {enum: EDeclaration: default_value} or {enum: EDeclaration.default_value} or {enum: EDeclaration}
-     * {interface: IDeclaration} */
+     * {interface: IDeclaration} or {interface: IDeclaration.initialDeclaration} */
     column_comment: string;
     isAutoIncrement: boolean;
 }
@@ -49,7 +49,7 @@ export declare class PGColumn implements IPGColumn {
     /** Comment on column, except for within {}'s
      * {} can contain comma separated values
      * {enum: EDeclaration: default_value} or {enum: EDeclaration.default_value} or {enum: EDeclaration}
-     * {interface: IDeclaration} */
+     * {interface: IDeclaration} or {interface: IDeclaration.initialDeclaration} */
     column_comment: string;
     isAutoIncrement: boolean;
     static readonly TYPE_BOOLEAN = "bool";
