@@ -819,12 +819,15 @@ class PGTable {
                         const items = commaItem.split(':');
                         if (((_a = items[0]) !== null && _a !== void 0 ? _a : '').toLowerCase().trim() === 'enum') {
                             const enumName = (_c = (_b = items[1]) === null || _b === void 0 ? void 0 : _b.split('.')[0]) === null || _c === void 0 ? void 0 : _c.trim();
-                            const enumDefault = (_f = (_e = intelliwaketsfoundation.CoalesceFalsey((_d = items[1]) === null || _d === void 0 ? void 0 : _d.split('.')[1], items[2], column.column_default)) === null || _e === void 0 ? void 0 : _e.toString()) === null || _f === void 0 ? void 0 : _f.trim();
+                            let enumDefault = (_f = (_e = intelliwaketsfoundation.CoalesceFalsey((_d = items[1]) === null || _d === void 0 ? void 0 : _d.split('.')[1], items[2], column.column_default)) === null || _e === void 0 ? void 0 : _e.toString()) === null || _f === void 0 ? void 0 : _f.trim();
+                            if (enumDefault === null || enumDefault === void 0 ? void 0 : enumDefault.startsWith('\'{}\'')) {
+                                enumDefault = '[]';
+                            }
                             // console.info(column.column_name, enumName, enumDefault)
                             if (!enumName) {
                                 throw new Error('Enum requested in comment, but not specified  - Format {Enum: ETest} for nullable or {Enum: ETest.FirstValue}');
                             }
-                            if (!intelliwaketsfoundation.IsOn(column.is_nullable) && !enumDefault) {
+                            if (!intelliwaketsfoundation.IsOn(column.is_nullable) && !enumDefault && !column.array_dimensions.length) {
                                 throw new Error('Not Nullable Enum requested in comment, but no default value specified - Format {Enum: ETest.FirstValue}');
                             }
                             return {

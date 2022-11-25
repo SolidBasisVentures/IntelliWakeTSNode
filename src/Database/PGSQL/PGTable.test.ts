@@ -81,6 +81,31 @@ pgTable.addColumn({
 	is_nullable: 'NO',
 	column_comment: '{enum: ETest.FirstValue}'
 })
+pgTable.addColumn({
+	column_name: 'enum_test_array_null',
+	udt_name: PGColumn.TYPE_VARCHAR,
+	array_dimensions: [1],
+	character_maximum_length: 64,
+	is_nullable: 'YES',
+	column_comment: '{enum: ETest}'
+})
+pgTable.addColumn({
+	column_name: 'enum_test_array',
+	udt_name: PGColumn.TYPE_VARCHAR,
+	array_dimensions: [1],
+	character_maximum_length: 64,
+	is_nullable: 'NO',
+	column_comment: '{enum: ETest}'
+})
+pgTable.addColumn({
+	column_name: 'enum_test_array_default',
+	udt_name: PGColumn.TYPE_VARCHAR,
+	array_dimensions: [1],
+	character_maximum_length: 64,
+	column_default: `'{}'::varchar[]`,
+	is_nullable: 'NO',
+	column_comment: '{enum: ETest}'
+})
 
 pgTable.addColumn({
 	column_name: 'interface_test_null',
@@ -130,6 +155,8 @@ pgTable.addColumn({
 test('PGTable', () => {
 	const tsTest = pgTable.tsText()
 
+	console.info(tsTest)
+
 	expect(tsTest.includes('enum_test_null: ETest | null')).toBeTruthy()
 	expect(tsTest.includes('enum_test_null: null')).toBeTruthy()
 	expect(tsTest.includes('enum_test_null_default: ETest | null')).toBeTruthy()
@@ -140,6 +167,12 @@ test('PGTable', () => {
 	expect(tsTest.includes('enum_test_default: ETest.FirstValue')).toBeTruthy()
 	expect(tsTest.includes('enum_test_default_comment: ETest')).toBeTruthy()
 	expect(tsTest.includes('enum_test_default_comment: ETest.FirstValue')).toBeTruthy()
+	expect(tsTest.includes('enum_test_array_null: ETest[]')).toBeTruthy()
+	expect(tsTest.includes('enum_test_array_null: null')).toBeTruthy()
+	expect(tsTest.includes('enum_test_array: ETest[]')).toBeTruthy()
+	expect(tsTest.includes('enum_test_array: [],')).toBeTruthy()
+	expect(tsTest.includes('enum_test_array_default: ETest[]')).toBeTruthy()
+	expect(tsTest.includes('enum_test_array_default: [],')).toBeTruthy()
 
 	expect(tsTest.includes('interface_test_null: ITest | null')).toBeTruthy()
 	expect(tsTest.includes('interface_test_null: null')).toBeTruthy()

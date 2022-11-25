@@ -269,14 +269,17 @@ export class PGTable {
 								       const items = commaItem.split(':')
 								       if ((items[0] ?? '').toLowerCase().trim() === 'enum') {
 									       const enumName = items[1]?.split('.')[0]?.trim()
-									       const enumDefault = CoalesceFalsey(items[1]?.split('.')[1], items[2], column.column_default)?.toString()?.trim()
+									       let enumDefault = CoalesceFalsey(items[1]?.split('.')[1], items[2], column.column_default)?.toString()?.trim()
+									       if (enumDefault?.startsWith('\'{}\'')) {
+											   enumDefault = '[]'
+									       }
 
 									       // console.info(column.column_name, enumName, enumDefault)
 
 									       if (!enumName) {
 										       throw new Error('Enum requested in comment, but not specified  - Format {Enum: ETest} for nullable or {Enum: ETest.FirstValue}')
 									       }
-									       if (!IsOn(column.is_nullable) && !enumDefault) {
+									       if (!IsOn(column.is_nullable) && !enumDefault && !column.array_dimensions.length) {
 										       throw new Error('Not Nullable Enum requested in comment, but no default value specified - Format {Enum: ETest.FirstValue}')
 									       }
 									       return {
