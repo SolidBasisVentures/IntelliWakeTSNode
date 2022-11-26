@@ -856,7 +856,7 @@ class PGTable {
                         const items = commaItem.split(':');
                         if (((_a = items[0]) !== null && _a !== void 0 ? _a : '').toLowerCase().trim() === 'interface') {
                             const interfaceName = (_c = (_b = items[1]) === null || _b === void 0 ? void 0 : _b.split('.')[0]) === null || _c === void 0 ? void 0 : _c.trim();
-                            const interfaceDefault = (_g = ((_f = (_e = intelliwaketsfoundation.CoalesceFalsey((_d = items[1]) === null || _d === void 0 ? void 0 : _d.split('.')[1], items[2], column.column_default)) === null || _e === void 0 ? void 0 : _e.toString()) === null || _f === void 0 ? void 0 : _f.trim())) !== null && _g !== void 0 ? _g : (intelliwaketsfoundation.IsOn(column.is_nullable) ? 'null' : '{}');
+                            let interfaceDefault = (_g = ((_f = (_e = intelliwaketsfoundation.CoalesceFalsey((_d = items[1]) === null || _d === void 0 ? void 0 : _d.split('.')[1], items[2], column.column_default)) === null || _e === void 0 ? void 0 : _e.toString()) === null || _f === void 0 ? void 0 : _f.trim())) !== null && _g !== void 0 ? _g : (intelliwaketsfoundation.IsOn(column.is_nullable) ? 'null' : '{}');
                             if (!interfaceName) {
                                 throw new Error('Interface requested in comment, but not specified  - Format {Interface: ITest} for nullable or {Interface: ITest.initialValue}');
                             }
@@ -884,7 +884,8 @@ class PGTable {
         }
         interfaces.map(interfaceItem => interfaceItem).reduce((results, interfaceItem) => results.some(result => result.interface_name === interfaceItem.interface_name && (!!result.otherImportItem || !interfaceItem.otherImportItem)) ? results : [...results.filter(result => result.interface_name !== interfaceItem.interface_name), interfaceItem], [])
             .forEach(interfaceItem => {
-            text += `import {${interfaceItem.interface_name}${!interfaceItem.otherImportItem ? '' : `, ${interfaceItem.otherImportItem}`}} from "../Interfaces/${interfaceItem.interface_name}"${TS_EOL$1}`;
+            var _a;
+            text += `import {${interfaceItem.interface_name}${(!interfaceItem.otherImportItem || ((_a = interfaceItem === null || interfaceItem === void 0 ? void 0 : interfaceItem.otherImportItem) === null || _a === void 0 ? void 0 : _a.toLowerCase()) === 'null') ? '' : `, ${interfaceItem.otherImportItem}`}} from "../Interfaces/${interfaceItem.interface_name}"${TS_EOL$1}`;
         });
         if (interfaces.length > 0) {
             text += TS_EOL$1;

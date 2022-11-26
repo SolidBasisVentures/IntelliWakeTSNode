@@ -313,7 +313,7 @@ export class PGTable {
 								       const items = commaItem.split(':')
 								       if ((items[0] ?? '').toLowerCase().trim() === 'interface') {
 									       const interfaceName = items[1]?.split('.')[0]?.trim()
-									       const interfaceDefault = (CoalesceFalsey(items[1]?.split('.')[1], items[2], column.column_default)?.toString()?.trim()) ?? (IsOn(column.is_nullable) ? 'null' : '{}')
+									       let interfaceDefault = (CoalesceFalsey(items[1]?.split('.')[1], items[2], column.column_default)?.toString()?.trim()) ?? (IsOn(column.is_nullable) ? 'null' : '{}')
 
 									       if (!interfaceName) {
 										       throw new Error('Interface requested in comment, but not specified  - Format {Interface: ITest} for nullable or {Interface: ITest.initialValue}')
@@ -348,7 +348,7 @@ export class PGTable {
 
 		interfaces.map(interfaceItem => interfaceItem).reduce<TInterfaceBuild[]>((results, interfaceItem) => results.some(result => result.interface_name === interfaceItem.interface_name && (!!result.otherImportItem || !interfaceItem.otherImportItem)) ? results : [...results.filter(result => result.interface_name !== interfaceItem.interface_name), interfaceItem], [])
 		          .forEach(interfaceItem => {
-			          text += `import {${interfaceItem.interface_name}${!interfaceItem.otherImportItem ? '' : `, ${interfaceItem.otherImportItem}`}} from "../Interfaces/${interfaceItem.interface_name}"${TS_EOL}`
+			          text += `import {${interfaceItem.interface_name}${(!interfaceItem.otherImportItem || interfaceItem?.otherImportItem?.toLowerCase() === 'null') ? '' : `, ${interfaceItem.otherImportItem}`}} from "../Interfaces/${interfaceItem.interface_name}"${TS_EOL}`
 		          })
 
 		if (interfaces.length > 0) {
