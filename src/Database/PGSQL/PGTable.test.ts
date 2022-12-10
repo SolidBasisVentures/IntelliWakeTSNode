@@ -158,6 +158,13 @@ test('PGTable', () => {
 		column_comment: '{enum: ETest3}'
 	})
 	pgTable.addColumn({
+		column_name: 'enum_test4_array_null',
+		udt_name: PGColumn.TYPE_VARCHAR,
+		column_default: '',
+		character_maximum_length: 64,
+		column_comment: '{enum: ETest4.Test}'
+	})
+	pgTable.addColumn({
 		column_name: 'interface_test_null_default_comment',
 		udt_name: PGColumn.TYPE_VARCHAR,
 		character_maximum_length: 64,
@@ -236,6 +243,7 @@ test('PGTable', () => {
 	expect(tsTest.includes('import {ETest} from "../Enums/ETest"')).toBeTruthy()
 	expect(tsTest.includes('import type {ETest2} from "../Enums/ETest2"')).toBeTruthy()
 	expect(tsTest.includes('import type {ETest3} from "../Enums/ETest3"')).toBeTruthy()
+	expect(tsTest.includes('import {ETest4} from "../Enums/ETest4"')).toBeTruthy()
 	expect(tsTest.includes('import type {ITest} from "../Interfaces/ITest"')).toBeTruthy()
 
 	expect(tsTestTable.includes('import {initial_test_table} from \'@Common/Tables/Itest_table\'')).toBeTruthy()

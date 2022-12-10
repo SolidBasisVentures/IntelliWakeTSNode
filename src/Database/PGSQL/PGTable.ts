@@ -347,10 +347,11 @@ export class PGTable {
 		enums.map(enumItem => enumItem.enum_name).reduce<string[]>((results, enumItem) => results.includes(enumItem) ? results : [...results, ReplaceAll('[]', '', enumItem)], [])
 		     .forEach(enumItem => {
 			     text += `import ${(this.importWithTypes &&
-				     !this.columns.some(column => column.column_comment?.includes(enumItem) &&
-					     (!!column.column_default &&
-						     !(column.column_default ?? '').toString().includes('{}') &&
-						     !['null', '[]'].includes((column.column_default ?? '').toString().toLowerCase())))) ?
+				     !this.columns.some(column => ReplaceAll(' ', '', column.column_comment ?? '').toLowerCase().includes(`{enum:${enumItem.toLowerCase()}`) &&
+					     (ReplaceAll(' ', '', column.column_comment ?? '').toLowerCase().includes(`{enum:${enumItem.toLowerCase()}.`) ||
+						     (!!column.column_default &&
+							     !(column.column_default ?? '').toString().includes('{}') &&
+							     (column.column_default ?? '').toString().toLowerCase() !== 'null')))) ?
 				     'type ' : ''}{${enumItem}} from "../Enums/${enumItem}"${TS_EOL}`
 		     })
 
