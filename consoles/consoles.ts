@@ -5,6 +5,8 @@ import {PGColumn} from '../src/Database/PGSQL/PGColumn'
 const processScript = async () => {
 	const pgTable = new PGTable()
 
+	pgTable.breakOutTypes = true
+
 	pgTable.name = 'test_table'
 
 	pgTable.addColumn({
@@ -62,6 +64,13 @@ const processScript = async () => {
 		column_comment: '{enum: ETest}'
 	})
 	pgTable.addColumn({
+		column_name: 'enum_test2_null_default',
+		udt_name: PGColumn.TYPE_VARCHAR,
+		character_maximum_length: 64,
+		is_nullable: 'YES',
+		column_comment: '{enum: ETest2}'
+	})
+	pgTable.addColumn({
 		column_name: 'enum_test_null_default_comment',
 		udt_name: PGColumn.TYPE_VARCHAR,
 		character_maximum_length: 64,
@@ -90,7 +99,8 @@ const processScript = async () => {
 		column_comment: '{interface: ITest}'
 	})
 
-	console.log(pgTable.tsText())
+	// console.log(pgTable.tsText())
+	console.log(pgTable.tsTextTable())
 }
 
 processScript().then(() => console.log('Done!'))

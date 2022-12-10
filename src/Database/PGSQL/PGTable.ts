@@ -53,6 +53,8 @@ export class PGTable {
 
 	public foreignKeys: PGForeignKey[] = []
 
+	public breakOutTypes = false
+
 	constructor(instanceData?: Partial<PGTable>) {
 		if (instanceData) {
 			this.deserialize(instanceData)
@@ -242,7 +244,12 @@ export class PGTable {
 		let text = this.tableHeaderText('Table Manager for')
 		if (this.inherits.length > 0) {
 			for (const inherit of this.inherits) {
+				// if (this.breakOutTypes) {
+				// 	text += `import type {I${inherit}} from "./I${inherit}"${TS_EOL}`
+				// 	text += `import {initial_${inherit}} from "./I${inherit}"${TS_EOL}`
+				// } else {
 				text += `import {I${inherit}, initial_${inherit}} from "./I${inherit}"${TS_EOL}`
+				// }
 			}
 		}
 
@@ -271,7 +278,7 @@ export class PGTable {
 									       const enumName = items[1]?.split('.')[0]?.trim()
 									       let enumDefault = CoalesceFalsey(items[1]?.split('.')[1], items[2], column.column_default)?.toString()?.trim()
 									       if (enumDefault?.startsWith('\'{}\'')) {
-											   enumDefault = '[]'
+										       enumDefault = '[]'
 									       }
 
 									       // console.info(column.column_name, enumName, enumDefault)
@@ -339,7 +346,7 @@ export class PGTable {
 
 		enums.map(enumItem => enumItem.enum_name).reduce<string[]>((results, enumItem) => results.includes(enumItem) ? results : [...results, ReplaceAll('[]', '', enumItem)], [])
 		     .forEach(enumItem => {
-			     text += `import {${enumItem}} from "../Enums/${enumItem}"${TS_EOL}`
+			     text += `import ${(this.breakOutTypes && !this.columns.some(column => column.column_comment?.includes(enumItem) && !!column.column_default && column.column_default.toString().toLowerCase() !== 'null')) ? 'type ' : ''}{${enumItem}} from "../Enums/${enumItem}"${TS_EOL}`
 		     })
 
 		if (enums.length > 0) {
@@ -348,7 +355,7 @@ export class PGTable {
 
 		interfaces.map(interfaceItem => interfaceItem).reduce<TInterfaceBuild[]>((results, interfaceItem) => results.some(result => result.interface_name === interfaceItem.interface_name && (!!result.otherImportItem || !interfaceItem.otherImportItem)) ? results : [...results.filter(result => result.interface_name !== interfaceItem.interface_name), interfaceItem], [])
 		          .forEach(interfaceItem => {
-			          text += `import {${interfaceItem.interface_name}${(!interfaceItem.otherImportItem || interfaceItem?.otherImportItem?.toLowerCase() === 'null') ? '' : `, ${interfaceItem.otherImportItem}`}} from "../Interfaces/${interfaceItem.interface_name}"${TS_EOL}`
+			          text += `import ${this.breakOutTypes ? 'type ' : ''}{${interfaceItem.interface_name}${(!interfaceItem.otherImportItem || interfaceItem?.otherImportItem?.toLowerCase() === 'null') ? '' : `, ${interfaceItem.otherImportItem}`}} from "../Interfaces/${interfaceItem.interface_name}"${TS_EOL}`
 		          })
 
 		if (interfaces.length > 0) {
@@ -514,10 +521,15 @@ export class PGTable {
 		}
 
 		let text = this.tableHeaderText('Table Class for', 'MODIFICATIONS WILL NOT BE OVERWRITTEN')
-		text += `import {initial_${this.name}, I${this.name}} from '${usePaths.initials}/I${this.name}'` + TS_EOL
-		text += `import {TTables} from '${usePaths.tTables}/TTables'` + TS_EOL
+		if (this.breakOutTypes) {
+			text += `import {initial_${this.name}} from '${usePaths.initials}/I${this.name}'` + TS_EOL
+			text += `import type {I${this.name}} from '${usePaths.initials}/I${this.name}'` + TS_EOL
+		} else {
+			text += `import {initial_${this.name}, I${this.name}} from '${usePaths.initials}/I${this.name}'` + TS_EOL
+		}
+		text += `import ${this.breakOutTypes ? 'type ' : ''}{TTables} from '${usePaths.tTables}/TTables'` + TS_EOL
 		text += `import {_CTable} from './_CTable'` + TS_EOL
-		text += `import {${usePaths.responseContextClass}} from '${usePaths.responseContext}'` + TS_EOL
+		text += `import ${this.breakOutTypes ? 'type ' : ''}{${usePaths.responseContextClass}} from '${usePaths.responseContext}'` + TS_EOL
 		for (const inherit of this.inherits) {
 			text += `import {_C${inherit}} from "./_C${inherit}"` + TS_EOL
 		}

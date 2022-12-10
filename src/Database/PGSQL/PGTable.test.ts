@@ -141,6 +141,14 @@ test('PGTable', () => {
 	expect(tsTest.includes('import {ITest} from "../Interfaces/ITest"')).toBeTruthy()
 
 	pgTable.addColumn({
+		column_name: 'enum_test2_array_null',
+		udt_name: PGColumn.TYPE_VARCHAR,
+		array_dimensions: [1],
+		character_maximum_length: 64,
+		is_nullable: 'YES',
+		column_comment: '{enum: ETest2}'
+	})
+	pgTable.addColumn({
 		column_name: 'interface_test_null_default_comment',
 		udt_name: PGColumn.TYPE_VARCHAR,
 		character_maximum_length: 64,
@@ -171,6 +179,8 @@ test('PGTable', () => {
 	})
 
 	tsTest = pgTable.tsText()
+
+	let tsTestTable = pgTable.tsTextTable()
 
 	expect(tsTest.includes('enum_test_null: ETest | null')).toBeTruthy()
 	expect(tsTest.includes('enum_test_null: null,')).toBeTruthy()
@@ -203,4 +213,24 @@ test('PGTable', () => {
 	expect(tsTest.includes('interface_test_default: initialValue,')).toBeTruthy()
 	expect(tsTest.includes('interface_test_default_comment: ITest')).toBeTruthy()
 	expect(tsTest.includes('interface_test_default_comment: initialValue')).toBeTruthy()
+
+	expect(tsTestTable.includes('import {initial_test_table, Itest_table} from \'@Common/Tables/Itest_table\'')).toBeTruthy()
+	expect(tsTestTable.includes('import {TTables} from \'../Database/TTables\'')).toBeTruthy()
+	expect(tsTestTable.includes('import {_CTable} from \'./_CTable\'')).toBeTruthy()
+	expect(tsTestTable.includes('import {ResponseContext} from \'../MiddleWare/ResponseContext\'')).toBeTruthy()
+
+	pgTable.breakOutTypes = true
+
+	tsTest = pgTable.tsText()
+	tsTestTable = pgTable.tsTextTable()
+
+	expect(tsTest.includes('import {ETest} from "../Enums/ETest"')).toBeTruthy()
+	expect(tsTest.includes('import type {ETest2} from "../Enums/ETest2"')).toBeTruthy()
+	expect(tsTest.includes('import type {ITest} from "../Interfaces/ITest"')).toBeTruthy()
+
+	expect(tsTestTable.includes('import {initial_test_table} from \'@Common/Tables/Itest_table\'')).toBeTruthy()
+	expect(tsTestTable.includes('import type {Itest_table} from \'@Common/Tables/Itest_table\'')).toBeTruthy()
+	expect(tsTestTable.includes('import type {TTables} from \'../Database/TTables\'')).toBeTruthy()
+	expect(tsTestTable.includes('import {_CTable} from \'./_CTable\'')).toBeTruthy()
+	expect(tsTestTable.includes('import type {ResponseContext} from \'../MiddleWare/ResponseContext\'')).toBeTruthy()
 })
