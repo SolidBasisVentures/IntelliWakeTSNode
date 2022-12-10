@@ -244,12 +244,12 @@ export class PGTable {
 		let text = this.tableHeaderText('Table Manager for')
 		if (this.inherits.length > 0) {
 			for (const inherit of this.inherits) {
-				// if (this.breakOutTypes) {
-				// 	text += `import type {I${inherit}} from "./I${inherit}"${TS_EOL}`
-				// 	text += `import {initial_${inherit}} from "./I${inherit}"${TS_EOL}`
-				// } else {
-				text += `import {I${inherit}, initial_${inherit}} from "./I${inherit}"${TS_EOL}`
-				// }
+				if (this.breakOutTypes) {
+					text += `import type {I${inherit}} from "./I${inherit}"${TS_EOL}`
+					text += `import {initial_${inherit}} from "./I${inherit}"${TS_EOL}`
+				} else {
+					text += `import {I${inherit}, initial_${inherit}} from "./I${inherit}"${TS_EOL}`
+				}
 			}
 		}
 
@@ -346,7 +346,7 @@ export class PGTable {
 
 		enums.map(enumItem => enumItem.enum_name).reduce<string[]>((results, enumItem) => results.includes(enumItem) ? results : [...results, ReplaceAll('[]', '', enumItem)], [])
 		     .forEach(enumItem => {
-			     text += `import ${(this.breakOutTypes && !this.columns.some(column => column.column_comment?.includes(enumItem) && !!column.column_default && column.column_default.toString().toLowerCase() !== 'null')) ? 'type ' : ''}{${enumItem}} from "../Enums/${enumItem}"${TS_EOL}`
+			     text += `import ${(this.breakOutTypes && !this.columns.some(column => column.column_comment?.includes(enumItem) && !!column.column_default && !['null', '{}', '[]'].includes((column.column_default ?? '').toString().toLowerCase()))) ? 'type ' : ''}{${enumItem}} from "../Enums/${enumItem}"${TS_EOL}`
 		     })
 
 		if (enums.length > 0) {
