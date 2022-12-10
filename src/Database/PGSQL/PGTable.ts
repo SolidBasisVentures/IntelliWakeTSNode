@@ -348,7 +348,9 @@ export class PGTable {
 		     .forEach(enumItem => {
 			     text += `import ${(this.importWithTypes &&
 				     !this.columns.some(column => column.column_comment?.includes(enumItem) &&
-					     (!!column.column_default && !['null', '{}', '[]'].includes((column.column_default ?? '').toString().toLowerCase())))) ?
+					     (!!column.column_default &&
+						     (column.column_default ?? '').toString().includes('\'{}\'') &&
+						     !['null', '[]'].includes((column.column_default ?? '').toString().toLowerCase())))) ?
 				     'type ' : ''}{${enumItem}} from "../Enums/${enumItem}"${TS_EOL}`
 		     })
 

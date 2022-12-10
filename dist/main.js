@@ -886,9 +886,11 @@ class PGTable {
             .forEach(enumItem => {
             text += `import ${(this.importWithTypes &&
                 !this.columns.some(column => {
-                    var _a, _b;
+                    var _a, _b, _c;
                     return ((_a = column.column_comment) === null || _a === void 0 ? void 0 : _a.includes(enumItem)) &&
-                        (!!column.column_default && !['null', '{}', '[]'].includes(((_b = column.column_default) !== null && _b !== void 0 ? _b : '').toString().toLowerCase()));
+                        (!!column.column_default &&
+                            ((_b = column.column_default) !== null && _b !== void 0 ? _b : '').toString().includes('\'{}\'') &&
+                            !['null', '[]'].includes(((_c = column.column_default) !== null && _c !== void 0 ? _c : '').toString().toLowerCase()));
                 })) ?
                 'type ' : ''}{${enumItem}} from "../Enums/${enumItem}"${TS_EOL$1}`;
         });
