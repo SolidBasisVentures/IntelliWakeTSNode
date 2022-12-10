@@ -884,7 +884,13 @@ class PGTable {
             .filter(enumName => !!enumName.interface_name)));
         enums.map(enumItem => enumItem.enum_name).reduce((results, enumItem) => results.includes(enumItem) ? results : [...results, intelliwaketsfoundation.ReplaceAll('[]', '', enumItem)], [])
             .forEach(enumItem => {
-            text += `import ${(this.importWithTypes && !this.columns.some(column => { var _a, _b; return ((_a = column.column_comment) === null || _a === void 0 ? void 0 : _a.includes(enumItem)) && ((!intelliwaketsfoundation.IsOn(column.is_nullable) && column.array_dimensions.length) || !!column.column_default && !['null', '{}', '[]'].includes(((_b = column.column_default) !== null && _b !== void 0 ? _b : '').toString().toLowerCase())); })) ? 'type ' : ''}{${enumItem}} from "../Enums/${enumItem}"${TS_EOL$1}`;
+            text += `import ${(this.importWithTypes &&
+                !this.columns.some(column => {
+                    var _a, _b;
+                    return ((_a = column.column_comment) === null || _a === void 0 ? void 0 : _a.includes(enumItem)) &&
+                        (!!column.column_default && !['null', '{}', '[]'].includes(((_b = column.column_default) !== null && _b !== void 0 ? _b : '').toString().toLowerCase()));
+                })) ?
+                'type ' : ''}{${enumItem}} from "../Enums/${enumItem}"${TS_EOL$1}`;
         });
         if (enums.length > 0) {
             text += TS_EOL$1;

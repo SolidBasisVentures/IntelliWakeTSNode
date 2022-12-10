@@ -234,7 +234,7 @@ test('PGTable', () => {
 
 	expect(tsTest.includes('import {ETest} from "../Enums/ETest"')).toBeTruthy()
 	expect(tsTest.includes('import type {ETest2} from "../Enums/ETest2"')).toBeTruthy()
-	expect(tsTest.includes('import {ETest3} from "../Enums/ETest3"')).toBeTruthy()
+	expect(tsTest.includes('import type {ETest3} from "../Enums/ETest3"')).toBeTruthy()
 	expect(tsTest.includes('import type {ITest} from "../Interfaces/ITest"')).toBeTruthy()
 
 	expect(tsTestTable.includes('import {initial_test_table} from \'@Common/Tables/Itest_table\'')).toBeTruthy()

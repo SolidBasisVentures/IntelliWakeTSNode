@@ -98,9 +98,17 @@ const processScript = async () => {
 		is_nullable: 'YES',
 		column_comment: '{interface: ITest}'
 	})
+	pgTable.addColumn({
+		column_name: 'enum_test3_array_null',
+		udt_name: PGColumn.TYPE_VARCHAR,
+		array_dimensions: [1],
+		character_maximum_length: 64,
+		is_nullable: 'NO',
+		column_comment: '{enum: ETest3}'
+	})
 
-	// console.log(pgTable.tsText())
-	console.log(pgTable.tsTextTable())
+	console.log(pgTable.tsText())
+	// console.log(pgTable.tsTextTable())
 }
 
 processScript().then(() => console.log('Done!'))
