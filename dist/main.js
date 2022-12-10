@@ -642,7 +642,7 @@ class PGTable {
         this.columns = [];
         this.indexes = [];
         this.foreignKeys = [];
-        this.breakOutTypes = false;
+        this.importWithTypes = false;
         if (instanceData) {
             this.deserialize(instanceData);
         }
@@ -795,7 +795,7 @@ class PGTable {
         let text = this.tableHeaderText('Table Manager for');
         if (this.inherits.length > 0) {
             for (const inherit of this.inherits) {
-                if (this.breakOutTypes) {
+                if (this.importWithTypes) {
                     text += `import type {I${inherit}} from "./I${inherit}"${TS_EOL$1}`;
                     text += `import {initial_${inherit}} from "./I${inherit}"${TS_EOL$1}`;
                 }
@@ -884,7 +884,7 @@ class PGTable {
             .filter(enumName => !!enumName.interface_name)));
         enums.map(enumItem => enumItem.enum_name).reduce((results, enumItem) => results.includes(enumItem) ? results : [...results, intelliwaketsfoundation.ReplaceAll('[]', '', enumItem)], [])
             .forEach(enumItem => {
-            text += `import ${(this.breakOutTypes && !this.columns.some(column => { var _a, _b; return ((_a = column.column_comment) === null || _a === void 0 ? void 0 : _a.includes(enumItem)) && !!column.column_default && !['null', '{}', '[]'].includes(((_b = column.column_default) !== null && _b !== void 0 ? _b : '').toString().toLowerCase()); })) ? 'type ' : ''}{${enumItem}} from "../Enums/${enumItem}"${TS_EOL$1}`;
+            text += `import ${(this.importWithTypes && !this.columns.some(column => { var _a, _b; return ((_a = column.column_comment) === null || _a === void 0 ? void 0 : _a.includes(enumItem)) && ((!intelliwaketsfoundation.IsOn(column.is_nullable) && column.array_dimensions.length) || !!column.column_default && !['null', '{}', '[]'].includes(((_b = column.column_default) !== null && _b !== void 0 ? _b : '').toString().toLowerCase())); })) ? 'type ' : ''}{${enumItem}} from "../Enums/${enumItem}"${TS_EOL$1}`;
         });
         if (enums.length > 0) {
             text += TS_EOL$1;
@@ -892,7 +892,7 @@ class PGTable {
         interfaces.map(interfaceItem => interfaceItem).reduce((results, interfaceItem) => results.some(result => result.interface_name === interfaceItem.interface_name && (!!result.otherImportItem || !interfaceItem.otherImportItem)) ? results : [...results.filter(result => result.interface_name !== interfaceItem.interface_name), interfaceItem], [])
             .forEach(interfaceItem => {
             var _a;
-            text += `import ${this.breakOutTypes ? 'type ' : ''}{${interfaceItem.interface_name}${(!interfaceItem.otherImportItem || ((_a = interfaceItem === null || interfaceItem === void 0 ? void 0 : interfaceItem.otherImportItem) === null || _a === void 0 ? void 0 : _a.toLowerCase()) === 'null') ? '' : `, ${interfaceItem.otherImportItem}`}} from "../Interfaces/${interfaceItem.interface_name}"${TS_EOL$1}`;
+            text += `import ${this.importWithTypes ? 'type ' : ''}{${interfaceItem.interface_name}${(!interfaceItem.otherImportItem || ((_a = interfaceItem === null || interfaceItem === void 0 ? void 0 : interfaceItem.otherImportItem) === null || _a === void 0 ? void 0 : _a.toLowerCase()) === 'null') ? '' : `, ${interfaceItem.otherImportItem}`}} from "../Interfaces/${interfaceItem.interface_name}"${TS_EOL$1}`;
         });
         if (interfaces.length > 0) {
             text += TS_EOL$1;
@@ -1066,16 +1066,16 @@ class PGTable {
             responseContextClass: (_e = relativePaths === null || relativePaths === void 0 ? void 0 : relativePaths.responseContextClass) !== null && _e !== void 0 ? _e : 'ResponseContext'
         };
         let text = this.tableHeaderText('Table Class for', 'MODIFICATIONS WILL NOT BE OVERWRITTEN');
-        if (this.breakOutTypes) {
+        if (this.importWithTypes) {
             text += `import {initial_${this.name}} from '${usePaths.initials}/I${this.name}'` + TS_EOL$1;
             text += `import type {I${this.name}} from '${usePaths.initials}/I${this.name}'` + TS_EOL$1;
         }
         else {
             text += `import {initial_${this.name}, I${this.name}} from '${usePaths.initials}/I${this.name}'` + TS_EOL$1;
         }
-        text += `import ${this.breakOutTypes ? 'type ' : ''}{TTables} from '${usePaths.tTables}/TTables'` + TS_EOL$1;
+        text += `import ${this.importWithTypes ? 'type ' : ''}{TTables} from '${usePaths.tTables}/TTables'` + TS_EOL$1;
         text += `import {_CTable} from './_CTable'` + TS_EOL$1;
-        text += `import ${this.breakOutTypes ? 'type ' : ''}{${usePaths.responseContextClass}} from '${usePaths.responseContext}'` + TS_EOL$1;
+        text += `import ${this.importWithTypes ? 'type ' : ''}{${usePaths.responseContextClass}} from '${usePaths.responseContext}'` + TS_EOL$1;
         for (const inherit of this.inherits) {
             text += `import {_C${inherit}} from "./_C${inherit}"` + TS_EOL$1;
         }

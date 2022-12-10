@@ -5,7 +5,7 @@ import {PGColumn} from '../src/Database/PGSQL/PGColumn'
 const processScript = async () => {
 	const pgTable = new PGTable()
 
-	pgTable.breakOutTypes = true
+	pgTable.importWithTypes = true
 
 	pgTable.name = 'test_table'
 

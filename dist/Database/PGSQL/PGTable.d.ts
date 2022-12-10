@@ -30,7 +30,7 @@ export declare class PGTable {
     columns: PGColumn[];
     indexes: PGIndex[];
     foreignKeys: PGForeignKey[];
-    breakOutTypes: boolean;
+    importWithTypes: boolean;
     constructor(instanceData?: Partial<PGTable>);
     protected deserialize(instanceData: Partial<PGTable>): void;
     indexOfColumn(columnName: string): number;
