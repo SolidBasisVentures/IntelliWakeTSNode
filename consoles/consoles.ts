@@ -102,6 +102,7 @@ const processScript = async () => {
 		column_name: 'enum_test3_array_null',
 		udt_name: PGColumn.TYPE_VARCHAR,
 		array_dimensions: [1],
+		column_default: '\'{}\'::character varying[]',
 		character_maximum_length: 64,
 		is_nullable: 'NO',
 		column_comment: '{enum: ETest3}'
