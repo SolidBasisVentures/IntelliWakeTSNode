@@ -6,7 +6,8 @@ import {
 	IPaginatorRequest,
 	IPaginatorResponse,
 	IsOn,
-	ISortColumn, ReplaceAll
+	ISortColumn,
+	ReplaceAll
 } from '@solidbasisventures/intelliwaketsfoundation'
 import {PGTable} from './PGTable'
 import {PGColumn} from './PGColumn'
@@ -55,7 +56,7 @@ export namespace PGSQL {
 		}
 	}
 
-	export type TQueryResults<T> = {rows?: Array<T>; fields?: FieldDef[]; rowCount?: number}
+	export type TQueryResults<T> = { rows?: Array<T>; fields?: FieldDef[]; rowCount?: number }
 
 	export const query = async <T>(connection: TConnection, sql: string, values?: any): Promise<TQueryResults<T>> => {
 		try {
@@ -167,7 +168,7 @@ export namespace PGSQL {
 
 	export const TableRowCount = async (connection: TConnection, table: string, schema?: string): Promise<number> => {
 		const data = await query(connection, `SELECT COUNT(*) AS count
-                                          FROM ${(!!schema ? `${schema}.` : '') + table}`, undefined)
+											  FROM ${(!!schema ? `${schema}.` : '') + table}`, undefined)
 
 		return (((data.rows ?? [])[0] ?? {}) as any)['count'] ?? 0
 	}
@@ -176,9 +177,9 @@ export namespace PGSQL {
 
 	export const TableExists = async (connection: TConnection, table: string, schema?: string): Promise<boolean> => {
 		const sql = `SELECT COUNT(*) AS count
-                 FROM information_schema.tables
-                 WHERE table_schema = '${CurrentSchema(schema)}'
-                   AND table_name = '${table}'`
+					 FROM information_schema.tables
+					 WHERE table_schema = '${CurrentSchema(schema)}'
+					   AND table_name = '${table}'`
 
 		const data = await query(connection, sql, undefined)
 
@@ -187,19 +188,19 @@ export namespace PGSQL {
 
 	export const TableColumnExists = async (connection: TConnection, table: string, column: string, schema?: string): Promise<boolean> => {
 		const sql = `SELECT COUNT(*) AS count
-                 FROM information_schema.COLUMNS
-                 WHERE table_schema = '${CurrentSchema(schema)}'
-                   AND table_name = '${table}'
-                   AND column_name = '${column}'`
+					 FROM information_schema.COLUMNS
+					 WHERE table_schema = '${CurrentSchema(schema)}'
+					   AND table_name = '${table}'
+					   AND column_name = '${column}'`
 		const data = await query(connection, sql, undefined)
 		return ((((data.rows ?? [])[0] ?? {}) as any)['count'] ?? 0) > 0
 	}
 
 	export const TriggerExists = async (connection: TConnection, trigger: string, schema?: string): Promise<boolean> => {
 		const sql = `SELECT COUNT(*) AS count
-                 FROM information_schema.triggers
-                 WHERE trigger_schema = '${CurrentSchema(schema)}'
-                   AND trigger_name = '${trigger}'`
+					 FROM information_schema.triggers
+					 WHERE trigger_schema = '${CurrentSchema(schema)}'
+					   AND trigger_name = '${trigger}'`
 		const data = await query(connection, sql, undefined)
 		return ((((data.rows ?? [])[0] ?? {}) as any)['count'] ?? 0) > 0
 	}
@@ -215,7 +216,7 @@ export namespace PGSQL {
 			return PGSQL.Execute(
 				connection,
 				`SELECT SETVAL(PG_GET_SERIAL_SEQUENCE('${table}', '${column}'), MAX(${column}))
-         FROM ${table};
+				 FROM ${table};
 				`
 			)
 		}
@@ -223,10 +224,10 @@ export namespace PGSQL {
 
 	export const ConstraintExists = async (connection: TConnection, constraint: string, schema?: string): Promise<boolean> => {
 		const sql = `
-        SELECT COUNT(*) AS count
-        FROM information_schema.table_constraints
-        WHERE constraint_schema = '${CurrentSchema(schema)}'
-          AND constraint_name = '${constraint}'`
+			SELECT COUNT(*) AS count
+			FROM information_schema.table_constraints
+			WHERE constraint_schema = '${CurrentSchema(schema)}'
+			  AND constraint_name = '${constraint}'`
 		const data = await query(connection, sql, undefined)
 		return ((((data.rows ?? [])[0] ?? {}) as any)['count'] ?? 0) > 0
 	}
@@ -238,21 +239,21 @@ export namespace PGSQL {
 
 	export const FKConstraints = async (connection: TConnection, schema?: string): Promise<IConstraints[]> => {
 		const sql = `
-        SELECT table_name, constraint_name
-        FROM information_schema.table_constraints
-        WHERE constraint_schema = '${CurrentSchema(schema)}'
-          AND constraint_type = 'FOREIGN KEY'`
+			SELECT table_name, constraint_name
+			FROM information_schema.table_constraints
+			WHERE constraint_schema = '${CurrentSchema(schema)}'
+			  AND constraint_type = 'FOREIGN KEY'`
 
 		return PGSQL.FetchMany<IConstraints>(connection, sql)
 	}
 
 	export const Functions = async (connection: TConnection, schema?: string): Promise<string[]> => {
 		const sql = `
-        SELECT routines.routine_name
-        FROM information_schema.routines
-        WHERE routines.specific_schema = '${CurrentSchema(schema)}'
-          AND routine_type = 'FUNCTION'
-        ORDER BY routines.routine_name`
+			SELECT routines.routine_name
+			FROM information_schema.routines
+			WHERE routines.specific_schema = '${CurrentSchema(schema)}'
+			  AND routine_type = 'FUNCTION'
+			ORDER BY routines.routine_name`
 
 		return (await PGSQL.FetchArray<string>(connection, sql)).filter(func => func.startsWith('func_'))
 	}
@@ -263,10 +264,10 @@ export namespace PGSQL {
 		indexName: string, schema?: string
 	): Promise<boolean> => {
 		const sql = `SELECT COUNT(*) AS count
-                 FROM pg_indexes
-                 WHERE schemaname = '${CurrentSchema(schema)}'
-                   AND tablename = '${tablename}'
-                   AND indexname = '${indexName}'`
+					 FROM pg_indexes
+					 WHERE schemaname = '${CurrentSchema(schema)}'
+					   AND tablename = '${tablename}'
+					   AND indexname = '${indexName}'`
 		const data = await query(connection, sql, undefined)
 		return ((((data.rows ?? [])[0] ?? {}) as any)['count'] ?? 0) > 0
 	}
@@ -277,8 +278,8 @@ export namespace PGSQL {
 		} else {
 			// noinspection SqlResolve
 			const sql = `SELECT *
-                   FROM ${table}
-                   WHERE id = $1`
+						 FROM ${table}
+						 WHERE id = $1`
 			const data = await query<T>(connection, sql, [id])
 
 			return !!(data.rows ?? [])[0] ? {...(data.rows ?? [])[0]} : null
@@ -331,7 +332,7 @@ export namespace PGSQL {
 	 */
 	export const FetchExists = async (connection: TConnection, sql: string, values?: any): Promise<boolean> => {
 		// noinspection SqlResolve
-		const data = await query<{does_exist: boolean}>(connection, `SELECT EXISTS (${sql}) as does_exist`, values)
+		const data = await query<{ does_exist: boolean }>(connection, `SELECT EXISTS (${sql}) as does_exist`, values)
 		return !!(data.rows ?? [])[0]?.does_exist
 	}
 
@@ -350,12 +351,12 @@ export namespace PGSQL {
 		let params = new PGParams()
 
 		const sql = `
-        INSERT INTO ${table}
-            ("${Object.keys(newValues).join('","')}")
-        VALUES (${Object.values(newValues)
-                .map(value => params.add(value))
-                .join(',')})
-        RETURNING *`
+			INSERT INTO ${table}
+				("${Object.keys(newValues).join('","')}")
+			VALUES (${Object.values(newValues)
+							.map(value => params.add(value))
+							.join(',')})
+			RETURNING *`
 
 		const results = await query(connection, sql, params.values)
 
@@ -377,12 +378,12 @@ export namespace PGSQL {
 		let params = new PGParams()
 
 		const sql = `
-        INSERT INTO ${table}
-            ("${Object.keys(newValues).join('","')}")
-        VALUES (${Object.values(newValues)
-                .map(value => params.add(value))
-                .join(',')})
-        RETURNING id`
+			INSERT INTO ${table}
+				("${Object.keys(newValues).join('","')}")
+			VALUES (${Object.values(newValues)
+							.map(value => params.add(value))
+							.join(',')})
+			RETURNING id`
 
 		const results = await query(connection, sql, params.values)
 
@@ -397,11 +398,11 @@ export namespace PGSQL {
 		let params = new PGParams()
 
 		const sql = `
-        INSERT INTO ${table}
-            ("${Object.keys(values).join('","')}")
-        VALUES (${Object.values(values)
-                .map(value => params.add(value))
-                .join(',')})`
+			INSERT INTO ${table}
+				("${Object.keys(values).join('","')}")
+			VALUES (${Object.values(values)
+							.map(value => params.add(value))
+							.join(',')})`
 
 		await query(connection, sql, params.values)
 	}
@@ -416,12 +417,12 @@ export namespace PGSQL {
 
 		// noinspection SqlResolve
 		const sql = `UPDATE ${table}
-                 SET ${BuildSetComponents(updateValues, params)}
-                 WHERE ${BuildWhereComponents(
-                         whereValues,
-                         params
-                 )}
-                 RETURNING *`
+					 SET ${BuildSetComponents(updateValues, params)}
+					 WHERE ${BuildWhereComponents(
+						 whereValues,
+						 params
+					 )}
+					 RETURNING *`
 		const data = await query(connection, sql, params.values)
 		// @ts-ignore
 		return data.rows[0]
@@ -429,13 +430,13 @@ export namespace PGSQL {
 
 	export const BuildWhereComponents = (whereValues: any, params: PGParams): string =>
 		Object.keys(whereValues)
-			.map(key => (whereValues[key] === undefined || whereValues[key] === null) ? `"${key}" IS NULL` : `"${key}"=${params.add(whereValues[key])}`)
-			.join(' AND ')
+		      .map(key => (whereValues[key] === undefined || whereValues[key] === null) ? `"${key}" IS NULL` : `"${key}"=${params.add(whereValues[key])}`)
+		      .join(' AND ')
 
 	export const BuildSetComponents = (setValues: any, params: PGParams): string =>
 		Object.keys(setValues)
-			.map(key => `"${key}"=${params.add(setValues[key])}`)
-			.join(',')
+		      .map(key => `"${key}"=${params.add(setValues[key])}`)
+		      .join(',')
 
 	export const Save = async (connection: TConnection, table: string, values: any): Promise<any | null> => {
 		if (!values.id) {
@@ -452,8 +453,8 @@ export namespace PGSQL {
 
 		// noinspection SqlResolve
 		const sql = `DELETE
-                 FROM ${table}
-                 WHERE ${BuildWhereComponents(whereValues, params)}`
+					 FROM ${table}
+					 WHERE ${BuildWhereComponents(whereValues, params)}`
 		await query(connection, sql, params.values)
 	}
 
@@ -486,12 +487,19 @@ export namespace PGSQL {
 	export const TruncateAllTables = async (connection: TConnection, exceptions: string[] = [], includeCascade = false) => {
 		let tables = await TablesArray(connection)
 
-		await Execute(connection, 'SET CONSTRAINTS ALL DEFERRED', undefined)
+		await Execute(connection, 'START TRANSACTION')
+		await Execute(connection, 'SET CONSTRAINTS ALL DEFERRED')
 
-		for (const table of tables) {
-			if (exceptions.includes(table)) {
-				await Execute(connection, `TRUNCATE TABLE ${table} RESTART IDENTITY` + (includeCascade ? ' CASCADE' : ''), undefined)
+		try {
+			for (const table of tables) {
+				if (exceptions.includes(table)) {
+					await Execute(connection, `TRUNCATE TABLE ${table} RESTART IDENTITY` + (includeCascade ? ' CASCADE' : ''), undefined)
+				}
 			}
+			await Execute(connection, 'COMMIT')
+		} catch (err) {
+			await Execute(connection, 'ROLLBACK')
+			return false
 		}
 
 		return true
@@ -507,10 +515,10 @@ export namespace PGSQL {
 		return FetchArray<string>(
 			connection,
 			`
-          SELECT table_name
-          FROM information_schema.tables
-          WHERE table_schema = '${CurrentSchema(schema)}'
-            AND table_type = 'BASE TABLE'`
+				SELECT table_name
+				FROM information_schema.tables
+				WHERE table_schema = '${CurrentSchema(schema)}'
+				  AND table_type = 'BASE TABLE'`
 		)
 	}
 
@@ -518,10 +526,10 @@ export namespace PGSQL {
 		return await FetchArray<string>(
 			connection,
 			`
-          SELECT table_name
-          FROM information_schema.tables
-          WHERE table_schema = '${CurrentSchema(schema)}'
-            AND table_type = 'VIEW'`
+				SELECT table_name
+				FROM information_schema.tables
+				WHERE table_schema = '${CurrentSchema(schema)}'
+				  AND table_type = 'VIEW'`
 		)
 	}
 
@@ -529,9 +537,9 @@ export namespace PGSQL {
 		return await FetchArray<string>(
 			connection,
 			`
-          SELECT matviewname
-          FROM pg_matviews
-          WHERE schemaname = '${CurrentSchema(schema)}'`
+				SELECT matviewname
+				FROM pg_matviews
+				WHERE schemaname = '${CurrentSchema(schema)}'`
 		)
 	}
 
@@ -539,10 +547,10 @@ export namespace PGSQL {
 		return await FetchArray<string>(
 			connection,
 			`
-          SELECT typname
-          FROM pg_type
-          WHERE typcategory = 'E'
-          ORDER BY typname`
+				SELECT typname
+				FROM pg_type
+				WHERE typcategory = 'E'
+				ORDER BY typname`
 		)
 	}
 
@@ -550,11 +558,11 @@ export namespace PGSQL {
 		return await FetchArray<string>(
 			connection,
 			`
-          SELECT f.proname
-          FROM pg_catalog.pg_proc f
-                   INNER JOIN pg_catalog.pg_namespace n ON (f.pronamespace = n.oid)
-          WHERE n.nspname = '${CurrentSchema(schema)}'
-            AND f.proname ILIKE 'func_%'`
+				SELECT f.proname
+				FROM pg_catalog.pg_proc f
+						 INNER JOIN pg_catalog.pg_namespace n ON (f.pronamespace = n.oid)
+				WHERE n.nspname = '${CurrentSchema(schema)}'
+				  AND f.proname ILIKE 'func_%'`
 		)
 	}
 
@@ -562,11 +570,11 @@ export namespace PGSQL {
 		return await FetchArray<any>(
 			connection,
 			`
-          SELECT f.oid
-          FROM pg_catalog.pg_proc f
-                   INNER JOIN pg_catalog.pg_namespace n ON (f.pronamespace = n.oid)
-          WHERE n.nspname = '${CurrentSchema(schema)}'
-            AND f.proname ILIKE 'func_%'`
+				SELECT f.oid
+				FROM pg_catalog.pg_proc f
+						 INNER JOIN pg_catalog.pg_namespace n ON (f.pronamespace = n.oid)
+				WHERE n.nspname = '${CurrentSchema(schema)}'
+				  AND f.proname ILIKE 'func_%'`
 		)
 	}
 
@@ -574,9 +582,9 @@ export namespace PGSQL {
 		return await FetchArray<string>(
 			connection,
 			`
-          SELECT extname
-          FROM pg_extension
-          WHERE extname != 'plpgsql'`
+				SELECT extname
+				FROM pg_extension
+				WHERE extname != 'plpgsql'`
 		)
 	}
 
@@ -584,11 +592,11 @@ export namespace PGSQL {
 		return FetchOne<any>(
 			connection,
 			`
-          SELECT *
-          FROM information_schema.tables
-          WHERE table_schema = '${CurrentSchema(schema)}'
-            AND table_type = 'BASE TABLE'
-            AND table_name = $1`,
+				SELECT *
+				FROM information_schema.tables
+				WHERE table_schema = '${CurrentSchema(schema)}'
+				  AND table_type = 'BASE TABLE'
+				  AND table_name = $1`,
 			[table]
 		)
 	}
@@ -597,11 +605,11 @@ export namespace PGSQL {
 		return FetchMany<any>(
 			connection,
 			`
-          SELECT *
-          FROM information_schema.columns
-          WHERE table_schema = '${CurrentSchema(schema)}'
-            AND table_name = $1
-          ORDER BY ordinal_position`,
+				SELECT *
+				FROM information_schema.columns
+				WHERE table_schema = '${CurrentSchema(schema)}'
+				  AND table_name = $1
+				ORDER BY ordinal_position`,
 			[table]
 		)
 	}
@@ -610,27 +618,27 @@ export namespace PGSQL {
 		return FetchMany<any>(
 			connection,
 			`
-          SELECT tc.table_schema,
-                 tc.constraint_name,
-                 tc.table_name,
-                 MAX(tc.enforced),
-                 JSON_AGG(kcu.column_name) AS "columnNames",
-                 MAX(ccu.table_schema)     AS foreign_table_schema,
-                 MAX(ccu.table_name)       AS "primaryTable",
-                 JSON_AGG(ccu.column_name) AS "primaryColumns"
-          FROM information_schema.table_constraints AS tc
-                   JOIN information_schema.key_column_usage AS kcu
-                        ON tc.constraint_name = kcu.constraint_name
-                            AND tc.table_schema = kcu.table_schema
-                   JOIN information_schema.constraint_column_usage AS ccu
-                        ON ccu.constraint_name = tc.constraint_name
-                            AND ccu.table_schema = tc.table_schema
-          WHERE tc.table_schema = '${CurrentSchema(schema)}'
-            AND tc.constraint_type = 'FOREIGN KEY'
-            AND tc.table_name = $1
-          GROUP BY tc.table_schema,
-                   tc.constraint_name,
-                   tc.table_name`,
+				SELECT tc.table_schema,
+					   tc.constraint_name,
+					   tc.table_name,
+					   MAX(tc.enforced),
+					   JSON_AGG(kcu.column_name) AS "columnNames",
+					   MAX(ccu.table_schema)     AS foreign_table_schema,
+					   MAX(ccu.table_name)       AS "primaryTable",
+					   JSON_AGG(ccu.column_name) AS "primaryColumns"
+				FROM information_schema.table_constraints AS tc
+						 JOIN information_schema.key_column_usage AS kcu
+							  ON tc.constraint_name = kcu.constraint_name
+								  AND tc.table_schema = kcu.table_schema
+						 JOIN information_schema.constraint_column_usage AS ccu
+							  ON ccu.constraint_name = tc.constraint_name
+								  AND ccu.table_schema = tc.table_schema
+				WHERE tc.table_schema = '${CurrentSchema(schema)}'
+				  AND tc.constraint_type = 'FOREIGN KEY'
+				  AND tc.table_name = $1
+				GROUP BY tc.table_schema,
+						 tc.constraint_name,
+						 tc.table_name`,
 			[table]
 		)
 	}
@@ -639,12 +647,12 @@ export namespace PGSQL {
 		return FetchMany<any>(
 			connection,
 			`
-          SELECT *
-          FROM pg_indexes
-          WHERE schemaname = '${CurrentSchema(schema)}'
-            AND tablename = $1
-            AND (indexname NOT ILIKE '%_pkey'
-              OR indexdef ILIKE '%(%,%)%')`,
+				SELECT *
+				FROM pg_indexes
+				WHERE schemaname = '${CurrentSchema(schema)}'
+				  AND tablename = $1
+				  AND (indexname NOT ILIKE '%_pkey'
+					OR indexdef ILIKE '%(%,%)%')`,
 			[table]
 		)
 	}
@@ -816,17 +824,17 @@ export namespace PGSQL {
 		return enums
 	}
 
-	export const TableColumnComments = async (connection: TConnection, table: string, schema?: string): Promise<{column_name: string, column_comment: string | null}[]> => {
-		return PGSQL.FetchMany<{column_name: string, column_comment: string | null}>(connection, `
-        SELECT cols.column_name,
-               (SELECT pg_catalog.COL_DESCRIPTION(c.oid, cols.ordinal_position::INT)
-                FROM pg_catalog.pg_class c
-                WHERE c.oid = (SELECT cols.table_name::REGCLASS::OID)
-                  AND c.relname = cols.table_name) AS column_comment
+	export const TableColumnComments = async (connection: TConnection, table: string, schema?: string): Promise<{ column_name: string, column_comment: string | null }[]> => {
+		return PGSQL.FetchMany<{ column_name: string, column_comment: string | null }>(connection, `
+			SELECT cols.column_name,
+				   (SELECT pg_catalog.COL_DESCRIPTION(c.oid, cols.ordinal_position::INT)
+					FROM pg_catalog.pg_class c
+					WHERE c.oid = (SELECT cols.table_name::REGCLASS::OID)
+					  AND c.relname = cols.table_name) AS column_comment
 
-        FROM information_schema.columns cols
-        WHERE cols.table_schema = '${CurrentSchema(schema)}'
-          AND cols.table_name = '${table}'`)
+			FROM information_schema.columns cols
+			WHERE cols.table_schema = '${CurrentSchema(schema)}'
+			  AND cols.table_name = '${table}'`)
 	}
 
 	export const GetPGTable = async (connection: TConnection, table: string, schema?: string): Promise<PGTable> => {

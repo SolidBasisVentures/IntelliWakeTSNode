@@ -2763,35 +2763,35 @@ exports.PGSQL = void 0;
     PGSQL.TableRowCount = (connection, table, schema) => __awaiter(this, void 0, void 0, function* () {
         var _a, _b, _c;
         const data = yield PGSQL.query(connection, `SELECT COUNT(*) AS count
-                                          FROM ${(!!schema ? `${schema}.` : '') + table}`, undefined);
+											  FROM ${(!!schema ? `${schema}.` : '') + table}`, undefined);
         return (_c = ((_b = ((_a = data.rows) !== null && _a !== void 0 ? _a : [])[0]) !== null && _b !== void 0 ? _b : {})['count']) !== null && _c !== void 0 ? _c : 0;
     });
     PGSQL.CurrentSchema = (schema) => schema !== null && schema !== void 0 ? schema : 'public';
     PGSQL.TableExists = (connection, table, schema) => __awaiter(this, void 0, void 0, function* () {
         var _d, _e, _f;
         const sql = `SELECT COUNT(*) AS count
-                 FROM information_schema.tables
-                 WHERE table_schema = '${PGSQL.CurrentSchema(schema)}'
-                   AND table_name = '${table}'`;
+					 FROM information_schema.tables
+					 WHERE table_schema = '${PGSQL.CurrentSchema(schema)}'
+					   AND table_name = '${table}'`;
         const data = yield PGSQL.query(connection, sql, undefined);
         return ((_f = ((_e = ((_d = data.rows) !== null && _d !== void 0 ? _d : [])[0]) !== null && _e !== void 0 ? _e : {})['count']) !== null && _f !== void 0 ? _f : 0) > 0;
     });
     PGSQL.TableColumnExists = (connection, table, column, schema) => __awaiter(this, void 0, void 0, function* () {
         var _g, _h, _j;
         const sql = `SELECT COUNT(*) AS count
-                 FROM information_schema.COLUMNS
-                 WHERE table_schema = '${PGSQL.CurrentSchema(schema)}'
-                   AND table_name = '${table}'
-                   AND column_name = '${column}'`;
+					 FROM information_schema.COLUMNS
+					 WHERE table_schema = '${PGSQL.CurrentSchema(schema)}'
+					   AND table_name = '${table}'
+					   AND column_name = '${column}'`;
         const data = yield PGSQL.query(connection, sql, undefined);
         return ((_j = ((_h = ((_g = data.rows) !== null && _g !== void 0 ? _g : [])[0]) !== null && _h !== void 0 ? _h : {})['count']) !== null && _j !== void 0 ? _j : 0) > 0;
     });
     PGSQL.TriggerExists = (connection, trigger, schema) => __awaiter(this, void 0, void 0, function* () {
         var _k, _l, _m;
         const sql = `SELECT COUNT(*) AS count
-                 FROM information_schema.triggers
-                 WHERE trigger_schema = '${PGSQL.CurrentSchema(schema)}'
-                   AND trigger_name = '${trigger}'`;
+					 FROM information_schema.triggers
+					 WHERE trigger_schema = '${PGSQL.CurrentSchema(schema)}'
+					   AND trigger_name = '${trigger}'`;
         const data = yield PGSQL.query(connection, sql, undefined);
         return ((_m = ((_l = ((_k = data.rows) !== null && _k !== void 0 ? _k : [])[0]) !== null && _l !== void 0 ? _l : {})['count']) !== null && _m !== void 0 ? _m : 0) > 0;
     });
@@ -2802,44 +2802,44 @@ exports.PGSQL = void 0;
         }
         else {
             return PGSQL.Execute(connection, `SELECT SETVAL(PG_GET_SERIAL_SEQUENCE('${table}', '${column}'), MAX(${column}))
-         FROM ${table};
+				 FROM ${table};
 				`);
         }
     });
     PGSQL.ConstraintExists = (connection, constraint, schema) => __awaiter(this, void 0, void 0, function* () {
         var _o, _p, _q;
         const sql = `
-        SELECT COUNT(*) AS count
-        FROM information_schema.table_constraints
-        WHERE constraint_schema = '${PGSQL.CurrentSchema(schema)}'
-          AND constraint_name = '${constraint}'`;
+			SELECT COUNT(*) AS count
+			FROM information_schema.table_constraints
+			WHERE constraint_schema = '${PGSQL.CurrentSchema(schema)}'
+			  AND constraint_name = '${constraint}'`;
         const data = yield PGSQL.query(connection, sql, undefined);
         return ((_q = ((_p = ((_o = data.rows) !== null && _o !== void 0 ? _o : [])[0]) !== null && _p !== void 0 ? _p : {})['count']) !== null && _q !== void 0 ? _q : 0) > 0;
     });
     PGSQL.FKConstraints = (connection, schema) => __awaiter(this, void 0, void 0, function* () {
         const sql = `
-        SELECT table_name, constraint_name
-        FROM information_schema.table_constraints
-        WHERE constraint_schema = '${PGSQL.CurrentSchema(schema)}'
-          AND constraint_type = 'FOREIGN KEY'`;
+			SELECT table_name, constraint_name
+			FROM information_schema.table_constraints
+			WHERE constraint_schema = '${PGSQL.CurrentSchema(schema)}'
+			  AND constraint_type = 'FOREIGN KEY'`;
         return PGSQL.FetchMany(connection, sql);
     });
     PGSQL.Functions = (connection, schema) => __awaiter(this, void 0, void 0, function* () {
         const sql = `
-        SELECT routines.routine_name
-        FROM information_schema.routines
-        WHERE routines.specific_schema = '${PGSQL.CurrentSchema(schema)}'
-          AND routine_type = 'FUNCTION'
-        ORDER BY routines.routine_name`;
+			SELECT routines.routine_name
+			FROM information_schema.routines
+			WHERE routines.specific_schema = '${PGSQL.CurrentSchema(schema)}'
+			  AND routine_type = 'FUNCTION'
+			ORDER BY routines.routine_name`;
         return (yield PGSQL.FetchArray(connection, sql)).filter(func => func.startsWith('func_'));
     });
     PGSQL.IndexExists = (connection, tablename, indexName, schema) => __awaiter(this, void 0, void 0, function* () {
         var _r, _s, _t;
         const sql = `SELECT COUNT(*) AS count
-                 FROM pg_indexes
-                 WHERE schemaname = '${PGSQL.CurrentSchema(schema)}'
-                   AND tablename = '${tablename}'
-                   AND indexname = '${indexName}'`;
+					 FROM pg_indexes
+					 WHERE schemaname = '${PGSQL.CurrentSchema(schema)}'
+					   AND tablename = '${tablename}'
+					   AND indexname = '${indexName}'`;
         const data = yield PGSQL.query(connection, sql, undefined);
         return ((_t = ((_s = ((_r = data.rows) !== null && _r !== void 0 ? _r : [])[0]) !== null && _s !== void 0 ? _s : {})['count']) !== null && _t !== void 0 ? _t : 0) > 0;
     });
@@ -2851,8 +2851,8 @@ exports.PGSQL = void 0;
         else {
             // noinspection SqlResolve
             const sql = `SELECT *
-                   FROM ${table}
-                   WHERE id = $1`;
+						 FROM ${table}
+						 WHERE id = $1`;
             const data = yield PGSQL.query(connection, sql, [id]);
             return !!((_u = data.rows) !== null && _u !== void 0 ? _u : [])[0] ? Object.assign({}, ((_v = data.rows) !== null && _v !== void 0 ? _v : [])[0]) : null;
         }
@@ -2916,12 +2916,12 @@ exports.PGSQL = void 0;
         }
         let params = new PGParams();
         const sql = `
-        INSERT INTO ${table}
-            ("${Object.keys(newValues).join('","')}")
-        VALUES (${Object.values(newValues)
+			INSERT INTO ${table}
+				("${Object.keys(newValues).join('","')}")
+			VALUES (${Object.values(newValues)
             .map(value => params.add(value))
             .join(',')})
-        RETURNING *`;
+			RETURNING *`;
         const results = yield PGSQL.query(connection, sql, params.values);
         return ((_9 = results.rows) !== null && _9 !== void 0 ? _9 : [])[0];
     });
@@ -2935,12 +2935,12 @@ exports.PGSQL = void 0;
         }
         let params = new PGParams();
         const sql = `
-        INSERT INTO ${table}
-            ("${Object.keys(newValues).join('","')}")
-        VALUES (${Object.values(newValues)
+			INSERT INTO ${table}
+				("${Object.keys(newValues).join('","')}")
+			VALUES (${Object.values(newValues)
             .map(value => params.add(value))
             .join(',')})
-        RETURNING id`;
+			RETURNING id`;
         const results = yield PGSQL.query(connection, sql, params.values);
         const id = (_10 = results.rows[0]) === null || _10 === void 0 ? void 0 : _10.id;
         if (!id)
@@ -2950,9 +2950,9 @@ exports.PGSQL = void 0;
     PGSQL.InsertBulk = (connection, table, values) => __awaiter(this, void 0, void 0, function* () {
         let params = new PGParams();
         const sql = `
-        INSERT INTO ${table}
-            ("${Object.keys(values).join('","')}")
-        VALUES (${Object.values(values)
+			INSERT INTO ${table}
+				("${Object.keys(values).join('","')}")
+			VALUES (${Object.values(values)
             .map(value => params.add(value))
             .join(',')})`;
         yield PGSQL.query(connection, sql, params.values);
@@ -2961,9 +2961,9 @@ exports.PGSQL = void 0;
         let params = new PGParams();
         // noinspection SqlResolve
         const sql = `UPDATE ${table}
-                 SET ${PGSQL.BuildSetComponents(updateValues, params)}
-                 WHERE ${PGSQL.BuildWhereComponents(whereValues, params)}
-                 RETURNING *`;
+					 SET ${PGSQL.BuildSetComponents(updateValues, params)}
+					 WHERE ${PGSQL.BuildWhereComponents(whereValues, params)}
+					 RETURNING *`;
         const data = yield PGSQL.query(connection, sql, params.values);
         // @ts-ignore
         return data.rows[0];
@@ -2987,8 +2987,8 @@ exports.PGSQL = void 0;
         let params = new PGParams();
         // noinspection SqlResolve
         const sql = `DELETE
-                 FROM ${table}
-                 WHERE ${PGSQL.BuildWhereComponents(whereValues, params)}`;
+					 FROM ${table}
+					 WHERE ${PGSQL.BuildWhereComponents(whereValues, params)}`;
         yield PGSQL.query(connection, sql, params.values);
     });
     PGSQL.ExecuteRaw = (connection, sql) => __awaiter(this, void 0, void 0, function* () { return PGSQL.Execute(connection, sql); });
@@ -3019,11 +3019,19 @@ exports.PGSQL = void 0;
     });
     PGSQL.TruncateAllTables = (connection, exceptions = [], includeCascade = false) => __awaiter(this, void 0, void 0, function* () {
         let tables = yield PGSQL.TablesArray(connection);
-        yield PGSQL.Execute(connection, 'SET CONSTRAINTS ALL DEFERRED', undefined);
-        for (const table of tables) {
-            if (exceptions.includes(table)) {
-                yield PGSQL.Execute(connection, `TRUNCATE TABLE ${table} RESTART IDENTITY` + (includeCascade ? ' CASCADE' : ''), undefined);
+        yield PGSQL.Execute(connection, 'START TRANSACTION');
+        yield PGSQL.Execute(connection, 'SET CONSTRAINTS ALL DEFERRED');
+        try {
+            for (const table of tables) {
+                if (exceptions.includes(table)) {
+                    yield PGSQL.Execute(connection, `TRUNCATE TABLE ${table} RESTART IDENTITY` + (includeCascade ? ' CASCADE' : ''), undefined);
+                }
             }
+            yield PGSQL.Execute(connection, 'COMMIT');
+        }
+        catch (err) {
+            yield PGSQL.Execute(connection, 'ROLLBACK');
+            return false;
         }
         return true;
     });
@@ -3034,101 +3042,101 @@ exports.PGSQL = void 0;
     });
     PGSQL.TablesArray = (connection, schema) => __awaiter(this, void 0, void 0, function* () {
         return PGSQL.FetchArray(connection, `
-          SELECT table_name
-          FROM information_schema.tables
-          WHERE table_schema = '${PGSQL.CurrentSchema(schema)}'
-            AND table_type = 'BASE TABLE'`);
+				SELECT table_name
+				FROM information_schema.tables
+				WHERE table_schema = '${PGSQL.CurrentSchema(schema)}'
+				  AND table_type = 'BASE TABLE'`);
     });
     PGSQL.ViewsArray = (connection, schema) => __awaiter(this, void 0, void 0, function* () {
         return yield PGSQL.FetchArray(connection, `
-          SELECT table_name
-          FROM information_schema.tables
-          WHERE table_schema = '${PGSQL.CurrentSchema(schema)}'
-            AND table_type = 'VIEW'`);
+				SELECT table_name
+				FROM information_schema.tables
+				WHERE table_schema = '${PGSQL.CurrentSchema(schema)}'
+				  AND table_type = 'VIEW'`);
     });
     PGSQL.ViewsMatArray = (connection, schema) => __awaiter(this, void 0, void 0, function* () {
         return yield PGSQL.FetchArray(connection, `
-          SELECT matviewname
-          FROM pg_matviews
-          WHERE schemaname = '${PGSQL.CurrentSchema(schema)}'`);
+				SELECT matviewname
+				FROM pg_matviews
+				WHERE schemaname = '${PGSQL.CurrentSchema(schema)}'`);
     });
     PGSQL.TypesArray = (connection) => __awaiter(this, void 0, void 0, function* () {
         return yield PGSQL.FetchArray(connection, `
-          SELECT typname
-          FROM pg_type
-          WHERE typcategory = 'E'
-          ORDER BY typname`);
+				SELECT typname
+				FROM pg_type
+				WHERE typcategory = 'E'
+				ORDER BY typname`);
     });
     PGSQL.FunctionsArray = (connection, schema) => __awaiter(this, void 0, void 0, function* () {
         return yield PGSQL.FetchArray(connection, `
-          SELECT f.proname
-          FROM pg_catalog.pg_proc f
-                   INNER JOIN pg_catalog.pg_namespace n ON (f.pronamespace = n.oid)
-          WHERE n.nspname = '${PGSQL.CurrentSchema(schema)}'
-            AND f.proname ILIKE 'func_%'`);
+				SELECT f.proname
+				FROM pg_catalog.pg_proc f
+						 INNER JOIN pg_catalog.pg_namespace n ON (f.pronamespace = n.oid)
+				WHERE n.nspname = '${PGSQL.CurrentSchema(schema)}'
+				  AND f.proname ILIKE 'func_%'`);
     });
     PGSQL.FunctionsOIDArray = (connection, schema) => __awaiter(this, void 0, void 0, function* () {
         return yield PGSQL.FetchArray(connection, `
-          SELECT f.oid
-          FROM pg_catalog.pg_proc f
-                   INNER JOIN pg_catalog.pg_namespace n ON (f.pronamespace = n.oid)
-          WHERE n.nspname = '${PGSQL.CurrentSchema(schema)}'
-            AND f.proname ILIKE 'func_%'`);
+				SELECT f.oid
+				FROM pg_catalog.pg_proc f
+						 INNER JOIN pg_catalog.pg_namespace n ON (f.pronamespace = n.oid)
+				WHERE n.nspname = '${PGSQL.CurrentSchema(schema)}'
+				  AND f.proname ILIKE 'func_%'`);
     });
     PGSQL.ExtensionsArray = (connection) => __awaiter(this, void 0, void 0, function* () {
         return yield PGSQL.FetchArray(connection, `
-          SELECT extname
-          FROM pg_extension
-          WHERE extname != 'plpgsql'`);
+				SELECT extname
+				FROM pg_extension
+				WHERE extname != 'plpgsql'`);
     });
     PGSQL.TableData = (connection, table, schema) => __awaiter(this, void 0, void 0, function* () {
         return PGSQL.FetchOne(connection, `
-          SELECT *
-          FROM information_schema.tables
-          WHERE table_schema = '${PGSQL.CurrentSchema(schema)}'
-            AND table_type = 'BASE TABLE'
-            AND table_name = $1`, [table]);
+				SELECT *
+				FROM information_schema.tables
+				WHERE table_schema = '${PGSQL.CurrentSchema(schema)}'
+				  AND table_type = 'BASE TABLE'
+				  AND table_name = $1`, [table]);
     });
     PGSQL.TableColumnsData = (connection, table, schema) => __awaiter(this, void 0, void 0, function* () {
         return PGSQL.FetchMany(connection, `
-          SELECT *
-          FROM information_schema.columns
-          WHERE table_schema = '${PGSQL.CurrentSchema(schema)}'
-            AND table_name = $1
-          ORDER BY ordinal_position`, [table]);
+				SELECT *
+				FROM information_schema.columns
+				WHERE table_schema = '${PGSQL.CurrentSchema(schema)}'
+				  AND table_name = $1
+				ORDER BY ordinal_position`, [table]);
     });
     PGSQL.TableFKsData = (connection, table, schema) => __awaiter(this, void 0, void 0, function* () {
         return PGSQL.FetchMany(connection, `
-          SELECT tc.table_schema,
-                 tc.constraint_name,
-                 tc.table_name,
-                 MAX(tc.enforced),
-                 JSON_AGG(kcu.column_name) AS "columnNames",
-                 MAX(ccu.table_schema)     AS foreign_table_schema,
-                 MAX(ccu.table_name)       AS "primaryTable",
-                 JSON_AGG(ccu.column_name) AS "primaryColumns"
-          FROM information_schema.table_constraints AS tc
-                   JOIN information_schema.key_column_usage AS kcu
-                        ON tc.constraint_name = kcu.constraint_name
-                            AND tc.table_schema = kcu.table_schema
-                   JOIN information_schema.constraint_column_usage AS ccu
-                        ON ccu.constraint_name = tc.constraint_name
-                            AND ccu.table_schema = tc.table_schema
-          WHERE tc.table_schema = '${PGSQL.CurrentSchema(schema)}'
-            AND tc.constraint_type = 'FOREIGN KEY'
-            AND tc.table_name = $1
-          GROUP BY tc.table_schema,
-                   tc.constraint_name,
-                   tc.table_name`, [table]);
+				SELECT tc.table_schema,
+					   tc.constraint_name,
+					   tc.table_name,
+					   MAX(tc.enforced),
+					   JSON_AGG(kcu.column_name) AS "columnNames",
+					   MAX(ccu.table_schema)     AS foreign_table_schema,
+					   MAX(ccu.table_name)       AS "primaryTable",
+					   JSON_AGG(ccu.column_name) AS "primaryColumns"
+				FROM information_schema.table_constraints AS tc
+						 JOIN information_schema.key_column_usage AS kcu
+							  ON tc.constraint_name = kcu.constraint_name
+								  AND tc.table_schema = kcu.table_schema
+						 JOIN information_schema.constraint_column_usage AS ccu
+							  ON ccu.constraint_name = tc.constraint_name
+								  AND ccu.table_schema = tc.table_schema
+				WHERE tc.table_schema = '${PGSQL.CurrentSchema(schema)}'
+				  AND tc.constraint_type = 'FOREIGN KEY'
+				  AND tc.table_name = $1
+				GROUP BY tc.table_schema,
+						 tc.constraint_name,
+						 tc.table_name`, [table]);
     });
     PGSQL.TableIndexesData = (connection, table, schema) => __awaiter(this, void 0, void 0, function* () {
         return PGSQL.FetchMany(connection, `
-          SELECT *
-          FROM pg_indexes
-          WHERE schemaname = '${PGSQL.CurrentSchema(schema)}'
-            AND tablename = $1
-            AND (indexname NOT ILIKE '%_pkey'
-              OR indexdef ILIKE '%(%,%)%')`, [table]);
+				SELECT *
+				FROM pg_indexes
+				WHERE schemaname = '${PGSQL.CurrentSchema(schema)}'
+				  AND tablename = $1
+				  AND (indexname NOT ILIKE '%_pkey'
+					OR indexdef ILIKE '%(%,%)%')`, [table]);
     });
     PGSQL.ViewData = (connection, view) => __awaiter(this, void 0, void 0, function* () {
         var _11, _12;
@@ -3255,15 +3263,15 @@ exports.PGSQL = void 0;
     });
     PGSQL.TableColumnComments = (connection, table, schema) => __awaiter(this, void 0, void 0, function* () {
         return PGSQL.FetchMany(connection, `
-        SELECT cols.column_name,
-               (SELECT pg_catalog.COL_DESCRIPTION(c.oid, cols.ordinal_position::INT)
-                FROM pg_catalog.pg_class c
-                WHERE c.oid = (SELECT cols.table_name::REGCLASS::OID)
-                  AND c.relname = cols.table_name) AS column_comment
+			SELECT cols.column_name,
+				   (SELECT pg_catalog.COL_DESCRIPTION(c.oid, cols.ordinal_position::INT)
+					FROM pg_catalog.pg_class c
+					WHERE c.oid = (SELECT cols.table_name::REGCLASS::OID)
+					  AND c.relname = cols.table_name) AS column_comment
 
-        FROM information_schema.columns cols
-        WHERE cols.table_schema = '${PGSQL.CurrentSchema(schema)}'
-          AND cols.table_name = '${table}'`);
+			FROM information_schema.columns cols
+			WHERE cols.table_schema = '${PGSQL.CurrentSchema(schema)}'
+			  AND cols.table_name = '${table}'`);
     });
     PGSQL.GetPGTable = (connection, table, schema) => __awaiter(this, void 0, void 0, function* () {
         var _17, _18, _19, _20, _21;
