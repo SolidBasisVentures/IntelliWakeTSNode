@@ -555,13 +555,12 @@ export class PGTable {
 					}
 				}
 
-				if (pgColumn.isArray() && !pgColumn.isNullable()) {
-					fieldConstraint.default = fieldConstraint.default ?? []
-				}
-
 				fieldConstraint.nullable = IsOn(pgColumn.is_nullable)
 
 				if (pgColumn.isArray()) {
+					if (!fieldConstraint.nullable) {
+						fieldConstraint.default = fieldConstraint.default ?? []
+					}
 					fieldConstraint.isArray = true
 				}
 

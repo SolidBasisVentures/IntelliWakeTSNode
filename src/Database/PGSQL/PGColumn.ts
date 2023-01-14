@@ -1,5 +1,5 @@
 import {PGEnum} from './PGEnum'
-import {IsOn} from '@solidbasisventures/intelliwaketsfoundation'
+import {IsOn, ToArray} from '@solidbasisventures/intelliwaketsfoundation'
 
 export interface IPGColumn {
 	column_name: string
@@ -120,7 +120,7 @@ export class PGColumn implements IPGColumn {
 		}
 	}
 
-	public isArray = (): boolean => !!(this.array_dimensions ?? [])[0]
+	public isArray = (): boolean => !!ToArray(this.array_dimensions)[0]
 
 	public isNullable = (): boolean => IsOn(this.is_nullable)
 
