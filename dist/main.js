@@ -807,6 +807,11 @@ class PGTable {
         text += TS_EOL$1;
         return text;
     }
+    /**
+     * Generates type definitions for a table.
+     *
+     * @param options
+     */
     tsText(options) {
         var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q, _r;
         let text = this.tableHeaderText('Table Manager for');
@@ -1142,6 +1147,11 @@ class PGTable {
         text += TS_EOL$1;
         return text;
     }
+    /**
+     * Generates the text for a class that manages the table itself.  Must inherit from a local _CTable base class.
+     *
+     * @param relativePaths
+     */
     tsTextTable(relativePaths) {
         var _a, _b, _c, _d, _e;
         const usePaths = {

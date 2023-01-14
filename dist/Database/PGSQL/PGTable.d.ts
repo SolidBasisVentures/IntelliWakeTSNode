@@ -51,8 +51,18 @@ export declare class PGTable {
     reOrderColumns(): void;
     addIndex(pgIndex: PGIndex): void;
     tableHeaderText(forTableText: string, modifyStatement?: string): string;
+    /**
+     * Generates type definitions for a table.
+     *
+     * @param options
+     */
     tsText(options?: TPGTableTextOptions): string;
     static TSTables(tables: string[]): string;
+    /**
+     * Generates the text for a class that manages the table itself.  Must inherit from a local _CTable base class.
+     *
+     * @param relativePaths
+     */
     tsTextTable(relativePaths?: ICTableRelativePaths): string;
     ddlPrimaryKey(): string | null;
     ddlCreateTableText(createForeignKeys: boolean, createIndexes: boolean, dropFirst?: boolean): string;

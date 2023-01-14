@@ -249,6 +249,11 @@ export class PGTable {
 		return text
 	}
 
+	/**
+	 * Generates type definitions for a table.
+	 *
+	 * @param options
+	 */
 	public tsText(options?: TPGTableTextOptions): string {
 		let text = this.tableHeaderText('Table Manager for')
 
@@ -589,6 +594,11 @@ export class PGTable {
 		return text
 	}
 
+	/**
+	 * Generates the text for a class that manages the table itself.  Must inherit from a local _CTable base class.
+	 *
+	 * @param relativePaths
+	 */
 	public tsTextTable(relativePaths?: ICTableRelativePaths): string {
 		const usePaths: Required<ICTableRelativePaths> = {
 			initials: RemoveEnding('/', relativePaths?.initials ?? '@Common/Tables', true),
