@@ -216,6 +216,8 @@ class PGColumn {
                 return 'string'; // Date or String or Enum
             }
         };
+        this.isArray = () => { var _a; return !!((_a = this.array_dimensions) !== null && _a !== void 0 ? _a : [])[0]; };
+        this.isNullable = () => intelliwaketsfoundation.IsOn(this.is_nullable);
         this.enumType = () => {
             return typeof this.udt_name !== 'string';
         };
@@ -1073,7 +1075,7 @@ class PGTable {
                 const fieldConstraint = {};
                 if (pgColumn.booleanType()) {
                     fieldConstraint.type = 'boolean';
-                    if (pgColumn.column_default) {
+                    if (pgColumn.column_default && !pgColumn.isArray()) {
                         fieldConstraint.default = intelliwaketsfoundation.IsOn(pgColumn.column_default);
                     }
                 }
@@ -1082,7 +1084,7 @@ class PGTable {
                     if (pgColumn.numeric_precision) {
                         fieldConstraint.length = intelliwaketsfoundation.CleanNumber(pgColumn.numeric_precision);
                     }
-                    if (pgColumn.column_default) {
+                    if (pgColumn.column_default && !pgColumn.isArray()) {
                         fieldConstraint.default = intelliwaketsfoundation.CleanNumber(pgColumn.column_default);
                     }
                 }
@@ -1091,19 +1093,19 @@ class PGTable {
                 }
                 else if (pgColumn.dateOnlyType()) {
                     fieldConstraint.type = 'date';
-                    if (pgColumn.column_default) {
+                    if (pgColumn.column_default && !pgColumn.isArray()) {
                         fieldConstraint.default = 'now';
                     }
                 }
                 else if (pgColumn.dateTimeOnlyType()) {
                     fieldConstraint.type = 'datetime';
-                    if (pgColumn.column_default) {
+                    if (pgColumn.column_default && !pgColumn.isArray()) {
                         fieldConstraint.default = 'now';
                     }
                 }
                 else if (pgColumn.timeOnlyType()) {
                     fieldConstraint.type = 'time';
-                    if (pgColumn.column_default) {
+                    if (pgColumn.column_default && !pgColumn.isArray()) {
                         fieldConstraint.default = 'now';
                     }
                 }
@@ -1112,12 +1114,15 @@ class PGTable {
                     if (pgColumn.character_maximum_length) {
                         fieldConstraint.length = pgColumn.character_maximum_length;
                     }
-                    if (pgColumn.column_default) {
+                    if (pgColumn.column_default && !pgColumn.isArray()) {
                         fieldConstraint.default = '';
                     }
                 }
+                if (pgColumn.isArray() && !pgColumn.isNullable()) {
+                    fieldConstraint.default = (_r = fieldConstraint.default) !== null && _r !== void 0 ? _r : [];
+                }
                 fieldConstraint.nullable = intelliwaketsfoundation.IsOn(pgColumn.is_nullable);
-                if (((_r = pgColumn.array_dimensions) !== null && _r !== void 0 ? _r : [])[0]) {
+                if (pgColumn.isArray()) {
                     fieldConstraint.isArray = true;
                 }
                 constraint[pgColumn.column_name] = fieldConstraint;

@@ -517,7 +517,7 @@ export class PGTable {
 
 				if (pgColumn.booleanType()) {
 					fieldConstraint.type = 'boolean'
-					if (pgColumn.column_default) {
+					if (pgColumn.column_default && !pgColumn.isArray()) {
 						fieldConstraint.default = IsOn(pgColumn.column_default)
 					}
 				} else if (pgColumn.integerFloatType()) {
@@ -525,24 +525,24 @@ export class PGTable {
 					if (pgColumn.numeric_precision) {
 						fieldConstraint.length = CleanNumber(pgColumn.numeric_precision)
 					}
-					if (pgColumn.column_default) {
+					if (pgColumn.column_default && !pgColumn.isArray()) {
 						fieldConstraint.default = CleanNumber(pgColumn.column_default)
 					}
 				} else if (pgColumn.jsonType()) {
 					fieldConstraint.type = 'object'
 				} else if (pgColumn.dateOnlyType()) {
 					fieldConstraint.type = 'date'
-					if (pgColumn.column_default) {
+					if (pgColumn.column_default && !pgColumn.isArray()) {
 						fieldConstraint.default = 'now'
 					}
 				} else if (pgColumn.dateTimeOnlyType()) {
 					fieldConstraint.type = 'datetime'
-					if (pgColumn.column_default) {
+					if (pgColumn.column_default && !pgColumn.isArray()) {
 						fieldConstraint.default = 'now'
 					}
 				} else if (pgColumn.timeOnlyType()) {
 					fieldConstraint.type = 'time'
-					if (pgColumn.column_default) {
+					if (pgColumn.column_default && !pgColumn.isArray()) {
 						fieldConstraint.default = 'now'
 					}
 				} else {
@@ -550,14 +550,18 @@ export class PGTable {
 					if (pgColumn.character_maximum_length) {
 						fieldConstraint.length = pgColumn.character_maximum_length
 					}
-					if (pgColumn.column_default) {
+					if (pgColumn.column_default && !pgColumn.isArray()) {
 						fieldConstraint.default = ''
 					}
 				}
 
+				if (pgColumn.isArray() && !pgColumn.isNullable()) {
+					fieldConstraint.default = fieldConstraint.default ?? []
+				}
+
 				fieldConstraint.nullable = IsOn(pgColumn.is_nullable)
 
-				if ((pgColumn.array_dimensions ?? [])[0]) {
+				if (pgColumn.isArray()) {
 					fieldConstraint.isArray = true
 				}
 

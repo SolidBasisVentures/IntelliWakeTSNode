@@ -72,6 +72,8 @@ export declare class PGColumn implements IPGColumn {
     static readonly TYPE_UUID = "uuid";
     static readonly TYPES_ALL: string[];
     jsType: () => string;
+    isArray: () => boolean;
+    isNullable: () => boolean;
     enumType: () => boolean;
     integerType: () => boolean;
     floatType: () => boolean;

@@ -120,6 +120,10 @@ export class PGColumn implements IPGColumn {
 		}
 	}
 
+	public isArray = (): boolean => !!(this.array_dimensions ?? [])[0]
+
+	public isNullable = (): boolean => IsOn(this.is_nullable)
+
 	public enumType = (): boolean => {
 		return typeof this.udt_name !== 'string'
 	}
