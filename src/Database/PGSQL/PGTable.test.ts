@@ -194,7 +194,7 @@ test('PGTable', () => {
 		column_comment: '{interface: ITest.initialValue}'
 	})
 
-	tsTest = pgTable.tsText()
+	tsTest = pgTable.tsText({includeConstaint: true})
 
 	let tsTestTable = pgTable.tsTextTable()
 

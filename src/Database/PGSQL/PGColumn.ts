@@ -158,6 +158,26 @@ export class PGColumn implements IPGColumn {
 		].includes(this.udt_name.toLowerCase())
 	}
 
+	public dateOnlyType = (): boolean => {
+		return (typeof this.udt_name === 'string') && [
+			PGColumn.TYPE_DATE
+		].includes(this.udt_name.toLowerCase())
+	}
+
+	public timeOnlyType = (): boolean => {
+		return (typeof this.udt_name === 'string') && [
+			PGColumn.TYPE_TIME,
+			PGColumn.TYPE_TIMETZ
+		].includes(this.udt_name.toLowerCase())
+	}
+
+	public dateTimeOnlyType = (): boolean => {
+		return (typeof this.udt_name === 'string') && [
+			PGColumn.TYPE_TIMESTAMP,
+			PGColumn.TYPE_TIMESTAMPTZ
+		].includes(this.udt_name.toLowerCase())
+	}
+
 	public blobType = (): boolean => {
 		return (typeof this.udt_name === 'string') && [PGColumn.TYPE_TEXT].includes(this.udt_name.toLowerCase())
 	}

@@ -2,6 +2,7 @@ import {PGColumn} from './PGColumn'
 import {PGIndex} from './PGIndex'
 import {PGForeignKey} from './PGForeignKey'
 import {
+	CleanNumber,
 	CoalesceFalsey,
 	IsOn,
 	RemoveEnding,
@@ -10,10 +11,14 @@ import {
 	YYYY_MM_DD_HH_mm_ss
 } from '@solidbasisventures/intelliwaketsfoundation'
 import {PGEnum} from './PGEnum'
+import {
+	TObjectConstraint,
+	TObjectFieldConstraint
+} from '@solidbasisventures/intelliwaketsfoundation/dist/src/ObjectConstraint'
 
 const TS_EOL = '\n' // was \r\n
 
-export interface ICTableRelativePaths {
+export interface ICTableRelativePaths extends TPGTableTextOptions {
 	/** @Common/Tables */
 	initials?: string
 	/** ../Database */
@@ -38,6 +43,10 @@ export interface IFixedWidthMap<T> {
 
 export const initialFixedWidthMapOptions: IFixedWidthMapOptions = {
 	startPosition: 0
+}
+
+export type TPGTableTextOptions = {
+	includeConstaint?: boolean
 }
 
 export class PGTable {
@@ -240,15 +249,20 @@ export class PGTable {
 		return text
 	}
 
-	public tsText(): string {
+	public tsText(options?: TPGTableTextOptions): string {
 		let text = this.tableHeaderText('Table Manager for')
+
+		if (options?.includeConstaint) {
+			text += `import type {TObjectConstraint} from '@solidbasisventures/intelliwaketsfoundation'${TS_EOL}`
+		}
+
 		if (this.inherits.length > 0) {
 			for (const inherit of this.inherits) {
 				if (this.importWithTypes) {
-					text += `import type {I${inherit}} from "./I${inherit}"${TS_EOL}`
-					text += `import {initial_${inherit}} from "./I${inherit}"${TS_EOL}`
+					text += `import type {I${inherit}} from './I${inherit}'${TS_EOL}`
+					text += `import {initial_${inherit}} from './I${inherit}'${TS_EOL}`
 				} else {
-					text += `import {I${inherit}, initial_${inherit}} from "./I${inherit}"${TS_EOL}`
+					text += `import {I${inherit}, initial_${inherit}} from './I${inherit}'${TS_EOL}`
 				}
 			}
 		}
@@ -488,7 +502,65 @@ export class PGTable {
 			}
 			addComma = true
 		}
-		text += TS_EOL + '}' + TS_EOL // Removed semi
+		text += TS_EOL + '}' + TS_EOL
+
+		if (options?.includeConstaint) {
+			const constraint: TObjectConstraint = {}
+
+			for (const pgColumn of this.columns) {
+				const fieldConstraint: TObjectFieldConstraint = {}
+
+				if (pgColumn.booleanType()) {
+					fieldConstraint.type = 'boolean'
+					if (pgColumn.column_default) {
+						fieldConstraint.default = IsOn(pgColumn.column_default)
+					}
+				} else if (pgColumn.integerFloatType()) {
+					fieldConstraint.type = 'number'
+					if (pgColumn.numeric_precision) {
+						fieldConstraint.length = CleanNumber(pgColumn.numeric_precision)
+					}
+					if (pgColumn.column_default) {
+						fieldConstraint.default = CleanNumber(pgColumn.column_default)
+					}
+				} else if (pgColumn.jsonType()) {
+					fieldConstraint.type = 'object'
+				} else if (pgColumn.dateOnlyType()) {
+					fieldConstraint.type = 'date'
+					if (pgColumn.column_default) {
+						fieldConstraint.default = 'now'
+					}
+				} else if (pgColumn.dateTimeOnlyType()) {
+					fieldConstraint.type = 'datetime'
+					if (pgColumn.column_default) {
+						fieldConstraint.default = 'now'
+					}
+				} else if (pgColumn.timeOnlyType()) {
+					fieldConstraint.type = 'time'
+					if (pgColumn.column_default) {
+						fieldConstraint.default = 'now'
+					}
+				} else {
+					fieldConstraint.type = 'string'
+					if (pgColumn.character_maximum_length) {
+						fieldConstraint.length = pgColumn.character_maximum_length
+					}
+					if (pgColumn.column_default) {
+						fieldConstraint.default = ''
+					}
+				}
+
+				fieldConstraint.nullable = IsOn(pgColumn.is_nullable)
+
+				if ((pgColumn.array_dimensions ?? [])[0]) {
+					fieldConstraint.isArray = true
+				}
+
+				constraint[pgColumn.column_name] = fieldConstraint
+			}
+
+			text += TS_EOL + `export const Constraint_${this.name}: TObjectConstraint<I${this.name}> = ${JSON.stringify(constraint, undefined, 4)}` + TS_EOL
+		}
 
 		return text
 	}
@@ -523,12 +595,13 @@ export class PGTable {
 			tTables: RemoveEnding('/', relativePaths?.tTables ?? '../Database', true),
 			responseContext: RemoveEnding('/', relativePaths?.responseContext ?? '../MiddleWare/ResponseContext', true),
 			responseContextName: relativePaths?.responseContextName ?? 'responseContext',
-			responseContextClass: relativePaths?.responseContextClass ?? 'ResponseContext'
+			responseContextClass: relativePaths?.responseContextClass ?? 'ResponseContext',
+			includeConstaint: !!relativePaths?.includeConstaint
 		}
 
 		let text = this.tableHeaderText('Table Class for', 'MODIFICATIONS WILL NOT BE OVERWRITTEN')
 		if (this.importWithTypes) {
-			text += `import {initial_${this.name}} from '${usePaths.initials}/I${this.name}'` + TS_EOL
+			text += `import {initial_${this.name}${usePaths.includeConstaint ? `, Constraint_${this.name}` : ''} from '${usePaths.initials}/I${this.name}'` + TS_EOL
 			text += `import type {I${this.name}} from '${usePaths.initials}/I${this.name}'` + TS_EOL
 		} else {
 			text += `import {initial_${this.name}, I${this.name}} from '${usePaths.initials}/I${this.name}'` + TS_EOL
@@ -550,6 +623,9 @@ export class PGTable {
 		text += `\tconstructor(${usePaths.responseContextName}: ${usePaths.responseContextClass}) {` + TS_EOL
 		text += `\t\tsuper(${usePaths.responseContextName}, {...initial_${this.name}})` + TS_EOL
 		text += TS_EOL
+		if (usePaths.includeConstaint) {
+			text += `\t\tthis.constraint = 'Constraint_${this.name}'` + TS_EOL
+		}
 		text += `\t\tthis.table = '${this.name}'` + TS_EOL
 		text += `\t}` + TS_EOL
 		text += `}` + TS_EOL
