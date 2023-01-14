@@ -815,7 +815,7 @@ class PGTable {
      * @param options
      */
     tsText(options) {
-        var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q, _r;
+        var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q;
         let text = this.tableHeaderText('Table Manager for');
         if (options === null || options === void 0 ? void 0 : options.includeConstaint) {
             text += `import type {TObjectConstraint} from '@solidbasisventures/intelliwaketsfoundation'${TS_EOL$1}`;
@@ -1119,11 +1119,13 @@ class PGTable {
                     }
                 }
                 fieldConstraint.nullable = intelliwaketsfoundation.IsOn(pgColumn.is_nullable);
+                if (pgColumn.column_name === 'features')
+                    console.log(pgColumn.column_name, pgColumn.array_dimensions);
                 if (pgColumn.isArray()) {
-                    if (!fieldConstraint.nullable) {
-                        fieldConstraint.default = (_r = fieldConstraint.default) !== null && _r !== void 0 ? _r : [];
-                    }
                     fieldConstraint.isArray = true;
+                    if (!fieldConstraint.nullable) {
+                        fieldConstraint.default = [];
+                    }
                 }
                 constraint[pgColumn.column_name] = fieldConstraint;
             }
