@@ -11,8 +11,10 @@ import {
 	YYYY_MM_DD_HH_mm_ss
 } from '@solidbasisventures/intelliwaketsfoundation'
 import {PGEnum} from './PGEnum'
-import type {TObjectConstraint,
-	TObjectFieldConstraint} from '@solidbasisventures/intelliwaketsfoundation'
+import type {
+	TObjectConstraint,
+	TObjectFieldConstraint
+} from '@solidbasisventures/intelliwaketsfoundation'
 
 const TS_EOL = '\n' // was \r\n
 
