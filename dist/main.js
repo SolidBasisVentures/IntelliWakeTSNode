@@ -216,7 +216,7 @@ class PGColumn {
                 return 'string'; // Date or String or Enum
             }
         };
-        this.isArray = () => !!intelliwaketsfoundation.ToArray(this.array_dimensions)[0];
+        this.isArray = () => { var _a, _b, _c, _d, _e, _f; return !!intelliwaketsfoundation.ToArray(this.array_dimensions)[0] || ((_c = (_b = ((_a = this.column_default) !== null && _a !== void 0 ? _a : '')) === null || _b === void 0 ? void 0 : _b.toString()) === null || _c === void 0 ? void 0 : _c.includes('{}')) || ((_f = (_e = ((_d = this.column_default) !== null && _d !== void 0 ? _d : '')) === null || _e === void 0 ? void 0 : _e.toString()) === null || _f === void 0 ? void 0 : _f.includes('[]')); };
         this.isNullable = () => intelliwaketsfoundation.IsOn(this.is_nullable);
         this.enumType = () => {
             return typeof this.udt_name !== 'string';
@@ -1119,8 +1119,8 @@ class PGTable {
                     }
                 }
                 fieldConstraint.nullable = intelliwaketsfoundation.IsOn(pgColumn.is_nullable);
-                if (pgColumn.column_name === 'features')
-                    console.log(this.name, pgColumn.column_name, pgColumn.array_dimensions, pgColumn.column_default, pgColumn.udt_name);
+                // if (pgColumn.column_name === 'features')
+                // 	console.log(this.name, pgColumn.column_name, pgColumn.array_dimensions, pgColumn.column_default, pgColumn.udt_name)
                 if (pgColumn.isArray()) {
                     fieldConstraint.isArray = true;
                     if (!fieldConstraint.nullable) {

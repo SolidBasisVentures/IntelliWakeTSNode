@@ -8,13 +8,11 @@ import {
 	RemoveEnding,
 	ReplaceAll,
 	SortCompare,
-	YYYY_MM_DD_HH_mm_ss
-} from '@solidbasisventures/intelliwaketsfoundation'
-import {PGEnum} from './PGEnum'
-import {
+	YYYY_MM_DD_HH_mm_ss,
 	TObjectConstraint,
 	TObjectFieldConstraint
-} from '@solidbasisventures/intelliwaketsfoundation/dist/src/ObjectConstraint'
+} from '@solidbasisventures/intelliwaketsfoundation'
+import {PGEnum} from './PGEnum'
 
 const TS_EOL = '\n' // was \r\n
 
@@ -557,8 +555,8 @@ export class PGTable {
 
 				fieldConstraint.nullable = IsOn(pgColumn.is_nullable)
 
-				if (pgColumn.column_name === 'features')
-					console.log(this.name, pgColumn.column_name, pgColumn.array_dimensions, pgColumn.column_default, pgColumn.udt_name)
+				// if (pgColumn.column_name === 'features')
+				// 	console.log(this.name, pgColumn.column_name, pgColumn.array_dimensions, pgColumn.column_default, pgColumn.udt_name)
 
 				if (pgColumn.isArray()) {
 					fieldConstraint.isArray = true

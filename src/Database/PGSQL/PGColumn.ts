@@ -120,7 +120,7 @@ export class PGColumn implements IPGColumn {
 		}
 	}
 
-	public isArray = (): boolean => !!ToArray(this.array_dimensions)[0]
+	public isArray = (): boolean => !!ToArray(this.array_dimensions)[0] || (this.column_default ?? '')?.toString()?.includes('{}') || (this.column_default ?? '')?.toString()?.includes('[]')
 
 	public isNullable = (): boolean => IsOn(this.is_nullable)
 
