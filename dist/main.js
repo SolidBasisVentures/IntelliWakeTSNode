@@ -216,7 +216,7 @@ class PGColumn {
                 return 'string'; // Date or String or Enum
             }
         };
-        this.isArray = () => { var _a; return !!((_a = this.array_dimensions) !== null && _a !== void 0 ? _a : [])[0]; };
+        this.isArray = () => !!intelliwaketsfoundation.ToArray(this.array_dimensions)[0];
         this.isNullable = () => intelliwaketsfoundation.IsOn(this.is_nullable);
         this.enumType = () => {
             return typeof this.udt_name !== 'string';
@@ -1118,11 +1118,11 @@ class PGTable {
                         fieldConstraint.default = '';
                     }
                 }
-                if (pgColumn.isArray() && !pgColumn.isNullable()) {
-                    fieldConstraint.default = (_r = fieldConstraint.default) !== null && _r !== void 0 ? _r : [];
-                }
                 fieldConstraint.nullable = intelliwaketsfoundation.IsOn(pgColumn.is_nullable);
                 if (pgColumn.isArray()) {
+                    if (!fieldConstraint.nullable) {
+                        fieldConstraint.default = (_r = fieldConstraint.default) !== null && _r !== void 0 ? _r : [];
+                    }
                     fieldConstraint.isArray = true;
                 }
                 constraint[pgColumn.column_name] = fieldConstraint;
