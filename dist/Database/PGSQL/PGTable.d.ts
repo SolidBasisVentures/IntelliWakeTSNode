@@ -1,7 +1,7 @@
 import { PGColumn } from './PGColumn';
 import { PGIndex } from './PGIndex';
 import { PGForeignKey } from './PGForeignKey';
-export interface ICTableRelativePaths {
+export interface ICTableRelativePaths extends TPGTableTextOptions {
     /** @Common/Tables */
     initials?: string;
     /** ../Database */
@@ -22,6 +22,9 @@ export interface IFixedWidthMap<T> {
     positionWidth: number;
 }
 export declare const initialFixedWidthMapOptions: IFixedWidthMapOptions;
+export declare type TPGTableTextOptions = {
+    includeConstaint?: boolean;
+};
 export declare class PGTable {
     name: string;
     description: string;
@@ -48,7 +51,7 @@ export declare class PGTable {
     reOrderColumns(): void;
     addIndex(pgIndex: PGIndex): void;
     tableHeaderText(forTableText: string, modifyStatement?: string): string;
-    tsText(): string;
+    tsText(options?: TPGTableTextOptions): string;
     static TSTables(tables: string[]): string;
     tsTextTable(relativePaths?: ICTableRelativePaths): string;
     ddlPrimaryKey(): string | null;

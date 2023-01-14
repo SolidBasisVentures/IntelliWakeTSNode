@@ -80,6 +80,9 @@ export declare class PGColumn implements IPGColumn {
     jsonType: () => boolean;
     generalStringType: () => boolean;
     dateType: () => boolean;
+    dateOnlyType: () => boolean;
+    timeOnlyType: () => boolean;
+    dateTimeOnlyType: () => boolean;
     blobType: () => boolean;
     otherType: () => boolean;
     constructor(instanceData?: Partial<IPGColumn>);

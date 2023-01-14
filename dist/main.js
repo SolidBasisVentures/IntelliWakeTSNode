@@ -246,6 +246,23 @@ class PGColumn {
                 PGColumn.TYPE_TIMESTAMPTZ
             ].includes(this.udt_name.toLowerCase());
         };
+        this.dateOnlyType = () => {
+            return (typeof this.udt_name === 'string') && [
+                PGColumn.TYPE_DATE
+            ].includes(this.udt_name.toLowerCase());
+        };
+        this.timeOnlyType = () => {
+            return (typeof this.udt_name === 'string') && [
+                PGColumn.TYPE_TIME,
+                PGColumn.TYPE_TIMETZ
+            ].includes(this.udt_name.toLowerCase());
+        };
+        this.dateTimeOnlyType = () => {
+            return (typeof this.udt_name === 'string') && [
+                PGColumn.TYPE_TIMESTAMP,
+                PGColumn.TYPE_TIMESTAMPTZ
+            ].includes(this.udt_name.toLowerCase());
+        };
         this.blobType = () => {
             return (typeof this.udt_name === 'string') && [PGColumn.TYPE_TEXT].includes(this.udt_name.toLowerCase());
         };
@@ -790,17 +807,20 @@ class PGTable {
         text += TS_EOL$1;
         return text;
     }
-    tsText() {
-        var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q;
+    tsText(options) {
+        var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q, _r;
         let text = this.tableHeaderText('Table Manager for');
+        if (options === null || options === void 0 ? void 0 : options.includeConstaint) {
+            text += `import type {TObjectConstraint} from '@solidbasisventures/intelliwaketsfoundation'${TS_EOL$1}`;
+        }
         if (this.inherits.length > 0) {
             for (const inherit of this.inherits) {
                 if (this.importWithTypes) {
-                    text += `import type {I${inherit}} from "./I${inherit}"${TS_EOL$1}`;
-                    text += `import {initial_${inherit}} from "./I${inherit}"${TS_EOL$1}`;
+                    text += `import type {I${inherit}} from './I${inherit}'${TS_EOL$1}`;
+                    text += `import {initial_${inherit}} from './I${inherit}'${TS_EOL$1}`;
                 }
                 else {
-                    text += `import {I${inherit}, initial_${inherit}} from "./I${inherit}"${TS_EOL$1}`;
+                    text += `import {I${inherit}, initial_${inherit}} from './I${inherit}'${TS_EOL$1}`;
                 }
             }
         }
@@ -1041,7 +1061,64 @@ class PGTable {
             }
             addComma = true;
         }
-        text += TS_EOL$1 + '}' + TS_EOL$1; // Removed semi
+        text += TS_EOL$1 + '}' + TS_EOL$1;
+        if (options === null || options === void 0 ? void 0 : options.includeConstaint) {
+            const constraint = {};
+            for (const pgColumn of this.columns) {
+                const fieldConstraint = {};
+                if (pgColumn.booleanType()) {
+                    fieldConstraint.type = 'boolean';
+                    if (pgColumn.column_default) {
+                        fieldConstraint.default = intelliwaketsfoundation.IsOn(pgColumn.column_default);
+                    }
+                }
+                else if (pgColumn.integerFloatType()) {
+                    fieldConstraint.type = 'number';
+                    if (pgColumn.numeric_precision) {
+                        fieldConstraint.length = intelliwaketsfoundation.CleanNumber(pgColumn.numeric_precision);
+                    }
+                    if (pgColumn.column_default) {
+                        fieldConstraint.default = intelliwaketsfoundation.CleanNumber(pgColumn.column_default);
+                    }
+                }
+                else if (pgColumn.jsonType()) {
+                    fieldConstraint.type = 'object';
+                }
+                else if (pgColumn.dateOnlyType()) {
+                    fieldConstraint.type = 'date';
+                    if (pgColumn.column_default) {
+                        fieldConstraint.default = 'now';
+                    }
+                }
+                else if (pgColumn.dateTimeOnlyType()) {
+                    fieldConstraint.type = 'datetime';
+                    if (pgColumn.column_default) {
+                        fieldConstraint.default = 'now';
+                    }
+                }
+                else if (pgColumn.timeOnlyType()) {
+                    fieldConstraint.type = 'time';
+                    if (pgColumn.column_default) {
+                        fieldConstraint.default = 'now';
+                    }
+                }
+                else {
+                    fieldConstraint.type = 'string';
+                    if (pgColumn.character_maximum_length) {
+                        fieldConstraint.length = pgColumn.character_maximum_length;
+                    }
+                    if (pgColumn.column_default) {
+                        fieldConstraint.default = '';
+                    }
+                }
+                fieldConstraint.nullable = intelliwaketsfoundation.IsOn(pgColumn.is_nullable);
+                if (((_r = pgColumn.array_dimensions) !== null && _r !== void 0 ? _r : [])[0]) {
+                    fieldConstraint.isArray = true;
+                }
+                constraint[pgColumn.column_name] = fieldConstraint;
+            }
+            text += TS_EOL$1 + `export const Constraint_${this.name}: TObjectConstraint<I${this.name}> = ${JSON.stringify(constraint, undefined, 4)}` + TS_EOL$1;
+        }
         return text;
     }
     /*export class Cprogress_report_test extends _CTable<Iprogress_report_test> {
@@ -1072,11 +1149,12 @@ class PGTable {
             tTables: intelliwaketsfoundation.RemoveEnding('/', (_b = relativePaths === null || relativePaths === void 0 ? void 0 : relativePaths.tTables) !== null && _b !== void 0 ? _b : '../Database', true),
             responseContext: intelliwaketsfoundation.RemoveEnding('/', (_c = relativePaths === null || relativePaths === void 0 ? void 0 : relativePaths.responseContext) !== null && _c !== void 0 ? _c : '../MiddleWare/ResponseContext', true),
             responseContextName: (_d = relativePaths === null || relativePaths === void 0 ? void 0 : relativePaths.responseContextName) !== null && _d !== void 0 ? _d : 'responseContext',
-            responseContextClass: (_e = relativePaths === null || relativePaths === void 0 ? void 0 : relativePaths.responseContextClass) !== null && _e !== void 0 ? _e : 'ResponseContext'
+            responseContextClass: (_e = relativePaths === null || relativePaths === void 0 ? void 0 : relativePaths.responseContextClass) !== null && _e !== void 0 ? _e : 'ResponseContext',
+            includeConstaint: !!(relativePaths === null || relativePaths === void 0 ? void 0 : relativePaths.includeConstaint)
         };
         let text = this.tableHeaderText('Table Class for', 'MODIFICATIONS WILL NOT BE OVERWRITTEN');
         if (this.importWithTypes) {
-            text += `import {initial_${this.name}} from '${usePaths.initials}/I${this.name}'` + TS_EOL$1;
+            text += `import {initial_${this.name}${usePaths.includeConstaint ? `, Constraint_${this.name}` : ''} from '${usePaths.initials}/I${this.name}'` + TS_EOL$1;
             text += `import type {I${this.name}} from '${usePaths.initials}/I${this.name}'` + TS_EOL$1;
         }
         else {
@@ -1099,6 +1177,9 @@ class PGTable {
         text += `\tconstructor(${usePaths.responseContextName}: ${usePaths.responseContextClass}) {` + TS_EOL$1;
         text += `\t\tsuper(${usePaths.responseContextName}, {...initial_${this.name}})` + TS_EOL$1;
         text += TS_EOL$1;
+        if (usePaths.includeConstaint) {
+            text += `\t\tthis.constraint = 'Constraint_${this.name}'` + TS_EOL$1;
+        }
         text += `\t\tthis.table = '${this.name}'` + TS_EOL$1;
         text += `\t}` + TS_EOL$1;
         text += `}` + TS_EOL$1;
