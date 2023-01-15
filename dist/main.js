@@ -815,7 +815,7 @@ class PGTable {
      * @param options
      */
     tsText(options) {
-        var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q;
+        var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q, _r, _s;
         let text = this.tableHeaderText('Table Manager for');
         if (options === null || options === void 0 ? void 0 : options.includeConstaint) {
             text += `import type {TObjectConstraint} from '@solidbasisventures/intelliwaketsfoundation'${TS_EOL$1}`;
@@ -948,15 +948,12 @@ class PGTable {
                 })) ?
                 'type ' : ''}{${enumItem}} from "../Enums/${enumItem}"${TS_EOL$1}`;
         });
-        if (enums.length > 0) {
-            text += TS_EOL$1;
-        }
         interfaces.map(interfaceItem => interfaceItem).reduce((results, interfaceItem) => results.some(result => result.interface_name === interfaceItem.interface_name && (!!result.otherImportItem || !interfaceItem.otherImportItem)) ? results : [...results.filter(result => result.interface_name !== interfaceItem.interface_name), interfaceItem], [])
             .forEach(interfaceItem => {
             var _a;
             text += `import ${this.importWithTypes ? 'type ' : ''}{${interfaceItem.interface_name}${(!interfaceItem.otherImportItem || ((_a = interfaceItem === null || interfaceItem === void 0 ? void 0 : interfaceItem.otherImportItem) === null || _a === void 0 ? void 0 : _a.toLowerCase()) === 'null') ? '' : `, ${interfaceItem.otherImportItem}`}} from "../Interfaces/${interfaceItem.interface_name}"${TS_EOL$1}`;
         });
-        if (interfaces.length > 0) {
+        if (enums.length > 0 || interfaces.length > 0) {
             text += TS_EOL$1;
         }
         types.map(typeItem => typeItem)
@@ -988,11 +985,11 @@ class PGTable {
             text += '\t';
             text += pgColumn.column_name;
             text += ': ';
-            text += intelliwaketsfoundation.ReplaceAll('[]', '', (_d = (_b = (_a = enums.find(enumItem => enumItem.column_name === pgColumn.column_name)) === null || _a === void 0 ? void 0 : _a.enum_name) !== null && _b !== void 0 ? _b : (_c = interfaces.find(interfaceItem => interfaceItem.column_name === pgColumn.column_name)) === null || _c === void 0 ? void 0 : _c.interface_name) !== null && _d !== void 0 ? _d : pgColumn.jsType()).trim();
+            text += intelliwaketsfoundation.ReplaceAll('[]', '', (_f = (_d = (_b = (_a = enums.find(enumItem => enumItem.column_name === pgColumn.column_name)) === null || _a === void 0 ? void 0 : _a.enum_name) !== null && _b !== void 0 ? _b : (_c = interfaces.find(interfaceItem => interfaceItem.column_name === pgColumn.column_name)) === null || _c === void 0 ? void 0 : _c.interface_name) !== null && _d !== void 0 ? _d : (_e = types.find(typeItem => typeItem.column_name === pgColumn.column_name)) === null || _e === void 0 ? void 0 : _e.type_name) !== null && _f !== void 0 ? _f : pgColumn.jsType()).trim();
             if (pgColumn.array_dimensions.length > 0) {
                 text += `[${pgColumn.array_dimensions.map(() => '').join('],[')}]`;
             }
-            if (intelliwaketsfoundation.IsOn((_e = pgColumn.is_nullable) !== null && _e !== void 0 ? _e : 'YES')) {
+            if (intelliwaketsfoundation.IsOn((_g = pgColumn.is_nullable) !== null && _g !== void 0 ? _g : 'YES')) {
                 text += ' | null';
             }
             text += TS_EOL$1;
@@ -1011,7 +1008,7 @@ class PGTable {
             text += '\t';
             text += pgColumn.column_name;
             text += ': ';
-            const itemDefault = (_g = (_f = enums.find(enumItem => enumItem.column_name === pgColumn.column_name)) === null || _f === void 0 ? void 0 : _f.default_value) !== null && _g !== void 0 ? _g : (_h = interfaces.find(interfaceItem => interfaceItem.column_name === pgColumn.column_name)) === null || _h === void 0 ? void 0 : _h.default_value;
+            const itemDefault = (_j = (_h = enums.find(enumItem => enumItem.column_name === pgColumn.column_name)) === null || _h === void 0 ? void 0 : _h.default_value) !== null && _j !== void 0 ? _j : (_k = interfaces.find(interfaceItem => interfaceItem.column_name === pgColumn.column_name)) === null || _k === void 0 ? void 0 : _k.default_value;
             // if (pgColumn.column_name === 'inspect_roles') {
             // 	console.log('Column', pgColumn)
             // 	console.log('ItemDefault', itemDefault)
@@ -1054,14 +1051,14 @@ class PGTable {
                             text += '\'\'';
                         }
                         else if (pgColumn.jsonType()) {
-                            text += ((_j = pgColumn.column_default) !== null && _j !== void 0 ? _j : '{}').toString().substring(1, ((_k = pgColumn.column_default) !== null && _k !== void 0 ? _k : '').toString().indexOf('::') - 1);
+                            text += ((_l = pgColumn.column_default) !== null && _l !== void 0 ? _l : '{}').toString().substring(1, ((_m = pgColumn.column_default) !== null && _m !== void 0 ? _m : '').toString().indexOf('::') - 1);
                         }
                         else if (pgColumn.integerFloatType() || pgColumn.dateType()) {
                             text += pgColumn.column_default;
                         }
                         else if (typeof pgColumn.udt_name !== 'string') {
                             text +=
-                                '\'' + ((_m = (_l = pgColumn.column_default) !== null && _l !== void 0 ? _l : pgColumn.udt_name.defaultValue) !== null && _m !== void 0 ? _m : '') + '\' as ' + pgColumn.jsType();
+                                '\'' + ((_p = (_o = pgColumn.column_default) !== null && _o !== void 0 ? _o : pgColumn.udt_name.defaultValue) !== null && _p !== void 0 ? _p : '') + '\' as ' + pgColumn.jsType();
                         }
                         else if (!!pgColumn.column_default && pgColumn.column_default.toString().includes('::')) {
                             if (pgColumn.udt_name.startsWith('e_')) {
@@ -1073,11 +1070,11 @@ class PGTable {
                                 // text += PGEnum.TypeName(pgColumn.udt_name)
                             }
                             else {
-                                text += '\'' + ((_o = pgColumn.column_default) !== null && _o !== void 0 ? _o : '').toString().substring(1, ((_p = pgColumn.column_default) !== null && _p !== void 0 ? _p : '').toString().indexOf('::') - 1) + '\'';
+                                text += '\'' + ((_q = pgColumn.column_default) !== null && _q !== void 0 ? _q : '').toString().substring(1, ((_r = pgColumn.column_default) !== null && _r !== void 0 ? _r : '').toString().indexOf('::') - 1) + '\'';
                             }
                         }
                         else {
-                            text += '\'' + ((_q = pgColumn.column_default) !== null && _q !== void 0 ? _q : '') + '\'';
+                            text += '\'' + ((_s = pgColumn.column_default) !== null && _s !== void 0 ? _s : '') + '\'';
                         }
                     }
                     else if (intelliwaketsfoundation.IsOn(pgColumn.is_nullable)) {

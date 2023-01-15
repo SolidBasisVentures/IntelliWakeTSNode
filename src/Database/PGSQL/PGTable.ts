@@ -407,16 +407,12 @@ export class PGTable {
 				     'type ' : ''}{${enumItem}} from "../Enums/${enumItem}"${TS_EOL}`
 		     })
 
-		if (enums.length > 0) {
-			text += TS_EOL
-		}
-
 		interfaces.map(interfaceItem => interfaceItem).reduce<TInterfaceBuild[]>((results, interfaceItem) => results.some(result => result.interface_name === interfaceItem.interface_name && (!!result.otherImportItem || !interfaceItem.otherImportItem)) ? results : [...results.filter(result => result.interface_name !== interfaceItem.interface_name), interfaceItem], [])
 		          .forEach(interfaceItem => {
 			          text += `import ${this.importWithTypes ? 'type ' : ''}{${interfaceItem.interface_name}${(!interfaceItem.otherImportItem || interfaceItem?.otherImportItem?.toLowerCase() === 'null') ? '' : `, ${interfaceItem.otherImportItem}`}} from "../Interfaces/${interfaceItem.interface_name}"${TS_EOL}`
 		          })
 
-		if (interfaces.length > 0) {
+		if (enums.length > 0 || interfaces.length > 0) {
 			text += TS_EOL
 		}
 
@@ -451,7 +447,10 @@ export class PGTable {
 			text += '\t'
 			text += pgColumn.column_name
 			text += ': '
-			text += ReplaceAll('[]', '', enums.find(enumItem => enumItem.column_name === pgColumn.column_name)?.enum_name ?? interfaces.find(interfaceItem => interfaceItem.column_name === pgColumn.column_name)?.interface_name ?? pgColumn.jsType()).trim()
+			text += ReplaceAll('[]', '', enums.find(enumItem => enumItem.column_name === pgColumn.column_name)?.enum_name ??
+				interfaces.find(interfaceItem => interfaceItem.column_name === pgColumn.column_name)?.interface_name ??
+				types.find(typeItem => typeItem.column_name === pgColumn.column_name)?.type_name ??
+				pgColumn.jsType()).trim()
 			if (pgColumn.array_dimensions.length > 0) {
 				text += `[${pgColumn.array_dimensions.map(() => '').join('],[')}]`
 			}
