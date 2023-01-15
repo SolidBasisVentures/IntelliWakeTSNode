@@ -909,6 +909,32 @@ class PGTable {
             })
         ]
             .filter(enumName => !!enumName.interface_name)));
+        const types = Array.from(new Set([
+            ...this.columns
+                .map(column => {
+                var _a, _b, _c;
+                const regExp = /{([^}]*)}/;
+                const results = regExp.exec(column.column_comment);
+                if (!!results && !!results[1]) {
+                    const commaItems = results[1].split(',');
+                    for (const commaItem of commaItems) {
+                        const items = commaItem.split(':');
+                        if (((_a = items[0]) !== null && _a !== void 0 ? _a : '').toLowerCase().trim() === 'type') {
+                            const typeName = (_c = (_b = items[1]) === null || _b === void 0 ? void 0 : _b.split('.')[0]) === null || _c === void 0 ? void 0 : _c.trim();
+                            if (!typeName) {
+                                throw new Error('Type requested in comment, but not specified  - Format {type: TTest}');
+                            }
+                            return {
+                                column_name: column.column_name,
+                                type_name: typeName
+                            };
+                        }
+                    }
+                }
+                return { column_name: column.column_name, type_name: '' };
+            })
+        ]
+            .filter(enumName => !!enumName.type_name)));
         enums.map(enumItem => enumItem.enum_name).reduce((results, enumItem) => results.includes(enumItem) ? results : [...results, intelliwaketsfoundation.ReplaceAll('[]', '', enumItem)], [])
             .forEach(enumItem => {
             text += `import ${(this.importWithTypes &&
@@ -931,6 +957,16 @@ class PGTable {
             text += `import ${this.importWithTypes ? 'type ' : ''}{${interfaceItem.interface_name}${(!interfaceItem.otherImportItem || ((_a = interfaceItem === null || interfaceItem === void 0 ? void 0 : interfaceItem.otherImportItem) === null || _a === void 0 ? void 0 : _a.toLowerCase()) === 'null') ? '' : `, ${interfaceItem.otherImportItem}`}} from "../Interfaces/${interfaceItem.interface_name}"${TS_EOL$1}`;
         });
         if (interfaces.length > 0) {
+            text += TS_EOL$1;
+        }
+        types.map(typeItem => typeItem)
+            .reduce((results, typeItem) => results.some(result => result.type_name === typeItem.type_name) ?
+            results :
+            [...results.filter(result => result.type_name !== typeItem.type_name), typeItem], [])
+            .forEach(typeItem => {
+            text += `import ${this.importWithTypes ? 'type ' : ''}{${typeItem.type_name}} from "../Types/${typeItem.type_name}"${TS_EOL$1}`;
+        });
+        if (types.length > 0) {
             text += TS_EOL$1;
         }
         text += `export interface I${this.name}`;

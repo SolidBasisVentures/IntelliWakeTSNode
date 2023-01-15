@@ -363,6 +363,39 @@ export class PGTable {
 			)
 		)
 
+		type TTypeBuild = { column_name: string, type_name: string }
+		const types: TTypeBuild[] = Array.from(
+			new Set(
+				[
+					...this.columns
+					       .map(column => {
+						       const regExp = /{([^}]*)}/
+						       const results = regExp.exec(column.column_comment)
+						       if (!!results && !!results[1]) {
+							       const commaItems = results[1].split(',')
+							       for (const commaItem of commaItems) {
+								       const items = commaItem.split(':')
+								       if ((items[0] ?? '').toLowerCase().trim() === 'type') {
+									       const typeName = items[1]?.split('.')[0]?.trim()
+
+									       if (!typeName) {
+										       throw new Error('Type requested in comment, but not specified  - Format {type: TTest}')
+									       }
+
+									       return {
+										       column_name: column.column_name,
+										       type_name: typeName
+									       }
+								       }
+							       }
+						       }
+						       return {column_name: column.column_name, type_name: ''}
+					       })
+				]
+					.filter(enumName => !!enumName.type_name)
+			)
+		)
+
 		enums.map(enumItem => enumItem.enum_name).reduce<string[]>((results, enumItem) => results.includes(enumItem) ? results : [...results, ReplaceAll('[]', '', enumItem)], [])
 		     .forEach(enumItem => {
 			     text += `import ${(this.importWithTypes &&
@@ -384,6 +417,18 @@ export class PGTable {
 		          })
 
 		if (interfaces.length > 0) {
+			text += TS_EOL
+		}
+
+		types.map(typeItem => typeItem)
+		     .reduce<TTypeBuild[]>((results, typeItem) => results.some(result => result.type_name === typeItem.type_name) ?
+			     results :
+			     [...results.filter(result => result.type_name !== typeItem.type_name), typeItem], [])
+		     .forEach(typeItem => {
+			     text += `import ${this.importWithTypes ? 'type ' : ''}{${typeItem.type_name}} from "../Types/${typeItem.type_name}"${TS_EOL}`
+		     })
+
+		if (types.length > 0) {
 			text += TS_EOL
 		}
 
