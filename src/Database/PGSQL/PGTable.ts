@@ -661,7 +661,7 @@ export class PGTable {
 
 		let text = this.tableHeaderText('Table Class for', 'MODIFICATIONS WILL NOT BE OVERWRITTEN')
 		if (this.importWithTypes) {
-			text += `import {initial_${this.name}${usePaths.includeConstaint ? `, Constraint_${this.name}` : ''} from '${usePaths.initials}/I${this.name}'` + TS_EOL
+			text += `import {initial_${this.name}${usePaths.includeConstaint ? `, Constraint_${this.name}` : ''}} from '${usePaths.initials}/I${this.name}'` + TS_EOL
 			text += `import type {I${this.name}} from '${usePaths.initials}/I${this.name}'` + TS_EOL
 		} else {
 			text += `import {initial_${this.name}, I${this.name}} from '${usePaths.initials}/I${this.name}'` + TS_EOL
