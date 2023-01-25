@@ -1228,7 +1228,7 @@ class PGTable {
         text += `\t\tsuper(${usePaths.responseContextName}, {...initial_${this.name}})` + TS_EOL$1;
         text += TS_EOL$1;
         if (usePaths.includeConstaint) {
-            text += `\t\tthis.constraint = 'Constraint_${this.name}'` + TS_EOL$1;
+            text += `\t\tthis.constraint = Constraint_${this.name}` + TS_EOL$1;
         }
         text += `\t\tthis.table = '${this.name}'` + TS_EOL$1;
         text += `\t}` + TS_EOL$1;
