@@ -360,7 +360,7 @@ export namespace PGSQL {
 
 		const results = await query(connection, sql, params.values)
 
-		if (!((results.rows as any[]) ?? [])[0]) console.error('Error inserting', sql, results)
+		// if (!((results.rows as any[]) ?? [])[0]) console.error('Error inserting', sql, results)
 
 		return ((results.rows as any[]) ?? [])[0]
 	}
@@ -427,7 +427,7 @@ export namespace PGSQL {
 					 RETURNING *`
 		const data = await query(connection, sql, params.values)
 		// @ts-ignore
-		if (!data.rows[0]) console.error('Error updating', sql, data)
+		// if (!data.rows[0]) console.error('Error updating', sql, data)
 		// @ts-ignore
 		return data.rows[0]
 	}
