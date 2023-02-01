@@ -46,7 +46,7 @@ export const initialFixedWidthMapOptions: IFixedWidthMapOptions = {
 }
 
 export type TPGTableTextOptions = {
-	includeConstaint?: boolean
+	includeConstraint?: boolean
 }
 
 export class PGTable {
@@ -257,7 +257,7 @@ export class PGTable {
 	public tsText(options?: TPGTableTextOptions): string {
 		let text = this.tableHeaderText('Table Manager for')
 
-		if (options?.includeConstaint) {
+		if (options?.includeConstraint) {
 			text += `import type {TObjectConstraint} from '@solidbasisventures/intelliwaketsfoundation'${TS_EOL}`
 		}
 
@@ -553,7 +553,7 @@ export class PGTable {
 		}
 		text += TS_EOL + '}' + TS_EOL
 
-		if (options?.includeConstaint) {
+		if (options?.includeConstraint) {
 			const constraint: TObjectConstraint = {}
 
 			for (const pgColumn of this.columns) {
@@ -656,12 +656,12 @@ export class PGTable {
 			responseContext: RemoveEnding('/', relativePaths?.responseContext ?? '../MiddleWare/ResponseContext', true),
 			responseContextName: relativePaths?.responseContextName ?? 'responseContext',
 			responseContextClass: relativePaths?.responseContextClass ?? 'ResponseContext',
-			includeConstaint: !!relativePaths?.includeConstaint
+			includeConstraint: !!relativePaths?.includeConstraint
 		}
 
 		let text = this.tableHeaderText('Table Class for', 'MODIFICATIONS WILL NOT BE OVERWRITTEN')
 		if (this.importWithTypes) {
-			text += `import {initial_${this.name}${usePaths.includeConstaint ? `, Constraint_${this.name}` : ''}} from '${usePaths.initials}/I${this.name}'` + TS_EOL
+			text += `import {initial_${this.name}${usePaths.includeConstraint ? `, Constraint_${this.name}` : ''}} from '${usePaths.initials}/I${this.name}'` + TS_EOL
 			text += `import type {I${this.name}} from '${usePaths.initials}/I${this.name}'` + TS_EOL
 		} else {
 			text += `import {initial_${this.name}, I${this.name}} from '${usePaths.initials}/I${this.name}'` + TS_EOL
@@ -683,7 +683,7 @@ export class PGTable {
 		text += `\tconstructor(${usePaths.responseContextName}: ${usePaths.responseContextClass}) {` + TS_EOL
 		text += `\t\tsuper(${usePaths.responseContextName}, {...initial_${this.name}})` + TS_EOL
 		text += TS_EOL
-		if (usePaths.includeConstaint) {
+		if (usePaths.includeConstraint) {
 			text += `\t\tthis.constraint = Constraint_${this.name}` + TS_EOL
 		}
 		text += `\t\tthis.table = '${this.name}'` + TS_EOL

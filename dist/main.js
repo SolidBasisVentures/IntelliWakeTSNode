@@ -817,7 +817,7 @@ class PGTable {
     tsText(options) {
         var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q, _r, _s;
         let text = this.tableHeaderText('Table Manager for');
-        if (options === null || options === void 0 ? void 0 : options.includeConstaint) {
+        if (options === null || options === void 0 ? void 0 : options.includeConstraint) {
             text += `import type {TObjectConstraint} from '@solidbasisventures/intelliwaketsfoundation'${TS_EOL$1}`;
         }
         if (this.inherits.length > 0) {
@@ -1102,7 +1102,7 @@ class PGTable {
             addComma = true;
         }
         text += TS_EOL$1 + '}' + TS_EOL$1;
-        if (options === null || options === void 0 ? void 0 : options.includeConstaint) {
+        if (options === null || options === void 0 ? void 0 : options.includeConstraint) {
             const constraint = {};
             for (const pgColumn of this.columns) {
                 const fieldConstraint = {};
@@ -1200,11 +1200,11 @@ class PGTable {
             responseContext: intelliwaketsfoundation.RemoveEnding('/', (_c = relativePaths === null || relativePaths === void 0 ? void 0 : relativePaths.responseContext) !== null && _c !== void 0 ? _c : '../MiddleWare/ResponseContext', true),
             responseContextName: (_d = relativePaths === null || relativePaths === void 0 ? void 0 : relativePaths.responseContextName) !== null && _d !== void 0 ? _d : 'responseContext',
             responseContextClass: (_e = relativePaths === null || relativePaths === void 0 ? void 0 : relativePaths.responseContextClass) !== null && _e !== void 0 ? _e : 'ResponseContext',
-            includeConstaint: !!(relativePaths === null || relativePaths === void 0 ? void 0 : relativePaths.includeConstaint)
+            includeConstraint: !!(relativePaths === null || relativePaths === void 0 ? void 0 : relativePaths.includeConstraint)
         };
         let text = this.tableHeaderText('Table Class for', 'MODIFICATIONS WILL NOT BE OVERWRITTEN');
         if (this.importWithTypes) {
-            text += `import {initial_${this.name}${usePaths.includeConstaint ? `, Constraint_${this.name}` : ''}} from '${usePaths.initials}/I${this.name}'` + TS_EOL$1;
+            text += `import {initial_${this.name}${usePaths.includeConstraint ? `, Constraint_${this.name}` : ''}} from '${usePaths.initials}/I${this.name}'` + TS_EOL$1;
             text += `import type {I${this.name}} from '${usePaths.initials}/I${this.name}'` + TS_EOL$1;
         }
         else {
@@ -1227,7 +1227,7 @@ class PGTable {
         text += `\tconstructor(${usePaths.responseContextName}: ${usePaths.responseContextClass}) {` + TS_EOL$1;
         text += `\t\tsuper(${usePaths.responseContextName}, {...initial_${this.name}})` + TS_EOL$1;
         text += TS_EOL$1;
-        if (usePaths.includeConstaint) {
+        if (usePaths.includeConstraint) {
             text += `\t\tthis.constraint = Constraint_${this.name}` + TS_EOL$1;
         }
         text += `\t\tthis.table = '${this.name}'` + TS_EOL$1;
