@@ -23,7 +23,7 @@ export interface IFixedWidthMap<T> {
 }
 export declare const initialFixedWidthMapOptions: IFixedWidthMapOptions;
 export declare type TPGTableTextOptions = {
-    includeConstaint?: boolean;
+    includeConstraint?: boolean;
 };
 export declare class PGTable {
     name: string;
