@@ -1,7 +1,7 @@
 import readline from 'readline'
 // import {exec, ExecException} from 'child_process'
 
-let cp = require("child_process")
+// let cp = require("child_process")
 // type ExecException = cp.ExecException
 
 export const KeyboardLine = async (question: string, validAnswers?: string[]): Promise<string> => {
@@ -44,17 +44,17 @@ export const KeyboardKey = async (question?: string, validKeys?: string[] | ((ke
 	})
 }
 
-export const ExecuteScript = async (script: string): Promise<string> =>
-	new Promise<string>((resolve, reject) => {
-		cp.exec(script, async (error: any | null, stdout: string, stderr: string) => {
-			if (error) {
-				reject(error)
-			} else {
-				if (stderr) {
-					console.log(`stderr: ${stderr}`)
-				}
-
-				resolve(stdout)
-			}
-		})
-	})
+// export const ExecuteScript = async (script: string): Promise<string> =>
+// 	new Promise<string>((resolve, reject) => {
+// 		cp.exec(script, async (error: any | null, stdout: string, stderr: string) => {
+// 			if (error) {
+// 				reject(error)
+// 			} else {
+// 				if (stderr) {
+// 					console.log(`stderr: ${stderr}`)
+// 				}
+//
+// 				resolve(stdout)
+// 			}
+// 		})
+// 	})
