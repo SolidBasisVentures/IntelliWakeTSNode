@@ -1,6 +1,6 @@
 {
 	"name": "@solidbasisventures/intelliwaketsnode",
-	"version": "2.0.310",
+	"version": "2.0.311",
 	"description": "NPM package for IntelliWake Node Components",
 	"type": "module",
 	"exports": {
