@@ -13,6 +13,7 @@
 	"types": "dist/main.d.ts",
 	"scripts": {
 		"Vitest-Watch": "vitest",
+		"Build": "tsc && vite build",
 		"Publish": "tsc && vite build && pnpm version patch && git push && npm publish",
 		"OLD_BuildAndPublish": "rollup -c && npm version patch --no-git-tag-version && npm publish",
 		"YarnInstall": "yarn install && yarn add -D @solidbasisventures/intelliwaketsfoundation --force -W",
