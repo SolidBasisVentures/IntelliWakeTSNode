@@ -2,7 +2,14 @@
   "name": "@solidbasisventures/intelliwaketsnode",
   "version": "2.0.304",
   "description": "NPM package for IntelliWake Node Components",
-  "main": "dist/main.js",
+  "type": "module",
+  "exports": {
+    ".": {
+      "import": "main.mjs",
+      "require": "main.umd.js"
+    }
+  },
+  "main": "dist/main.mjs",
   "types": "dist/main.d.ts",
   "scripts": {
     "Vitest-Watch": "vitest",
