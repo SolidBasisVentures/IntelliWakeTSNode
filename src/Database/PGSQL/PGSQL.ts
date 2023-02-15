@@ -15,7 +15,8 @@ import {PGParams} from './PGParams'
 import {PGEnum} from './PGEnum'
 import {PGIndex} from './PGIndex'
 import {PGForeignKey} from './PGForeignKey'
-import {Client, FieldDef, Pool, PoolClient} from 'pg'
+import {Client, Pool, PoolClient, QueryResultRow} from 'pg'
+import type {QueryResult} from 'pg'
 
 // import QueryStream from 'pg-query-stream'
 
@@ -56,9 +57,9 @@ export namespace PGSQL {
 		}
 	}
 
-	export type TQueryResults<T> = { rows?: Array<T>; fields?: FieldDef[]; rowCount?: number }
+	export type TQueryResults<T extends QueryResultRow> = QueryResult<T> // { rows?: Array<T>; fields?: FieldDef[]; rowCount?: number }
 
-	export const query = async <T>(connection: TConnection, sql: string, values?: any): Promise<TQueryResults<T>> => {
+	export const query = async <T extends QueryResultRow>(connection: TConnection, sql: string, values?: any): Promise<TQueryResults<T>> => {
 		try {
 			if (!process.env.DB_MS_ALERT) {
 				return await connection.query(sql, values)
@@ -272,7 +273,7 @@ export namespace PGSQL {
 		return ((((data.rows ?? [])[0] ?? {}) as any)['count'] ?? 0) > 0
 	}
 
-	export const GetByID = async <T>(connection: TConnection, table: string, id: number | null): Promise<T | null> => {
+	export const GetByID = async <T extends QueryResultRow>(connection: TConnection, table: string, id: number | null): Promise<T | null> => {
 		if (!id) {
 			return Promise.resolve(null)
 		} else {
@@ -301,7 +302,7 @@ export namespace PGSQL {
 		// return isNaN(value) ? 0 : parseInt(value)
 	}
 
-	export const FetchOne = async <T>(connection: TConnection, sql: string, values?: any): Promise<T | null> => {
+	export const FetchOne = async <T extends QueryResultRow>(connection: TConnection, sql: string, values?: any): Promise<T | null> => {
 		// noinspection SqlResolve
 		const data = await query<T>(connection, sql, values)
 		return !!(data.rows ?? [])[0] ? {...(data.rows ?? [])[0]} : null
@@ -311,7 +312,7 @@ export namespace PGSQL {
 		return (Object.values((await FetchOne<any>(connection, sql, values)) ?? {}) as any)[0] ?? null
 	}
 
-	export const FetchMany = async <T>(connection: TConnection, sql: string, values?: any): Promise<Array<T>> => {
+	export const FetchMany = async <T extends QueryResultRow>(connection: TConnection, sql: string, values?: any): Promise<Array<T>> => {
 		// noinspection SqlResolve
 		const data = await query<T>(connection, sql, values)
 		return data.rows ?? []
