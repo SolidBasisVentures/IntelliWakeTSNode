@@ -5,7 +5,7 @@
   "main": "dist/main.js",
   "types": "dist/main.d.ts",
   "scripts": {
-    "BuildAndPublish": "rollup -c && npm version patch --no-git-tag-version && npm publish",
+    "BuildAndPublish": "tsc && vite build",
     "OLD_BuildAndPublish": "rollup -c && npm version patch --no-git-tag-version && npm publish",
     "YarnInstall": "yarn install && yarn add -D @solidbasisventures/intelliwaketsfoundation --force -W",
     "YarnUpgrade": "yarn upgrade && yarn add -D @solidbasisventures/intelliwaketsfoundation --force -W",
