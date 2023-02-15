@@ -5,11 +5,11 @@
 	"type": "module",
 	"exports": {
 		".": {
-			"import": "./dist/main.mjs",
+			"import": "./dist/main.js",
 			"require": "./dist/main.umd.cjs"
 		}
 	},
-	"main": "dist/main.mjs",
+	"main": "dist/main.js",
 	"types": "dist/main.d.ts",
 	"scripts": {
 		"Vitest-Watch": "vitest",
