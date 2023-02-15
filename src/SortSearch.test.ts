@@ -1,4 +1,5 @@
 import {PaginatorReturnRowCount} from './SortSearch'
+import {test, expect} from 'vitest'
 
 test('SortSearch', () => {
 	expect(PaginatorReturnRowCount({

@@ -30,6 +30,5 @@
         "node_modules",
         "dist",
         "example",
-        "rollup.config.js"
     ]
 }

@@ -1,4 +1,5 @@
 import {IsOn} from '@solidbasisventures/intelliwaketsfoundation'
+import {test, expect} from 'vitest'
 
 test('IsOn 1', () => {
 	expect(IsOn(1)).toBe(true);

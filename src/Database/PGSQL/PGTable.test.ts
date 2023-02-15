@@ -1,5 +1,7 @@
 import {PGTable} from './PGTable'
 import {PGColumn} from './PGColumn'
+import {test, expect} from 'vitest'
+
 
 test('PGTable', () => {
 

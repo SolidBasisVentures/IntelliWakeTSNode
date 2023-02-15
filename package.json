@@ -6,6 +6,7 @@
   "types": "dist/main.d.ts",
   "scripts": {
     "BuildAndPublish": "rollup -c && npm version patch --no-git-tag-version && npm publish",
+    "OLD_BuildAndPublish": "rollup -c && npm version patch --no-git-tag-version && npm publish",
     "YarnInstall": "yarn install && yarn add -D @solidbasisventures/intelliwaketsfoundation --force -W",
     "YarnUpgrade": "yarn upgrade && yarn add -D @solidbasisventures/intelliwaketsfoundation --force -W",
     "Test": "jest",
@@ -24,24 +25,22 @@
   "peerDependencies": {},
   "devDependencies": {
     "@solidbasisventures/intelliwaketsfoundation": "^5.2.34",
-    "@types/jest": "^26.0.15",
     "@types/mssql": "^6.0.2",
     "@types/mysql": "^2.15.15",
     "@types/node": "^16.11.11",
     "@types/pg": "^8.6.5",
-    "jest": "^26.6.1",
     "mssql": "^6.2.0",
     "mysql": "^2.18.1",
     "pg": "^8.7.3",
     "pg-cursor": "^2.7.3",
     "prettier": "^2.7.1",
-    "rollup": "^2.10.8",
-    "rollup-plugin-terser": "^5.3.0",
-    "rollup-plugin-typescript2": "^0.27.1",
     "source-map-support": "^0.5.19",
-    "ts-jest": "^26.4.3",
     "ts-node": "^10.8.1",
     "ts-node-dev": "^2.0.0",
-    "typescript": "^4.7.4"
+    "typescript": "^4.7.4",
+	"vite": "^4.1.1",
+	"vitest": "^0.28.5",
+	"vite-plugin-dts": "^1.7.2",
+	"rollup-plugin-node-polyfills": "^0.2.1"
   }
 }
