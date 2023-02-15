@@ -1,40 +1,43 @@
 import {MyColumn} from './MyColumn'
 import {MyIndex} from './MyIndex'
 import {MyForeignKey} from './MyForeignKey'
-import path from 'path'
-import fs from 'fs'
+// import path from 'path'
+// import fs from 'fs'
 import {IsOn, YYYY_MM_DD_HH_mm_ss} from '@solidbasisventures/intelliwaketsfoundation'
+
+let path = require('path')
+let fs = require('fs')
 
 const TS_EOL = '\r\n'
 
 export class MyTable {
 	public name = ''
 	public description = ''
-	
+
 	public ENGINE = 'InnoDB'
 	public CHARSET = 'utf8mb4'
 	public COLLATE = 'utf8mb4_unicode_ci'
 	public ROW_FORMAT = 'COMPACT'
-	
+
 	static readonly DEFINITIONS_DIR = path.resolve('./') + '/src/Assets/Tables'
 	static readonly TS_INTERFACE_DIR = path.resolve('./') + '/../app/src/Common/Tables'
 	static readonly TS_CLASS_DIR = path.resolve('./') + '/src/Tables'
-	
+
 	public columns: MyColumn[] = []
-	
+
 	public indexes: MyIndex[] = []
-	
+
 	public foreignKeys: MyForeignKey[] = []
-	
+
 	constructor(instanceData?: MyTable) {
 		if (instanceData) {
 			this.deserialize(instanceData)
 		}
 	}
-	
+
 	private deserialize(instanceData: MyTable) {
 		const keys = Object.keys(this)
-		
+
 		for (const key of keys) {
 			if (instanceData.hasOwnProperty(key)) {
 				switch (key) {
@@ -60,94 +63,94 @@ export class MyTable {
 			}
 		}
 	}
-	
+
 	public indexOfColumn(columnName: string): number {
 		return this.columns.findIndex(column => column.COLUMN_NAME === columnName)
 	}
-	
+
 	public indexesOfForeignKeyByColumn(columnName: string): number[] {
 		let indexes: number[] = []
-		
+
 		for (let i = 0; i < this.foreignKeys.length; i++) {
 			if (this.foreignKeys[i].columnNames.includes(columnName)) {
 				indexes.push(i)
 			}
 		}
-		
+
 		return indexes
 	}
-	
+
 	public getForeignKeysByColumn(columnName: string): MyForeignKey[] {
 		let fks: MyForeignKey[] = []
-		
+
 		const indexes = this.indexesOfForeignKeyByColumn(columnName)
-		
+
 		for (const index of indexes) {
 			fks.push(this.foreignKeys[index])
 		}
-		
+
 		return fks
 	}
-	
+
 	public removeForeignKeysByColumn(columnName: string) {
 		this.foreignKeys = this.foreignKeys.filter(foreignKey => !foreignKey.columnNames.includes(columnName))
 	}
-	
+
 	public addForeignKey(myForeignKey: MyForeignKey) {
 		this.foreignKeys.push(myForeignKey)
 	}
-	
+
 	public getColumn(columnName: string): MyColumn | null {
 		return this.columns.find(column => column.COLUMN_NAME === columnName) ?? null
 	}
-	
+
 	public removeColumn(columnName: string) {
 		const column = this.getColumn(columnName)
-		
+
 		if (!!column) {
 			this.removeForeignKeysByColumn(columnName)
-			
+
 			this.columns.filter(column => column.COLUMN_NAME !== columnName)
-			
+
 			this.reOrderColumns()
 		}
 	}
-	
+
 	public addColumn(myColumn: MyColumn) {
 		if (!myColumn.ORDINAL_POSITION) {
 			myColumn.ORDINAL_POSITION = 999999
 		}
-		
+
 		this.columns = this.columns.filter(column => column.COLUMN_NAME !== myColumn.COLUMN_NAME)
-		
+
 		for (let i = 0; i < this.columns.length; i++) {
 			if (this.columns[i].ORDINAL_POSITION >= myColumn.ORDINAL_POSITION) {
 				this.columns[i].ORDINAL_POSITION++
 			}
 		}
-		
+
 		this.columns.push(myColumn)
-		
+
 		this.reOrderColumns()
 	}
-	
+
 	public reOrderColumns() {
 		this.columns = this.columns.sort((a, b) =>
 			a.ORDINAL_POSITION - b.ORDINAL_POSITION
 		)
-		
+
 		let position = 0
-		
+
 		for (let i = 0; i < this.columns.length; i++) {
 			position++
 			this.columns[i].ORDINAL_POSITION = position
 		}
 	}
-	
+
 	public addIndex(myIndex: MyIndex) {
 		this.indexes.push(myIndex)
 	}
-	
+
 	public tableHeaderText(forTableText: string): string {
 		let text = '/**' + TS_EOL
 		text += ' * Automatically generated: ' + YYYY_MM_DD_HH_mm_ss('now') + TS_EOL
@@ -161,10 +164,10 @@ export class MyTable {
 		}
 		text += ' */' + TS_EOL
 		text += TS_EOL
-		
+
 		return text
 	}
-	
+
 	public tsText(): string {
 		let text = this.tableHeaderText('Table Manager for')
 		text += `export interface I${this.name} {` + TS_EOL
@@ -234,10 +237,10 @@ export class MyTable {
 		}
 		text += addComment + TS_EOL
 		text += '};' + TS_EOL
-		
+
 		return text
 	}
-	
+
 	public tsTextTable(): string {
 		let text = this.tableHeaderText('Table Class for')
 		text += `import {initial_${this.name}, I${this.name}} from "../../../app/src/Common/Tables/${this.name}";` + TS_EOL
@@ -254,15 +257,15 @@ export class MyTable {
 		text += `\t\tthis.table = '${this.name}';` + TS_EOL
 		text += `\t}` + TS_EOL
 		text += `}` + TS_EOL
-		
+
 		return text
 	}
-	
+
 	public ddlPrimaryKey(_altering: boolean): string | null {
 		let found = false
-		
+
 		let ddl = 'PRIMARY KEY (`'
-		
+
 		for (const column of this.columns) {
 			if (column.isPK) {
 				if (found) {
@@ -272,38 +275,38 @@ export class MyTable {
 				found = true
 			}
 		}
-		
+
 		if (found) {
 			ddl += '`)'
-			
+
 			return ddl
 		}
-		
+
 		return null
 	}
-	
+
 	public async ddlText(process: boolean, includeFKs: boolean, altering = false): Promise<string | null> {
 		let ddl = ''
-		
+
 		let shouldProcess = process
-		
+
 		if (!altering) {
 			if (altering) {
 				/** @noinspection SqlResolve */
 				ddl += `DROP TABLE ${this.name} CASCADE;` + TS_EOL
 			}
-			
+
 			ddl += `CREATE TABLE ${this.name}
               (` + TS_EOL
-			
+
 			let prevColumn: MyColumn | null = null
 			for (const myColumn of this.columns) {
 				if (prevColumn !== null) {
 					ddl += ',' + TS_EOL
 				}
-				
+
 				ddl += '\t' + myColumn.ddlDefinition(this, prevColumn, altering)
-				
+
 				prevColumn = myColumn
 			}
 			const pk = this.ddlPrimaryKey(altering)
@@ -321,7 +324,7 @@ export class MyTable {
 					ddl += ',' + TS_EOL + '\t' + foreignKey.ddlConstraintDefinition(this, altering)
 				}
 			}
-			
+
 			ddl += TS_EOL
 			ddl += ') '
 			ddl += 'ENGINE=' + (this.ENGINE ?? 'InnoDB') + ' '
@@ -371,59 +374,59 @@ export class MyTable {
 				// } else {
 				//     ddl = '';
 			}
-			
+
 			shouldProcess = false
 		}
-		
+
 		if (shouldProcess && !!ddl) {
 			// if (!await SQL.ExecuteRaw(connection, ddl)) {
 			//     return null;
 			// }
 		}
-		
+
 		return ddl
 	}
-	
+
 	public save() {
 		for (let i = 0; i < this.columns.length; i++) {
 			this.columns[i].clean()
 		}
-		
+
 		MyTable.SetPermissions()
-		
+
 		fs.mkdirSync(MyTable.TS_INTERFACE_DIR + '/New/', {recursive: true})
 		fs.mkdirSync(MyTable.TS_CLASS_DIR + '/New/', {recursive: true})
 		MyTable.writeFileIfDifferent(MyTable.DEFINITIONS_DIR + '/' + this.name + '.json', JSON.stringify(this), false)
 		MyTable.writeFileIfDifferent(MyTable.TS_INTERFACE_DIR + '/New/I' + this.name + '.ts', this.tsText(), true)
 		MyTable.writeFileIfDifferent(MyTable.TS_CLASS_DIR + '/New/C' + this.name + '.ts', this.tsTextTable(), true, true)
 	}
-	
+
 	static ExistsNewTS(): boolean {
 		return (fs.existsSync(MyTable.TS_INTERFACE_DIR + '/New') && ((fs.readdirSync(MyTable.TS_INTERFACE_DIR + '/New') as string[]) ?? []).filter(file => file.endsWith('.ts')).length > 0) || (fs.existsSync(MyTable.TS_CLASS_DIR + '/New') && ((fs.readdirSync(MyTable.TS_CLASS_DIR + '/New') as string[]) ?? []).filter(file => file.endsWith('.ts')).length > 0)
 	}
-	
+
 	public moveInNewTS() {
 		// Note: this may break the server as it could change the definition of certain files.  Do this AFTER the connections have been closed!
 		let fileName = MyTable.TS_INTERFACE_DIR + '/New/I' + this.name + '.ts'
-		
+
 		if (fs.existsSync(fileName)) {
 			fs.renameSync(fileName, fileName.replace('/New/', '/'))
 		}
-		
+
 		fileName = MyTable.TS_CLASS_DIR + '/New/C' + this.name + '.ts'
-		
+
 		if (fs.existsSync(fileName)) {
 			fs.renameSync(fileName, fileName.replace('/New/', '/'))
 		}
 	}
-	
+
 	public static writeFileIfDifferent(fileName: string, data: string, useSBVCheck: boolean, skipIfExists = false) {
 		MyTable.SetPermissions()
-		
+
 		if (skipIfExists && (fs.existsSync(fileName.replace('/New/', '/')) || fs.existsSync(fileName))) {
 			return
 		}
-		
+
 		if (useSBVCheck) {
 			let newSBVPos = data.indexOf('Solid Basis Ventures')
 			if (newSBVPos) {
@@ -445,53 +448,53 @@ export class MyTable {
 				}
 			}
 		}
-		
+
 		return fs.writeFileSync(fileName, data)
 	}
-	
+
 	public static writeFileIfNotExists(fileName: string, data: string) {
 		MyTable.SetPermissions()
-		
+
 		if (!fs.existsSync(fileName)) {
 			fs.writeFileSync(fileName, data)
 		}
 	}
-	
+
 	public async syncToDB(includeFKs: boolean, altering = false): Promise<boolean> {
 		const ddl = await this.ddlText(true, includeFKs, altering)
-		
+
 		return !!ddl
 	}
-	
+
 	public static SaveAll(myTables: MyTable[]) {
 		for (let i = 0; i < myTables.length; i++) {
 			myTables[i].save()
 		}
 	}
-	
+
 	public static Load(fileName: string): MyTable | null {
 		MyTable.SetPermissions()
-		
+
 		let calcFileName = fileName
-		
+
 		if (!calcFileName.endsWith('.json')) {
 			calcFileName += '.json'
 		}
-		
+
 		if (!calcFileName.startsWith(MyTable.DEFINITIONS_DIR)) {
 			calcFileName = MyTable.DEFINITIONS_DIR + '/' + calcFileName
 		}
-		
+
 		return new MyTable(JSON.parse(fs.readFileSync(calcFileName) as any) as MyTable)
 	}
-	
+
 	public static LoadAll(): MyTable[] {
 		MyTable.SetPermissions()
-		
+
 		let files = fs.readdirSync(MyTable.DEFINITIONS_DIR)
-		
+
 		let myTables: MyTable[] = []
-		
+
 		for (const file of files) {
 			if (file.endsWith('.json')) {
 				const myTable = MyTable.Load(file)
@@ -500,21 +503,21 @@ export class MyTable {
 				}
 			}
 		}
-		
+
 		return myTables
 	}
-	
+
 	// noinspection JSUnusedLocalSymbols
 	public static DeleteAll() {
 		MyTable.SetPermissions()
-		
+
 		let files = fs.readdirSync(MyTable.DEFINITIONS_DIR) as string[]
 		for (const file of files) {
 			if (file.endsWith('.json')) {
 				fs.unlinkSync(MyTable.DEFINITIONS_DIR + '/' + file)
 			}
 		}
-		
+
 		files = fs.readdirSync(MyTable.TS_INTERFACE_DIR) as string[]
 		for (const file of files) {
 			if (file.endsWith('.json')) {
@@ -522,9 +525,9 @@ export class MyTable {
 			}
 		}
 	}
-	
+
 	// static ArePermissionsSet = false;
-	
+
 	public static SetPermissions() {
 		// if (!self::ArePermissionsSet) {
 		// 	self::ArePermissionsSet = true;
@@ -535,12 +538,12 @@ export class MyTable {
 		// 	exec('chmod a+rwx -R ' + MyTable.DEFINITIONS_DIR);
 		// }
 	}
-	
+
 	public static CleanComment(comment: string): string {
 		if (!comment) {
 			return comment
 		}
-		
+
 		return comment.replace(/[\n\r]/g, ' ')
 	}
 }
