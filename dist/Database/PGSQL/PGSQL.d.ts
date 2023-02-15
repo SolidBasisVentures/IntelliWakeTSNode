@@ -2,10 +2,11 @@ import { IPaginatorRequest, IPaginatorResponse, ISortColumn } from '@solidbasisv
 import { PGTable } from './PGTable';
 import { PGParams } from './PGParams';
 import { PGEnum } from './PGEnum';
-import { Client, FieldDef, Pool, PoolClient } from 'pg';
+import { Client, Pool, PoolClient, QueryResultRow } from 'pg';
+import type { QueryResult } from 'pg';
 declare function transact<TResult>(fn: (client: PoolClient) => Promise<TResult>): Promise<TResult>;
 declare function transact<TResult>(fn: (client: PoolClient) => Promise<TResult>, cb: (error: Error | null, result?: TResult) => void): void;
-export declare type TConnection = Pool | PoolClient | Client | {
+export type TConnection = Pool | PoolClient | Client | {
     pool: Pool;
     Client: Client;
     query: Pool['query'];
@@ -24,19 +25,15 @@ export declare namespace PGSQL {
         countPerPage: number;
     }
     const SetDBMSAlert: (milliseconds?: number) => void;
-    type TQueryResults<T> = {
-        rows?: Array<T>;
-        fields?: FieldDef[];
-        rowCount?: number;
-    };
-    const query: <T>(connection: TConnection, sql: string, values?: any) => Promise<TQueryResults<T>>;
+    type TQueryResults<T extends QueryResultRow> = QueryResult<T>;
+    const query: <T extends QueryResultRow>(connection: TConnection, sql: string, values?: any) => Promise<TQueryResults<T>>;
     const timeout: (ms: number) => Promise<unknown>;
     const TableRowCount: (connection: TConnection, table: string, schema?: string) => Promise<number>;
     const CurrentSchema: (schema?: string) => string;
     const TableExists: (connection: TConnection, table: string, schema?: string) => Promise<boolean>;
     const TableColumnExists: (connection: TConnection, table: string, column: string, schema?: string) => Promise<boolean>;
     const TriggerExists: (connection: TConnection, trigger: string, schema?: string) => Promise<boolean>;
-    const TableResetIncrement: (connection: TConnection, table: string, column: string, toID?: number) => Promise<import("pg").QueryResult<any>>;
+    const TableResetIncrement: (connection: TConnection, table: string, column: string, toID?: number) => Promise<QueryResult<any>>;
     const ConstraintExists: (connection: TConnection, constraint: string, schema?: string) => Promise<boolean>;
     interface IConstraints {
         table_name: string;
@@ -45,7 +42,7 @@ export declare namespace PGSQL {
     const FKConstraints: (connection: TConnection, schema?: string) => Promise<IConstraints[]>;
     const Functions: (connection: TConnection, schema?: string) => Promise<string[]>;
     const IndexExists: (connection: TConnection, tablename: string, indexName: string, schema?: string) => Promise<boolean>;
-    const GetByID: <T>(connection: TConnection, table: string, id: number | null) => Promise<T | null>;
+    const GetByID: <T extends QueryResultRow>(connection: TConnection, table: string, id: number | null) => Promise<T | null>;
     /**
      * Returns a number from the sql who's only column returned is "count"
      *
@@ -55,9 +52,9 @@ export declare namespace PGSQL {
      * @constructor
      */
     const GetCountSQL: (connection: TConnection, sql: string, values?: any) => Promise<number>;
-    const FetchOne: <T>(connection: TConnection, sql: string, values?: any) => Promise<T | null>;
+    const FetchOne: <T extends QueryResultRow>(connection: TConnection, sql: string, values?: any) => Promise<T | null>;
     const FetchOneValue: <T>(connection: TConnection, sql: string, values?: any) => Promise<T | null>;
-    const FetchMany: <T>(connection: TConnection, sql: string, values?: any) => Promise<T[]>;
+    const FetchMany: <T extends QueryResultRow>(connection: TConnection, sql: string, values?: any) => Promise<T[]>;
     const FetchArray: <T>(connection: TConnection, sql: string, values?: any) => Promise<T[]>;
     /**
      * Pass a SQL command with a "SELECT 1 FROM..." and it will check if it exists
@@ -76,8 +73,8 @@ export declare namespace PGSQL {
     const BuildSetComponents: (setValues: any, params: PGParams) => string;
     const Save: (connection: TConnection, table: string, values: any) => Promise<any | null>;
     const Delete: (connection: TConnection, table: string, whereValues: any) => Promise<void>;
-    const ExecuteRaw: (connection: TConnection, sql: string) => Promise<import("pg").QueryResult<any>>;
-    const Execute: (connection: TConnection, sql: string, values?: any) => Promise<import("pg").QueryResult<any>>;
+    const ExecuteRaw: (connection: TConnection, sql: string) => Promise<QueryResult<any>>;
+    const Execute: (connection: TConnection, sql: string, values?: any) => Promise<QueryResult<any>>;
     const TruncateAllTables: (connection: TConnection, exceptions?: string[], includeCascade?: boolean) => Promise<boolean>;
     const TruncateTables: (connection: TConnection, tables: string[], includeCascade?: boolean) => Promise<void>;
     const TablesArray: (connection: TConnection, schema?: string) => Promise<string[]>;
