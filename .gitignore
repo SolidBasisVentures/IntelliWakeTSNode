@@ -39,4 +39,4 @@ yarn-error.log*
 other.npmrc_old
 .npmrc
 
-dist
+/dist
