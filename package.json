@@ -15,7 +15,8 @@
 		"Vitest-Watch": "vitest",
 		"Publish": "tsc && vite build && pnpm version patch && git push && npm publish",
 		"YarnInstall": "yarn install && yarn add -D @solidbasisventures/intelliwaketsfoundation --force -W",
-		"TSNodeDev": "ts-node-dev --script-mode --respawn --transpile-only consoles/consoles.ts"
+		"TSNodeDev": "ts-node-dev --script-mode --respawn --transpile-only consoles/consoles.ts",
+		"Version-Minor-Advance": "pnpm version minor"
 	},
 	"files": [
 		"dist"
