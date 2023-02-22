@@ -284,10 +284,10 @@
     colors "~1.2.1"
     string-argv "~0.3.1"
 
-"@solidbasisventures/intelliwaketsfoundation@^5.2.37":
-  version "5.2.37"
-  resolved "https://registry.yarnpkg.com/@solidbasisventures/intelliwaketsfoundation/-/intelliwaketsfoundation-5.2.37.tgz#8b0bc04e1c333e28f9ec353a0b2d8f30749d074e"
-  integrity sha512-DgNR/WDKIb8L3Lg+ERMcw/f9HPtkFMGP7XQl8nMBpEu/pRP1is8nCgJUV3bhR+V0Mib9x9b+q1HARSdg+ishTA==
+"@solidbasisventures/intelliwaketsfoundation@^5.2.38":
+  version "5.2.38"
+  resolved "https://registry.yarnpkg.com/@solidbasisventures/intelliwaketsfoundation/-/intelliwaketsfoundation-5.2.38.tgz#c7887887a1242d717e732e02b24348738d9c089f"
+  integrity sha512-jk5tmoXi5zljFoFqLqTSj0POpcJGGbA1xRvyxzyiPlIxMCm9zJKJDnFV4kFs5frNbJ+Ao8X6GypzV0Ww7VXAgQ==
 
 "@ts-morph/common@~0.18.0":
   version "0.18.1"
