@@ -1,6 +1,7 @@
 import {PGColumn} from './PGColumn'
 import {PGIndex} from './PGIndex'
 import {PGForeignKey} from './PGForeignKey'
+import type {TObjectConstraint, TObjectFieldConstraint} from '@solidbasisventures/intelliwaketsfoundation'
 import {
 	CleanNumber,
 	CoalesceFalsey,
@@ -11,10 +12,6 @@ import {
 	YYYY_MM_DD_HH_mm_ss
 } from '@solidbasisventures/intelliwaketsfoundation'
 import {PGEnum} from './PGEnum'
-import type {
-	TObjectConstraint,
-	TObjectFieldConstraint
-} from '@solidbasisventures/intelliwaketsfoundation'
 
 const TS_EOL = '\n' // was \r\n
 
@@ -325,7 +322,12 @@ export class PGTable {
 			)
 		)
 
-		type TInterfaceBuild = { column_name: string, interface_name: string, default_value?: string, otherImportItem?: string | null }
+		type TInterfaceBuild = {
+			column_name: string,
+			interface_name: string,
+			default_value?: string,
+			otherImportItem?: string | null
+		}
 		const interfaces: TInterfaceBuild[] = Array.from(
 			new Set(
 				[
@@ -523,7 +525,7 @@ export class PGTable {
 								const colDefault = pgColumn.column_default.toString()
 								text += PGEnum.TypeName(pgColumn.udt_name)
 								text += '.'
-								text += colDefault.substr(1, colDefault.indexOf('::') - 2)
+								text += colDefault.substring(1, 1 + colDefault.indexOf('::') - 2)
 								// text += ' as '
 								// text += PGEnum.TypeName(pgColumn.udt_name)
 							} else {

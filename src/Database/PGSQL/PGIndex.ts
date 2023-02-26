@@ -1,4 +1,5 @@
 import {PGTable} from './PGTable'
+import {GreaterNumber} from '@solidbasisventures/intelliwaketsfoundation'
 
 export class PGIndex {
 	public columns: string[] = []
@@ -15,7 +16,7 @@ export class PGIndex {
 
 	private deserialize(instanceData: Partial<PGIndex>) {
 		const keys = Object.keys(this)
-		
+
 		for (const key of keys) {
 			if (instanceData.hasOwnProperty(key)) {
 				;(this as any)[key] = (instanceData as any)[key]
@@ -26,21 +27,22 @@ export class PGIndex {
 	public name(pgTable: PGTable): string {
 		return (
 			'idx_' +
-			pgTable.name.substr(-25) +
+			pgTable.name.substring(GreaterNumber(pgTable.name.length - 25, 0)) +
 			'_' +
 			this.columns
-				.map((column) =>
-					column
-						.replace(' ASC', '')
-						.replace(' DESC', '')
-						.replace(' NULLS', '')
-						.replace(' FIRST', '')
-						.replace(' LAST', '')
-						.replace('(', '_')
-						.replace(')', '_')
-						.trim().substr(-25)
-				)
-				.join('_')
+			    .map((column) =>
+				    column
+					    .replace(' ASC', '')
+					    .replace(' DESC', '')
+					    .replace(' NULLS', '')
+					    .replace(' FIRST', '')
+					    .replace(' LAST', '')
+					    .replace('(', '_')
+					    .replace(')', '_')
+					    .trim()
+			    )
+			    .map(column => column.substring(GreaterNumber(column.length - 25, 0)))
+			    .join('_')
 		)
 	}
 

@@ -1,4 +1,5 @@
 import {PGTable} from './PGTable'
+import {GreaterNumber} from '@solidbasisventures/intelliwaketsfoundation'
 
 export class PGForeignKey {
 	public columnNames: string[] = []
@@ -25,7 +26,7 @@ export class PGForeignKey {
 	}
 
 	public fkName(pgTable: PGTable) {
-		return pgTable.name + '_' + this.columnNames.map(column => column.substr(-25)).join('_') + '_fkey'
+		return pgTable.name + '_' + this.columnNames.map(column => column.substring(GreaterNumber(column.length-25, 0))).join('_') + '_fkey'
 	}
 
 	public ddlConstraintDefinition(pgTable: PGTable): string {

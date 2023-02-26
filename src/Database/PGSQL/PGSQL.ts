@@ -15,8 +15,8 @@ import {PGParams} from './PGParams'
 import {PGEnum} from './PGEnum'
 import {PGIndex} from './PGIndex'
 import {PGForeignKey} from './PGForeignKey'
-import {Client, Pool, PoolClient, QueryResultRow} from 'pg'
 import type {QueryResult} from 'pg'
+import {Client, Pool, PoolClient, QueryResultRow} from 'pg'
 
 // import QueryStream from 'pg-query-stream'
 
@@ -829,7 +829,10 @@ export namespace PGSQL {
 		return enums
 	}
 
-	export const TableColumnComments = async (connection: TConnection, table: string, schema?: string): Promise<{ column_name: string, column_comment: string | null }[]> => {
+	export const TableColumnComments = async (connection: TConnection, table: string, schema?: string): Promise<{
+		column_name: string,
+		column_comment: string | null
+	}[]> => {
 		return PGSQL.FetchMany<{ column_name: string, column_comment: string | null }>(connection, `
 			SELECT cols.column_name,
 				   (SELECT pg_catalog.COL_DESCRIPTION(c.oid, cols.ordinal_position::INT)
@@ -855,7 +858,7 @@ export namespace PGSQL {
 				...column,
 				generatedAlwaysAs: column.generation_expression,
 				isAutoIncrement: IsOn(column.identity_increment),
-				udt_name: column.udt_name.toString().startsWith('_') ? column.udt_name.toString().substr(1) : column.udt_name,
+				udt_name: column.udt_name.toString().startsWith('_') ? column.udt_name.toString().substring(1) : column.udt_name,
 				array_dimensions: column.udt_name.toString().startsWith('_') ? [null] : [],
 				column_default: ((column.column_default ?? '').toString().startsWith('\'NULL\'') || (column.column_default ?? '').toString().startsWith('NULL::')) ? null : (column.column_default ?? '').toString().startsWith('\'\'::') ? '' : column.column_default,
 				column_comment: columnComments.find(col => col.column_name === column.column_name)?.column_comment ?? ''
