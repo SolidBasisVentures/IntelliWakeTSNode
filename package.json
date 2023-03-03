@@ -14,7 +14,7 @@
 	"scripts": {
 		"Vitest-Watch": "vitest",
 		"Publish": "tsc && vite build && pnpm version patch && git push && npm publish",
-		"YarnInstall": "yarn install && yarn add -D @solidbasisventures/intelliwaketsfoundation --force -W",
+		"Install-IntelliWake": "pnpm install && pnpm update @solidbasisventures/intelliwaketsfoundation@latest",
 		"TSNodeDev": "ts-node-dev --script-mode --respawn --transpile-only consoles/consoles.ts",
 		"Version-Minor-Advance": "pnpm version minor"
 	},
@@ -27,9 +27,8 @@
 		"type": "git",
 		"url": "https://github.com/SolidBasisVentures/IntelliWakeTSNode.git"
 	},
-	"peerDependencies": {},
 	"devDependencies": {
-		"@solidbasisventures/intelliwaketsfoundation": "^5.2.39",
+		"@solidbasisventures/intelliwaketsfoundation": "^5.2.41",
 		"@types/mssql": "^6.0.2",
 		"@types/mysql": "^2.15.15",
 		"@types/node": "^16.11.11",
