@@ -1,7 +1,7 @@
 lockfileVersion: 5.4
 
 specifiers:
-  '@solidbasisventures/intelliwaketsfoundation': ^5.2.41
+  '@solidbasisventures/intelliwaketsfoundation': ^5.2.43
   '@types/mssql': ^6.0.2
   '@types/mysql': ^2.15.15
   '@types/node': ^16.11.11
@@ -20,7 +20,7 @@ specifiers:
   vitest: ^0.28.5
 
 devDependencies:
-  '@solidbasisventures/intelliwaketsfoundation': 5.2.41
+  '@solidbasisventures/intelliwaketsfoundation': 5.2.43
   '@types/mssql': 6.0.8
   '@types/mysql': 2.15.21
   '@types/node': 16.18.12
@@ -221,8 +221,8 @@ packages:
       string-argv: 0.3.1
     dev: true
 
-  /@solidbasisventures/intelliwaketsfoundation/5.2.41:
-    resolution: {integrity: sha512-grJvMpWrYVzOPTumbdw0H7eyzdXgR+Rb1ds9of3Nc6qa6O+ZjAOcyewyqDNms68wYvEXrcnQCYCyACmxBEt1Fg==}
+  /@solidbasisventures/intelliwaketsfoundation/5.2.43:
+    resolution: {integrity: sha512-WwBrjMDZ2zoFVtc3Kd54DeL27n1WMzro4TPDIflwGPN2deGrns81HTH5mH4LVh32/qIcn+E8A8CNm8dSvggd4g==}
     dev: true
 
   /@ts-morph/common/0.18.1:

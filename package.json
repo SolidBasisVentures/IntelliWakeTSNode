@@ -28,7 +28,7 @@
 		"url": "https://github.com/SolidBasisVentures/IntelliWakeTSNode.git"
 	},
 	"devDependencies": {
-		"@solidbasisventures/intelliwaketsfoundation": "^5.2.41",
+		"@solidbasisventures/intelliwaketsfoundation": "^5.2.43",
 		"@types/mssql": "^6.0.2",
 		"@types/mysql": "^2.15.15",
 		"@types/node": "^16.11.11",
