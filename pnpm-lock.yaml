@@ -22,7 +22,6 @@ specifiers:
   vitest: ^0.28.5
 
 dependencies:
-  '@types/split2': registry.npmjs.org/@types/split2/3.2.1
   split2: registry.npmjs.org/split2/4.1.0
 
 devDependencies:
@@ -31,6 +30,7 @@ devDependencies:
   '@types/mysql': 2.15.21
   '@types/node': 16.18.12
   '@types/pg': 8.6.6
+  '@types/split2': registry.npmjs.org/@types/split2/3.2.1
   mssql: 6.4.1
   mysql: 2.18.1
   pg: 8.9.0
@@ -2123,7 +2123,7 @@ packages:
     resolution: {integrity: sha512-vzLe5NaNMjIE3mcddFVGlAXN1LEWueUsMsOJWaT6wWMJGyljHAWHznqfnKUQWGzu7TLPrGvWdNAsvQYW+C0xtw==, registry: https://registry.yarnpkg.com/, tarball: https://registry.npmjs.org/@types/node/-/node-16.18.12.tgz}
     name: '@types/node'
     version: 16.18.12
-    dev: false
+    dev: true
 
   registry.npmjs.org/@types/split2/3.2.1:
     resolution: {integrity: sha512-7uz3yU+LooBq4yNOzlZD9PU9/1Eu0rTD1MjQ6apOVEoHsPrMUrFw7W8XrvWtesm2vK67SBK9AyJcOXtMpl9bgQ==, registry: https://registry.yarnpkg.com/, tarball: https://registry.npmjs.org/@types/split2/-/split2-3.2.1.tgz}
@@ -2131,7 +2131,7 @@ packages:
     version: 3.2.1
     dependencies:
       '@types/node': registry.npmjs.org/@types/node/16.18.12
-    dev: false
+    dev: true
 
   registry.npmjs.org/commander/9.5.0:
     resolution: {integrity: sha512-KRs7WVDKg86PWiuAqhDrAQnTXZKraVcCc6vFdL14qrZ/DcWwuRo7VoiYXalXO7S5GKpqYiVEwCbgFDfxNHKJBQ==, registry: https://registry.yarnpkg.com/, tarball: https://registry.npmjs.org/commander/-/commander-9.5.0.tgz}
