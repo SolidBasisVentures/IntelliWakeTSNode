@@ -21,20 +21,22 @@ specifiers:
   vite-plugin-dts: ^1.7.2
   vitest: ^0.28.5
 
+dependencies:
+  '@types/split2': registry.npmjs.org/@types/split2/3.2.1
+  split2: registry.npmjs.org/split2/4.1.0
+
 devDependencies:
   '@solidbasisventures/intelliwaketsfoundation': 5.3.4
   '@types/mssql': 6.0.8
   '@types/mysql': 2.15.21
   '@types/node': 16.18.12
   '@types/pg': 8.6.6
-  '@types/split2': registry.npmjs.org/@types/split2/3.2.1
   mssql: 6.4.1
   mysql: 2.18.1
   pg: 8.9.0
   pg-cursor: 2.8.0_pg@8.9.0
   prettier: 2.8.4
   source-map-support: 0.5.21
-  split2: registry.npmjs.org/split2/4.1.0
   ts-node: 10.9.1_rcvzjt2q3f6gordb34f5djrkie
   ts-node-dev: 2.0.0_rcvzjt2q3f6gordb34f5djrkie
   typescript: 4.9.5
@@ -2121,7 +2123,7 @@ packages:
     resolution: {integrity: sha512-vzLe5NaNMjIE3mcddFVGlAXN1LEWueUsMsOJWaT6wWMJGyljHAWHznqfnKUQWGzu7TLPrGvWdNAsvQYW+C0xtw==, registry: https://registry.yarnpkg.com/, tarball: https://registry.npmjs.org/@types/node/-/node-16.18.12.tgz}
     name: '@types/node'
     version: 16.18.12
-    dev: true
+    dev: false
 
   registry.npmjs.org/@types/split2/3.2.1:
     resolution: {integrity: sha512-7uz3yU+LooBq4yNOzlZD9PU9/1Eu0rTD1MjQ6apOVEoHsPrMUrFw7W8XrvWtesm2vK67SBK9AyJcOXtMpl9bgQ==, registry: https://registry.yarnpkg.com/, tarball: https://registry.npmjs.org/@types/split2/-/split2-3.2.1.tgz}
@@ -2129,7 +2131,7 @@ packages:
     version: 3.2.1
     dependencies:
       '@types/node': registry.npmjs.org/@types/node/16.18.12
-    dev: true
+    dev: false
 
   registry.npmjs.org/commander/9.5.0:
     resolution: {integrity: sha512-KRs7WVDKg86PWiuAqhDrAQnTXZKraVcCc6vFdL14qrZ/DcWwuRo7VoiYXalXO7S5GKpqYiVEwCbgFDfxNHKJBQ==, registry: https://registry.yarnpkg.com/, tarball: https://registry.npmjs.org/commander/-/commander-9.5.0.tgz}
@@ -2161,4 +2163,3 @@ packages:
     name: split2
     version: 4.1.0
     engines: {node: '>= 10.x'}
-    dev: true
