@@ -1,17 +1,19 @@
 lockfileVersion: 5.4
 
 specifiers:
-  '@solidbasisventures/intelliwaketsfoundation': ^5.2.43
+  '@solidbasisventures/intelliwaketsfoundation': ^5.3.2
   '@types/mssql': ^6.0.2
   '@types/mysql': ^2.15.15
   '@types/node': ^16.11.11
   '@types/pg': ^8.6.5
+  '@types/split2': ^3.2.1
   mssql: ^6.2.0
   mysql: ^2.18.1
   pg: ^8.7.3
   pg-cursor: ^2.7.3
   prettier: ^2.7.1
   source-map-support: ^0.5.19
+  split2: ^4.1.0
   ts-node: ^10.8.1
   ts-node-dev: ^2.0.0
   typescript: ^4.7.4
@@ -20,17 +22,19 @@ specifiers:
   vitest: ^0.28.5
 
 devDependencies:
-  '@solidbasisventures/intelliwaketsfoundation': 5.2.43
+  '@solidbasisventures/intelliwaketsfoundation': 5.3.2
   '@types/mssql': 6.0.8
   '@types/mysql': 2.15.21
   '@types/node': 16.18.12
   '@types/pg': 8.6.6
+  '@types/split2': registry.npmjs.org/@types/split2/3.2.1
   mssql: 6.4.1
   mysql: 2.18.1
   pg: 8.9.0
   pg-cursor: 2.8.0_pg@8.9.0
   prettier: 2.8.4
   source-map-support: 0.5.21
+  split2: registry.npmjs.org/split2/4.1.0
   ts-node: 10.9.1_rcvzjt2q3f6gordb34f5djrkie
   ts-node-dev: 2.0.0_rcvzjt2q3f6gordb34f5djrkie
   typescript: 4.9.5
@@ -221,8 +225,8 @@ packages:
       string-argv: 0.3.1
     dev: true
 
-  /@solidbasisventures/intelliwaketsfoundation/5.2.43:
-    resolution: {integrity: sha512-WwBrjMDZ2zoFVtc3Kd54DeL27n1WMzro4TPDIflwGPN2deGrns81HTH5mH4LVh32/qIcn+E8A8CNm8dSvggd4g==}
+  /@solidbasisventures/intelliwaketsfoundation/5.3.2:
+    resolution: {integrity: sha512-LjHZI29j+fZ56ihcMdG8f19ed2TIHuXSGTxPugQBdE1zQv8uF5jqRYoGX3Y5FBCA7I3v89stBBgG+X1YC+80xQ==}
     dev: true
 
   /@ts-morph/common/0.18.1:
@@ -1158,7 +1162,7 @@ packages:
   /pgpass/1.0.5:
     resolution: {integrity: sha512-FdW9r/jQZhSeohs1Z3sI1yxFQNFvMcnmfuj4WBMUTxOrAyLMaTcE1aAMBiTlbMNaXvBCQuVi0R7hd8udDSP7ug==}
     dependencies:
-      split2: 4.1.0
+      split2: registry.npmjs.org/split2/4.1.0
     dev: true
 
   /picocolors/1.0.0:
@@ -1366,11 +1370,6 @@ packages:
   /source-map/0.6.1:
     resolution: {integrity: sha512-UjgapumWlbMhkBgzT7Ykc5YXUT46F0iKu8SGXq0bcwP5dz/h0Plj6enJqjz1Zbq2l5WaqYnrVbwWOWMyF3F47g==}
     engines: {node: '>=0.10.0'}
-    dev: true
-
-  /split2/4.1.0:
-    resolution: {integrity: sha512-VBiJxFkxiXRlUIeyMQi8s4hgvKCSjtknJv/LVYbrgALPwf5zSKmEwV9Lst25AkvMDnvxODugjdl6KZgwKM1WYQ==}
-    engines: {node: '>= 10.x'}
     dev: true
 
   /sprintf-js/1.0.3:
@@ -2118,6 +2117,20 @@ packages:
     dev: true
     optional: true
 
+  registry.npmjs.org/@types/node/16.18.12:
+    resolution: {integrity: sha512-vzLe5NaNMjIE3mcddFVGlAXN1LEWueUsMsOJWaT6wWMJGyljHAWHznqfnKUQWGzu7TLPrGvWdNAsvQYW+C0xtw==, registry: https://registry.yarnpkg.com/, tarball: https://registry.npmjs.org/@types/node/-/node-16.18.12.tgz}
+    name: '@types/node'
+    version: 16.18.12
+    dev: true
+
+  registry.npmjs.org/@types/split2/3.2.1:
+    resolution: {integrity: sha512-7uz3yU+LooBq4yNOzlZD9PU9/1Eu0rTD1MjQ6apOVEoHsPrMUrFw7W8XrvWtesm2vK67SBK9AyJcOXtMpl9bgQ==, registry: https://registry.yarnpkg.com/, tarball: https://registry.npmjs.org/@types/split2/-/split2-3.2.1.tgz}
+    name: '@types/split2'
+    version: 3.2.1
+    dependencies:
+      '@types/node': registry.npmjs.org/@types/node/16.18.12
+    dev: true
+
   registry.npmjs.org/commander/9.5.0:
     resolution: {integrity: sha512-KRs7WVDKg86PWiuAqhDrAQnTXZKraVcCc6vFdL14qrZ/DcWwuRo7VoiYXalXO7S5GKpqYiVEwCbgFDfxNHKJBQ==, registry: https://registry.yarnpkg.com/, tarball: https://registry.npmjs.org/commander/-/commander-9.5.0.tgz}
     name: commander
@@ -2141,4 +2154,11 @@ packages:
     resolution: {integrity: sha512-9ByhssR2fPVsNZj478qUUbKfmL0+t5BDVyjShtyZZLiK7ZDAArFFfopyOTj0M05wE2tJPisA4iTnnXl2YoPvOA==, registry: https://registry.yarnpkg.com/, tarball: https://registry.npmjs.org/graceful-fs/-/graceful-fs-4.2.10.tgz}
     name: graceful-fs
     version: 4.2.10
+    dev: true
+
+  registry.npmjs.org/split2/4.1.0:
+    resolution: {integrity: sha512-VBiJxFkxiXRlUIeyMQi8s4hgvKCSjtknJv/LVYbrgALPwf5zSKmEwV9Lst25AkvMDnvxODugjdl6KZgwKM1WYQ==, registry: https://registry.yarnpkg.com/, tarball: https://registry.npmjs.org/split2/-/split2-4.1.0.tgz}
+    name: split2
+    version: 4.1.0
+    engines: {node: '>= 10.x'}
     dev: true
