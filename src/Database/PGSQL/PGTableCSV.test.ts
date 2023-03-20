@@ -11,6 +11,6 @@ test('PGTable_CSV', async () => {
 		// expect(true).toBeTruthy()
 		expect(table.name).toBe(fileName.split('.')[0])
 
-		console.log(table.columns)
+		// console.log(table.columns)
 	}
 })
