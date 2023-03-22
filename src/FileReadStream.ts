@@ -1,5 +1,5 @@
 import fs from 'fs'
-import splitly from 'splitly'
+// import split2 from 'split2'
 import {ESTTodayDateTimeLabel} from '@solidbasisventures/intelliwaketsfoundation'
 
 export type TFileReadStreamOptions = {
@@ -12,7 +12,7 @@ export type TFileReadStreamOptions = {
 export async function FileReadStream(fileName: string, options: TFileReadStreamOptions) {
 	return new Promise<void>((resolve, reject) => {
 		const files = fs.createReadStream(fileName)
-		                .pipe(splitly.createStream())
+		                // .pipe(split2())
 
 		let linesStarted = 0
 		let linesCompleted = 0
