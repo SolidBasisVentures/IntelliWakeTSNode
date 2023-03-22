@@ -1,6 +1,6 @@
 {
 	"name": "@solidbasisventures/intelliwaketsnode",
-	"version": "2.1.4",
+	"version": "2.1.5",
 	"description": "NPM package for IntelliWake Node Components",
 	"type": "module",
 	"exports": {
@@ -28,8 +28,7 @@
 		"type": "git",
 		"url": "https://github.com/SolidBasisVentures/IntelliWakeTSNode.git"
 	},
-	"dependencies": {
-	},
+	"dependencies": {},
 	"devDependencies": {
 		"@solidbasisventures/intelliwaketsfoundation": "^5.3.6",
 		"@types/mssql": "^6.0.2",
