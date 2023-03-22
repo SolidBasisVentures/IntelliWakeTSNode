@@ -10,7 +10,7 @@
 			"es2017"
 		],
 		"sourceMap": true,
-		"allowJs": false,
+		"allowJs": true,
 		"declaration": true,
 		"moduleResolution": "node",
 		"forceConsistentCasingInFileNames": true,
@@ -23,6 +23,9 @@
 		"noUnusedParameters": true,
 		"allowSyntheticDefaultImports": true,
 		"resolveJsonModule": true
+	},
+	"engines": {
+		"node": ">= 10.x"
 	},
 	"include": [
 		"src",
