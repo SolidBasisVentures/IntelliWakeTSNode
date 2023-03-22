@@ -29,15 +29,15 @@
 		"url": "https://github.com/SolidBasisVentures/IntelliWakeTSNode.git"
 	},
 	"dependencies": {
-		"split2": "^4.1.0"
 	},
 	"devDependencies": {
-		"@solidbasisventures/intelliwaketsfoundation": "^5.3.4",
-		"@types/split2": "^3.2.1",
+		"@solidbasisventures/intelliwaketsfoundation": "^5.3.6",
 		"@types/mssql": "^6.0.2",
 		"@types/mysql": "^2.15.15",
 		"@types/node": "^16.11.11",
 		"@types/pg": "^8.6.5",
+		"@types/split2": "^3.2.1",
+		"split2": "^4.1.0",
 		"mssql": "^6.2.0",
 		"mysql": "^2.18.1",
 		"pg": "^8.7.3",
