@@ -6,14 +6,13 @@ specifiers:
   '@types/mysql': ^2.15.15
   '@types/node': ^16.11.11
   '@types/pg': ^8.6.5
-  '@types/split2': ^3.2.1
   mssql: ^6.2.0
   mysql: ^2.18.1
   pg: ^8.7.3
   pg-cursor: ^2.7.3
   prettier: ^2.7.1
   source-map-support: ^0.5.19
-  split2: ^4.1.0
+  splitly: ^1.0.2
   ts-node: ^10.8.1
   ts-node-dev: ^2.0.0
   typescript: ^4.7.4
@@ -27,14 +26,13 @@ devDependencies:
   '@types/mysql': 2.15.21
   '@types/node': 16.18.12
   '@types/pg': 8.6.6
-  '@types/split2': 3.2.1
   mssql: 6.4.1
   mysql: 2.18.1
   pg: 8.9.0
   pg-cursor: 2.8.0_pg@8.9.0
   prettier: 2.8.4
   source-map-support: 0.5.21
-  split2: 4.1.0
+  splitly: 1.0.2
   ts-node: 10.9.1_rcvzjt2q3f6gordb34f5djrkie
   ts-node-dev: 2.0.0_rcvzjt2q3f6gordb34f5djrkie
   typescript: 4.9.5
@@ -504,12 +502,6 @@ packages:
     dependencies:
       '@types/node': 16.18.12
       safe-buffer: 5.1.2
-    dev: true
-
-  /@types/split2/3.2.1:
-    resolution: {integrity: sha512-7uz3yU+LooBq4yNOzlZD9PU9/1Eu0rTD1MjQ6apOVEoHsPrMUrFw7W8XrvWtesm2vK67SBK9AyJcOXtMpl9bgQ==, registry: https://registry.yarnpkg.com/}
-    dependencies:
-      '@types/node': 16.18.12
     dev: true
 
   /@types/strip-bom/3.0.0:
@@ -1592,8 +1584,12 @@ packages:
     dev: true
 
   /split2/4.1.0:
-    resolution: {integrity: sha512-VBiJxFkxiXRlUIeyMQi8s4hgvKCSjtknJv/LVYbrgALPwf5zSKmEwV9Lst25AkvMDnvxODugjdl6KZgwKM1WYQ==, registry: https://registry.yarnpkg.com/}
+    resolution: {integrity: sha512-VBiJxFkxiXRlUIeyMQi8s4hgvKCSjtknJv/LVYbrgALPwf5zSKmEwV9Lst25AkvMDnvxODugjdl6KZgwKM1WYQ==, registry: https://registry.yarnpkg.com/, tarball: https://registry.yarnpkg.com/split2/-/split2-4.1.0.tgz}
     engines: {node: '>= 10.x'}
+    dev: true
+
+  /splitly/1.0.2:
+    resolution: {integrity: sha512-tb49LjiVgOd03U4AEwqGbF72ME75lvOz6IGOjLj3j3xBmPnshDYlJNWFYt9qtYUzhkUrLP+dM735vixJt5RzqA==}
     dev: true
 
   /sprintf-js/1.0.3:
