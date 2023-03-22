@@ -12,7 +12,6 @@ specifiers:
   pg-cursor: ^2.7.3
   prettier: ^2.7.1
   source-map-support: ^0.5.19
-  splitly: ^1.0.2
   ts-node: ^10.8.1
   ts-node-dev: ^2.0.0
   typescript: ^4.7.4
@@ -32,7 +31,6 @@ devDependencies:
   pg-cursor: 2.8.0_pg@8.9.0
   prettier: 2.8.4
   source-map-support: 0.5.21
-  splitly: 1.0.2
   ts-node: 10.9.1_rcvzjt2q3f6gordb34f5djrkie
   ts-node-dev: 2.0.0_rcvzjt2q3f6gordb34f5djrkie
   typescript: 4.9.5
@@ -1586,10 +1584,6 @@ packages:
   /split2/4.1.0:
     resolution: {integrity: sha512-VBiJxFkxiXRlUIeyMQi8s4hgvKCSjtknJv/LVYbrgALPwf5zSKmEwV9Lst25AkvMDnvxODugjdl6KZgwKM1WYQ==, registry: https://registry.yarnpkg.com/, tarball: https://registry.yarnpkg.com/split2/-/split2-4.1.0.tgz}
     engines: {node: '>= 10.x'}
-    dev: true
-
-  /splitly/1.0.2:
-    resolution: {integrity: sha512-tb49LjiVgOd03U4AEwqGbF72ME75lvOz6IGOjLj3j3xBmPnshDYlJNWFYt9qtYUzhkUrLP+dM735vixJt5RzqA==}
     dev: true
 
   /sprintf-js/1.0.3:
