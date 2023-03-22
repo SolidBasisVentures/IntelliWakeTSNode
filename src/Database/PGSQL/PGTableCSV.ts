@@ -1,5 +1,5 @@
 import {PGTable} from './PGTable'
-import {FileReadStream} from '../../FileReadStream'
+import {LineReadStream} from '../../LineReadStream'
 import {CoalesceFalsey, GreaterNumber} from '@solidbasisventures/intelliwaketsfoundation'
 import {PGColumn} from './PGColumn'
 
@@ -43,20 +43,17 @@ export class PGTableCSV extends PGTable {
 
 		let fields: TFieldAnalysis[] = []
 
-		await FileReadStream(fileName, {
-			onFirstLine: data => {
+		await LineReadStream(fileName, {
+			onFirstLineJSON: data => {
 				fields = data
-					.split(',')
 					.map((field, idx) => (CoalesceFalsey(field, `field${idx}`) ?? '').toLowerCase())
 					.map(field => ({
 						...initialFieldAnalysis,
 						name: field
 					}))
 			},
-			onSubsequentLine: data => {
-				const values = data.split(',').map(value => value.trim())
-
-				values.forEach((value, idx) => {
+			onSubsequentLineJSON: data => {
+				data.forEach((value, idx) => {
 						const field = fields[idx]
 						if (!field) throw new Error('Empty field')
 
@@ -106,7 +103,7 @@ export class PGTableCSV extends PGTable {
 			}
 		})
 
-		// console.table(fields)
+		console.table(fields)
 
 		fields.forEach(field => {
 			const column = new PGColumn({

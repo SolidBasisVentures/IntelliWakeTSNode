@@ -1,4 +1,4 @@
-export * from './FileReadStream'
+export * from './LineReadStream'
 export * from './Functions'
 export * from './SortSearch'
 export * from './Database/PGSQL/PGTable'
