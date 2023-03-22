@@ -1,8 +1,8 @@
 {
 	"name": "@solidbasisventures/intelliwaketsnode",
-	"version": "2.1.9",
+	"version": "2.1.8",
 	"description": "NPM package for IntelliWake Node Components",
-	"type": "commonjs",
+	"type": "module",
 	"exports": {
 		".": {
 			"import": "./dist/main.js",
