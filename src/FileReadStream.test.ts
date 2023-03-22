@@ -6,12 +6,20 @@ test('FileReadStream', async () => {
 	const pathName = path.resolve('consoles', 'CSVData')
 
 	const fileName = 'M20_TEST.csv'
+
+	const showSeparated = true
+	const showEach = false
+
 	await FileReadStream(path.resolve(pathName, fileName), {
-		onFirstLine: () => {
+		onFirstLine: (data) => {
+			if (showSeparated) console.info('1st', data)
+			if (data.endsWith('\r')) console.info('Here')
 		},
-		onSubsequentLine: () => {
+		onSubsequentLine: (data) => {
+			if (showSeparated) console.info('nth', data)
 		},
-		onLine: () => {
+		onLine: (data) => {
+			if (showEach) console.info('Each', data)
 		},
 		pauseAfterLines: 10
 	})
