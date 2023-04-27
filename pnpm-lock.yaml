@@ -2,8 +2,8 @@ lockfileVersion: '6.0'
 
 devDependencies:
   '@solidbasisventures/intelliwaketsfoundation':
-    specifier: ^5.6.1
-    version: 5.6.1
+    specifier: ^5.6.4
+    version: 5.6.4
   '@types/node':
     specifier: ^16.11.11
     version: 16.18.12
@@ -178,8 +178,8 @@ packages:
       string-argv: 0.3.1
     dev: true
 
-  /@solidbasisventures/intelliwaketsfoundation@5.6.1:
-    resolution: {integrity: sha512-rer3Eoca3WrB5F3ri18NdALkJAxm2FTWcTGYOPptp1ycWNcztPndApOQ/id/uJ57xAdNqE+eN1LP9/hdXvXlOA==}
+  /@solidbasisventures/intelliwaketsfoundation@5.6.4:
+    resolution: {integrity: sha512-b+xt2lJSDMS91UhHR2pJvKeDl/0QoNrfOzUH0eQ+gEKOQg2NtiRJaBFHPjjvgmY1bPqrIcpmDgyQPITmNMt1og==}
     dev: true
 
   /@ts-morph/common@0.18.1:
