@@ -1,7 +1,7 @@
 // noinspection SqlNoDataSourceInspection
 
 import {
-	CleanNumber,
+	CleanNumber, CleanNumberNull,
 	DateFormat,
 	IPaginatorRequest,
 	IPaginatorResponse,
@@ -61,48 +61,73 @@ export namespace PGSQL {
 	export type TQueryResults<T extends QueryResultRow> = QueryResult<T> // { rows?: Array<T>; fields?: FieldDef[]; rowCount?: number }
 
 	export const query = async <T extends QueryResultRow>(connection: TConnection, sql: string, values?: any): Promise<TQueryResults<T>> => {
-		try {
-			if (!process.env.DB_MS_ALERT) {
-				return connection.query(sql, values)
-			} else {
-				const start = Date.now()
-				const response = await connection.query(sql, values)
-				const ms = Date.now() - start
-				if (ms > CleanNumber(process.env.DB_MS_ALERT)) {
-					console.log('----- Long SQL Query', ToDigits(ms), 'ms')
-					console.log(sql)
-					console.log(values)
+		const start = Date.now()
+
+		return connection.query(sql, values)
+			.then(response => {
+				const alert = CleanNumberNull(process.env.DB_MS_ALERT)
+				if (alert) {
+					const ms = Date.now() - start
+					if (ms > alert) {
+						console.log('----- Long SQL Query', ToDigits(ms), 'ms')
+						console.log(sql)
+						console.log(values)
+					}
 				}
 				return response
-			}
-		} catch (err) {
-			console.log('------------ SQL Query')
-			console.log(DateFormat('LocalDateTime', 'now', 'America/New_York'))
-			console.log(err.message)
-			console.log(sql)
-			console.log(values)
-			throw err
-		}
-
-		// return await new Promise((resolve, reject) => {
-		// 	// const stackTrace = new Error().stack
-		// 	const res = await connection.query(sql, values)
-		// 	connection
-		// 		.query(sql, values)
-		// 		.then(res => {
-		// 			resolve({rows: res.rows, fields: res.fields, rowCount: res.rowCount})
-		// 		})
-		// 		.catch(err => {
-		// 			// console.log('------------ SQL')
-		// 			// console.log(sql)
-		// 			// console.log(values)
-		// 			// console.log(err)
-		// 			// console.log(stackTrace)
-		// 			// throw 'SQL Error'
-		// 			reject(`${err.message}\n${sql}\n${JSON.stringify(values ?? {})}`)
-		// 		})
-		// })
+			})
+			.catch(err => {
+				console.log('------------ SQL Query')
+				console.log(DateFormat('LocalDateTime', 'now', 'America/New_York'))
+				console.log(err.message)
+				console.log(sql)
+				console.log(values)
+				throw err
+			})
 	}
+	// {
+	// 	try {
+	// 		if (!process.env.DB_MS_ALERT) {
+	// 			return connection.query(sql, values)
+	// 		} else {
+	// 			const start = Date.now()
+	// 			const response = await connection.query(sql, values)
+	// 			const ms = Date.now() - start
+	// 			if (ms > CleanNumber(process.env.DB_MS_ALERT)) {
+	// 				console.log('----- Long SQL Query', ToDigits(ms), 'ms')
+	// 				console.log(sql)
+	// 				console.log(values)
+	// 			}
+	// 			return response
+	// 		}
+	// 	} catch (err) {
+	// 		console.log('------------ SQL Query')
+	// 		console.log(DateFormat('LocalDateTime', 'now', 'America/New_York'))
+	// 		console.log(err.message)
+	// 		console.log(sql)
+	// 		console.log(values)
+	// 		throw err
+	// 	}
+	//
+	// 	// return await new Promise((resolve, reject) => {
+	// 	// 	// const stackTrace = new Error().stack
+	// 	// 	const res = await connection.query(sql, values)
+	// 	// 	connection
+	// 	// 		.query(sql, values)
+	// 	// 		.then(res => {
+	// 	// 			resolve({rows: res.rows, fields: res.fields, rowCount: res.rowCount})
+	// 	// 		})
+	// 	// 		.catch(err => {
+	// 	// 			// console.log('------------ SQL')
+	// 	// 			// console.log(sql)
+	// 	// 			// console.log(values)
+	// 	// 			// console.log(err)
+	// 	// 			// console.log(stackTrace)
+	// 	// 			// throw 'SQL Error'
+	// 	// 			reject(`${err.message}\n${sql}\n${JSON.stringify(values ?? {})}`)
+	// 	// 		})
+	// 	// })
+	// }
 
 	export const timeout = async (ms: number) => {
 		return new Promise(resolve => {
