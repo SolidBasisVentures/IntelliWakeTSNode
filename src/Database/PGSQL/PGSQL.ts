@@ -7,7 +7,8 @@ import {
 	IPaginatorResponse,
 	IsOn,
 	ISortColumn,
-	ReplaceAll
+	ReplaceAll,
+	ToDigits
 } from '@solidbasisventures/intelliwaketsfoundation'
 import {PGTable} from './PGTable'
 import {PGColumn} from './PGColumn'
@@ -68,7 +69,7 @@ export namespace PGSQL {
 				const response = await connection.query(sql, values)
 				const ms = Date.now() - start
 				if (ms > CleanNumber(process.env.DB_MS_ALERT)) {
-					console.log('----- Long SQL Query', ms / 1000, 'ms')
+					console.log('----- Long SQL Query', ToDigits(ms), 'ms')
 					console.log(sql)
 					console.log(values)
 				}
