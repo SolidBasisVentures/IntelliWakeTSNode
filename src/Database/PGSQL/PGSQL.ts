@@ -50,6 +50,8 @@ export namespace PGSQL {
 		countPerPage: number
 	}
 
+	export const IgnoreDBMSAlert = '/*NO_DBMS_ALERT*/'
+
 	export const SetDBMSAlert = (milliseconds?: number) => {
 		if (!milliseconds) {
 			delete process.env.DB_MS_ALERT
@@ -66,7 +68,7 @@ export namespace PGSQL {
 		return connection.query(sql, values)
 			.then(response => {
 				const alert = CleanNumberNull(process.env.DB_MS_ALERT)
-				if (alert) {
+				if (alert && !sql.includes(IgnoreDBMSAlert)) {
 					const ms = Date.now() - start
 					if (ms > alert) {
 						console.log('----- Long SQL Query', ToDigits(ms), 'ms')
