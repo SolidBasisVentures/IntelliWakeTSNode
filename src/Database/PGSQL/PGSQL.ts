@@ -62,7 +62,7 @@ export namespace PGSQL {
 	export const query = async <T extends QueryResultRow>(connection: TConnection, sql: string, values?: any): Promise<TQueryResults<T>> => {
 		try {
 			if (!process.env.DB_MS_ALERT) {
-				return await connection.query(sql, values)
+				return connection.query(sql, values)
 			} else {
 				const start = Date.now()
 				const response = await connection.query(sql, values)
@@ -333,7 +333,9 @@ export namespace PGSQL {
 	 */
 	export const FetchExists = async (connection: TConnection, sql: string, values?: any): Promise<boolean> => {
 		// noinspection SqlResolve
-		const data = await query<{ does_exist: boolean }>(connection, `SELECT EXISTS (${sql}) as does_exist`, values)
+		const data = await query<{
+			does_exist: boolean
+		}>(connection, `SELECT EXISTS (${sql}) as does_exist`, values)
 		return !!(data.rows ?? [])[0]?.does_exist
 	}
 
