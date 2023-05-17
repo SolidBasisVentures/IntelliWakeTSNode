@@ -1,8 +1,10 @@
 // noinspection SqlNoDataSourceInspection
 
 import {
-	CleanNumber, CleanNumberNull,
-	DateFormat, ESTTodayDateTimeLabel,
+	CleanNumber,
+	CleanNumberNull,
+	DateFormat,
+	ESTTodayDateTimeLabel,
 	IPaginatorRequest,
 	IPaginatorResponse,
 	IsOn,
@@ -42,7 +44,7 @@ export type TConnection = (Pool | PoolClient | Client | {
 	query: Pool['query'];
 	connect: Pool['connect'];
 	transact: typeof transact;
-}>) & {inTransaction?: boolean}
+}>) & { inTransaction?: boolean }
 
 export namespace PGSQL {
 	export interface IOffsetAndCount {
@@ -66,26 +68,26 @@ export namespace PGSQL {
 		const start = Date.now()
 
 		return connection.query(sql, values)
-			.then(response => {
-				const alert = CleanNumberNull(process.env.DB_MS_ALERT)
-				if (alert && !sql.includes(IgnoreDBMSAlert)) {
-					const ms = Date.now() - start
-					if (ms > alert) {
-						console.log('----- Long SQL Query', ToDigits(ms), 'ms')
-						console.log(sql)
-						console.log(values)
-					}
-				}
-				return response
-			})
-			.catch(err => {
-				console.log('------------ SQL Query')
-				console.log(DateFormat('LocalDateTime', 'now', 'America/New_York'))
-				console.log(err.message)
-				console.log(sql)
-				console.log(values)
-				throw err
-			})
+		                 .then(response => {
+			                 const alert = CleanNumberNull(process.env.DB_MS_ALERT)
+			                 if (alert && !sql.includes(IgnoreDBMSAlert)) {
+				                 const ms = Date.now() - start
+				                 if (ms > alert) {
+					                 console.log('----- Long SQL Query', ToDigits(ms), 'ms')
+					                 console.log(sql)
+					                 console.log(values)
+				                 }
+			                 }
+			                 return response
+		                 })
+		                 .catch(err => {
+			                 console.log('------------ SQL Query')
+			                 console.log(DateFormat('LocalDateTime', 'now', 'America/New_York'))
+			                 console.log(err.message)
+			                 console.log(sql)
+			                 console.log(values)
+			                 throw err
+		                 })
 	}
 	// {
 	// 	try {
@@ -519,7 +521,7 @@ export namespace PGSQL {
 		}
 	}
 
-	export const Transaction = async (connection: TConnection, func: () => Promise<void>) => {
+	export const Transaction = async <T>(connection: TConnection, func: () => Promise<T>) => {
 		if (connection.inTransaction) return func()
 
 		connection.inTransaction = true
@@ -528,7 +530,10 @@ export namespace PGSQL {
 		await Execute(connection, 'SET CONSTRAINTS ALL DEFERRED')
 
 		return func()
-			.then(() => Execute(connection, 'COMMIT'))
+			.then(response => {
+				Execute(connection, 'COMMIT')
+				return response
+			})
 			.catch(() => Execute(connection, 'ROLLBACK'))
 			.finally(() => connection.inTransaction = false)
 	}
