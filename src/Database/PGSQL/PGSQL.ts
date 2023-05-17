@@ -30,7 +30,7 @@ declare function transact<TResult>(
 	cb: (error: Error | null, result?: TResult) => void
 ): void;
 
-export type TConnection = Pool | PoolClient | Client | {
+export type TConnection = (Pool | PoolClient | Client | {
 	pool: Pool;
 	Client: Client;
 	query: Pool['query'];
@@ -42,7 +42,7 @@ export type TConnection = Pool | PoolClient | Client | {
 	query: Pool['query'];
 	connect: Pool['connect'];
 	transact: typeof transact;
-}>
+}>) & {inTransaction?: boolean}
 
 export namespace PGSQL {
 	export interface IOffsetAndCount {
@@ -517,6 +517,20 @@ export namespace PGSQL {
 			console.log(values)
 			throw new Error(err.message)
 		}
+	}
+
+	export const Transaction = async (connection: TConnection, func: () => Promise<void>) => {
+		if (connection.inTransaction) return func()
+
+		connection.inTransaction = true
+
+		await Execute(connection, 'START TRANSACTION')
+		await Execute(connection, 'SET CONSTRAINTS ALL DEFERRED')
+
+		return func()
+			.then(() => Execute(connection, 'COMMIT'))
+			.catch(() => Execute(connection, 'ROLLBACK'))
+			.finally(() => connection.inTransaction = false)
 	}
 
 	export const TruncateAllTables = async (connection: TConnection, exceptions: string[] = [], includeCascade = false) => {
