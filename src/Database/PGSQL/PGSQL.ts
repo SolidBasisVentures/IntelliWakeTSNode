@@ -531,11 +531,15 @@ export namespace PGSQL {
 
 		return func()
 			.then(response => {
+				connection.inTransaction = false
 				Execute(connection, 'COMMIT')
 				return response
 			})
-			.catch(() => Execute(connection, 'ROLLBACK'))
-			.finally(() => connection.inTransaction = false)
+			.catch(err => {
+				connection.inTransaction = false
+				Execute(connection, 'ROLLBACK')
+				throw new Error(err)
+			})
 	}
 
 	export const TruncateAllTables = async (connection: TConnection, exceptions: string[] = [], includeCascade = false) => {
