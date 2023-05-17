@@ -2,7 +2,7 @@
 
 import {
 	CleanNumber, CleanNumberNull,
-	DateFormat,
+	DateFormat, ESTTodayDateTimeLabel,
 	IPaginatorRequest,
 	IPaginatorResponse,
 	IsOn,
@@ -504,14 +504,14 @@ export namespace PGSQL {
 				const response = await connection.query(sql, values)
 				const ms = Date.now() - start
 				if (ms > CleanNumber(process.env.DB_MS_ALERT)) {
-					console.log('----- Long SQL Query', ms / 1000, 'ms')
+					console.log('----- Long SQL Query', ms / 1000, 's', ESTTodayDateTimeLabel())
 					console.log(sql)
 					console.log(values)
 				}
 				return response
 			}
 		} catch (err) {
-			console.log('------------ SQL Execute')
+			console.log('------------ SQL Execute', ESTTodayDateTimeLabel())
 			console.log(err.message)
 			console.log(sql)
 			console.log(values)
