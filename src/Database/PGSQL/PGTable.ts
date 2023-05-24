@@ -611,7 +611,7 @@ export class PGTable {
 				}
 
 				if (pgColumn.column_name === 'sysuser_ids')
-					console.log(this.name, pgColumn.isArray(), fieldConstraint)
+					console.log(this.name, pgColumn)
 
 				constraint[pgColumn.column_name] = fieldConstraint
 			}
