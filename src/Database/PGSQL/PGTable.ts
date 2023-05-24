@@ -610,8 +610,8 @@ export class PGTable {
 					}
 				}
 
-				if (pgColumn.column_name === 'sysuser_ids' || pgColumn.column_name === 'freshxpert_sysuser_id')
-					console.log(this.name, pgColumn)
+				// if (pgColumn.column_name === 'sysuser_ids' || pgColumn.column_name === 'freshxpert_sysuser_id')
+				// 	console.log(this.name, pgColumn)
 
 				constraint[pgColumn.column_name] = fieldConstraint
 			}

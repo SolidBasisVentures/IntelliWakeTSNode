@@ -120,7 +120,7 @@ export class PGColumn implements IPGColumn {
 		}
 	}
 
-	public isArray = (): boolean => !!ToArray(this.array_dimensions)[0] || (this.column_default ?? '')?.toString()?.includes('{}') || (this.column_default ?? '')?.toString()?.includes('[]')
+	public isArray = (): boolean => !!ToArray(this.array_dimensions)[0] || this.array_dimensions[0] == null || (this.column_default ?? '')?.toString()?.includes('{}') || (this.column_default ?? '')?.toString()?.includes('[]')
 
 	public isNullable = (): boolean => IsOn(this.is_nullable)
 
@@ -202,7 +202,7 @@ export class PGColumn implements IPGColumn {
 		const keys = Object.keys(this)
 
 		for (const key of keys) {
-			if (instanceData.hasOwnProperty(key) && typeof(instanceData as any) !== 'function') {
+			if (instanceData.hasOwnProperty(key) && typeof (instanceData as any) !== 'function') {
 				;(this as any)[key] = (instanceData as any)[key]
 			}
 		}
@@ -223,8 +223,8 @@ export class PGColumn implements IPGColumn {
 
 		if (this.array_dimensions.length > 0) {
 			ddl += `[${this.array_dimensions
-				.map((array_dimension) => (!!array_dimension ? array_dimension.toString() : ''))
-				.join('],[')}] `
+			               .map((array_dimension) => (!!array_dimension ? array_dimension.toString() : ''))
+			               .join('],[')}] `
 		} else {
 			if (this.udt_name !== PGColumn.TYPE_POINT) {
 				if (this.floatType() && this.udt_name !== PGColumn.TYPE_FLOAT8) {
