@@ -603,15 +603,15 @@ export class PGTable {
 
 				fieldConstraint.nullable = IsOn(pgColumn.is_nullable)
 
-				// if (pgColumn.column_name === 'features')
-				// 	console.log(this.name, pgColumn.column_name, pgColumn.array_dimensions, pgColumn.column_default, pgColumn.udt_name)
-
 				if (pgColumn.isArray()) {
 					fieldConstraint.isArray = true
 					if (!fieldConstraint.nullable) {
 						fieldConstraint.default = []
 					}
 				}
+
+				if (pgColumn.column_name === 'sysuser_ids')
+					console.log(this.name, pgColumn.isArray(), fieldConstraint)
 
 				constraint[pgColumn.column_name] = fieldConstraint
 			}
