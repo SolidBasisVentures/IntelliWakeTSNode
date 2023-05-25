@@ -882,6 +882,11 @@ export namespace PGSQL {
 		return enums
 	}
 
+	export const TableComments = async (connection: TConnection, table: string, schema?: string): Promise<string | null> => {
+		return PGSQL.FetchOneValue<string | null>(connection, `
+			SELECT obj_description('${!schema ? '' : `${schema}.`}${table}'::regclass, 'pg_class')`)
+	}
+
 	export const TableColumnComments = async (connection: TConnection, table: string, schema?: string): Promise<{
 		column_name: string,
 		column_comment: string | null
@@ -902,6 +907,7 @@ export namespace PGSQL {
 		const pgTable = new PGTable()
 
 		pgTable.name = table
+		pgTable.description = await TableComments(connection, table, schema) ?? ''
 
 		const columnComments = await TableColumnComments(connection, table, schema)
 

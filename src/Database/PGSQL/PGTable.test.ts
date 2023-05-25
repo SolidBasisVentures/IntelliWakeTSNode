@@ -1,4 +1,4 @@
-import {PGTable} from './PGTable'
+import {PGTable, TS_EOL} from './PGTable'
 import {PGColumn} from './PGColumn'
 import {test, expect} from 'vitest'
 
@@ -253,4 +253,13 @@ test('PGTable', () => {
 	expect(tsTestTable.includes('import type {TTables} from \'../Database/TTables\'')).toBeTruthy()
 	expect(tsTestTable.includes('import {_CTable} from \'./_CTable\'')).toBeTruthy()
 	expect(tsTestTable.includes('import type {ResponseContext} from \'../MiddleWare/ResponseContext\'')).toBeTruthy()
+
+	let resultText = `import ...${TS_EOL}${TS_EOL}export class Ctest_table`
+	expect(pgTable.tsTextTableUpdateDescription(`import ...${TS_EOL}${TS_EOL}export class Ctest_table`)).toEqual(resultText)
+	expect(pgTable.tsTextTableUpdateDescription(`import ...${TS_EOL}${TS_EOL}/** Previous comments */${TS_EOL}export class Ctest_table`)).toEqual(resultText)
+
+	pgTable.description = 'Test Description'
+	resultText = `import ...${TS_EOL}${TS_EOL}/** ${pgTable.description} */${TS_EOL}export class Ctest_table`
+	expect(pgTable.tsTextTableUpdateDescription(`import ...${TS_EOL}${TS_EOL}export class Ctest_table`)).toEqual(resultText)
+	expect(pgTable.tsTextTableUpdateDescription(`import ...${TS_EOL}${TS_EOL}/** Previous comments */${TS_EOL}export class Ctest_table`)).toEqual(resultText)
 })

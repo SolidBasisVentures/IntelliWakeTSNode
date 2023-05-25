@@ -13,7 +13,7 @@ import {
 } from '@solidbasisventures/intelliwaketsfoundation'
 import {PGEnum} from './PGEnum'
 
-const TS_EOL = '\n' // was \r\n
+export const TS_EOL = '\n' // was \r\n
 
 export interface ICTableRelativePaths extends TPGTableTextOptions {
 	/** @Common/Tables */
@@ -430,6 +430,10 @@ export class PGTable {
 			text += TS_EOL
 		}
 
+		if (this.description) {
+			text += `/** ${this.description} */${TS_EOL}`
+		}
+
 		text += `export interface I${this.name}`
 		if (this.inherits.length > 0) {
 			text += ` extends I${this.inherits.join(', I')}`
@@ -675,6 +679,9 @@ export class PGTable {
 			text += `import {_C${inherit}} from "./_C${inherit}"` + TS_EOL
 		}
 		text += TS_EOL
+		if (this.description) {
+			text += `/** ${this.description} */${TS_EOL}`
+		}
 		text += `export class C${this.name} extends _CTable<I${this.name}>`
 		if (this.inherits.length > 0) {
 			text += `, C${this.inherits.join(', C')}`
@@ -693,6 +700,26 @@ export class PGTable {
 		text += `}` + TS_EOL
 
 		return text
+	}
+
+	public tsTextTableUpdateDescription(currentText: string): string {
+		const currentTextLines = currentText.split(TS_EOL)
+
+		let classIdx = currentTextLines.findIndex(line => line.startsWith('export class C'))
+		if (classIdx > 0) {
+			if (currentTextLines[classIdx - 1]?.startsWith('/** ')) {
+				currentTextLines.splice(classIdx - 1, 1)
+				if (this.description) {
+					currentTextLines.splice(classIdx - 1, 0, `/** ${this.description} */`)
+				}
+			} else {
+				if (this.description) {
+					currentTextLines.splice(classIdx, 0, `/** ${this.description} */`)
+				}
+			}
+		}
+
+		return currentTextLines.join(TS_EOL)
 	}
 
 	public ddlPrimaryKey(): string | null {
