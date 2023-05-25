@@ -414,9 +414,6 @@ export class PGTable {
 			          text += `import ${this.importWithTypes ? 'type ' : ''}{${interfaceItem.interface_name}${(!interfaceItem.otherImportItem || interfaceItem?.otherImportItem?.toLowerCase() === 'null') ? '' : `, ${interfaceItem.otherImportItem}`}} from "../Interfaces/${interfaceItem.interface_name}"${TS_EOL}`
 		          })
 
-		if (enums.length > 0 || interfaces.length > 0) {
-			text += TS_EOL
-		}
 
 		types.map(typeItem => typeItem)
 		     .reduce<TTypeBuild[]>((results, typeItem) => results.some(result => result.type_name === typeItem.type_name) ?
@@ -426,9 +423,7 @@ export class PGTable {
 			     text += `import ${this.importWithTypes ? 'type ' : ''}{${typeItem.type_name}} from "../Types/${typeItem.type_name}"${TS_EOL}`
 		     })
 
-		if (types.length > 0) {
-			text += TS_EOL
-		}
+		text += TS_EOL
 
 		if (this.description) {
 			text += `/** ${this.description} */${TS_EOL}`
