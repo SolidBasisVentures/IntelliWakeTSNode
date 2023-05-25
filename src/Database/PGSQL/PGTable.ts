@@ -697,8 +697,9 @@ export class PGTable {
 		return text
 	}
 
-	public tsTextTableUpdateDescription(currentText: string): string {
-		const currentTextLines = currentText.split(TS_EOL)
+	public tsTextTableUpdateDescription(currentText: string | null | undefined): string | null {
+		if (!currentText) return null
+		const currentTextLines = currentText.toString().split(TS_EOL)
 
 		let classIdx = currentTextLines.findIndex(line => line.startsWith('export class C'))
 		if (classIdx > 0) {
