@@ -521,6 +521,10 @@ export namespace PGSQL {
 		}
 	}
 
+	export const ExecuteNoConsole = async (connection: TConnection, sql: string, values?: any) => {
+		return await connection.query(sql, values)
+	}
+
 	export const Transaction = async <T>(connection: TConnection, func: () => Promise<T>) => {
 		if (connection.inTransaction) return func()
 
