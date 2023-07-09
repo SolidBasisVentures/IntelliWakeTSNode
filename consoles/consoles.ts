@@ -14,8 +14,11 @@ const processScript = async () => {
 	const tvf = testValueFunc()
 	const tvfas = testValueFuncAS()
 
-	console.log('tvf', await Promise.resolve(tvf))
-	console.log('tvfas', await Promise.resolve(tvfas))
+	const tvfv = await Promise.resolve(tvf)
+	const tvfasv = await Promise.resolve(tvfas)
+
+	console.log('tvf', tvfv)
+	console.log('tvfas', tvfasv)
 }
 
 console.info('Started')
