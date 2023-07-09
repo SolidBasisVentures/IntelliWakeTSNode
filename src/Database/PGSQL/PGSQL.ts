@@ -64,10 +64,12 @@ export namespace PGSQL {
 
 	export type TQueryResults<T extends QueryResultRow> = QueryResult<T> // { rows?: Array<T>; fields?: FieldDef[]; rowCount?: number }
 
-	export const query = async <T extends QueryResultRow>(connection: TConnection, sql: string, values?: any): Promise<TQueryResults<T>> => {
+	export const query = async <T extends QueryResultRow>(connection: TConnection | Promise<TConnection>, sql: string, values?: any): Promise<TQueryResults<T>> => {
 		const start = Date.now()
 
-		return connection.query(sql, values)
+		const connectionResolved = await Promise.resolve(connection)
+
+		return connectionResolved.query(sql, values)
 		                 .then(response => {
 			                 const alert = CleanNumberNull(process.env.DB_MS_ALERT)
 			                 if (alert && !sql.includes(IgnoreDBMSAlert)) {
@@ -140,7 +142,7 @@ export namespace PGSQL {
 	}
 
 	// export const PGQueryValuesStream = async <T = any>(
-	// 	connection: TConnection,
+	// 	connection: TConnection | Promise<TConnection>,
 	// 	sql: string,
 	// 	values: any,
 	// 	row?: (row: T) => void
@@ -191,13 +193,13 @@ export namespace PGSQL {
 	// }
 	//
 	// export const PGQueryStream = async <T = any>(
-	// 	connection: TConnection,
+	// 	connection: TConnection | Promise<TConnection>,
 	// 	sql: string,
 	// 	row: (row: T) => void
 	// ): Promise<void> => PGQueryValuesStream<T>(connection, sql, [], row)
 
 
-	export const TableRowCount = async (connection: TConnection, table: string, schema?: string): Promise<number> => {
+	export const TableRowCount = async (connection: TConnection | Promise<TConnection>, table: string, schema?: string): Promise<number> => {
 		const data = await query(connection, `SELECT COUNT(*) AS count
 											  FROM ${(!!schema ? `${schema}.` : '') + table}`, undefined)
 
@@ -206,7 +208,7 @@ export namespace PGSQL {
 
 	export const CurrentSchema = (schema?: string) => schema ?? 'public'
 
-	export const TableExists = async (connection: TConnection, table: string, schema?: string): Promise<boolean> => {
+	export const TableExists = async (connection: TConnection | Promise<TConnection>, table: string, schema?: string): Promise<boolean> => {
 		const sql = `SELECT COUNT(*) AS count
 					 FROM information_schema.tables
 					 WHERE table_schema = '${CurrentSchema(schema)}'
@@ -217,7 +219,7 @@ export namespace PGSQL {
 		return ((((data.rows ?? [])[0] ?? {}) as any)['count'] ?? 0) > 0
 	}
 
-	export const TableColumnExists = async (connection: TConnection, table: string, column: string, schema?: string): Promise<boolean> => {
+	export const TableColumnExists = async (connection: TConnection | Promise<TConnection>, table: string, column: string, schema?: string): Promise<boolean> => {
 		const sql = `SELECT COUNT(*) AS count
 					 FROM information_schema.COLUMNS
 					 WHERE table_schema = '${CurrentSchema(schema)}'
@@ -227,7 +229,7 @@ export namespace PGSQL {
 		return ((((data.rows ?? [])[0] ?? {}) as any)['count'] ?? 0) > 0
 	}
 
-	export const TriggerExists = async (connection: TConnection, trigger: string, schema?: string): Promise<boolean> => {
+	export const TriggerExists = async (connection: TConnection | Promise<TConnection>, trigger: string, schema?: string): Promise<boolean> => {
 		const sql = `SELECT COUNT(*) AS count
 					 FROM information_schema.triggers
 					 WHERE trigger_schema = '${CurrentSchema(schema)}'
@@ -236,7 +238,7 @@ export namespace PGSQL {
 		return ((((data.rows ?? [])[0] ?? {}) as any)['count'] ?? 0) > 0
 	}
 
-	export const TableResetIncrement = async (connection: TConnection, table: string, column: string, toID?: number) => {
+	export const TableResetIncrement = async (connection: TConnection | Promise<TConnection>, table: string, column: string, toID?: number) => {
 		if (!!toID) {
 			return PGSQL.Execute(
 				connection,
@@ -253,7 +255,7 @@ export namespace PGSQL {
 		}
 	}
 
-	export const ConstraintExists = async (connection: TConnection, constraint: string, schema?: string): Promise<boolean> => {
+	export const ConstraintExists = async (connection: TConnection | Promise<TConnection>, constraint: string, schema?: string): Promise<boolean> => {
 		const sql = `
 			SELECT COUNT(*) AS count
 			FROM information_schema.table_constraints
@@ -268,7 +270,7 @@ export namespace PGSQL {
 		constraint_name: string
 	}
 
-	export const FKConstraints = async (connection: TConnection, schema?: string): Promise<IConstraints[]> => {
+	export const FKConstraints = async (connection: TConnection | Promise<TConnection>, schema?: string): Promise<IConstraints[]> => {
 		const sql = `
 			SELECT table_name, constraint_name
 			FROM information_schema.table_constraints
@@ -278,7 +280,7 @@ export namespace PGSQL {
 		return PGSQL.FetchMany<IConstraints>(connection, sql)
 	}
 
-	export const Functions = async (connection: TConnection, schema?: string): Promise<string[]> => {
+	export const Functions = async (connection: TConnection | Promise<TConnection>, schema?: string): Promise<string[]> => {
 		const sql = `
 			SELECT routines.routine_name
 			FROM information_schema.routines
@@ -290,7 +292,7 @@ export namespace PGSQL {
 	}
 
 	export const IndexExists = async (
-		connection: TConnection,
+		connection: TConnection | Promise<TConnection>,
 		tablename: string,
 		indexName: string, schema?: string
 	): Promise<boolean> => {
@@ -303,7 +305,7 @@ export namespace PGSQL {
 		return ((((data.rows ?? [])[0] ?? {}) as any)['count'] ?? 0) > 0
 	}
 
-	export const GetByID = async <T extends QueryResultRow>(connection: TConnection, table: string, id: number | null): Promise<T | null> => {
+	export const GetByID = async <T extends QueryResultRow>(connection: TConnection | Promise<TConnection>, table: string, id: number | null): Promise<T | null> => {
 		if (!id) {
 			return Promise.resolve(null)
 		} else {
@@ -325,30 +327,30 @@ export namespace PGSQL {
 	 * @param values
 	 * @constructor
 	 */
-	export const GetCountSQL = async (connection: TConnection, sql: string, values?: any): Promise<number> => {
+	export const GetCountSQL = async (connection: TConnection | Promise<TConnection>, sql: string, values?: any): Promise<number> => {
 		const data = await query(connection, sql, values)
 
 		return CleanNumber((((data.rows ?? [])[0] ?? {}) as any)['count'] ?? (((data.rows ?? [])[0] ?? {}) as any)[0], 0)
 		// return isNaN(value) ? 0 : parseInt(value)
 	}
 
-	export const FetchOne = async <T extends QueryResultRow>(connection: TConnection, sql: string, values?: any): Promise<T | null> => {
+	export const FetchOne = async <T extends QueryResultRow>(connection: TConnection | Promise<TConnection>, sql: string, values?: any): Promise<T | null> => {
 		// noinspection SqlResolve
 		const data = await query<T>(connection, sql, values)
 		return !!(data.rows ?? [])[0] ? {...(data.rows ?? [])[0]} : null
 	}
 
-	export const FetchOneValue = async <T>(connection: TConnection, sql: string, values?: any): Promise<T | null> => {
+	export const FetchOneValue = async <T>(connection: TConnection | Promise<TConnection>, sql: string, values?: any): Promise<T | null> => {
 		return (Object.values((await FetchOne<any>(connection, sql, values)) ?? {}) as any)[0] ?? null
 	}
 
-	export const FetchMany = async <T extends QueryResultRow>(connection: TConnection, sql: string, values?: any): Promise<Array<T>> => {
+	export const FetchMany = async <T extends QueryResultRow>(connection: TConnection | Promise<TConnection>, sql: string, values?: any): Promise<Array<T>> => {
 		// noinspection SqlResolve
 		const data = await query<T>(connection, sql, values)
 		return data.rows ?? []
 	}
 
-	export const FetchArray = async <T>(connection: TConnection, sql: string, values?: any): Promise<Array<T>> => {
+	export const FetchArray = async <T>(connection: TConnection | Promise<TConnection>, sql: string, values?: any): Promise<Array<T>> => {
 		const data = await query(connection, sql, values)
 		return (data.rows ?? []).map((row: any) => (row as any)[Object.keys(row as any)[0]] as T)
 	}
@@ -361,7 +363,7 @@ export namespace PGSQL {
 	 * @param values
 	 * @constructor
 	 */
-	export const FetchExists = async (connection: TConnection, sql: string, values?: any): Promise<boolean> => {
+	export const FetchExists = async (connection: TConnection | Promise<TConnection>, sql: string, values?: any): Promise<boolean> => {
 		// noinspection SqlResolve
 		const data = await query<{
 			does_exist: boolean
@@ -370,7 +372,7 @@ export namespace PGSQL {
 	}
 
 	export const InsertAndGetReturning = async (
-		connection: TConnection,
+		connection: TConnection | Promise<TConnection>,
 		table: string,
 		values: any
 	): Promise<any | null> => {
@@ -399,7 +401,7 @@ export namespace PGSQL {
 	}
 
 	export const InsertAndGetID = async (
-		connection: TConnection,
+		connection: TConnection | Promise<TConnection>,
 		table: string,
 		values: any
 	): Promise<number> => {
@@ -429,7 +431,7 @@ export namespace PGSQL {
 		return id
 	}
 
-	export const InsertBulk = async (connection: TConnection, table: string, values: any): Promise<void> => {
+	export const InsertBulk = async (connection: TConnection | Promise<TConnection>, table: string, values: any): Promise<void> => {
 		let params = new PGParams()
 
 		const sql = `
@@ -443,7 +445,7 @@ export namespace PGSQL {
 	}
 
 	export const UpdateAndGetReturning = async (
-		connection: TConnection,
+		connection: TConnection | Promise<TConnection>,
 		table: string,
 		whereValues: any,
 		updateValues: any
@@ -475,7 +477,7 @@ export namespace PGSQL {
 		      .map(key => `"${key}"=${params.add(setValues[key])}`)
 		      .join(',')
 
-	export const Save = async (connection: TConnection, table: string, values: any): Promise<any | null> => {
+	export const Save = async (connection: TConnection | Promise<TConnection>, table: string, values: any): Promise<any | null> => {
 		if (!values.id) {
 			return InsertAndGetReturning(connection, table, values)
 		} else {
@@ -485,7 +487,7 @@ export namespace PGSQL {
 		}
 	}
 
-	export const Delete = async (connection: TConnection, table: string, whereValues: any): Promise<void> => {
+	export const Delete = async (connection: TConnection | Promise<TConnection>, table: string, whereValues: any): Promise<void> => {
 		let params = new PGParams()
 
 		// noinspection SqlResolve
@@ -495,15 +497,16 @@ export namespace PGSQL {
 		await query(connection, sql, params.values)
 	}
 
-	export const ExecuteRaw = async (connection: TConnection, sql: string) => Execute(connection, sql)
+	export const ExecuteRaw = async (connection: TConnection | Promise<TConnection>, sql: string) => Execute(connection, sql)
 
-	export const Execute = async (connection: TConnection, sql: string, values?: any) => {
+	export const Execute = async (connection: TConnection | Promise<TConnection>, sql: string, values?: any) => {
+		const connectionResolved = await Promise.resolve(connection)
 		try {
 			if (!process.env.DB_MS_ALERT) {
-				return await connection.query(sql, values)
+				return await connectionResolved.query(sql, values)
 			} else {
 				const start = Date.now()
-				const response = await connection.query(sql, values)
+				const response = await connectionResolved.query(sql, values)
 				const ms = Date.now() - start
 				if (ms > CleanNumber(process.env.DB_MS_ALERT)) {
 					console.log('----- Long SQL Query', ms / 1000, 's', ESTTodayDateTimeLabel())
@@ -521,32 +524,34 @@ export namespace PGSQL {
 		}
 	}
 
-	export const ExecuteNoConsole = async (connection: TConnection, sql: string, values?: any) => {
-		return await connection.query(sql, values)
+	export const ExecuteNoConsole = async (connection: TConnection | Promise<TConnection>, sql: string, values?: any) => {
+		const connectionResolved = await Promise.resolve(connection)
+		return await connectionResolved.query(sql, values)
 	}
 
-	export const Transaction = async <T>(connection: TConnection, func: () => Promise<T>) => {
-		if (connection.inTransaction) return func()
+	export const Transaction = async <T>(connection: TConnection | Promise<TConnection>, func: () => Promise<T>) => {
+		const connectionResolved = await Promise.resolve(connection)
+		if (connectionResolved.inTransaction) return func()
 
-		connection.inTransaction = true
+		connectionResolved.inTransaction = true
 
-		await Execute(connection, 'START TRANSACTION')
-		await Execute(connection, 'SET CONSTRAINTS ALL DEFERRED')
+		await Execute(connectionResolved, 'START TRANSACTION')
+		await Execute(connectionResolved, 'SET CONSTRAINTS ALL DEFERRED')
 
 		return func()
 			.then(response => {
-				connection.inTransaction = false
-				Execute(connection, 'COMMIT')
+				connectionResolved.inTransaction = false
+				Execute(connectionResolved, 'COMMIT')
 				return response
 			})
 			.catch(err => {
-				connection.inTransaction = false
-				Execute(connection, 'ROLLBACK')
+				connectionResolved.inTransaction = false
+				Execute(connectionResolved, 'ROLLBACK')
 				throw new Error(err)
 			})
 	}
 
-	export const TruncateAllTables = async (connection: TConnection, exceptions: string[] = [], includeCascade = false) => {
+	export const TruncateAllTables = async (connection: TConnection | Promise<TConnection>, exceptions: string[] = [], includeCascade = false) => {
 		let tables = await TablesArray(connection)
 
 		await Execute(connection, 'START TRANSACTION')
@@ -567,13 +572,13 @@ export namespace PGSQL {
 		return true
 	}
 
-	export const TruncateTables = async (connection: TConnection, tables: string[], includeCascade = false) => {
+	export const TruncateTables = async (connection: TConnection | Promise<TConnection>, tables: string[], includeCascade = false) => {
 		for (const table of tables) {
 			await Execute(connection, `TRUNCATE TABLE ${table} RESTART IDENTITY` + (includeCascade ? ' CASCADE' : ''))
 		}
 	}
 
-	export const TablesArray = async (connection: TConnection, schema?: string): Promise<string[]> => {
+	export const TablesArray = async (connection: TConnection | Promise<TConnection>, schema?: string): Promise<string[]> => {
 		return FetchArray<string>(
 			connection,
 			`
@@ -584,7 +589,7 @@ export namespace PGSQL {
 		)
 	}
 
-	export const ViewsArray = async (connection: TConnection, schema?: string): Promise<string[]> => {
+	export const ViewsArray = async (connection: TConnection | Promise<TConnection>, schema?: string): Promise<string[]> => {
 		return await FetchArray<string>(
 			connection,
 			`
@@ -595,7 +600,7 @@ export namespace PGSQL {
 		)
 	}
 
-	export const ViewsMatArray = async (connection: TConnection, schema?: string): Promise<string[]> => {
+	export const ViewsMatArray = async (connection: TConnection | Promise<TConnection>, schema?: string): Promise<string[]> => {
 		return await FetchArray<string>(
 			connection,
 			`
@@ -605,7 +610,7 @@ export namespace PGSQL {
 		)
 	}
 
-	export const TypesArray = async (connection: TConnection): Promise<string[]> => {
+	export const TypesArray = async (connection: TConnection | Promise<TConnection>): Promise<string[]> => {
 		return await FetchArray<string>(
 			connection,
 			`
@@ -616,7 +621,7 @@ export namespace PGSQL {
 		)
 	}
 
-	export const FunctionsArray = async (connection: TConnection, schema?: string): Promise<string[]> => {
+	export const FunctionsArray = async (connection: TConnection | Promise<TConnection>, schema?: string): Promise<string[]> => {
 		return await FetchArray<string>(
 			connection,
 			`
@@ -628,7 +633,7 @@ export namespace PGSQL {
 		)
 	}
 
-	export const FunctionsOIDArray = async (connection: TConnection, schema?: string): Promise<any[]> => {
+	export const FunctionsOIDArray = async (connection: TConnection | Promise<TConnection>, schema?: string): Promise<any[]> => {
 		return await FetchArray<any>(
 			connection,
 			`
@@ -640,7 +645,7 @@ export namespace PGSQL {
 		)
 	}
 
-	export const ExtensionsArray = async (connection: TConnection): Promise<string[]> => {
+	export const ExtensionsArray = async (connection: TConnection | Promise<TConnection>): Promise<string[]> => {
 		return await FetchArray<string>(
 			connection,
 			`
@@ -650,7 +655,7 @@ export namespace PGSQL {
 		)
 	}
 
-	export const TableData = async (connection: TConnection, table: string, schema?: string): Promise<any> => {
+	export const TableData = async (connection: TConnection | Promise<TConnection>, table: string, schema?: string): Promise<any> => {
 		return FetchOne<any>(
 			connection,
 			`
@@ -663,7 +668,7 @@ export namespace PGSQL {
 		)
 	}
 
-	export const TableColumnsData = async (connection: TConnection, table: string, schema?: string): Promise<any[]> => {
+	export const TableColumnsData = async (connection: TConnection | Promise<TConnection>, table: string, schema?: string): Promise<any[]> => {
 		return FetchMany<any>(
 			connection,
 			`
@@ -676,7 +681,7 @@ export namespace PGSQL {
 		)
 	}
 
-	export const TableFKsData = async (connection: TConnection, table: string, schema?: string): Promise<any[]> => {
+	export const TableFKsData = async (connection: TConnection | Promise<TConnection>, table: string, schema?: string): Promise<any[]> => {
 		return FetchMany<any>(
 			connection,
 			`
@@ -705,7 +710,7 @@ export namespace PGSQL {
 		)
 	}
 
-	export const TableIndexesData = async (connection: TConnection, table: string, schema?: string): Promise<any[]> => {
+	export const TableIndexesData = async (connection: TConnection | Promise<TConnection>, table: string, schema?: string): Promise<any[]> => {
 		return FetchMany<any>(
 			connection,
 			`
@@ -719,7 +724,7 @@ export namespace PGSQL {
 		)
 	}
 
-	export const ViewData = async (connection: TConnection, view: string): Promise<string | null> => {
+	export const ViewData = async (connection: TConnection | Promise<TConnection>, view: string): Promise<string | null> => {
 		return (
 			(
 				await FetchOne<any>(
@@ -732,7 +737,7 @@ export namespace PGSQL {
 		)
 	}
 
-	export const ViewsMatData = async (connection: TConnection, viewMat: string): Promise<any> => {
+	export const ViewsMatData = async (connection: TConnection | Promise<TConnection>, viewMat: string): Promise<any> => {
 		return (
 			(
 				await FetchOne<any>(
@@ -745,7 +750,7 @@ export namespace PGSQL {
 		)
 	}
 
-	export const FunctionData = async (connection: TConnection, func: string): Promise<any> => {
+	export const FunctionData = async (connection: TConnection | Promise<TConnection>, func: string): Promise<any> => {
 		return (
 			(
 				await FetchOne<any>(
@@ -758,7 +763,7 @@ export namespace PGSQL {
 		)
 	}
 
-	export const TypeData = async (connection: TConnection, type: string): Promise<string[]> => {
+	export const TypeData = async (connection: TConnection | Promise<TConnection>, type: string): Promise<string[]> => {
 		return FetchArray<string>(
 			connection,
 			`
@@ -858,7 +863,7 @@ export namespace PGSQL {
 		}
 	}
 
-	export const ResetIDs = async (connection: TConnection) => {
+	export const ResetIDs = async (connection: TConnection | Promise<TConnection>) => {
 		let tables = await PGSQL.TablesArray(connection)
 
 		for (const table of tables) {
@@ -868,7 +873,7 @@ export namespace PGSQL {
 		}
 	}
 
-	export const GetTypes = async (connection: TConnection): Promise<PGEnum[]> => {
+	export const GetTypes = async (connection: TConnection | Promise<TConnection>): Promise<PGEnum[]> => {
 		const enumItems = await TypesArray(connection)
 
 		let enums: PGEnum[] = []
@@ -886,12 +891,12 @@ export namespace PGSQL {
 		return enums
 	}
 
-	export const TableComments = async (connection: TConnection, table: string, schema?: string): Promise<string | null> => {
+	export const TableComments = async (connection: TConnection | Promise<TConnection>, table: string, schema?: string): Promise<string | null> => {
 		return PGSQL.FetchOneValue<string | null>(connection, `
 			SELECT obj_description('${!schema ? '' : `${schema}.`}${table}'::regclass, 'pg_class')`)
 	}
 
-	export const TableColumnComments = async (connection: TConnection, table: string, schema?: string): Promise<{
+	export const TableColumnComments = async (connection: TConnection | Promise<TConnection>, table: string, schema?: string): Promise<{
 		column_name: string,
 		column_comment: string | null
 	}[]> => {
@@ -907,7 +912,7 @@ export namespace PGSQL {
 			  AND cols.table_name = '${table}'`)
 	}
 
-	export const GetPGTable = async (connection: TConnection, table: string, schema?: string): Promise<PGTable> => {
+	export const GetPGTable = async (connection: TConnection | Promise<TConnection>, table: string, schema?: string): Promise<PGTable> => {
 		const pgTable = new PGTable()
 
 		pgTable.name = table
