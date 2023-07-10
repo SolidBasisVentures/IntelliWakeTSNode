@@ -9,7 +9,7 @@ devDependencies:
     specifier: ^5.8.9
     version: 5.8.9
   '@types/node':
-    specifier: ^14.18.53
+    specifier: ^14.18.36
     version: 14.18.53
   '@types/pg':
     specifier: ^8.6.5
