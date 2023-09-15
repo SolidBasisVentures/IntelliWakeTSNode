@@ -530,7 +530,12 @@ export class PGTable {
 						if (pgColumn.dateType()) {
 							text += '\'\''
 						} else if (pgColumn.jsonType()) {
-							text += (CoalesceFalsey(pgColumn.column_default, '{}') ?? '{}').toString().substring(1, (pgColumn.column_default ?? '').toString().indexOf('::') - 1)
+							if (CoalesceFalsey(pgColumn.column_default ?? '', '{}').toString().includes('{}')) {
+								text += '{}'
+							} else {
+								text += (CoalesceFalsey(pgColumn.column_default, '{}') ?? '{}').toString().substring(1, (pgColumn.column_default ?? '').toString().indexOf('::') - 1)
+							}
+							text += ` as ${getTSType(pgColumn)}`
 						} else if (pgColumn.integerFloatType() || pgColumn.dateType()) {
 							text += pgColumn.column_default
 						} else if (typeof pgColumn.udt_name !== 'string') {

@@ -23,12 +23,14 @@ const processScript = async () => {
 		column_name: 'support_data2',
 		udt_name: PGColumn.TYPE_JSONB,
 		is_nullable: 'NO',
+		column_default: '{}',
 		column_comment: '{type: TTestType[ETest]}'
 	}))
 	pgTable.addColumn(new PGColumn({
 		column_name: 'support_data3',
 		udt_name: PGColumn.TYPE_JSONB,
 		is_nullable: 'NO',
+		column_default: '\'{}\'::jsonb',
 		column_comment: '{type: TTestType[ETest2]}'
 	}))
 	pgTable.addColumn(new PGColumn({column_name: 'ysupport_data', udt_name: PGColumn.TYPE_JSONB, is_nullable: 'YES'}))
