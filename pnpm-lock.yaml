@@ -6,25 +6,25 @@ settings:
 
 devDependencies:
   '@solidbasisventures/intelliwaketsfoundation':
-    specifier: ^5.8.9
-    version: 5.8.9
+    specifier: ^5.9.21
+    version: 5.9.21
   '@types/node':
-    specifier: ^14.18.53
+    specifier: ^14.18.36
     version: 14.18.53
   '@types/pg':
-    specifier: ^8.10.2
+    specifier: ^8.6.5
     version: 8.10.2
   pg:
-    specifier: ^8.11.1
+    specifier: ^8.7.3
     version: 8.11.1
   pg-cursor:
-    specifier: ^2.10.1
+    specifier: ^2.7.3
     version: 2.10.1(pg@8.11.1)
   prettier:
-    specifier: ^2.8.8
+    specifier: ^2.8.3
     version: 2.8.8
   source-map-support:
-    specifier: ^0.5.21
+    specifier: ^0.5.19
     version: 0.5.21
   ts-node:
     specifier: ^10.9.1
@@ -395,8 +395,8 @@ packages:
     resolution: {integrity: sha512-+Fj43pSMwJs4KRrH/938Uf+uAELIgVBmQzg/q1YG10djyfA3TnrU8N8XzqCh/okZdszqBQTZf96idMfE5lnwTA==}
     dev: true
 
-  /@solidbasisventures/intelliwaketsfoundation@5.8.9:
-    resolution: {integrity: sha512-mUZ1SKZFIYHxf/mdYzJz+tbW4HpLnB0xKnfCMSlqcuZpwEH5Rilbqbd3q4vee36Rp/J+4Pdi9MT5ufh0E3XgDQ==}
+  /@solidbasisventures/intelliwaketsfoundation@5.9.21:
+    resolution: {integrity: sha512-6TS0fkRL/l9/2Yam/4xUaRN2wxXbwJUAGxTdX8UEY4N4Zd5KUTE5nUlJHawflXL69qjvKBPwc4n4NzSAhC0LfQ==}
     dev: true
 
   /@ts-morph/common@0.18.1:
@@ -625,7 +625,7 @@ packages:
       normalize-path: 3.0.0
       readdirp: 3.6.0
     optionalDependencies:
-      fsevents: 2.3.2
+      fsevents: 2.3.3
     dev: true
 
   /code-block-writer@11.0.3:
@@ -775,8 +775,8 @@ packages:
     resolution: {integrity: sha512-OO0pH2lK6a0hZnAdau5ItzHPI6pUlvI7jMVnxUQRtw4owF2wk8lOSabtGDCTP4Ggrg2MbGnWO9X8K1t4+fGMDw==}
     dev: true
 
-  /fsevents@2.3.2:
-    resolution: {integrity: sha512-xiqMQR4xAeHTuB9uWm+fFRcIOgKBMiOBP+eXiyT7jsgVCq1bkVygt00oASowB7EdtpOHaaPgKt812P9ab+DDKA==}
+  /fsevents@2.3.3:
+    resolution: {integrity: sha512-5xoDfX+fL7faATnagmWPpbFtwh/R77WmMMqqHGS65C3vvB0YHrgF+B1YmZ3441tMj5n63k0212XNoJwzlhffQw==}
     engines: {node: ^8.16.0 || ^10.6.0 || >=11.0.0}
     os: [darwin]
     requiresBuild: true
@@ -1271,7 +1271,7 @@ packages:
     engines: {node: '>=14.18.0', npm: '>=8.0.0'}
     hasBin: true
     optionalDependencies:
-      fsevents: 2.3.2
+      fsevents: 2.3.3
     dev: true
 
   /run-parallel@1.2.0:
@@ -1592,7 +1592,7 @@ packages:
       postcss: 8.4.25
       rollup: 3.26.2
     optionalDependencies:
-      fsevents: 2.3.2
+      fsevents: 2.3.3
     dev: true
 
   /vitest@0.33.0:
