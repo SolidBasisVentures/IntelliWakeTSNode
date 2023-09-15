@@ -392,13 +392,17 @@ export class PGTable {
 		                  }, [])
 
 		enums.map(enumItem => enumItem.enum_name)
-		     .reduce<string[]>((results, enumItem) => results.includes(enumItem) ? results : [...results, ReplaceAll('[]', '', enumItem)],
+		     .reduce<string[]>((results, enumItem) => {
+				     return results.some(res => res === enumItem) ? results : [...results, ReplaceAll('[]', '', enumItem)]
+			     },
 			     types.reduce<string[]>((results, typ) => {
-					 const possibleEnum = ReplaceAll(']', '', typ.type_name.split('[')[1] ?? '')
+				     const possibleEnum = ReplaceAll(']', '', typ.type_name.split('[')[1] ?? '')
 				     if (possibleEnum.startsWith('E')) {
-						 return [...results, possibleEnum]
+					     if (!results.some(res => res === possibleEnum)) {
+						     return [...results, possibleEnum]
+					     }
 				     }
-					 return results
+				     return results
 			     }, []))
 		     .sort(SortCompare)
 		     .forEach(enumItem => {
@@ -418,11 +422,11 @@ export class PGTable {
 		          })
 
 		types.reduce<TTypeBuild[]>((results, typeItem) => {
-			     const newName = typeItem.type_name.split('[')[0]
-			     return (!newName || results.some(result => result.type_name === newName)) ?
-				     results :
-				     [...results.filter(result => result.type_name !== typeItem.type_name), typeItem]
-		     }, [])
+			const newName = typeItem.type_name.split('[')[0]
+			return (!newName || results.some(result => result.type_name === newName)) ?
+				results :
+				[...results.filter(result => result.type_name !== newName), {...typeItem, type_name: newName}]
+		}, [])
 		     .sort((a, b) => SortCompare(a.type_name, b.type_name))
 		     .forEach(typeItem => {
 			     text += `import ${this.importWithTypes ? 'type ' : ''}{${typeItem.type_name}} from "../Types/${typeItem.type_name}"${TS_EOL}`
