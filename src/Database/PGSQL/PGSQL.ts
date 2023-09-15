@@ -44,7 +44,19 @@ export type TConnection = (Pool | PoolClient | Client | {
 	query: Pool['query'];
 	connect: Pool['connect'];
 	transact: typeof transact;
-}>) & { inTransaction?: boolean }
+}>) & { inTransaction?: boolean } | Promise<(Pool | PoolClient | Client | {
+	pool: Pool;
+	Client: Client;
+	query: Pool['query'];
+	connect: Pool['connect'];
+	transact: typeof transact;
+} & Record<string, {
+	pool: Pool;
+	Client: Client;
+	query: Pool['query'];
+	connect: Pool['connect'];
+	transact: typeof transact;
+}>) & { inTransaction?: boolean }>
 
 export namespace PGSQL {
 	export interface IOffsetAndCount {
@@ -67,7 +79,9 @@ export namespace PGSQL {
 	export const query = async <T extends QueryResultRow>(connection: TConnection, sql: string, values?: any): Promise<TQueryResults<T>> => {
 		const start = Date.now()
 
-		return connection.query(sql, values)
+		const connectionResolved = await Promise.resolve(connection)
+
+		return connectionResolved.query(sql, values)
 		                 .then(response => {
 			                 const alert = CleanNumberNull(process.env.DB_MS_ALERT)
 			                 if (alert && !sql.includes(IgnoreDBMSAlert)) {
@@ -498,12 +512,13 @@ export namespace PGSQL {
 	export const ExecuteRaw = async (connection: TConnection, sql: string) => Execute(connection, sql)
 
 	export const Execute = async (connection: TConnection, sql: string, values?: any) => {
+		const connectionResolved = await Promise.resolve(connection)
 		try {
 			if (!process.env.DB_MS_ALERT) {
-				return await connection.query(sql, values)
+				return await connectionResolved.query(sql, values)
 			} else {
 				const start = Date.now()
-				const response = await connection.query(sql, values)
+				const response = await connectionResolved.query(sql, values)
 				const ms = Date.now() - start
 				if (ms > CleanNumber(process.env.DB_MS_ALERT)) {
 					console.log('----- Long SQL Query', ms / 1000, 's', ESTTodayDateTimeLabel())
@@ -522,26 +537,28 @@ export namespace PGSQL {
 	}
 
 	export const ExecuteNoConsole = async (connection: TConnection, sql: string, values?: any) => {
-		return await connection.query(sql, values)
+		const connectionResolved = await Promise.resolve(connection)
+		return await connectionResolved.query(sql, values)
 	}
 
 	export const Transaction = async <T>(connection: TConnection, func: () => Promise<T>) => {
-		if (connection.inTransaction) return func()
+		const connectionResolved = await Promise.resolve(connection)
+		if (connectionResolved.inTransaction) return func()
 
-		connection.inTransaction = true
+		connectionResolved.inTransaction = true
 
-		await Execute(connection, 'START TRANSACTION')
-		await Execute(connection, 'SET CONSTRAINTS ALL DEFERRED')
+		await Execute(connectionResolved, 'START TRANSACTION')
+		await Execute(connectionResolved, 'SET CONSTRAINTS ALL DEFERRED')
 
 		return func()
 			.then(response => {
-				connection.inTransaction = false
-				Execute(connection, 'COMMIT')
+				connectionResolved.inTransaction = false
+				Execute(connectionResolved, 'COMMIT')
 				return response
 			})
 			.catch(err => {
-				connection.inTransaction = false
-				Execute(connection, 'ROLLBACK')
+				connectionResolved.inTransaction = false
+				Execute(connectionResolved, 'ROLLBACK')
 				throw new Error(err)
 			})
 	}

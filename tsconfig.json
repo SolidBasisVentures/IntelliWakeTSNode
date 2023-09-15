@@ -22,10 +22,13 @@
 		"noUnusedLocals": true,
 		"noUnusedParameters": true,
 		"allowSyntheticDefaultImports": true,
-		"resolveJsonModule": true
+		"resolveJsonModule": true,
+		"types": [
+			"node"
+		]
 	},
 	"engines": {
-		"node": ">= 10.x"
+		"node": ">= 14.x"
 	},
 	"include": [
 		"src",
