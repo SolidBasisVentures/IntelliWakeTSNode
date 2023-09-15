@@ -1,26 +1,18 @@
-import {testValue} from './TestData'
-
-function testValueFunc() {
-	return testValue
-}
-
-async function testValueFuncAS(): Promise<number> {
-	return new Promise<number>(resolve => {
-		resolve(testValue)
-	})
-}
+import {ESTTodayDateTimeLabel} from '@solidbasisventures/intelliwaketsfoundation'
+import {PGTable} from '../src/Database/PGSQL/PGTable'
+import {PGColumn} from '../src/Database/PGSQL/PGColumn'
 
 const processScript = async () => {
-	const tvf = testValueFunc()
-	const tvfas = testValueFuncAS()
-
-	const tvfv = await Promise.resolve(tvf)
-	const tvfasv = await Promise.resolve(tvfas)
-
-	console.log('tvf', tvfv)
-	console.log('tvfas', tvfasv)
+	const pgTable = new PGTable({name: 'Test_Table'})
+	pgTable.addColumn(new PGColumn({column_name: 'id', udt_name: PGColumn.TYPE_INTEGER, is_nullable: 'NO'}))
+	pgTable.addColumn(new PGColumn({column_name: 'e_test', udt_name: PGColumn.TYPE_VARCHAR, numeric_scale: 64, is_nullable: 'NO', column_comment: '{enum: ETest.One}'}))
+	pgTable.addColumn(new PGColumn({column_name: 'support_data', udt_name: PGColumn.TYPE_JSONB, is_nullable: 'NO'}))
+	pgTable.addColumn(new PGColumn({column_name: 'support_data1', udt_name: PGColumn.TYPE_JSONB, is_nullable: 'NO', column_comment: '{type: TTestType}'}))
+	pgTable.addColumn(new PGColumn({column_name: 'support_data2', udt_name: PGColumn.TYPE_JSONB, is_nullable: 'NO', column_comment: '{type: TTestType[ETest]}'}))
+	pgTable.addColumn(new PGColumn({column_name: 'support_data3', udt_name: PGColumn.TYPE_JSONB, is_nullable: 'NO', column_comment: '{type: TTestType[ETest2]}'}))
+	console.log(pgTable.tsText())
 }
 
-console.info('Started')
+console.info('Started', ESTTodayDateTimeLabel())
 console.time('Ended')
 processScript().then(() => console.timeEnd('Ended'))

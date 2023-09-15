@@ -366,39 +366,41 @@ export class PGTable {
 		)
 
 		type TTypeBuild = { column_name: string, type_name: string }
-		const types: TTypeBuild[] = Array.from(
-			new Set(
-				[
-					...this.columns
-					       .map(column => {
-						       const regExp = /{([^}]*)}/
-						       const results = regExp.exec(column.column_comment)
-						       if (!!results && !!results[1]) {
-							       const commaItems = results[1].split(',')
-							       for (const commaItem of commaItems) {
-								       const items = commaItem.split(':')
-								       if ((items[0] ?? '').toLowerCase().trim() === 'type') {
-									       const typeName = items[1]?.split('.')[0]?.trim()
+		const types = this.columns
+		                  .reduce<TTypeBuild[]>((types, column) => {
+			                  const regExp = /{([^}]*)}/
+			                  const results = regExp.exec(column.column_comment)
+			                  if (!!results && !!results[1]) {
+				                  const commaItems = results[1].split(',')
+				                  for (const commaItem of commaItems) {
+					                  const items = commaItem.split(':')
+					                  if ((items[0] ?? '').toLowerCase().trim() === 'type') {
+						                  const typeName = items[1]?.split('.')[0]?.trim()
 
-									       if (!typeName) {
-										       throw new Error('Type requested in comment, but not specified  - Format {type: TTest}')
-									       }
+						                  if (!typeName) {
+							                  throw new Error('Type requested in comment, but not specified  - Format {type: TTest}')
+						                  }
 
-									       return {
-										       column_name: column.column_name,
-										       type_name: typeName
-									       }
-								       }
-							       }
-						       }
-						       return {column_name: column.column_name, type_name: ''}
-					       })
-				]
-					.filter(enumName => !!enumName.type_name)
-			)
-		)
+						                  return [...types, {
+							                  column_name: column.column_name,
+							                  type_name: typeName
+						                  }]
+					                  }
+				                  }
+			                  }
+			                  return types
+		                  }, [])
 
-		enums.map(enumItem => enumItem.enum_name).reduce<string[]>((results, enumItem) => results.includes(enumItem) ? results : [...results, ReplaceAll('[]', '', enumItem)], [])
+		enums.map(enumItem => enumItem.enum_name)
+		     .reduce<string[]>((results, enumItem) => results.includes(enumItem) ? results : [...results, ReplaceAll('[]', '', enumItem)],
+			     types.reduce<string[]>((results, typ) => {
+					 const possibleEnum = ReplaceAll(']', '', typ.type_name.split('[')[1] ?? '')
+				     if (possibleEnum.startsWith('E')) {
+						 return [...results, possibleEnum]
+				     }
+					 return results
+			     }, []))
+		     .sort(SortCompare)
 		     .forEach(enumItem => {
 			     text += `import ${(this.importWithTypes &&
 				     !this.columns.some(column => ReplaceAll(' ', '', column.column_comment ?? '').toLowerCase().includes(`{enum:${enumItem.toLowerCase()}`) &&
@@ -409,16 +411,19 @@ export class PGTable {
 				     'type ' : ''}{${enumItem}} from "../Enums/${enumItem}"${TS_EOL}`
 		     })
 
-		interfaces.map(interfaceItem => interfaceItem).reduce<TInterfaceBuild[]>((results, interfaceItem) => results.some(result => result.interface_name === interfaceItem.interface_name && (!!result.otherImportItem || !interfaceItem.otherImportItem)) ? results : [...results.filter(result => result.interface_name !== interfaceItem.interface_name), interfaceItem], [])
+		interfaces.reduce<TInterfaceBuild[]>((results, interfaceItem) => results.some(result => result.interface_name === interfaceItem.interface_name && (!!result.otherImportItem || !interfaceItem.otherImportItem)) ? results : [...results.filter(result => result.interface_name !== interfaceItem.interface_name), interfaceItem], [])
+		          .sort((a, b) => SortCompare(a.interface_name, b.interface_name))
 		          .forEach(interfaceItem => {
 			          text += `import ${this.importWithTypes ? 'type ' : ''}{${interfaceItem.interface_name}${(!interfaceItem.otherImportItem || interfaceItem?.otherImportItem?.toLowerCase() === 'null') ? '' : `, ${interfaceItem.otherImportItem}`}} from "../Interfaces/${interfaceItem.interface_name}"${TS_EOL}`
 		          })
 
-
-		types.map(typeItem => typeItem)
-		     .reduce<TTypeBuild[]>((results, typeItem) => results.some(result => result.type_name === typeItem.type_name) ?
-			     results :
-			     [...results.filter(result => result.type_name !== typeItem.type_name), typeItem], [])
+		types.reduce<TTypeBuild[]>((results, typeItem) => {
+			     const newName = typeItem.type_name.split('[')[0]
+			     return (!newName || results.some(result => result.type_name === newName)) ?
+				     results :
+				     [...results.filter(result => result.type_name !== typeItem.type_name), typeItem]
+		     }, [])
+		     .sort((a, b) => SortCompare(a.type_name, b.type_name))
 		     .forEach(typeItem => {
 			     text += `import ${this.importWithTypes ? 'type ' : ''}{${typeItem.type_name}} from "../Types/${typeItem.type_name}"${TS_EOL}`
 		     })
@@ -434,8 +439,25 @@ export class PGTable {
 			text += ` extends I${this.inherits.join(', I')}`
 		}
 		text += ` {` + TS_EOL
+
+		function getTSType(pgColumn: PGColumn): string {
+			let tsType = ReplaceAll('[]', '', enums.find(enumItem => enumItem.column_name === pgColumn.column_name)?.enum_name ??
+				interfaces.find(interfaceItem => interfaceItem.column_name === pgColumn.column_name)?.interface_name ??
+				types.find(typeItem => typeItem.column_name === pgColumn.column_name)?.type_name ??
+				pgColumn.jsType()).trim()
+			if (pgColumn.array_dimensions.length > 0) {
+				tsType += `[${pgColumn.array_dimensions.map(() => '').join('],[')}]`
+			}
+			if (IsOn(pgColumn.is_nullable ?? 'YES')) {
+				tsType += ' | null'
+			}
+
+			return tsType
+		}
+
 		for (const pgColumn of this.columns) {
 			// if (!!pgColumn.column_comment || !!pgColumn.generatedAlwaysAs) {
+
 			if (!!PGTable.CleanComment(pgColumn.column_comment)) {
 				text += `\t/** `
 				text += `${PGTable.CleanComment(pgColumn.column_comment)} `
@@ -448,16 +470,7 @@ export class PGTable {
 			text += '\t'
 			text += pgColumn.column_name
 			text += ': '
-			text += ReplaceAll('[]', '', enums.find(enumItem => enumItem.column_name === pgColumn.column_name)?.enum_name ??
-				interfaces.find(interfaceItem => interfaceItem.column_name === pgColumn.column_name)?.interface_name ??
-				types.find(typeItem => typeItem.column_name === pgColumn.column_name)?.type_name ??
-				pgColumn.jsType()).trim()
-			if (pgColumn.array_dimensions.length > 0) {
-				text += `[${pgColumn.array_dimensions.map(() => '').join('],[')}]`
-			}
-			if (IsOn(pgColumn.is_nullable ?? 'YES')) {
-				text += ' | null'
-			}
+			text += getTSType(pgColumn)
 			text += TS_EOL
 		}
 		text += '}' + TS_EOL
@@ -513,7 +526,7 @@ export class PGTable {
 						if (pgColumn.dateType()) {
 							text += '\'\''
 						} else if (pgColumn.jsonType()) {
-							text += (pgColumn.column_default ?? '{}').toString().substring(1, (pgColumn.column_default ?? '').toString().indexOf('::') - 1)
+							text += (CoalesceFalsey(pgColumn.column_default, '{}') ?? '{}').toString().substring(1, (pgColumn.column_default ?? '').toString().indexOf('::') - 1)
 						} else if (pgColumn.integerFloatType() || pgColumn.dateType()) {
 							text += pgColumn.column_default
 						} else if (typeof pgColumn.udt_name !== 'string') {
@@ -542,6 +555,8 @@ export class PGTable {
 							text += '0'
 						} else if (pgColumn.dateType()) {
 							text += '\'\''
+						} else if (pgColumn.jsonType()) {
+							text += `{} as ${getTSType(pgColumn)}`
 						} else {
 							text += '\'\''
 						}
