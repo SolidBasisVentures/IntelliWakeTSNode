@@ -1,7 +1,7 @@
 import {PGColumn} from './PGColumn'
 import {PGIndex} from './PGIndex'
 import {PGForeignKey} from './PGForeignKey'
-import type {TObjectConstraint, TObjectFieldConstraint} from '@solidbasisventures/intelliwaketsfoundation'
+import {StringGetSets, TObjectConstraint, TObjectFieldConstraint} from '@solidbasisventures/intelliwaketsfoundation'
 import {
 	CleanNumber,
 	CoalesceFalsey,
@@ -432,6 +432,17 @@ export class PGTable {
 			     text += `import ${this.importWithTypes ? 'type ' : ''}{${typeItem.type_name}} from "../Types/${typeItem.type_name}"${TS_EOL}`
 		     })
 
+		const enumReferences = enums
+			.filter(enumItem => {
+				if (enums.filter(eFilter => eFilter.enum_name === enumItem.enum_name).length !== 1) return false
+
+				if (!this.columns.some(col => (col.column_comment?.toLowerCase())?.includes('{type') &&
+					(col.column_comment?.toLowerCase())?.includes(`[${enumItem.enum_name.toLowerCase()}]`))) return false
+
+				return true
+			})
+			.sort((a, b) => SortCompare(a.enum_name, b.enum_name))
+
 		text += TS_EOL
 
 		if (this.description) {
@@ -439,16 +450,34 @@ export class PGTable {
 		}
 
 		text += `export interface I${this.name}`
+		if (enumReferences.length) {
+			text += `<${enumReferences.map(er => `T${er.enum_name} extends ${er.enum_name} = ${er.enum_name}`).join(', ')}>`
+		}
 		if (this.inherits.length > 0) {
 			text += ` extends I${this.inherits.join(', I')}`
 		}
 		text += ` {` + TS_EOL
 
-		function getTSType(pgColumn: PGColumn): string {
+		function getTSType(pgColumn: PGColumn, eReferences?: typeof enumReferences): string {
 			let tsType = ReplaceAll('[]', '', enums.find(enumItem => enumItem.column_name === pgColumn.column_name)?.enum_name ??
 				interfaces.find(interfaceItem => interfaceItem.column_name === pgColumn.column_name)?.interface_name ??
 				types.find(typeItem => typeItem.column_name === pgColumn.column_name)?.type_name ??
 				pgColumn.jsType()).trim()
+
+			if (eReferences?.length) {
+				if (eReferences.some(er => er.enum_name === tsType)) {
+					tsType = `T${tsType}`
+				} else {
+					const bracketValue = (StringGetSets(tsType, '[', ']') ?? [])[0]
+					if (bracketValue && eReferences.some(er => er.enum_name === bracketValue)) {
+						tsType = tsType.replace('[', '[T')
+					}
+				}
+			}
+
+			// const er = eReferences?.find(er => er.enum_name === )
+
+
 			if (pgColumn.array_dimensions.length > 0) {
 				tsType += `[${pgColumn.array_dimensions.map(() => '').join('],[')}]`
 			}
@@ -474,7 +503,7 @@ export class PGTable {
 			text += '\t'
 			text += pgColumn.column_name
 			text += ': '
-			text += getTSType(pgColumn)
+			text += getTSType(pgColumn, enumReferences)
 			text += TS_EOL
 		}
 		text += '}' + TS_EOL
