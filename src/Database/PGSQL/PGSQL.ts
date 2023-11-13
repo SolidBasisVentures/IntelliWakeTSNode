@@ -571,7 +571,7 @@ export namespace PGSQL {
 
 		try {
 			for (const table of tables) {
-				if (exceptions.includes(table)) {
+				if (!exceptions.includes(table)) {
 					await Execute(connection, `TRUNCATE TABLE ${table} RESTART IDENTITY` + (includeCascade ? ' CASCADE' : ''), undefined)
 				}
 			}
