@@ -42,7 +42,7 @@ devDependencies:
     specifier: ^3.7.2
     version: 3.7.2(@types/node@20.11.6)(typescript@5.3.3)(vite@5.0.12)
   vitest:
-    specifier: ^1.0.0
+    specifier: ^1.2.1
     version: 1.2.1(@types/node@20.11.6)
 
 packages:
