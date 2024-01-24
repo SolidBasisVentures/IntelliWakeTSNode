@@ -42,22 +42,6 @@ export const KeyboardKey = async (question?: string, validKeys?: string[] | ((ke
 	})
 }
 
-// export const ExecuteScript = async (script: string): Promise<string> =>
-// 	new Promise<string>((resolve, reject) => {
-// 		cp.exec(script, async (error: any | null, stdout: string, stderr: string) => {
-// 			if (error) {
-// 				reject(error)
-// 			} else {
-// 				if (stderr) {
-// 					console.log(`stderr: ${stderr}`)
-// 				}
-//
-// 				resolve(stdout)
-// 			}
-// 		})
-// 	})
-
-
 /**
  * @typedef {Object} TParallelProcessOptions
  * @template T
