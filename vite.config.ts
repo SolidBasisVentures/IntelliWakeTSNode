@@ -5,7 +5,7 @@ import dts from 'vite-plugin-dts'
 export default defineConfig({
 	test: {},
 	build: {
-		target: 'es2015',
+		target: 'node20',
 		lib: {
 			entry: resolve(__dirname, 'src/main.ts'),
 			name: 'main',
