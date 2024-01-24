@@ -6,8 +6,8 @@ settings:
 
 devDependencies:
   '@solidbasisventures/intelliwaketsfoundation':
-    specifier: ^5.11.14
-    version: 5.11.14
+    specifier: ^5.11.15
+    version: 5.11.15
   '@types/node':
     specifier: ^14.18.63
     version: 14.18.63
@@ -391,8 +391,8 @@ packages:
     resolution: {integrity: sha512-+Fj43pSMwJs4KRrH/938Uf+uAELIgVBmQzg/q1YG10djyfA3TnrU8N8XzqCh/okZdszqBQTZf96idMfE5lnwTA==, tarball: https://registry.npmjs.org/@sinclair/typebox/-/typebox-0.27.8.tgz}
     dev: true
 
-  /@solidbasisventures/intelliwaketsfoundation@5.11.14:
-    resolution: {integrity: sha512-QGvlGa+UEOWRQBz9xz0Gi8rgyoGsbYFsFnO+iAQRyfcrwaRWEPokTy3QwwM3DP6+ULu/nwfa+YyMfdtuG6xQ8A==}
+  /@solidbasisventures/intelliwaketsfoundation@5.11.15:
+    resolution: {integrity: sha512-055xmOOxILCsUPyzATlqwoYixyTq/n1dhrP1W1xmYz/L7AkFmb+GcLIbzZqdapWpC0ELLdEGJglAzfyIcGb/hw==}
     dev: true
 
   /@ts-morph/common@0.18.1:
