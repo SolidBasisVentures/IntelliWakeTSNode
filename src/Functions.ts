@@ -1,6 +1,6 @@
 import readline from 'readline'
 import { GreaterNumber, Sleep } from '@solidbasisventures/intelliwaketsfoundation'
-import {Readable} from 'node:stream'
+import {Readable} from 'stream'
 
 export const KeyboardLine = async (question: string, validAnswers?: string[]): Promise<string> => {
 	const rl = readline.createInterface({
