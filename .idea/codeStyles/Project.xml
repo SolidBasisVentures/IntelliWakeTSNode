@@ -4,7 +4,7 @@
     <CssCodeStyleSettings>
       <option name="VALUE_ALIGNMENT" value="2" />
     </CssCodeStyleSettings>
-    <DB2CodeStyleSettings version="6">
+    <DB2CodeStyleSettings version="7">
       <option name="USE_GENERAL_STYLE" value="false" />
       <option name="KEYWORD_CASE" value="2" />
       <option name="TYPE_CASE" value="2" />
@@ -13,7 +13,7 @@
       <option name="CONSTRAINT_WRAP_3" value="true" />
       <option name="VIEW_INDENT_QUERY" value="true" />
     </DB2CodeStyleSettings>
-    <DerbyCodeStyleSettings version="6">
+    <DerbyCodeStyleSettings version="7">
       <option name="USE_GENERAL_STYLE" value="false" />
       <option name="KEYWORD_CASE" value="2" />
       <option name="TYPE_CASE" value="2" />
@@ -22,7 +22,7 @@
       <option name="CONSTRAINT_WRAP_3" value="true" />
       <option name="VIEW_INDENT_QUERY" value="true" />
     </DerbyCodeStyleSettings>
-    <H2CodeStyleSettings version="6">
+    <H2CodeStyleSettings version="7">
       <option name="USE_GENERAL_STYLE" value="false" />
       <option name="KEYWORD_CASE" value="2" />
       <option name="TYPE_CASE" value="2" />
@@ -31,7 +31,7 @@
       <option name="CONSTRAINT_WRAP_3" value="true" />
       <option name="VIEW_INDENT_QUERY" value="true" />
     </H2CodeStyleSettings>
-    <HSQLCodeStyleSettings version="6">
+    <HSQLCodeStyleSettings version="7">
       <option name="USE_GENERAL_STYLE" value="false" />
       <option name="KEYWORD_CASE" value="2" />
       <option name="TYPE_CASE" value="2" />
@@ -55,7 +55,7 @@
       <option name="ENFORCE_TRAILING_COMMA" value="Remove" />
       <option name="SPACES_WITHIN_OBJECT_TYPE_BRACES" value="false" />
     </JSCodeStyleSettings>
-    <MSSQLCodeStyleSettings version="6">
+    <MSSQLCodeStyleSettings version="7">
       <option name="USE_GENERAL_STYLE" value="false" />
       <option name="KEYWORD_CASE" value="2" />
       <option name="TYPE_CASE" value="2" />
@@ -64,13 +64,13 @@
       <option name="CONSTRAINT_WRAP_3" value="true" />
       <option name="VIEW_INDENT_QUERY" value="true" />
     </MSSQLCodeStyleSettings>
-    <MySQLCodeStyleSettings version="6">
+    <MySQLCodeStyleSettings version="7">
       <option name="USE_GENERAL_STYLE" value="false" />
       <option name="KEYWORD_CASE" value="2" />
       <option name="TYPE_CASE" value="2" />
       <option name="CUSTOM_TYPE_CASE" value="2" />
     </MySQLCodeStyleSettings>
-    <OracleCodeStyleSettings version="6">
+    <OracleCodeStyleSettings version="7">
       <option name="USE_GENERAL_STYLE" value="false" />
       <option name="KEYWORD_CASE" value="2" />
       <option name="TYPE_CASE" value="2" />
@@ -90,7 +90,7 @@
       <option name="VARIABLE_NAMING_STYLE" value="CAMEL_CASE" />
       <option name="BLANK_LINES_BEFORE_RETURN_STATEMENT" value="1" />
     </PHPCodeStyleSettings>
-    <PostgresCodeStyleSettings version="6">
+    <PostgresCodeStyleSettings version="7">
       <option name="USE_GENERAL_STYLE" value="false" />
       <option name="KEYWORD_CASE" value="2" />
       <option name="TYPE_CASE" value="2" />
@@ -99,7 +99,7 @@
       <option name="CONSTRAINT_WRAP_3" value="true" />
       <option name="VIEW_INDENT_QUERY" value="true" />
     </PostgresCodeStyleSettings>
-    <SQLiteCodeStyleSettings version="6">
+    <SQLiteCodeStyleSettings version="7">
       <option name="USE_GENERAL_STYLE" value="false" />
       <option name="KEYWORD_CASE" value="2" />
       <option name="TYPE_CASE" value="2" />
@@ -108,7 +108,7 @@
       <option name="CONSTRAINT_WRAP_3" value="true" />
       <option name="VIEW_INDENT_QUERY" value="true" />
     </SQLiteCodeStyleSettings>
-    <SqlCodeStyleSettings version="6">
+    <SqlCodeStyleSettings version="7">
       <option name="KEYWORD_CASE" value="2" />
       <option name="TYPE_CASE" value="2" />
       <option name="CUSTOM_TYPE_CASE" value="2" />
@@ -116,7 +116,7 @@
       <option name="CONSTRAINT_WRAP_3" value="true" />
       <option name="VIEW_INDENT_QUERY" value="true" />
     </SqlCodeStyleSettings>
-    <SybaseCodeStyleSettings version="6">
+    <SybaseCodeStyleSettings version="7">
       <option name="USE_GENERAL_STYLE" value="false" />
       <option name="KEYWORD_CASE" value="2" />
       <option name="TYPE_CASE" value="2" />

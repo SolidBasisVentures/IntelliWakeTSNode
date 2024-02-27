@@ -1,57 +1,43 @@
-# Configuring NPM Package
+# IntelliWakeTSFoundation
 
+IntelliwakeTSNode, short for the IntelliWake TypeScript Node Library provides multiple helper functions in a back-end
+node server that are not present in vanilla JavaScript.
 
+Documentation on how to use these features can be found on
+our [WIKI](https://github.com/SolidBasisVentures/IntelliWakeTSNode/wiki)
 
+## Publishing
 
-## Helpful Resource
-This [link](https://blog.logrocket.com/the-complete-guide-to-publishing-a-react-package-to-npm/) explains the basics of using rollup for configuring a react/NPM package. I found the beginning pieces of information here.
+Use the following scripts found in the package.json to manage the repository:
 
+To run unit tests:
 
+```
+pnpm run Vitest-Watch
+```
 
-## NPM
-The original scope of this assignment was to move the iwaker code into a portable package hosted on NPM repository so that it could be distributed to different projects easily and handed to other developers. As of right now, there is no way that I can find to authenticate command line actions (such as npm install or npm update). Ideally an auth token should be stored in the .npmrc file however the only way this can be used (from what I can see) is to call this using an automated workflow which is not ideal. Another solution pursued was simply pulling the package from GitHub. However this breaks the update (npm update) functionality (see [this](https://medium.com/@jonchurch/use-github-branch-as-dependency-in-package-json-5eb609c81f1a) for more info). There are some other NPM repositories available.
+Note: please update test scripts for any changes.
 
+To run the `consoles.ts` file (with a watch for changes):
 
+```
+pnpm run TSNodeDev
+```
 
-## Package Components
+To update the packages in the package.json:
 
-### Rollup
-Rollup is an NPM package that is big used to take the package and complete two tasks: compile the code back down to ES5 so that all browsers can understand it, and “tree-shake” the code so that additional functions that are not used are emitted from the final package”. There are also a few plugins that have been added to rollup.
+```
+pnpm run Intall-IntelliWake
+```
 
-#### Commands
-In the package.json file, there are two commands that have to do with rollup: build and start. These can be run using the shell command “npm run build” or “npm run start”. The former manually builds the package when run and the latter starts a process that continuously builds the package every time it is saved, which can be very useful.
+After a significant change, update the minor version number with:
 
-### Typescript2 Plugin
-This is a simple plugin Rollup which allows for rollup to understand Typescript files.
+```
+pnpm run Verision-Minor-Advance
+```
 
-### SASS Plugin
-This allows for Rollup to understand sass and other files.
+To publish the repository to NPMJS:
 
-### Bable Plugin
-This is not currently added but it might be necessary if any normal javascript files are put in. I am not sure though
-
-
-
-## Files & Directories
-
-### rollup.config.js
-This is the configuration file for rollup. See [this](https://rollupjs.org/guide/en/#creating-your-first-bundle) for more info.
-
-### tsconfig,json
-This is the configuration file for the typescript plugin. [This](https://www.typescriptlang.org/docs/handbook/compiler-options.html) lists all of the options for this file.
-
-### src
-This is the directory where all of the code package code goes.
-
-### dist
-When rollup runs, all of the generated files are dumped in here. It can be very helpful to delete these if many changes are made; otherwise, extra files may continue to be present.
-
-#### Locally link files
-
-Old Scripts
-
-		"Build": "tsc && vite build",
-		"OLD_BuildAndPublish": "rollup -c && npm version patch --no-git-tag-version && npm publish",
-		"YarnUpgrade": "yarn upgrade && yarn add -D @solidbasisventures/intelliwaketsfoundation --force -W",
-		"Test": "jest",
-		"TSNode": "ts-node --script-mode consoles/consoles.ts",
+```
+pnpm run Publish
+```
