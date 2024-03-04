@@ -20,12 +20,12 @@ export type TLoadOptions<RECORD extends Record<string, any>> = {
 	ignoreCustomerCheck?: boolean
 }
 
-export abstract class CTableBase<RECORD extends Record<string, any>, TABLES extends string[]> {
+export abstract class CTableBase<RECORD extends Record<string, any>, TABLES extends string> {
 	public record: RECORD
 	public readonly recordDefault: RECORD
 	public recordBaseline: RECORD
 	public updateID: (keyof RECORD) | (keyof RECORD)[]
-	public abstract readonly table: TABLES[number]
+	public abstract readonly table: TABLES
 	protected nullIfFalsey: (keyof RECORD)[]
 	protected arrayFormDataItems: (keyof RECORD)[]
 	protected excludeColumnsSave: (keyof RECORD)[]
