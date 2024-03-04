@@ -47,6 +47,8 @@ export abstract class CTableBase<RECORD extends Record<string, any>, TABLES exte
 	public defaultImportColumns: (keyof RECORD)[] | null = null
 	public defaultImportExcludeColumns: (keyof RECORD)[] | null = null
 
+	public ignoreCustomerCheck = false
+
 	protected constructor(connection: TConnection, defaultValues: RECORD, options?: {
 		constraint?: TObjectConstraint<RECORD> | null
 		nullIfFalsey?: (keyof RECORD)[]
@@ -54,6 +56,7 @@ export abstract class CTableBase<RECORD extends Record<string, any>, TABLES exte
 		excludeColumnsSave?: (keyof RECORD)[]
 		excludeColumnsInsert?: (keyof RECORD)[]
 		excludeColumnsUpdate?: (keyof RECORD)[]
+		ignoreCustomerCheck?: boolean
 	}) {
 		this.connection = connection
 		this.record = {...defaultValues}
@@ -67,6 +70,7 @@ export abstract class CTableBase<RECORD extends Record<string, any>, TABLES exte
 		this.excludeColumnsSave = options?.excludeColumnsSave ?? []
 		this.excludeColumnsInsert = options?.excludeColumnsInsert ?? []
 		this.excludeColumnsUpdate = options?.excludeColumnsUpdate ?? []
+		this.ignoreCustomerCheck = !!options?.ignoreCustomerCheck
 	}
 
 	/**
@@ -227,13 +231,14 @@ export abstract class CTableBase<RECORD extends Record<string, any>, TABLES exte
 	 * Loads a record by ID and sets changes.
 	 *
 	 * @param {Partial<RECORD>} values - The values to set for the record.
+	 * @param ignoreCustomerCheck
 	 * @returns {Promise<this>} - A promise that resolves with the current instance of the record.
 	 */
-	public async loadByIDAndSetChanges(values: Partial<RECORD>): Promise<this> {
+	public async loadByIDAndSetChanges(values: Partial<RECORD>, ignoreCustomerCheck = false): Promise<this> {
 		const id = (values as any)['id']
 
 		if (id) {
-			await this.loadByID(id)
+			await this.loadByID(id, ignoreCustomerCheck)
 		}
 
 		this.setFromAny(values)
@@ -246,15 +251,18 @@ export abstract class CTableBase<RECORD extends Record<string, any>, TABLES exte
 	 *
 	 * @param {number | string | null | undefined} id - The ID of the record to load.
 	 *
+	 * @param ignoreCustomerCheck
 	 * @returns {Promise<this>} - A promise that resolves with the current instance of the method's class.
 	 *
 	 * @throws {Error} Throws an error if no ID is specified.
 	 * @throws {Error} Throws an error if the record is not found.
 	 */
-	public async loadID(id: number | string | null | undefined): Promise<this> {
+	public async loadID(id: number | string | null | undefined, ignoreCustomerCheck = false): Promise<this> {
 		if (!id) {
 			throw new Error('No ID specified')
 		}
+
+		this.ignoreCustomerCheck = this.ignoreCustomerCheck || ignoreCustomerCheck
 
 		const record = await PGSQL.GetByID<RECORD>(this.connection, this.table, CleanNumber(id))
 
@@ -275,14 +283,15 @@ export abstract class CTableBase<RECORD extends Record<string, any>, TABLES exte
 	 * Load an item by its ID.  If no id exists, returns null.
 	 *
 	 * @param {number | string | null | undefined} id - The ID of the item to load.
+	 * @param ignoreCustomerCheck
 	 * @returns {Promise<this | null>} A Promise that resolves to the loaded item if successful, otherwise null.
 	 */
-	public async loadByID(id: number | string | null | undefined): Promise<this | null> {
+	public async loadByID(id: number | string | null | undefined, ignoreCustomerCheck = false): Promise<this | null> {
 		if (!id) return null
 
 		try {
 			// noinspection UnnecessaryLocalVariableJS
-			const item = await this.loadID(id)
+			const item = await this.loadID(id, ignoreCustomerCheck)
 			return item
 		} catch (err) {
 			return null
@@ -324,6 +333,8 @@ export abstract class CTableBase<RECORD extends Record<string, any>, TABLES exte
 			ignoreCustomerCheck?: boolean
 		}
 	): Promise<this> {
+		this.ignoreCustomerCheck = this.ignoreCustomerCheck || !!options?.ignoreCustomerCheck
+
 		const params = new PGParams()
 
 		let where = ``
@@ -382,13 +393,14 @@ export abstract class CTableBase<RECORD extends Record<string, any>, TABLES exte
 	 *
 	 * @param {Partial<RECORD>} values - The values to check for existence.
 	 *
+	 * @param ignoreCustomerCheck
 	 * @return {Promise<boolean>} - A promise that resolves to a boolean value indicating if the values exist.
 	 */
 	public async existsValues(
-		values: Partial<RECORD>
+		values: Partial<RECORD>, ignoreCustomerCheck = false
 	): Promise<boolean> {
 		try {
-			return !!(await this.loadValues(values))
+			return !!(await this.loadValues(values, {ignoreCustomerCheck}))
 		} catch (err) {
 			return false
 		}
@@ -412,7 +424,8 @@ export abstract class CTableBase<RECORD extends Record<string, any>, TABLES exte
 			sortPrimary?: keyof RECORD,
 			ascendingPrimary?: boolean,
 			sortSecondary?: keyof RECORD,
-			ascendingSecondary?: boolean
+			ascendingSecondary?: boolean,
+			ignoreCustomerCheck?: boolean
 		}
 	): Promise<this> {
 		try {
@@ -426,13 +439,14 @@ export abstract class CTableBase<RECORD extends Record<string, any>, TABLES exte
 	 * Loads the ID or initializes the object.
 	 *
 	 * @param {number | string | null | undefined} id - The ID to load or null/undefined to initialize the object.
+	 * @param ignoreCustomerCheck
 	 * @return {Promise<this>} - A promise that resolves to the current object.
 	 */
 	public async loadIDOrInitial(
-		id: number | string | null | undefined
+		id: number | string | null | undefined, ignoreCustomerCheck = false
 	): Promise<this> {
 		if (!id) return this
-		return this.loadValuesOrInitial({id: id} as any)
+		return this.loadValuesOrInitial({id: id} as any, {ignoreCustomerCheck})
 	}
 
 	/**
@@ -452,7 +466,8 @@ export abstract class CTableBase<RECORD extends Record<string, any>, TABLES exte
 			sortPrimary?: keyof RECORD,
 			ascendingPrimary?: boolean,
 			sortSecondary?: keyof RECORD,
-			ascendingSecondary?: boolean
+			ascendingSecondary?: boolean,
+			ignoreCustomerCheck?: boolean
 		}
 	): Promise<this> {
 		try {
