@@ -9,18 +9,8 @@ import {
 	ReduceObjectToOtherKeys,
 	ToArray
 } from '@solidbasisventures/intelliwaketsfoundation'
-import type {Transform} from 'stream'
-import copyStream from 'pg-copy-streams'
 import {PGSQL, TConnection} from './PGSQL/PGSQL'
 import {PGParams} from './PGSQL/PGParams'
-
-export interface IStreamInCSVOptions<RECORD extends Record<string, any>> {
-	columns?: (keyof RECORD)[]
-	excludeColumns?: (keyof RECORD)[]
-	format?: 'CSV'
-	delimiter?: ',' | '|' | '\t'
-	header?: boolean
-}
 
 export type TLoadOptions<RECORD extends Record<string, any>> = {
 	sortPrimary?: keyof RECORD,
@@ -861,25 +851,25 @@ export abstract class CTableBase<RECORD extends Record<string, any>, TABLES exte
 	 * @param {IStreamInCSVOptions<RECORD>} [options] - Optional options for the CSV import.
 	 * @returns {void}
 	 */
-	public pipeInCSV(pipeStream: Transform, options?: IStreamInCSVOptions<RECORD>) {
-		if (!('query' in this.connection)) throw new Error('Could not load query in connection')
-
-		const useColumns = options?.columns ??
-			((options?.excludeColumns ?? this.defaultImportExcludeColumns ?? []).length ?
-				Object.keys(this.recordDefault)
-				      .filter(key => !((options?.excludeColumns ?? this.defaultImportExcludeColumns ?? [])?.includes(key))) :
-				this.defaultImportColumns)
-
-		const sql = `
-			COPY ${this.table} ${(useColumns ?? []).length > 0 ? `(${useColumns?.join(',')})` : ''} FROM STDIN
-			(
-			FORMAT ${options?.format ?? 'CSV'},
-			DELIMITER '${options?.delimiter ?? ','}'
-			${(options?.header ?? true) ? ', HEADER ' : ''}
-			)`
-
-		return pipeStream.pipe(this.connection.query(copyStream.from(sql)))
-	}
+	// public pipeInCSV(pipeStream: Transform, options?: IStreamInCSVOptions<RECORD>) {
+	// 	if (!('query' in this.connection)) throw new Error('Could not load query in connection')
+	//
+	// 	const useColumns = options?.columns ??
+	// 		((options?.excludeColumns ?? this.defaultImportExcludeColumns ?? []).length ?
+	// 			Object.keys(this.recordDefault)
+	// 			      .filter(key => !((options?.excludeColumns ?? this.defaultImportExcludeColumns ?? [])?.includes(key))) :
+	// 			this.defaultImportColumns)
+	//
+	// 	const sql = `
+	// 		COPY ${this.table} ${(useColumns ?? []).length > 0 ? `(${useColumns?.join(',')})` : ''} FROM STDIN
+	// 		(
+	// 		FORMAT ${options?.format ?? 'CSV'},
+	// 		DELIMITER '${options?.delimiter ?? ','}'
+	// 		${(options?.header ?? true) ? ', HEADER ' : ''}
+	// 		)`
+	//
+	// 	return pipeStream.pipe(this.connection.query(copyStream.from(sql)))
+	// }
 
 	/**
 	 * Converts the data into a format suitable for saving.  Designed for encrypting data.
