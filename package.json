@@ -1,6 +1,6 @@
 {
 	"name": "@solidbasisventures/intelliwaketsnode",
-	"version": "2.4.10",
+	"version": "2.4.18",
 	"description": "NPM package for IntelliWake Node Components",
 	"type": "module",
 	"exports": {
@@ -13,11 +13,10 @@
 	"types": "dist/main.d.ts",
 	"scripts": {
 		"Vitest-Watch": "vitest",
-		"Publish": "tsc && vite build && pnpm version patch && git push --tags && git push && npm publish",
-		"Install-IntelliWake": "pnpm install && pnpm update @solidbasisventures/intelliwaketsfoundation@latest",
 		"TSNodeDev": "ts-node-dev --script-mode --respawn --transpile-only consoles/consoles.ts",
-		"Build": "tsc && vite build",
-		"Version-Minor-Advance": "pnpm version minor"
+		"Install-IntelliWake": "pnpm install && pnpm update @solidbasisventures/intelliwaketsfoundation@latest",
+		"Version-Minor-Advance": "pnpm version minor",
+		"Publish": "tsc && vite build && pnpm version patch && git push --tags && git push && npm publish"
 	},
 	"files": [
 		"dist"
@@ -29,9 +28,8 @@
 		"url": "https://github.com/SolidBasisVentures/IntelliWakeTSNode.git"
 	},
 	"devDependencies": {
-		"@solidbasisventures/intelliwaketsfoundation": "^5.12.19",
+		"@solidbasisventures/intelliwaketsfoundation": "^5.11.2",
 		"@types/node": "^14.18.53",
-		"@types/pg-copy-streams": "^1.2.5",
 		"@types/pg": "^8.10.2",
 		"pg": "^8.11.1",
 		"pg-copy-streams": "^6.0.6",
