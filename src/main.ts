@@ -1,5 +1,6 @@
 export * from './Functions'
 export * from './SortSearch'
+export * from './Database/CTableBase'
 export * from './Database/PGSQL/PGTable'
 export * from './Database/PGSQL/PGSQL'
 export * from './Database/PGSQL/PGView'
