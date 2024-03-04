@@ -845,6 +845,18 @@ export abstract class CTableBase<RECORD extends Record<string, any>, TABLES exte
 	}
 
 	/**
+	 * Sets whether or not to ignore customer check for this instance.
+	 *
+	 * @param {boolean} ignore - Indicates whether to ignore customer check or not.
+	 * @return {this} - Returns the current instance.
+	 */
+	public setIgnoreCustomerCheck(ignore = true): this {
+		this.ignoreCustomerCheck = ignore
+
+		return this
+	}
+
+	/**
 	 * Pipes a CSV stream into the database table.
 	 *
 	 * @param {Transform} pipeStream - The CSV stream to pipe into the database.
