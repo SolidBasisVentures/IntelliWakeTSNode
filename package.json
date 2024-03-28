@@ -25,7 +25,7 @@
 	"license": "MIT",
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/SolidBasisVentures/IntelliWakeTSNode.git"
+		"url": "git+https://github.com/SolidBasisVentures/IntelliWakeTSNode.git"
 	},
 	"devDependencies": {
 		"@solidbasisventures/intelliwaketsfoundation": "^5.12.24",
