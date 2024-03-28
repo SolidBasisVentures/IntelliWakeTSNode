@@ -16,7 +16,7 @@
 		"TSNodeDev": "ts-node-dev --script-mode --respawn --transpile-only consoles/consoles.ts",
 		"Install-IntelliWake": "pnpm install && pnpm update @solidbasisventures/intelliwaketsfoundation@latest",
 		"Version-Minor-Advance": "pnpm version minor",
-		"Publish": "tsc && vite build && pnpm version patch && git push --tags --force && git push --force && npm publish"
+		"Publish": "tsc && vite build && pnpm version patch && git push --tags && git push && npm publish"
 	},
 	"files": [
 		"dist"
