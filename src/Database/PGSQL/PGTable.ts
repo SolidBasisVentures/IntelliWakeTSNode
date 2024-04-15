@@ -1,7 +1,6 @@
 import {PGColumn} from './PGColumn'
 import {PGIndex} from './PGIndex'
 import {PGForeignKey} from './PGForeignKey'
-import {StringGetSets, TObjectConstraint, TObjectFieldConstraint} from '@solidbasisventures/intelliwaketsfoundation'
 import {
 	CleanNumber,
 	CoalesceFalsey,
@@ -9,6 +8,9 @@ import {
 	RemoveEnding,
 	ReplaceAll,
 	SortCompare,
+	StringGetSets,
+	TObjectConstraint,
+	TObjectFieldConstraint,
 	YYYY_MM_DD_HH_mm_ss
 } from '@solidbasisventures/intelliwaketsfoundation'
 import {PGEnum} from './PGEnum'
@@ -303,7 +305,7 @@ export class PGTable {
 										       throw new Error('Enum requested in comment, but not specified  - Format {Enum: ETest} for nullable or {Enum: ETest.FirstValue}')
 									       }
 									       if (!IsOn(column.is_nullable) && !enumDefault && !column.array_dimensions.length) {
-										       throw new Error('Not Nullable Enum requested in comment, but no default value specified - Format {Enum: ETest.FirstValue}')
+										       throw new Error(`Not Nullable Enum requested in comment, but no default value specified for ${this.name}.${column.column_name} - ${column.column_comment}`)
 									       }
 									       return {
 										       column_name: column.column_name,
@@ -803,7 +805,7 @@ export class PGTable {
 			ddl += `DROP TABLE IF EXISTS ${this.name} CASCADE;` + TS_EOL
 		}
 		ddl += `CREATE TABLE ${this.name}
-				(` + TS_EOL
+		        (` + TS_EOL
 
 		let prevColumn: PGColumn | null = null
 		for (const pgColumn of this.columns) {
