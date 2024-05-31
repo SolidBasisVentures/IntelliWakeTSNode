@@ -94,6 +94,7 @@ export class PGColumn implements IPGColumn {
 		PGColumn.TYPE_TEXT,
 		PGColumn.TYPE_JSON,
 		PGColumn.TYPE_JSONB,
+		PGColumn.TYPE_BYTEA,
 		PGColumn.TYPE_DATE,
 		PGColumn.TYPE_TIME,
 		PGColumn.TYPE_TIMETZ,
@@ -111,6 +112,8 @@ export class PGColumn implements IPGColumn {
 			return 'boolean'
 		} else if (this.integerFloatType()) {
 			return 'number'
+		} else if (this.udt_name === PGColumn.TYPE_BYTEA) {
+			return 'ArrayBuffer'
 		} else if (this.udt_name === PGColumn.TYPE_POINT) {
 			return '[number, number]'
 		} else if (this.udt_name.startsWith('e_')) {
