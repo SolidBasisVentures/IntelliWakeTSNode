@@ -406,6 +406,7 @@ export class PGTable {
 				     }
 				     return results
 			     }, []))
+		     .reduce<string[]>((results, enumItem) => results.some(result => result === enumItem) ? results : [...results, enumItem], [])
 		     .sort(SortCompare)
 		     .forEach(enumItem => {
 			     text += `import ${(this.importWithTypes &&
