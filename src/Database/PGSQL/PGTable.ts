@@ -483,6 +483,11 @@ export class PGTable {
 
 			if (pgColumn.array_dimensions.length > 0) {
 				tsType += `[${pgColumn.array_dimensions.map(() => '').join('],[')}]`
+			} else if (pgColumn.jsonType()) {
+				const regex = /\{.*\[.*\].*\}/
+				if (regex.test(pgColumn.column_comment ?? '')) {
+					tsType += '[]'
+				}
 			}
 			if (IsOn(pgColumn.is_nullable ?? 'YES')) {
 				tsType += ' | null'
