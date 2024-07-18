@@ -737,6 +737,14 @@ export abstract class CTableBase<RECORD extends Record<string, any>, TABLES exte
 		if (this.record) {
 			const obj: any = {...this.record}
 
+			if (this.constraint) {
+				for (const key of Object.keys(this.constraint ?? {}) as (keyof RECORD)[]) {
+					if (this.constraint[key].type === 'object' && this.constraint[key].isArray && typeof obj[key] !== 'string') {
+						obj[key] = JSON.stringify(obj[key]) as any
+					}
+				}
+			}
+
 			for (const excludeColumnSave of this.excludeColumnsSave) {
 				delete obj[excludeColumnSave]
 			}
