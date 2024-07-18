@@ -123,10 +123,18 @@ export class PGColumn implements IPGColumn {
 		}
 	}
 
-	public isArray = (): boolean => !!ToArray(this.array_dimensions)[0] ||
-		!!this.array_dimensions.length ||
-		(this.column_default ?? '')?.toString()?.includes('{}') ||
-		(this.column_default ?? '')?.toString()?.includes('[]')
+	public isArray = (): boolean => {
+		if (!!ToArray(this.array_dimensions)[0] ||
+			!!this.array_dimensions.length ||
+			(this.column_default ?? '')?.toString()?.includes('{}') ||
+			(this.column_default ?? '')?.toString()?.includes('[]'))
+			return true
+
+		if (!this.jsonType()) return false
+
+		const regex = /\{.*\[.*\].*\}/
+		return regex.test(this.column_comment ?? '')
+	}
 
 	public isNullable = (): boolean => IsOn(this.is_nullable)
 
@@ -267,7 +275,7 @@ export class PGColumn implements IPGColumn {
 
 			if ((this.column_default !== undefined && this.column_default !== null) || this.is_identity || this.isAutoIncrement) {
 				if (!(this.dateType() && (!this.column_default || (this.column_default ?? '').toString().toUpperCase().includes('NULL')))) {
-					if (this.array_dimensions.length > 0) {
+					if (this.isArray()) {
 						if (IsOn(this.is_nullable)) {
 							ddl += `DEFAULT ${this.column_default ?? 'NULL'} `
 						} else {

@@ -304,13 +304,13 @@ export class PGTable {
 									       if (!enumName) {
 										       throw new Error('Enum requested in comment, but not specified  - Format {Enum: ETest} for nullable or {Enum: ETest.FirstValue}')
 									       }
-									       if (!IsOn(column.is_nullable) && !enumDefault && !column.array_dimensions.length) {
+									       if (!IsOn(column.is_nullable) && !enumDefault && !column.isArray()) {
 										       throw new Error(`Not Nullable Enum requested in comment, but no default value specified for ${this.name}.${column.column_name} - ${column.column_comment}`)
 									       }
 									       return {
 										       column_name: column.column_name,
 										       enum_name: enumName,
-										       default_value: column.array_dimensions.length > 0 ?
+										       default_value: column.isArray() ?
 											       (IsOn(column.is_nullable) ? 'null' : enumDefault ?? '[]') :
 											       (!enumDefault ? 'null' : `${enumName}.${enumDefault}`)
 									       }
@@ -353,7 +353,7 @@ export class PGTable {
 										       column_name: column.column_name,
 										       interface_name: interfaceName,
 										       otherImportItem: interfaceDefault,
-										       default_value: column.array_dimensions.length > 0 ?
+										       default_value: column.isArray() ?
 											       (IsOn(column.is_nullable) ? 'null' : interfaceDefault ?? '[]') :
 											       interfaceDefault
 									       }
@@ -483,11 +483,8 @@ export class PGTable {
 
 			if (pgColumn.array_dimensions.length > 0) {
 				tsType += `[${pgColumn.array_dimensions.map(() => '').join('],[')}]`
-			} else if (pgColumn.jsonType()) {
-				const regex = /\{.*\[.*\].*\}/
-				if (regex.test(pgColumn.column_comment ?? '')) {
-					tsType += '[]'
-				}
+			} else if (pgColumn.isArray()) {
+				tsType += '[]'
 			}
 			if (IsOn(pgColumn.is_nullable ?? 'YES')) {
 				tsType += ' | null'
@@ -544,7 +541,7 @@ export class PGTable {
 				} else {
 					text += itemDefault
 				}
-			} else if (pgColumn.array_dimensions.length > 0) {
+			} else if (pgColumn.isArray()) {
 				if (IsOn(pgColumn.is_nullable)) {
 					text += 'null'
 				} else {

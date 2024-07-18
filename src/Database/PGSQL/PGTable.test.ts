@@ -134,13 +134,22 @@ test('PGTable', () => {
 		column_default: 'null',
 		column_comment: '{interface: ITest}'
 	})
+	pgTable.addColumn({
+		column_name: 'interface_test_null_jsonb',
+		udt_name: PGColumn.TYPE_JSONB,
+		is_nullable: 'YES',
+		column_default: 'null',
+		column_comment: '{type: TTest[]}'
+	})
 
-	let tsTest = pgTable.tsText()
+	let tsTest = pgTable.tsText({includeConstraint: true})
 
 	// console.info(tsTest)
 
 	expect(tsTest.includes('import {ETest} from "../Enums/ETest"')).toBeTruthy()
 	expect(tsTest.includes('import {ITest} from "../Interfaces/ITest"')).toBeTruthy()
+	expect(tsTest.includes('import {TTest} from "../Types/TTest"')).toBeTruthy()
+	expect(tsTest.includes('interface_test_null_jsonb: TTest[] | null')).toBeTruthy()
 
 	pgTable.addColumn({
 		column_name: 'enum_test2_array_null',
