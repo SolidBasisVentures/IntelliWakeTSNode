@@ -9,11 +9,11 @@ importers:
   .:
     devDependencies:
       '@solidbasisventures/intelliwaketsfoundation':
-        specifier: ^5.12.37
-        version: 5.12.37
+        specifier: ^5.12.38
+        version: 5.12.38
       '@types/node':
-        specifier: ^14.18.53
-        version: 14.18.63
+        specifier: ^22.5.1
+        version: 22.5.1
       '@types/pg':
         specifier: ^8.10.2
         version: 8.10.2
@@ -31,7 +31,7 @@ importers:
         version: 0.5.21
       ts-node:
         specifier: ^10.9.1
-        version: 10.9.2(@types/node@14.18.63)(typescript@4.9.5)
+        version: 10.9.2(@types/node@22.5.1)(typescript@4.9.5)
       ts-node-dev:
         specifier: ^1.1.8
         version: 1.1.8(typescript@4.9.5)
@@ -40,10 +40,10 @@ importers:
         version: 4.9.5
       vite:
         specifier: ^5.3.4
-        version: 5.3.4(@types/node@14.18.63)
+        version: 5.3.4(@types/node@22.5.1)
       vite-plugin-dts:
         specifier: ^1.7.3
-        version: 1.7.3(@types/node@14.18.63)(rollup@4.18.1)(vite@5.3.4(@types/node@14.18.63))
+        version: 1.7.3(@types/node@22.5.1)(rollup@4.18.1)(vite@5.3.4(@types/node@22.5.1))
       vitest:
         specifier: ^0.33.0
         version: 0.33.0
@@ -469,8 +469,8 @@ packages:
   '@sinclair/typebox@0.27.8':
     resolution: {integrity: sha512-+Fj43pSMwJs4KRrH/938Uf+uAELIgVBmQzg/q1YG10djyfA3TnrU8N8XzqCh/okZdszqBQTZf96idMfE5lnwTA==}
 
-  '@solidbasisventures/intelliwaketsfoundation@5.12.37':
-    resolution: {integrity: sha512-rj7vwMKMuC+2VDX8WoJIZGtDh0Y6v1e3QQ/44AmZimiUUXonDXVffMvNUqShbWI8Dg9kjDHczYPtRBmda12r8w==}
+  '@solidbasisventures/intelliwaketsfoundation@5.12.38':
+    resolution: {integrity: sha512-YGBdfbMWwkdsusRsCMwBFzd4Q4I2CdqA0Vg34ltdOeMMPOLvtYgwNDcQ/2MeA86IY7JJWcXiGmt8AUfrUY85/A==}
 
   '@ts-morph/common@0.18.1':
     resolution: {integrity: sha512-RVE+zSRICWRsfrkAw5qCAK+4ZH9kwEFv5h0+/YeHTLieWP7F4wWq4JsKFuNWG+fYh/KF+8rAtgdj5zb2mm+DVA==}
@@ -499,8 +499,8 @@ packages:
   '@types/estree@1.0.5':
     resolution: {integrity: sha512-/kYRxGDLWzHOB7q+wtSUQlFrtcdUccpfy+X+9iMBpHK8QLLhx2wIPYuS5DYtR9Wa/YlZAbIovy7qVdB1Aq6Lyw==}
 
-  '@types/node@14.18.63':
-    resolution: {integrity: sha512-fAtCfv4jJg+ExtXhvCkCqUKZ+4ok/JQk01qDKhL5BDDoS3AxKXhV5/MAVUZyQnSEd2GT92fkgZl0pz0Q0AzcIQ==}
+  '@types/node@22.5.1':
+    resolution: {integrity: sha512-KkHsxej0j9IW1KKOOAA/XBA0z08UFSrRQHErzEfA3Vgq57eXIMYboIlHJuYIfd+lwCQjtKqUu3UnmKbtUc9yRw==}
 
   '@types/pg@8.10.2':
     resolution: {integrity: sha512-MKFs9P6nJ+LAeHLU3V0cODEOgyThJ3OAnmOlsZsxux6sfQs3HRXR5bBn7xG5DjckEFhTAxsXi7k7cd0pCMxpJw==}
@@ -1129,6 +1129,9 @@ packages:
   ufo@1.3.2:
     resolution: {integrity: sha512-o+ORpgGwaYQXgqGDwd+hkS4PuZ3QnmqMMxRuajK/a38L6fTpcE5GPIfrf+L/KemFzfUpeUQc1rRS1iDBozvnFA==}
 
+  undici-types@6.19.8:
+    resolution: {integrity: sha512-ve2KP6f/JnbPBFyobGHuerC9g1FYGn/F8n1LWTwNxCEzd6IfqTwUQcNXgEtmmQ6DlRrC1hrSrBnCZPokRrDHjw==}
+
   universalify@0.1.2:
     resolution: {integrity: sha512-rBJeI5CXAlmy1pV+617WB9J63U6XcazHHF2f2dbJix4XzpUF0RS3Zbj0FGIOCAva5P/d/GBOYaACQ1w+0azUkg==}
     engines: {node: '>= 4.0.0'}
@@ -1427,20 +1430,20 @@ snapshots:
       '@jridgewell/resolve-uri': 3.1.0
       '@jridgewell/sourcemap-codec': 1.4.15
 
-  '@microsoft/api-extractor-model@7.28.3(@types/node@14.18.63)':
+  '@microsoft/api-extractor-model@7.28.3(@types/node@22.5.1)':
     dependencies:
       '@microsoft/tsdoc': 0.14.2
       '@microsoft/tsdoc-config': 0.16.2
-      '@rushstack/node-core-library': 3.62.0(@types/node@14.18.63)
+      '@rushstack/node-core-library': 3.62.0(@types/node@22.5.1)
     transitivePeerDependencies:
       - '@types/node'
 
-  '@microsoft/api-extractor@7.39.0(@types/node@14.18.63)':
+  '@microsoft/api-extractor@7.39.0(@types/node@22.5.1)':
     dependencies:
-      '@microsoft/api-extractor-model': 7.28.3(@types/node@14.18.63)
+      '@microsoft/api-extractor-model': 7.28.3(@types/node@22.5.1)
       '@microsoft/tsdoc': 0.14.2
       '@microsoft/tsdoc-config': 0.16.2
-      '@rushstack/node-core-library': 3.62.0(@types/node@14.18.63)
+      '@rushstack/node-core-library': 3.62.0(@types/node@22.5.1)
       '@rushstack/rig-package': 0.5.1
       '@rushstack/ts-command-line': 4.17.1
       colors: 1.2.5
@@ -1529,7 +1532,7 @@ snapshots:
   '@rollup/rollup-win32-x64-msvc@4.18.1':
     optional: true
 
-  '@rushstack/node-core-library@3.62.0(@types/node@14.18.63)':
+  '@rushstack/node-core-library@3.62.0(@types/node@22.5.1)':
     dependencies:
       colors: 1.2.5
       fs-extra: 7.0.1
@@ -1539,7 +1542,7 @@ snapshots:
       semver: 7.5.4
       z-schema: 5.0.5
     optionalDependencies:
-      '@types/node': 14.18.63
+      '@types/node': 22.5.1
 
   '@rushstack/rig-package@0.5.1':
     dependencies:
@@ -1555,7 +1558,7 @@ snapshots:
 
   '@sinclair/typebox@0.27.8': {}
 
-  '@solidbasisventures/intelliwaketsfoundation@5.12.37': {}
+  '@solidbasisventures/intelliwaketsfoundation@5.12.38': {}
 
   '@ts-morph/common@0.18.1':
     dependencies:
@@ -1582,11 +1585,13 @@ snapshots:
 
   '@types/estree@1.0.5': {}
 
-  '@types/node@14.18.63': {}
+  '@types/node@22.5.1':
+    dependencies:
+      undici-types: 6.19.8
 
   '@types/pg@8.10.2':
     dependencies:
-      '@types/node': 14.18.63
+      '@types/node': 22.5.1
       pg-protocol: 1.6.0
       pg-types: 4.0.1
 
@@ -2190,14 +2195,14 @@ snapshots:
       tsconfig: 7.0.0
       typescript: 4.9.5
 
-  ts-node@10.9.2(@types/node@14.18.63)(typescript@4.9.5):
+  ts-node@10.9.2(@types/node@22.5.1)(typescript@4.9.5):
     dependencies:
       '@cspotcode/source-map-support': 0.8.1
       '@tsconfig/node10': 1.0.9
       '@tsconfig/node12': 1.0.11
       '@tsconfig/node14': 1.0.3
       '@tsconfig/node16': 1.0.3
-      '@types/node': 14.18.63
+      '@types/node': 22.5.1
       acorn: 8.11.3
       acorn-walk: 8.3.2
       arg: 4.1.3
@@ -2233,6 +2238,8 @@ snapshots:
 
   ufo@1.3.2: {}
 
+  undici-types@6.19.8: {}
+
   universalify@0.1.2: {}
 
   universalify@2.0.1: {}
@@ -2245,14 +2252,14 @@ snapshots:
 
   validator@13.9.0: {}
 
-  vite-node@0.33.0(@types/node@14.18.63):
+  vite-node@0.33.0(@types/node@22.5.1):
     dependencies:
       cac: 6.7.14
       debug: 4.3.4
       mlly: 1.5.0
       pathe: 1.1.2
       picocolors: 1.0.0
-      vite: 4.5.2(@types/node@14.18.63)
+      vite: 4.5.2(@types/node@22.5.1)
     transitivePeerDependencies:
       - '@types/node'
       - less
@@ -2263,45 +2270,45 @@ snapshots:
       - supports-color
       - terser
 
-  vite-plugin-dts@1.7.3(@types/node@14.18.63)(rollup@4.18.1)(vite@5.3.4(@types/node@14.18.63)):
+  vite-plugin-dts@1.7.3(@types/node@22.5.1)(rollup@4.18.1)(vite@5.3.4(@types/node@22.5.1)):
     dependencies:
-      '@microsoft/api-extractor': 7.39.0(@types/node@14.18.63)
+      '@microsoft/api-extractor': 7.39.0(@types/node@22.5.1)
       '@rollup/pluginutils': 5.1.0(rollup@4.18.1)
-      '@rushstack/node-core-library': 3.62.0(@types/node@14.18.63)
+      '@rushstack/node-core-library': 3.62.0(@types/node@22.5.1)
       debug: 4.3.4
       fast-glob: 3.3.2
       fs-extra: 10.1.0
       kolorist: 1.8.0
       ts-morph: 17.0.1
-      vite: 5.3.4(@types/node@14.18.63)
+      vite: 5.3.4(@types/node@22.5.1)
     transitivePeerDependencies:
       - '@types/node'
       - rollup
       - supports-color
 
-  vite@4.5.2(@types/node@14.18.63):
+  vite@4.5.2(@types/node@22.5.1):
     dependencies:
       esbuild: 0.18.20
       postcss: 8.4.33
       rollup: 3.29.4
     optionalDependencies:
-      '@types/node': 14.18.63
+      '@types/node': 22.5.1
       fsevents: 2.3.3
 
-  vite@5.3.4(@types/node@14.18.63):
+  vite@5.3.4(@types/node@22.5.1):
     dependencies:
       esbuild: 0.21.5
       postcss: 8.4.39
       rollup: 4.18.1
     optionalDependencies:
-      '@types/node': 14.18.63
+      '@types/node': 22.5.1
       fsevents: 2.3.3
 
   vitest@0.33.0:
     dependencies:
       '@types/chai': 4.3.11
       '@types/chai-subset': 1.3.5
-      '@types/node': 14.18.63
+      '@types/node': 22.5.1
       '@vitest/expect': 0.33.0
       '@vitest/runner': 0.33.0
       '@vitest/snapshot': 0.33.0
@@ -2320,8 +2327,8 @@ snapshots:
       strip-literal: 1.3.0
       tinybench: 2.6.0
       tinypool: 0.6.0
-      vite: 4.5.2(@types/node@14.18.63)
-      vite-node: 0.33.0(@types/node@14.18.63)
+      vite: 4.5.2(@types/node@22.5.1)
+      vite-node: 0.33.0(@types/node@22.5.1)
       why-is-node-running: 2.2.2
     transitivePeerDependencies:
       - less

@@ -153,6 +153,7 @@ test('PGTable', () => {
 
 	// console.info(tsTest)
 
+	expect(tsTest.includes('import type {TObjectConstraint} from "@solidbasisventures/intelliwaketsfoundation"')).toBeTruthy()
 	expect(tsTest.includes('import {ETest} from "../Enums/ETest"')).toBeTruthy()
 	expect(tsTest.includes('import {ITest} from "../Interfaces/ITest"')).toBeTruthy()
 	expect(tsTest.includes('import {TTest} from "../Types/TTest"')).toBeTruthy()
@@ -160,6 +161,19 @@ test('PGTable', () => {
 	expect(tsTest.includes('interface_test_null_jsonb_array: null')).toBeTruthy()
 	expect(tsTest.includes('interface_test_notnull_jsonb_array: TTest[]')).toBeTruthy()
 	expect(tsTest.includes('interface_test_notnull_jsonb_array: []')).toBeTruthy()
+	expect(tsTest.includes('"id": {')).toBeTruthy()
+	expect(tsTest.includes('"type": "object",')).toBeTruthy()
+
+	tsTest = pgTable.tsText({includeConstraint: true, singleQuote: true, spaceInImports: true})
+
+	// console.info(tsTest)
+
+	expect(tsTest.includes("import type { TObjectConstraint } from '@solidbasisventures/intelliwaketsfoundation'")).toBeTruthy()
+	expect(tsTest.includes("import { ETest } from '../Enums/ETest'")).toBeTruthy()
+	expect(tsTest.includes("import { ITest } from '../Interfaces/ITest'")).toBeTruthy()
+	expect(tsTest.includes("import { TTest } from '../Types/TTest'")).toBeTruthy()
+	expect(tsTest.includes("'id': {")).toBeTruthy()
+	expect(tsTest.includes("'type': 'object',")).toBeTruthy()
 
 	pgTable.addColumn({
 		column_name: 'enum_test2_array_null',

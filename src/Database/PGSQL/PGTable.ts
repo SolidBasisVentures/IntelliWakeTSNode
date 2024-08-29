@@ -9,6 +9,7 @@ import {
 	ReplaceAll,
 	SortCompare,
 	StringGetSets,
+	ToArray,
 	TObjectConstraint,
 	TObjectFieldConstraint,
 	YYYY_MM_DD_HH_mm_ss
@@ -46,6 +47,8 @@ export const initialFixedWidthMapOptions: IFixedWidthMapOptions = {
 
 export type TPGTableTextOptions = {
 	includeConstraint?: boolean
+	singleQuote?: boolean
+	spaceInImports?: boolean
 }
 
 export class PGTable {
@@ -256,17 +259,25 @@ export class PGTable {
 	public tsText(options?: TPGTableTextOptions): string {
 		let text = this.tableHeaderText('Table Manager for')
 
+		function AddSpaceImport(importObject: string | (string | null)[]) {
+			return !options?.spaceInImports ? ToArray(importObject).filter(iO => !!iO).join(', ') : ' ' + ToArray(importObject).filter(iO => !!iO).join(', ') + ' '
+		}
+
+		function AddQuote(item: string | string[]) {
+			return !options?.singleQuote ? `"${ToArray(item).join('", "')}"` : `'${ToArray(item).join('\', \'')}'`
+		}
+
 		if (options?.includeConstraint) {
-			text += `import type {TObjectConstraint} from '@solidbasisventures/intelliwaketsfoundation'${TS_EOL}`
+			text += `import type {${AddSpaceImport('TObjectConstraint')}} from ${AddQuote(`@solidbasisventures/intelliwaketsfoundation`)}${TS_EOL}`
 		}
 
 		if (this.inherits.length > 0) {
 			for (const inherit of this.inherits) {
 				if (this.importWithTypes) {
-					text += `import type {I${inherit}} from './I${inherit}'${TS_EOL}`
-					text += `import {initial_${inherit}} from './I${inherit}'${TS_EOL}`
+					text += `import type {${AddSpaceImport(`I${inherit}`)}} from ${AddQuote(`./I${inherit}`)}${TS_EOL}`
+					text += `import {${AddSpaceImport(`initial_${inherit}`)}} from ${AddQuote(`./I${inherit}`)}${TS_EOL}`
 				} else {
-					text += `import {I${inherit}, initial_${inherit}} from './I${inherit}'${TS_EOL}`
+					text += `import {${AddSpaceImport([`I${inherit}`, `initial_${inherit}`])}} from ${AddQuote(`./I${inherit}`)}${TS_EOL}`
 				}
 			}
 		}
@@ -415,13 +426,13 @@ export class PGTable {
 						     (!!column.column_default &&
 							     !(column.column_default ?? '').toString().includes('{}') &&
 							     (column.column_default ?? '').toString().toLowerCase() !== 'null')))) ?
-				     'type ' : ''}{${enumItem}} from "../Enums/${enumItem}"${TS_EOL}`
+				     'type ' : ''}{${AddSpaceImport(enumItem)}} from ${AddQuote(`../Enums/${enumItem}`)}${TS_EOL}`
 		     })
 
 		interfaces.reduce<TInterfaceBuild[]>((results, interfaceItem) => results.some(result => result.interface_name === interfaceItem.interface_name && (!!result.otherImportItem || !interfaceItem.otherImportItem)) ? results : [...results.filter(result => result.interface_name !== interfaceItem.interface_name), interfaceItem], [])
 		          .sort((a, b) => SortCompare(a.interface_name, b.interface_name))
 		          .forEach(interfaceItem => {
-			          text += `import ${this.importWithTypes ? 'type ' : ''}{${interfaceItem.interface_name}${(!interfaceItem.otherImportItem || interfaceItem?.otherImportItem?.toLowerCase() === 'null') ? '' : `, ${interfaceItem.otherImportItem}`}} from "../Interfaces/${interfaceItem.interface_name}"${TS_EOL}`
+			          text += `import ${this.importWithTypes ? 'type ' : ''}{${AddSpaceImport([interfaceItem.interface_name, (!interfaceItem.otherImportItem || interfaceItem?.otherImportItem?.toLowerCase() === 'null') ? '' : `, ${interfaceItem.otherImportItem}`])}} from ${AddQuote(`../Interfaces/${interfaceItem.interface_name}`)}${TS_EOL}`
 		          })
 
 		types.reduce<TTypeBuild[]>((results, typeItem) => {
@@ -432,7 +443,7 @@ export class PGTable {
 		}, [])
 		     .sort((a, b) => SortCompare(a.type_name, b.type_name))
 		     .forEach(typeItem => {
-			     text += `import ${this.importWithTypes ? 'type ' : ''}{${typeItem.type_name}} from "../Types/${typeItem.type_name}"${TS_EOL}`
+			     text += `import ${this.importWithTypes ? 'type ' : ''}{${AddSpaceImport(typeItem.type_name)}} from ${AddQuote(`../Types/${typeItem.type_name}`)}${TS_EOL}`
 		     })
 
 		const enumReferences = enums
@@ -673,7 +684,13 @@ export class PGTable {
 				constraint[pgColumn.column_name] = fieldConstraint
 			}
 
-			text += TS_EOL + `export const Constraint_${this.name}: TObjectConstraint<I${this.name}> = ${JSON.stringify(constraint, undefined, 4)}` + TS_EOL
+			let stringified = JSON.stringify(constraint, undefined, 4)
+
+			if (options?.singleQuote) {
+				stringified = ReplaceAll('"', "'", stringified)
+			}
+
+			text += TS_EOL + `export const Constraint_${this.name}: TObjectConstraint<I${this.name}> = ${stringified}` + TS_EOL
 		}
 
 		return text
@@ -715,7 +732,9 @@ export class PGTable {
 			responseContext: RemoveEnding('/', relativePaths?.responseContext ?? '../MiddleWare/ResponseContext', true),
 			responseContextName: relativePaths?.responseContextName ?? 'responseContext',
 			responseContextClass: relativePaths?.responseContextClass ?? 'ResponseContext',
-			includeConstraint: !!relativePaths?.includeConstraint
+			includeConstraint: !!relativePaths?.includeConstraint,
+			singleQuote: false,
+			spaceInImports: false
 		}
 
 		let text = this.tableHeaderText('Table Class for', 'MODIFICATIONS WILL NOT BE OVERWRITTEN')
