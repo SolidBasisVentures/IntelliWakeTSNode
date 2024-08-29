@@ -175,6 +175,13 @@ test('PGTable', () => {
 	expect(tsTest.includes("'id': {")).toBeTruthy()
 	expect(tsTest.includes("'type': 'object',")).toBeTruthy()
 
+	tsTest = pgTable.tsText({includeConstraint: true, singleQuote: true, spaceInImports: true, noConstraintKeyQuotes: true})
+
+	// console.info(tsTest)
+
+	expect(tsTest.includes("id: {")).toBeTruthy()
+	expect(tsTest.includes("type: 'object',")).toBeTruthy()
+
 	pgTable.addColumn({
 		column_name: 'enum_test2_array_null',
 		udt_name: PGColumn.TYPE_VARCHAR,
