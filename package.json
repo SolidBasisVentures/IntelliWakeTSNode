@@ -29,17 +29,17 @@
 	},
 	"devDependencies": {
 		"@solidbasisventures/intelliwaketsfoundation": "^5.12.38",
-		"@types/node": "^22.5.1",
+		"@types/node": "^14.18.53",
 		"@types/pg": "^8.10.2",
 		"pg": "^8.11.1",
 		"pg-cursor": "^2.10.1",
 		"prettier": "^2.8.8",
 		"source-map-support": "^0.5.21",
-		"ts-node": "^10.9.2",
+		"ts-node": "^10.9.1",
 		"ts-node-dev": "^1.1.8",
-		"typescript": "^5.5.4",
-		"vite": "^5.4.2",
-		"vite-plugin-dts": "^4.0.3",
-		"vitest": "^2.0.5"
+		"typescript": "^4.9.5",
+		"vite": "^5.3.4",
+		"vite-plugin-dts": "^1.7.3",
+		"vitest": "^0.33.0"
 	}
 }
