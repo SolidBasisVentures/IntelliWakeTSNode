@@ -49,7 +49,8 @@ export type TPGTableTextOptions = {
 	includeConstraint?: boolean
 	singleQuote?: boolean
 	spaceInImports?: boolean
-	noConstraintKeyQuotes?: boolean
+	noConstraintKeyQuotes?: boolean,
+	tabsForObjects?: boolean
 }
 
 export class PGTable {
@@ -685,7 +686,7 @@ export class PGTable {
 				constraint[pgColumn.column_name] = fieldConstraint
 			}
 
-			let stringified = JSON.stringify(constraint, undefined, 4)
+			let stringified = JSON.stringify(constraint, undefined, options?.tabsForObjects ? "\t" : 4)
 
 			if (options?.noConstraintKeyQuotes) {
 				stringified = stringified.replace(/\"([^(\")"]+)\":/g, '$1:')
@@ -740,7 +741,8 @@ export class PGTable {
 			includeConstraint: !!relativePaths?.includeConstraint,
 			singleQuote: false,
 			spaceInImports: false,
-			noConstraintKeyQuotes: false
+			noConstraintKeyQuotes: false,
+			tabsForObjects: false
 		}
 
 		let text = this.tableHeaderText('Table Class for', 'MODIFICATIONS WILL NOT BE OVERWRITTEN')
