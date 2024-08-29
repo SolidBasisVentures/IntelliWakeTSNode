@@ -35,11 +35,11 @@
 		"pg-cursor": "^2.10.1",
 		"prettier": "^2.8.8",
 		"source-map-support": "^0.5.21",
-		"ts-node": "^10.9.1",
+		"ts-node": "^10.9.2",
 		"ts-node-dev": "^1.1.8",
 		"typescript": "^5.5.4",
 		"vite": "^5.4.2",
-		"vite-plugin-dts": "^1.7.3",
+		"vite-plugin-dts": "^4.0.3",
 		"vitest": "^2.0.5"
 	}
 }
