@@ -9,8 +9,8 @@ importers:
   .:
     devDependencies:
       '@solidbasisventures/intelliwaketsfoundation':
-        specifier: ^5.12.38
-        version: 5.12.38
+        specifier: ^5.12.39
+        version: 5.12.39
       '@types/node':
         specifier: ^14.18.53
         version: 14.18.63
@@ -485,8 +485,8 @@ packages:
   '@sinclair/typebox@0.27.8':
     resolution: {integrity: sha512-+Fj43pSMwJs4KRrH/938Uf+uAELIgVBmQzg/q1YG10djyfA3TnrU8N8XzqCh/okZdszqBQTZf96idMfE5lnwTA==}
 
-  '@solidbasisventures/intelliwaketsfoundation@5.12.38':
-    resolution: {integrity: sha512-YGBdfbMWwkdsusRsCMwBFzd4Q4I2CdqA0Vg34ltdOeMMPOLvtYgwNDcQ/2MeA86IY7JJWcXiGmt8AUfrUY85/A==}
+  '@solidbasisventures/intelliwaketsfoundation@5.12.39':
+    resolution: {integrity: sha512-bqseMCSHoAqbIYS5FsZLNFvGMjvUKW9WihnOtiSm98uV6kjwl7BFVJ5qddd/exw6pvBXjrGqeJ3lzi5DoqGZWQ==}
 
   '@ts-morph/common@0.18.1':
     resolution: {integrity: sha512-RVE+zSRICWRsfrkAw5qCAK+4ZH9kwEFv5h0+/YeHTLieWP7F4wWq4JsKFuNWG+fYh/KF+8rAtgdj5zb2mm+DVA==}
@@ -1636,7 +1636,7 @@ snapshots:
 
   '@sinclair/typebox@0.27.8': {}
 
-  '@solidbasisventures/intelliwaketsfoundation@5.12.38': {}
+  '@solidbasisventures/intelliwaketsfoundation@5.12.39': {}
 
   '@ts-morph/common@0.18.1':
     dependencies:
