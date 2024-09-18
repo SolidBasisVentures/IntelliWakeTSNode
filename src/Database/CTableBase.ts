@@ -33,6 +33,7 @@ export abstract class CTableBase<RECORD extends Record<string, any>, TABLES exte
 	protected excludeColumnsUpdate: (keyof RECORD)[]
 	protected constraint: TObjectConstraint<RECORD> | null = null
 	public connection: TConnection
+	public readerConnection: TConnection | null | undefined
 
 	public defaultImportColumns: (keyof RECORD)[] | null = null
 	public defaultImportExcludeColumns: (keyof RECORD)[] | null = null
@@ -47,6 +48,7 @@ export abstract class CTableBase<RECORD extends Record<string, any>, TABLES exte
 		excludeColumnsInsert?: (keyof RECORD)[]
 		excludeColumnsUpdate?: (keyof RECORD)[]
 		ignoreCustomerCheck?: boolean
+		readerConnection?: TConnection | null
 	}) {
 		this.connection = connection
 		this.record = {...defaultValues}
@@ -61,6 +63,7 @@ export abstract class CTableBase<RECORD extends Record<string, any>, TABLES exte
 		this.excludeColumnsInsert = options?.excludeColumnsInsert ?? []
 		this.excludeColumnsUpdate = options?.excludeColumnsUpdate ?? []
 		this.ignoreCustomerCheck = !!options?.ignoreCustomerCheck
+		this.readerConnection = options?.readerConnection
 	}
 
 	/**
@@ -254,7 +257,7 @@ export abstract class CTableBase<RECORD extends Record<string, any>, TABLES exte
 
 		this.ignoreCustomerCheck = this.ignoreCustomerCheck || ignoreCustomerCheck
 
-		const record = await PGSQL.GetByID<RECORD>(this.connection, this.table, CleanNumber(id))
+		const record = await PGSQL.GetByID<RECORD>(this.readerConnection ?? this.connection, this.table, CleanNumber(id))
 
 		if (!record) {
 			throw new Error(`Record not found ${this.table}`)
@@ -341,7 +344,7 @@ export abstract class CTableBase<RECORD extends Record<string, any>, TABLES exte
 		}
 
 		const result = await PGSQL.FetchOne<RECORD>(
-			this.connection,
+			this.readerConnection ?? this.connection,
 			`SELECT *
 			 FROM ${this.table} ${where}` + sort,
 			params.values
@@ -482,7 +485,7 @@ export abstract class CTableBase<RECORD extends Record<string, any>, TABLES exte
 		             FROM ${this.table}
 		             WHERE id = ANY ($1::INT[]) `
 
-		return await PGSQL.FetchMany<RECORD>(this.connection, sql, [ids])
+		return await PGSQL.FetchMany<RECORD>(this.readerConnection ?? this.connection, sql, [ids])
 	}
 
 	/**
@@ -526,7 +529,7 @@ export abstract class CTableBase<RECORD extends Record<string, any>, TABLES exte
 			}
 		}
 
-		return await PGSQL.FetchMany<RECORD>(this.connection, sql, params.values)
+		return await PGSQL.FetchMany<RECORD>(this.readerConnection ?? this.connection, sql, params.values)
 	}
 
 	/**
@@ -570,7 +573,7 @@ export abstract class CTableBase<RECORD extends Record<string, any>, TABLES exte
 			}
 		}
 
-		return await PGSQL.FetchArray<number>(this.connection, sql, params.values)
+		return await PGSQL.FetchArray<number>(this.readerConnection ?? this.connection, sql, params.values)
 	}
 
 	/**
@@ -612,7 +615,7 @@ export abstract class CTableBase<RECORD extends Record<string, any>, TABLES exte
 			}
 		}
 
-		return PGSQL.FetchOne<RECORD>(this.connection, sql, params.values)
+		return PGSQL.FetchOne<RECORD>(this.readerConnection ?? this.connection, sql, params.values)
 	}
 
 	/**
@@ -628,7 +631,7 @@ export abstract class CTableBase<RECORD extends Record<string, any>, TABLES exte
 		             FROM ${this.table}
 		             WHERE id = $1`
 
-		const one = await PGSQL.FetchOne<RECORD>(this.connection, sql, [id])
+		const one = await PGSQL.FetchOne<RECORD>(this.readerConnection ?? this.connection, sql, [id])
 
 		if (!one) throw new Error('Could not find record')
 
@@ -860,6 +863,17 @@ export abstract class CTableBase<RECORD extends Record<string, any>, TABLES exte
 	 */
 	public setIgnoreCustomerCheck(ignore = true): this {
 		this.ignoreCustomerCheck = ignore
+
+		return this
+	}
+
+	/**
+	 * Ignores or resets the reader connection by setting it to undefined.
+	 *
+	 * @return {this} The instance of the class on which the method was called.
+	 */
+	public ignoreReaderConnection(): this {
+		this.readerConnection = undefined
 
 		return this
 	}
