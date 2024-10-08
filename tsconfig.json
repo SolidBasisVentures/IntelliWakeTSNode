@@ -12,7 +12,7 @@
 		"sourceMap": true,
 		"allowJs": true,
 		"declaration": true,
-		"moduleResolution": "NodeNext",
+		"moduleResolution": "node",
 		"forceConsistentCasingInFileNames": true,
 		"noImplicitReturns": true,
 		"noImplicitThis": true,
