@@ -28,8 +28,8 @@
 		"url": "git+https://github.com/SolidBasisVentures/IntelliWakeTSNode.git"
 	},
 	"devDependencies": {
-		"@solidbasisventures/intelliwaketsfoundation": "^5.12.39",
-		"@types/node": "^14.18.53",
+		"@solidbasisventures/intelliwaketsfoundation": "^5.12.42",
+		"@types/node": "^22.7.5",
 		"@types/pg": "^8.10.2",
 		"pg": "^8.11.1",
 		"pg-cursor": "^2.10.1",

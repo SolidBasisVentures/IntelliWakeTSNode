@@ -9,6 +9,7 @@ import {
 	IPaginatorResponse,
 	IsOn,
 	ISortColumn,
+	IsWholeNumber,
 	ReplaceAll,
 	ToDigits
 } from '@solidbasisventures/intelliwaketsfoundation'
@@ -219,26 +220,26 @@ export namespace PGSQL {
 		const connectionResolved = await Promise.resolve(connection)
 
 		return connectionResolved.query(sql, values)
-		                 .then(response => {
-			                 const alert = CleanNumberNull(process.env.DB_MS_ALERT)
-			                 if (alert && !sql.includes(IgnoreDBMSAlert)) {
-				                 const ms = Date.now() - start
-				                 if (ms > alert) {
-					                 console.log('----- Long SQL Query', ToDigits(ms), 'ms')
-					                 console.log(sql)
-					                 console.log(values)
-				                 }
-			                 }
-			                 return response
-		                 })
-		                 .catch(err => {
-			                 console.log('------------ SQL Query')
-			                 console.log(DateFormat('LocalDateTime', 'now', 'America/New_York'))
-			                 console.log(err.message)
-			                 console.log(sql)
-			                 console.log(values)
-			                 throw err
-		                 })
+		                         .then(response => {
+			                         const alert = CleanNumberNull(process.env.DB_MS_ALERT)
+			                         if (alert && !sql.includes(IgnoreDBMSAlert)) {
+				                         const ms = Date.now() - start
+				                         if (ms > alert) {
+					                         console.log('----- Long SQL Query', ToDigits(ms), 'ms')
+					                         console.log(sql)
+					                         console.log(values)
+				                         }
+			                         }
+			                         return response
+		                         })
+		                         .catch(err => {
+			                         console.log('------------ SQL Query')
+			                         console.log(DateFormat('LocalDateTime', 'now', 'America/New_York'))
+			                         console.log(err.message)
+			                         console.log(sql)
+			                         console.log(values)
+			                         throw err
+		                         })
 	}
 	// {
 	// 	try {
@@ -311,8 +312,6 @@ export namespace PGSQL {
 	}
 
 
-
-
 	/**
 	 * `TableRowCount` asynchronously retrieves the count of rows in a specific database table.
 	 *
@@ -338,7 +337,7 @@ export namespace PGSQL {
 	 */
 	export const TableRowCount = async (connection: TConnection, table: string, schema?: string): Promise<number> => {
 		const data = await query(connection, `SELECT COUNT(*) AS count
-											  FROM ${(!!schema ? `${schema}.` : '') + table}`, undefined)
+		                                      FROM ${(!!schema ? `${schema}.` : '') + table}`, undefined)
 
 		return (((data.rows ?? [])[0] ?? {}) as any)['count'] ?? 0
 	}
@@ -383,9 +382,9 @@ export namespace PGSQL {
 	 */
 	export const TableExists = async (connection: TConnection, table: string, schema?: string): Promise<boolean> => {
 		const sql = `SELECT COUNT(*) AS count
-					 FROM information_schema.tables
-					 WHERE table_schema = '${CurrentSchema(schema)}'
-					   AND table_name = '${table}'`
+		             FROM information_schema.tables
+		             WHERE table_schema = '${CurrentSchema(schema)}'
+			           AND table_name = '${table}'`
 
 		const data = await query(connection, sql, undefined)
 
@@ -414,10 +413,10 @@ export namespace PGSQL {
 	 */
 	export const TableColumnExists = async (connection: TConnection, table: string, column: string, schema?: string): Promise<boolean> => {
 		const sql = `SELECT COUNT(*) AS count
-					 FROM information_schema.COLUMNS
-					 WHERE table_schema = '${CurrentSchema(schema)}'
-					   AND table_name = '${table}'
-					   AND column_name = '${column}'`
+		             FROM information_schema.COLUMNS
+		             WHERE table_schema = '${CurrentSchema(schema)}'
+			           AND table_name = '${table}'
+			           AND column_name = '${column}'`
 		const data = await query(connection, sql, undefined)
 		return ((((data.rows ?? [])[0] ?? {}) as any)['count'] ?? 0) > 0
 	}
@@ -443,9 +442,9 @@ export namespace PGSQL {
 	 */
 	export const TriggerExists = async (connection: TConnection, trigger: string, schema?: string): Promise<boolean> => {
 		const sql = `SELECT COUNT(*) AS count
-					 FROM information_schema.triggers
-					 WHERE trigger_schema = '${CurrentSchema(schema)}'
-					   AND trigger_name = '${trigger}'`
+		             FROM information_schema.triggers
+		             WHERE trigger_schema = '${CurrentSchema(schema)}'
+			           AND trigger_name = '${trigger}'`
 		const data = await query(connection, sql, undefined)
 		return ((((data.rows ?? [])[0] ?? {}) as any)['count'] ?? 0) > 0
 	}
@@ -610,10 +609,10 @@ export namespace PGSQL {
 		indexName: string, schema?: string
 	): Promise<boolean> => {
 		const sql = `SELECT COUNT(*) AS count
-					 FROM pg_indexes
-					 WHERE schemaname = '${CurrentSchema(schema)}'
-					   AND tablename = '${tablename}'
-					   AND indexname = '${indexName}'`
+		             FROM pg_indexes
+		             WHERE schemaname = '${CurrentSchema(schema)}'
+			           AND tablename = '${tablename}'
+			           AND indexname = '${indexName}'`
 		const data = await query(connection, sql, undefined)
 		return ((((data.rows ?? [])[0] ?? {}) as any)['count'] ?? 0) > 0
 	}
@@ -644,8 +643,8 @@ export namespace PGSQL {
 		} else {
 			// noinspection SqlResolve
 			const sql = `SELECT *
-						 FROM ${table}
-						 WHERE id = $1`
+			             FROM ${table}
+			             WHERE id = $1`
 			const data = await query<T>(connection, sql, [id])
 
 			return !!(data.rows ?? [])[0] ? {...(data.rows ?? [])[0]} : null
@@ -856,8 +855,8 @@ export namespace PGSQL {
 			INSERT INTO ${table}
 				("${Object.keys(newValues).join('","')}")
 			VALUES (${Object.values(newValues)
-							.map(value => params.add(value))
-							.join(',')})
+			                .map(value => params.add(value))
+			                .join(',')})
 			RETURNING *`
 
 		const results = await query(connection, sql, params.values)
@@ -901,8 +900,8 @@ export namespace PGSQL {
 			INSERT INTO ${table}
 				("${Object.keys(newValues).join('","')}")
 			VALUES (${Object.values(newValues)
-							.map(value => params.add(value))
-							.join(',')})
+			                .map(value => params.add(value))
+			                .join(',')})
 			RETURNING id`
 
 		const results = await query(connection, sql, params.values)
@@ -937,8 +936,8 @@ export namespace PGSQL {
 			INSERT INTO ${table}
 				("${Object.keys(values).join('","')}")
 			VALUES (${Object.values(values)
-							.map(value => params.add(value))
-							.join(',')})`
+			                .map(value => params.add(value))
+			                .join(',')})`
 
 		await query(connection, sql, params.values)
 	}
@@ -970,12 +969,12 @@ export namespace PGSQL {
 
 		// noinspection SqlResolve
 		const sql = `UPDATE ${table}
-					 SET ${BuildSetComponents(updateValues, params)}
-					 WHERE ${BuildWhereComponents(
-						 whereValues,
-						 params
-					 )}
-					 RETURNING *`
+		             SET ${BuildSetComponents(updateValues, params)}
+		             WHERE ${BuildWhereComponents(
+			             whereValues,
+			             params
+		             )}
+		             RETURNING *`
 		const data = await query(connection, sql, params.values)
 		// @ts-ignore
 		// if (!data.rows[0]) console.error('Error updating', sql, data)
@@ -1085,8 +1084,8 @@ export namespace PGSQL {
 
 		// noinspection SqlResolve
 		const sql = `DELETE
-					 FROM ${table}
-					 WHERE ${BuildWhereComponents(whereValues, params)}`
+		             FROM ${table}
+		             WHERE ${BuildWhereComponents(whereValues, params)}`
 		await query(connection, sql, params.values)
 	}
 
@@ -1496,7 +1495,7 @@ export namespace PGSQL {
 			`
 				SELECT f.proname
 				FROM pg_catalog.pg_proc f
-						 INNER JOIN pg_catalog.pg_namespace n ON (f.pronamespace = n.oid)
+					     INNER JOIN pg_catalog.pg_namespace n ON (f.pronamespace = n.oid)
 				WHERE n.nspname = '${CurrentSchema(schema)}'
 				  AND f.proname ILIKE 'func_%'`
 		)
@@ -1528,7 +1527,7 @@ export namespace PGSQL {
 			`
 				SELECT f.oid
 				FROM pg_catalog.pg_proc f
-						 INNER JOIN pg_catalog.pg_namespace n ON (f.pronamespace = n.oid)
+					     INNER JOIN pg_catalog.pg_namespace n ON (f.pronamespace = n.oid)
 				WHERE n.nspname = '${CurrentSchema(schema)}'
 				  AND f.proname ILIKE 'func_%'`
 		)
@@ -1653,26 +1652,26 @@ export namespace PGSQL {
 			connection,
 			`
 				SELECT tc.table_schema,
-					   tc.constraint_name,
-					   tc.table_name,
-					   MAX(tc.enforced),
-					   JSON_AGG(kcu.column_name) AS "columnNames",
-					   MAX(ccu.table_schema)     AS foreign_table_schema,
-					   MAX(ccu.table_name)       AS "primaryTable",
-					   JSON_AGG(ccu.column_name) AS "primaryColumns"
+				       tc.constraint_name,
+				       tc.table_name,
+				       MAX(tc.enforced),
+				       JSON_AGG(kcu.column_name) AS "columnNames",
+				       MAX(ccu.table_schema)     AS foreign_table_schema,
+				       MAX(ccu.table_name)       AS "primaryTable",
+				       JSON_AGG(ccu.column_name) AS "primaryColumns"
 				FROM information_schema.table_constraints AS tc
-						 JOIN information_schema.key_column_usage AS kcu
-							  ON tc.constraint_name = kcu.constraint_name
-								  AND tc.table_schema = kcu.table_schema
-						 JOIN information_schema.constraint_column_usage AS ccu
-							  ON ccu.constraint_name = tc.constraint_name
-								  AND ccu.table_schema = tc.table_schema
+					     JOIN information_schema.key_column_usage AS kcu
+					          ON tc.constraint_name = kcu.constraint_name
+						          AND tc.table_schema = kcu.table_schema
+					     JOIN information_schema.constraint_column_usage AS ccu
+					          ON ccu.constraint_name = tc.constraint_name
+						          AND ccu.table_schema = tc.table_schema
 				WHERE tc.table_schema = '${CurrentSchema(schema)}'
 				  AND tc.constraint_type = 'FOREIGN KEY'
 				  AND tc.table_name = $1
 				GROUP BY tc.table_schema,
-						 tc.constraint_name,
-						 tc.table_name`,
+				         tc.constraint_name,
+				         tc.table_name`,
 			[table]
 		)
 	}
@@ -2293,10 +2292,10 @@ export namespace PGSQL {
 	}[]> => {
 		return PGSQL.FetchMany<{ column_name: string, column_comment: string | null }>(connection, `
 			SELECT cols.column_name,
-				   (SELECT pg_catalog.COL_DESCRIPTION(c.oid, cols.ordinal_position::INT)
-					FROM pg_catalog.pg_class c
-					WHERE c.oid = (SELECT cols.table_name::REGCLASS::OID)
-					  AND c.relname = cols.table_name) AS column_comment
+			       (SELECT pg_catalog.COL_DESCRIPTION(c.oid, cols.ordinal_position::INT)
+			        FROM pg_catalog.pg_class c
+			        WHERE c.oid = (SELECT cols.table_name::REGCLASS::OID)
+				      AND c.relname = cols.table_name) AS column_comment
 
 			FROM information_schema.columns cols
 			WHERE cols.table_schema = '${CurrentSchema(schema)}'
@@ -2404,4 +2403,30 @@ export namespace PGSQL {
 	 *
 	 */
 	export const CleanSQL = (sql: string): string => ReplaceAll(';', '', sql)
+}
+
+/**
+ * Checks if a given value is a valid PostgreSQL integer.
+ * @param value - The value to check.
+ * @param unsigned - Optional flag to check for an unsigned integer. Default is false (signed).
+ * @returns true if the value is a valid PostgreSQL integer, false otherwise.
+ */
+export function IsValidPostgresInteger(value: any, unsigned: boolean = false): boolean {
+	if (!IsWholeNumber(value)) return false
+
+	const minSignedInt = -2147483648
+	const maxSignedInt = 2147483647
+	const maxUnsignedInt = 4294967295
+
+	const useValue = CleanNumberNull(value)
+
+	if (typeof useValue !== 'number' || !Number.isInteger(useValue)) {
+		return false
+	}
+
+	if (unsigned) {
+		return useValue >= 0 && useValue <= maxUnsignedInt
+	} else {
+		return useValue >= minSignedInt && useValue <= maxSignedInt
+	}
 }
