@@ -238,7 +238,6 @@ export namespace PGSQL {
 			                         console.log(err.message)
 			                         console.log("Error Code:", err.code || 'No code')
 			                         console.log("Error Detail:", err.detail || 'No detail')
-			                         console.log("Error Hint:", err.hint || 'No hint')
 			                         console.log("Error Position:", err.position || 'No position')
 			                         console.log("Error Stack:", err.stack || 'No stack trace')
 			                         console.log(sql)
@@ -1176,7 +1175,6 @@ export namespace PGSQL {
 			console.log(err.message)
 			console.log("Error Code:", err.code || 'No code')
 			console.log("Error Detail:", err.detail || 'No detail')
-			console.log("Error Hint:", err.hint || 'No hint')
 			console.log("Error Position:", err.position || 'No position')
 			console.log("Error Stack:", err.stack || 'No stack trace')
 			console.log(sql)
@@ -1242,26 +1240,39 @@ export namespace PGSQL {
 	 *
 	 * @throws Will throw an error if the transaction function or the database commands fail.
 	 */
-	export const Transaction = async <T>(connection: TConnection, func: () => Promise<T>) => {
-		const connectionResolved = await Promise.resolve(connection)
-		if (connectionResolved.inTransaction) return func()
+	export const Transaction = async <T>(connection: TConnection, func: (transactionClient: Client | PoolClient) => Promise<T>) => {
+		const connectionResolved = await connection
 
-		connectionResolved.inTransaction = true
+		let transactionClient: Client | PoolClient
+		if (connectionResolved instanceof Pool) {
+			transactionClient = await connectionResolved.connect()
+		} else if (connectionResolved instanceof PoolClient || connectionResolved instanceof Client) {
+			transactionClient = connectionResolved
+		} else if (connectionResolved.Client instanceof PoolClient || connectionResolved.Client instanceof Client) {
+			transactionClient = connectionResolved.Client
+		} else {
+			throw new Error('Invalid connection')
+		}
 
-		await Execute(connectionResolved, 'START TRANSACTION')
-		await Execute(connectionResolved, 'SET CONSTRAINTS ALL DEFERRED')
+		if (transactionClient.inTransaction) return func(transactionClient)
 
-		return func()
-			.then(response => {
-				connectionResolved.inTransaction = false
-				Execute(connectionResolved, 'COMMIT')
-				return response
-			})
-			.catch(err => {
-				connectionResolved.inTransaction = false
-				Execute(connectionResolved, 'ROLLBACK')
-				throw new Error(err)
-			})
+		transactionClient.inTransaction = true
+
+		await Execute(transactionClient, 'START TRANSACTION')
+		await Execute(transactionClient, 'SET CONSTRAINTS ALL DEFERRED')
+
+		try {
+			const response = await func(transactionClient)
+			await Execute(transactionClient, 'COMMIT')
+			return response
+		} catch (err) {
+			await Execute(transactionClient, 'ROLLBACK')
+			throw new Error(err)
+		} finally {
+			transactionClient.inTransaction = false
+			transactionClient.release()
+		}
+		}
 	}
 
 	/**
