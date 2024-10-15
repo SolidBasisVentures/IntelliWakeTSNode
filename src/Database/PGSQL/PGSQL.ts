@@ -236,6 +236,11 @@ export namespace PGSQL {
 			                         console.log('------------ SQL Query')
 			                         console.log(DateFormat('LocalDateTime', 'now', 'America/New_York'))
 			                         console.log(err.message)
+			                         console.log("Error Code:", err.code || 'No code')
+			                         console.log("Error Detail:", err.detail || 'No detail')
+			                         console.log("Error Hint:", err.hint || 'No hint')
+			                         console.log("Error Position:", err.position || 'No position')
+			                         console.log("Error Stack:", err.stack || 'No stack trace')
 			                         console.log(sql)
 			                         console.log(values)
 			                         throw err
@@ -1169,6 +1174,11 @@ export namespace PGSQL {
 		} catch (err) {
 			console.log('------------ SQL Execute', ESTTodayDateTimeLabel())
 			console.log(err.message)
+			console.log("Error Code:", err.code || 'No code')
+			console.log("Error Detail:", err.detail || 'No detail')
+			console.log("Error Hint:", err.hint || 'No hint')
+			console.log("Error Position:", err.position || 'No position')
+			console.log("Error Stack:", err.stack || 'No stack trace')
 			console.log(sql)
 			console.log(values)
 			throw new Error(err.message)
