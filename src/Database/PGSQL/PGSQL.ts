@@ -1214,52 +1214,66 @@ export namespace PGSQL {
 		return await connectionResolved.query(sql, values)
 	}
 
+
 	/**
 	 * Executes a function within a database transaction.
 	 *
 	 * @template T The expected return type of the transaction function.
 	 *
-	 * @param {TConnection} connection The database connection to use for the transaction.
-	 * @param {() => Promise<T>} func The function to execute within the transaction, which should return a Promise.
+	 * @param {TConnection} connection - The connection object to be used for the transaction
+	 * @param {(Client | Poolclient) => Promise<T>} func The function to execute within the transaction, which should return a Promise.
 	 *
 	 * @returns {Promise<T>} Returns a Promise that resolves with the result of the transaction function or
 	 * rejects with an error if an error occurred during the transaction.
 	 *
 	 * @remarks
-	 * The function makes use of two internal database commands, 'START TRANSACTION'
-	 * and 'SET CONSTRAINTS ALL DEFERRED', to start the transaction. If successful,
-	 * the transaction is committed using 'COMMIT', if an error occurs, the transaction
-	 * is reverted using 'ROLLBACK' and an Error is thrown.
+	 * The function initiates a transaction by utilizing two internal database commands: 'START TRANSACTION' and
+	 * 'SET CONSTRAINTS ALL DEFERRED'. If the transaction succeeds, it is finalized with 'COMMIT'.
+	 * In the event of an error, the transaction is rolled back using 'ROLLBACK', and an Error is thrown.
+	 * After the transaction is complete, if the poolClient is in use, it is released.
 	 *
 	 * @example
 	 *
-	 *   const result = await Transaction<number>(dbConnection, () => {
+	 *   const result = await Transaction<number>(dbConnection, (transactionClient) => {
 	 *     //...some database operations that return a Promise
 	 *   });
 	 *
-	 *
-	 * @throws Will throw an error if the transaction function or the database commands fail.
+	 * @throws {Error} - If an invalid connection object is provided or if an error occurs during the transaction
 	 */
-	export const Transaction = async <T>(connection: TConnection, func: () => Promise<T>) => {
-		const connectionResolved = await Promise.resolve(connection)
-		if (connectionResolved.inTransaction) return func()
+	export const Transaction = async <T>(connection: TConnection, func: (transactionClient: Client | PoolClient) => Promise<T>) => {
+		const connectionResolved = await connection
+
+		let transactionClient: Client | PoolClient
+		if (connectionResolved instanceof Pool) {
+			transactionClient = await connectionResolved.connect()
+		} else if (connectionResolved instanceof Client) {
+			transactionClient = connectionResolved
+		} else if ('Client' in connectionResolved) {
+			transactionClient = connectionResolved.Client
+		} else {
+			throw new Error('Invalid connection')
+		}
+
+		if (connectionResolved.inTransaction) return await func(transactionClient)
 
 		connectionResolved.inTransaction = true
 
-		await Execute(connectionResolved, 'START TRANSACTION')
-		await Execute(connectionResolved, 'SET CONSTRAINTS ALL DEFERRED')
+		await Execute(transactionClient, 'START TRANSACTION')
+		await Execute(transactionClient, 'SET CONSTRAINTS ALL DEFERRED')
 
-		return func()
-			.then(response => {
-				connectionResolved.inTransaction = false
-				Execute(connectionResolved, 'COMMIT')
+		try {
+			const response = await func(transactionClient)
+			await Execute(transactionClient, 'COMMIT')
 			return response
-			})
-			.catch(err => {
-				connectionResolved.inTransaction = false
-				Execute(connectionResolved, 'ROLLBACK')
+		} catch (err) {
+			await Execute(transactionClient, 'ROLLBACK')
 			throw new Error(err)
-			})
+		} finally {
+			connectionResolved.inTransaction = false
+			if ('release' in transactionClient && typeof transactionClient.release === 'function') {
+				transactionClient.release()
+			}
+		}
 	}
 
 	/**
