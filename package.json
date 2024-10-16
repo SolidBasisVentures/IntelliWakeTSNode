@@ -1,6 +1,6 @@
 {
 	"name": "@solidbasisventures/intelliwaketsnode",
-	"version": "2.4.46",
+	"version": "2.4.45",
 	"description": "NPM package for IntelliWake Node Components",
 	"type": "module",
 	"exports": {
@@ -16,6 +16,7 @@
 		"TSNodeDev": "ts-node-dev --script-mode --respawn --transpile-only consoles/consoles.ts",
 		"Install-IntelliWake": "pnpm install && pnpm update @solidbasisventures/intelliwaketsfoundation@latest",
 		"Version-Minor-Advance": "pnpm version minor",
+		"Build": "tsc && vite build",
 		"Publish": "tsc && vite build && pnpm version patch && git push --tags && git push && npm publish"
 	},
 	"files": [
