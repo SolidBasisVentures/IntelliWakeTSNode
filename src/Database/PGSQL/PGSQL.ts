@@ -1243,8 +1243,10 @@ export namespace PGSQL {
 	export const Transaction = async <T>(connection: TConnection, func: (transactionClient: Client | PoolClient) => Promise<T>) => {
 		const connectionResolved = await connection
 
+		let is_Custom_Client = true
 		let transactionClient: Client | PoolClient
 		if (connectionResolved instanceof Pool) {
+			is_Custom_Client = false
 			transactionClient = await connectionResolved.connect()
 		} else if (connectionResolved instanceof Client) {
 			transactionClient = connectionResolved
@@ -1270,7 +1272,7 @@ export namespace PGSQL {
 			throw new Error(err)
 		} finally {
 			connectionResolved.inTransaction = false
-			if ('release' in transactionClient && typeof transactionClient.release === 'function') {
+			if ('release' in transactionClient && typeof transactionClient.release === 'function' && !is_Custom_Client) {
 				transactionClient.release()
 			}
 		}
