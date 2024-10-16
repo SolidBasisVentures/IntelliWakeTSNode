@@ -1230,7 +1230,8 @@ export namespace PGSQL {
 	 * The function initiates a transaction by utilizing two internal database commands: 'START TRANSACTION' and
 	 * 'SET CONSTRAINTS ALL DEFERRED'. If the transaction succeeds, it is finalized with 'COMMIT'.
 	 * In the event of an error, the transaction is rolled back using 'ROLLBACK', and an Error is thrown.
-	 * After the transaction is complete, if the poolClient is in use, it is released.
+	 * After the transaction is complete, if the Pool is in use, it is released automatically.
+	 * If Client or PoolClient then it must be release manually outside the function.
 	 *
 	 * @example
 	 *
