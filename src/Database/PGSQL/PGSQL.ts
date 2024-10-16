@@ -1246,17 +1246,15 @@ export namespace PGSQL {
 		let transactionClient: Client | PoolClient
 		if (connectionResolved instanceof Pool) {
 			transactionClient = await connectionResolved.connect()
-		} else if (connectionResolved instanceof PoolClient || connectionResolved instanceof Client) {
+		} else if (connectionResolved instanceof Client) {
 			transactionClient = connectionResolved
-		} else if (connectionResolved.Client instanceof PoolClient || connectionResolved.Client instanceof Client) {
-			transactionClient = connectionResolved.Client
 		} else {
 			throw new Error('Invalid connection')
 		}
 
-		if (transactionClient.inTransaction) return func(transactionClient)
+		if (connectionResolved.inTransaction) return func(transactionClient)
 
-		transactionClient.inTransaction = true
+		connectionResolved.inTransaction = true
 
 		await Execute(transactionClient, 'START TRANSACTION')
 		await Execute(transactionClient, 'SET CONSTRAINTS ALL DEFERRED')
@@ -1269,8 +1267,10 @@ export namespace PGSQL {
 			await Execute(transactionClient, 'ROLLBACK')
 			throw new Error(err)
 		} finally {
-			transactionClient.inTransaction = false
-			transactionClient.release()
+			connectionResolved.inTransaction = false
+			if ('release' in transactionClient && typeof transactionClient.release === 'function') {
+				transactionClient.release()
+			}
 		}
 		}
 	}
