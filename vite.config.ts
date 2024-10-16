@@ -12,6 +12,11 @@ export default defineConfig({
 			fileName: 'main'
 		},
 		sourcemap: true,
+		rollupOptions: {
+			external: [
+				'pg', 'pg-pool', 'fs', 'net', 'dns', 'path', 'events', 'tls', 'stream', 'crypto',
+			],
+		},
 		// rollupOptions: {
 		// 	external: [
 		// 		// "node:util",
@@ -38,5 +43,8 @@ export default defineConfig({
 	},
 	plugins: [
 		dts()
-	]
+	],
+	ssr: {
+		noExternal: ['pg', 'pg-pool']  // Ensure these modules remain external for SSR if you're using SSR
+	},
 })

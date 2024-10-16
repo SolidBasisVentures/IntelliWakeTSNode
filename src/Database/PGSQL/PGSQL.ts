@@ -1238,7 +1238,7 @@ export namespace PGSQL {
 	 *     //...some database operations that return a Promise
 	 *   });
 	 *
-	 * @throws {Error} - If an invalid connection object is provided or if an error occurs during the transaction
+	 * @throws If an invalid connection object is provided or if an error occurs during the transaction
 	 */
 	export const Transaction = async <T>(connection: TConnection, func: (transactionClient: Client | PoolClient) => Promise<T>) => {
 		const connectionResolved = await connection
