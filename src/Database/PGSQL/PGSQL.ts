@@ -19,8 +19,9 @@ import {PGParams} from './PGParams'
 import {PGEnum} from './PGEnum'
 import {PGIndex} from './PGIndex'
 import {PGForeignKey} from './PGForeignKey'
-import type {QueryResult} from 'pg'
-import {Client, Pool, PoolClient, QueryResultRow} from 'pg'
+import type {QueryResult, PoolClient, QueryResultRow, Pool, Client} from 'pg'
+import pkg from 'pg';
+const {Client: pkgClient, Pool: pkgPool} = pkg;
 
 // import QueryStream from 'pg-query-stream'
 
@@ -1246,10 +1247,10 @@ export namespace PGSQL {
 
 		let is_Custom_Client = true
 		let transactionClient: Client | PoolClient
-		if (connectionResolved instanceof Pool) {
+		if (connectionResolved instanceof pkgPool) {
 			is_Custom_Client = false
 			transactionClient = await connectionResolved.connect()
-		} else if (connectionResolved instanceof Client) {
+		} else if (connectionResolved instanceof pkgClient) {
 			transactionClient = connectionResolved
 		} else if ('Client' in connectionResolved) {
 			transactionClient = connectionResolved.Client
