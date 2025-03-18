@@ -5,8 +5,7 @@
 	"type": "module",
 	"exports": {
 		".": {
-			"import": "./dist/main.js",
-			"require": "./dist/main.umd.cjs"
+			"import": "./dist/main.js"
 		}
 	},
 	"main": "dist/main.js",
