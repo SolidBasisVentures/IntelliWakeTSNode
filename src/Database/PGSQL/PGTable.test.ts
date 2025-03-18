@@ -242,6 +242,11 @@ test('PGTable', () => {
 		is_nullable: 'NO',
 		column_comment: '{interface: ITest.initialValue}'
 	})
+	pgTable.addColumn({
+		column_name: 'jsonb_any',
+		udt_name: PGColumn.TYPE_JSONB,
+		is_nullable: 'NO'
+	})
 
 	tsTest = pgTable.tsText({includeConstraint: true})
 
@@ -263,6 +268,7 @@ test('PGTable', () => {
 	expect(tsTest.includes('enum_test_array: [],')).toBeTruthy()
 	expect(tsTest.includes('enum_test_array_default: ETest[]')).toBeTruthy()
 	expect(tsTest.includes('enum_test_array_default: [],')).toBeTruthy()
+	expect(tsTest.includes('jsonb_any: any')).toBeTruthy()
 
 	expect(tsTest.includes('interface_test_null: ITest | null')).toBeTruthy()
 	expect(tsTest.includes('interface_test_null: null,')).toBeTruthy()
@@ -278,6 +284,7 @@ test('PGTable', () => {
 	expect(tsTest.includes('interface_test_default: initialValue,')).toBeTruthy()
 	expect(tsTest.includes('interface_test_default_comment: ITest')).toBeTruthy()
 	expect(tsTest.includes('interface_test_default_comment: initialValue')).toBeTruthy()
+	expect(tsTest.includes('jsonb_any: {}')).toBeTruthy()
 
 	expect(tsTestTable.includes('import {initial_test_table, Itest_table} from \'@Common/Tables/Itest_table\'')).toBeTruthy()
 	expect(tsTestTable.includes('import {TTables} from \'../Database/TTables\'')).toBeTruthy()
