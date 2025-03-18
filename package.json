@@ -12,7 +12,7 @@
 	"main": "dist/main.js",
 	"types": "dist/main.d.ts",
 	"scripts": {
-		"Vitest-Watch": "vitest",
+		"Vitest-Watch": "vitest --config vitest.config.ts",
 		"TSNodeDev": "ts-node-dev --script-mode --respawn --transpile-only consoles/consoles.ts",
 		"Install-IntelliWake": "pnpm install && pnpm update @solidbasisventures/intelliwaketsfoundation@latest",
 		"Version-Minor-Advance": "pnpm version minor",

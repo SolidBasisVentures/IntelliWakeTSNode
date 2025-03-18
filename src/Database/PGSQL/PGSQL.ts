@@ -2439,6 +2439,7 @@ export namespace PGSQL {
  */
 export function IsValidPostgresInteger(value: any, unsigned: boolean = false): boolean {
 	if (!IsWholeNumber(value)) return false
+	if (Array.isArray(value)) return false
 
 	const minSignedInt = -2147483648
 	const maxSignedInt = 2147483647
