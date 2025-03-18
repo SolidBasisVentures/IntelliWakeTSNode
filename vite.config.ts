@@ -11,7 +11,7 @@ export default defineConfig({
 			entry: resolve(__dirname, 'src/main.ts'),
 			name: 'main',
 			fileName: (format) => `main.${format}.js`,
-			formats: ['es']
+			formats: ['es', 'cjs']
 		},
 		sourcemap: true,
 		rollupOptions: {
