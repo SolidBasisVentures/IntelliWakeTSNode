@@ -6,7 +6,7 @@ export default defineConfig({
 	test: {},
 	build: {
 		ssr: true,
-		target: 'node20',
+		target: 'es2018',
 		lib: {
 			entry: resolve(__dirname, 'src/main.ts'),
 			name: 'main',
