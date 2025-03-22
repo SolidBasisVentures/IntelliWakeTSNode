@@ -126,7 +126,7 @@ export class PGColumn implements IPGColumn {
 	public isArray = (): boolean => {
 		if (!!ToArray(this.array_dimensions)[0] ||
 			!!this.array_dimensions.length ||
-			(this.column_default ?? '')?.toString()?.includes('{}') ||
+			((this.column_default ?? '')?.toString()?.includes('{}') && !this.jsonType()) ||
 			(this.column_default ?? '')?.toString()?.includes('[]'))
 			return true
 

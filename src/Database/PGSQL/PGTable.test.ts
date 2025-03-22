@@ -145,7 +145,7 @@ test('PGTable', () => {
 		column_name: 'interface_test_notnull_jsonb_array',
 		udt_name: PGColumn.TYPE_JSONB,
 		is_nullable: 'NO',
-		column_default: "'{}'",
+		column_default: '\'{}\'',
 		column_comment: '{type: TTest[]}'
 	})
 
@@ -168,26 +168,37 @@ test('PGTable', () => {
 
 	// console.info(tsTest)
 
-	expect(tsTest.includes("import type { TObjectConstraint } from '@solidbasisventures/intelliwaketsfoundation'")).toBeTruthy()
-	expect(tsTest.includes("import { ETest } from '../Enums/ETest'")).toBeTruthy()
-	expect(tsTest.includes("import { ITest } from '../Interfaces/ITest'")).toBeTruthy()
-	expect(tsTest.includes("import { TTest } from '../Types/TTest'")).toBeTruthy()
-	expect(tsTest.includes("'id': {")).toBeTruthy()
-	expect(tsTest.includes("'type': 'object',")).toBeTruthy()
+	expect(tsTest.includes('import type { TObjectConstraint } from \'@solidbasisventures/intelliwaketsfoundation\'')).toBeTruthy()
+	expect(tsTest.includes('import { ETest } from \'../Enums/ETest\'')).toBeTruthy()
+	expect(tsTest.includes('import { ITest } from \'../Interfaces/ITest\'')).toBeTruthy()
+	expect(tsTest.includes('import { TTest } from \'../Types/TTest\'')).toBeTruthy()
+	expect(tsTest.includes('\'id\': {')).toBeTruthy()
+	expect(tsTest.includes('\'type\': \'object\',')).toBeTruthy()
 
-	tsTest = pgTable.tsText({includeConstraint: true, singleQuote: true, spaceInImports: true, noConstraintKeyQuotes: true})
-
-	// console.info(tsTest)
-
-	expect(tsTest.includes("    id: {")).toBeTruthy()
-	expect(tsTest.includes("        type: 'object',")).toBeTruthy()
-
-	tsTest = pgTable.tsText({includeConstraint: true, singleQuote: true, spaceInImports: true, noConstraintKeyQuotes: true, tabsForObjects: true})
+	tsTest = pgTable.tsText({
+		includeConstraint: true,
+		singleQuote: true,
+		spaceInImports: true,
+		noConstraintKeyQuotes: true
+	})
 
 	// console.info(tsTest)
 
-	expect(tsTest.includes("\tid: {")).toBeTruthy()
-	expect(tsTest.includes("\t\ttype: 'object',")).toBeTruthy()
+	expect(tsTest.includes('    id: {')).toBeTruthy()
+	expect(tsTest.includes('        type: \'object\',')).toBeTruthy()
+
+	tsTest = pgTable.tsText({
+		includeConstraint: true,
+		singleQuote: true,
+		spaceInImports: true,
+		noConstraintKeyQuotes: true,
+		tabsForObjects: true
+	})
+
+	// console.info(tsTest)
+
+	expect(tsTest.includes('\tid: {')).toBeTruthy()
+	expect(tsTest.includes('\t\ttype: \'object\',')).toBeTruthy()
 
 	pgTable.addColumn({
 		column_name: 'enum_test2_array_null',
@@ -245,6 +256,7 @@ test('PGTable', () => {
 	pgTable.addColumn({
 		column_name: 'jsonb_any',
 		udt_name: PGColumn.TYPE_JSONB,
+		column_default: '\'{}\'',
 		is_nullable: 'NO'
 	})
 
