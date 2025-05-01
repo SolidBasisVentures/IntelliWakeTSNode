@@ -968,12 +968,19 @@ export namespace PGSQL {
 		connection: TConnection,
 		table: string,
 		whereValues: any,
-		updateValues: any
+		updateValues: any,
+		initialComment: string | null = null
 	): Promise<any | null> => {
 		let params = new PGParams()
 
+		let sql = ''
+
+		if (initialComment) {
+			sql += `/* ${initialComment} */ `
+		}
+
 		// noinspection SqlResolve
-		const sql = `UPDATE ${table}
+		sql += `UPDATE ${table}
 		             SET ${BuildSetComponents(updateValues, params)}
 		             WHERE ${BuildWhereComponents(
 			             whereValues,
