@@ -47,6 +47,7 @@ export const initialFixedWidthMapOptions: IFixedWidthMapOptions = {
 
 export type TPGTableTextOptions = {
 	includeConstraint?: boolean
+	includeZod?: boolean
 	singleQuote?: boolean
 	spaceInImports?: boolean
 	noConstraintKeyQuotes?: boolean,
@@ -271,6 +272,10 @@ export class PGTable {
 
 		if (options?.includeConstraint) {
 			text += `import type {${AddSpaceImport('TObjectConstraint')}} from ${AddQuote(`@solidbasisventures/intelliwaketsfoundation`)}${TS_EOL}`
+		}
+
+		if (options?.includeZod) {
+			text += `import {z} from 'zod'${TS_EOL}`
 		}
 
 		if (this.inherits.length > 0) {
@@ -626,6 +631,80 @@ export class PGTable {
 		text += TS_EOL + '}' + TS_EOL
 
 		if (options?.includeConstraint) {
+			const constraint: TObjectConstraint = {}
+
+			for (const pgColumn of this.columns) {
+				const fieldConstraint: TObjectFieldConstraint = {}
+
+				if (pgColumn.booleanType()) {
+					fieldConstraint.type = 'boolean'
+					if (pgColumn.column_default && !pgColumn.isArray()) {
+						fieldConstraint.default = IsOn(pgColumn.column_default)
+					}
+				} else if (pgColumn.integerFloatType()) {
+					fieldConstraint.type = 'number'
+					if (pgColumn.numeric_precision) {
+						fieldConstraint.length = CleanNumber(pgColumn.numeric_precision)
+					}
+					if (pgColumn.column_default && !pgColumn.isArray()) {
+						fieldConstraint.default = CleanNumber(pgColumn.column_default)
+					}
+				} else if (pgColumn.jsonType()) {
+					fieldConstraint.type = 'object'
+				} else if (pgColumn.dateOnlyType()) {
+					fieldConstraint.type = 'date'
+					if (pgColumn.column_default && !pgColumn.isArray()) {
+						fieldConstraint.default = 'now'
+					}
+				} else if (pgColumn.dateTimeOnlyType()) {
+					fieldConstraint.type = 'datetime'
+					if (pgColumn.column_default && !pgColumn.isArray()) {
+						fieldConstraint.default = 'now'
+					}
+				} else if (pgColumn.timeOnlyType()) {
+					fieldConstraint.type = 'time'
+					if (pgColumn.column_default && !pgColumn.isArray()) {
+						fieldConstraint.default = 'now'
+					}
+				} else {
+					fieldConstraint.type = 'string'
+					if (pgColumn.character_maximum_length) {
+						fieldConstraint.length = pgColumn.character_maximum_length
+					}
+					if (pgColumn.column_default && !pgColumn.isArray()) {
+						fieldConstraint.default = ''
+					}
+				}
+
+				fieldConstraint.nullable = IsOn(pgColumn.is_nullable)
+
+				if (pgColumn.isArray()) {
+					fieldConstraint.isArray = true
+					if (!fieldConstraint.nullable) {
+						fieldConstraint.default = []
+					}
+				}
+
+				// if (pgColumn.column_name === 'sysuser_ids' || pgColumn.column_name === 'freshxpert_sysuser_id')
+				// 	console.log(this.name, pgColumn)
+
+				constraint[pgColumn.column_name] = fieldConstraint
+			}
+
+			let stringified = JSON.stringify(constraint, undefined, options?.tabsForObjects ? "\t" : 4)
+
+			if (options?.noConstraintKeyQuotes) {
+				stringified = stringified.replace(/\"([^(\")"]+)\":/g, '$1:')
+			}
+
+			if (options?.singleQuote) {
+				stringified = ReplaceAll('"', '\'', stringified)
+			}
+
+			text += TS_EOL + `export const Constraint_${this.name}: TObjectConstraint<I${this.name}> = ${stringified}` + TS_EOL
+		}
+
+		if (options?.includeZod) {
 			const constraint: TObjectConstraint = {}
 
 			for (const pgColumn of this.columns) {
