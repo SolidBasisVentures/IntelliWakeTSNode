@@ -7,7 +7,6 @@ import {
 	IsOn,
 	RemoveEnding,
 	ReplaceAll,
-	ReplaceAllMultiple,
 	SortCompare,
 	StringGetSets,
 	ToArray,
@@ -290,54 +289,54 @@ export class PGTable {
 			}
 		}
 
-		const enums: { column_name: string, enum_name: string, default_value?: string }[] = Array.from(
+		const enums: {column_name: string, enum_name: string, default_value?: string}[] = Array.from(
 			new Set(
 				[
 					...this.columns
-					       .map((column) => ({
-						       column_name: column.column_name,
-						       enum_name: (typeof column.udt_name !== 'string' ? column.udt_name.enumName : '')
-					       })),
+						.map((column) => ({
+							column_name: column.column_name,
+							enum_name: (typeof column.udt_name !== 'string' ? column.udt_name.enumName : '')
+						})),
 					...this.columns
-					       .map((column) => ({
-						       column_name: column.column_name,
-						       enum_name: (typeof column.udt_name === 'string' && column.udt_name.startsWith('e_') ? PGEnum.TypeName(column.udt_name) : '')
-					       })),
+						.map((column) => ({
+							column_name: column.column_name,
+							enum_name: (typeof column.udt_name === 'string' && column.udt_name.startsWith('e_') ? PGEnum.TypeName(column.udt_name) : '')
+						})),
 					...this.columns
-					       .map(column => {
-						       const regExp = /{([^}]*)}/
-						       const results = regExp.exec(column.column_comment)
-						       if (!!results && !!results[1]) {
-							       const commaItems = results[1].split(',')
-							       for (const commaItem of commaItems) {
-								       const items = commaItem.split(':')
-								       if ((items[0] ?? '').toLowerCase().trim() === 'enum') {
-									       const enumName = items[1]?.split('.')[0]?.trim()
-									       let enumDefault = CoalesceFalsey(items[1]?.split('.')[1], items[2], column.column_default)?.toString()?.trim()
-									       if (enumDefault?.startsWith('\'{}\'')) {
-										       enumDefault = '[]'
-									       }
+						.map(column => {
+							const regExp = /{([^}]*)}/
+							const results = regExp.exec(column.column_comment)
+							if (!!results && !!results[1]) {
+								const commaItems = results[1].split(',')
+								for (const commaItem of commaItems) {
+									const items = commaItem.split(':')
+									if ((items[0] ?? '').toLowerCase().trim() === 'enum') {
+										const enumName = items[1]?.split('.')[0]?.trim()
+										let enumDefault = CoalesceFalsey(items[1]?.split('.')[1], items[2], column.column_default)?.toString()?.trim()
+										if (enumDefault?.startsWith('\'{}\'')) {
+											enumDefault = '[]'
+										}
 
-									       // console.info(column.column_name, enumName, enumDefault)
+										// console.info(column.column_name, enumName, enumDefault)
 
-									       if (!enumName) {
-										       throw new Error('Enum requested in comment, but not specified  - Format {Enum: ETest} for nullable or {Enum: ETest.FirstValue}')
-									       }
-									       if (!IsOn(column.is_nullable) && !enumDefault && !column.isArray()) {
-										       throw new Error(`Not Nullable Enum requested in comment, but no default value specified for ${this.name}.${column.column_name} - ${column.column_comment}`)
-									       }
-									       return {
-										       column_name: column.column_name,
-										       enum_name: enumName,
-										       default_value: column.isArray() ?
-											       (IsOn(column.is_nullable) ? 'null' : enumDefault ?? '[]') :
-											       (!enumDefault ? 'null' : `${enumName}.${enumDefault}`)
-									       }
-								       }
-							       }
-						       }
-						       return {column_name: column.column_name, enum_name: ''}
-					       })
+										if (!enumName) {
+											throw new Error('Enum requested in comment, but not specified  - Format {Enum: ETest} for nullable or {Enum: ETest.FirstValue}')
+										}
+										if (!IsOn(column.is_nullable) && !enumDefault && !column.isArray()) {
+											throw new Error(`Not Nullable Enum requested in comment, but no default value specified for ${this.name}.${column.column_name} - ${column.column_comment}`)
+										}
+										return {
+											column_name: column.column_name,
+											enum_name: enumName,
+											default_value: column.isArray() ?
+												(IsOn(column.is_nullable) ? 'null' : enumDefault ?? '[]') :
+												(!enumDefault ? 'null' : `${enumName}.${enumDefault}`)
+										}
+									}
+								}
+							}
+							return {column_name: column.column_name, enum_name: ''}
+						})
 				]
 					.filter(enumName => !!enumName.enum_name)
 			)
@@ -353,95 +352,97 @@ export class PGTable {
 			new Set(
 				[
 					...this.columns
-					       .map(column => {
-						       const regExp = /{([^}]*)}/
-						       const results = regExp.exec(column.column_comment)
-						       if (!!results && !!results[1]) {
-							       const commaItems = results[1].split(',')
-							       for (const commaItem of commaItems) {
-								       const items = commaItem.split(':')
-								       if ((items[0] ?? '').toLowerCase().trim() === 'interface') {
-									       const interfaceName = items[1]?.split('.')[0]?.trim()
-									       let interfaceDefault = (CoalesceFalsey(items[1]?.split('.')[1], items[2], column.column_default)?.toString()?.trim()) ?? (IsOn(column.is_nullable) ? 'null' : '{}')
+						.map(column => {
+							const regExp = /{([^}]*)}/
+							const results = regExp.exec(column.column_comment)
+							if (!!results && !!results[1]) {
+								const commaItems = results[1].split(',')
+								for (const commaItem of commaItems) {
+									const items = commaItem.split(':')
+									if ((items[0] ?? '').toLowerCase().trim() === 'interface') {
+										const interfaceName = items[1]?.split('.')[0]?.trim()
+										let interfaceDefault = (CoalesceFalsey(items[1]?.split('.')[1], items[2], column.column_default)?.toString()?.trim()) ?? (IsOn(column.is_nullable) ? 'null' : '{}')
 
-									       if (!interfaceName) {
-										       throw new Error('Interface requested in comment, but not specified  - Format {Interface: ITest} for nullable or {Interface: ITest.initialValue}')
-									       }
+										if (!interfaceName) {
+											throw new Error('Interface requested in comment, but not specified  - Format {Interface: ITest} for nullable or {Interface: ITest.initialValue}')
+										}
 
-									       return {
-										       column_name: column.column_name,
-										       interface_name: interfaceName,
-										       otherImportItem: interfaceDefault,
-										       default_value: column.isArray() ?
-											       (IsOn(column.is_nullable) ? 'null' : interfaceDefault ?? '[]') :
-											       interfaceDefault
-									       }
-								       }
-							       }
-						       }
-						       return {column_name: column.column_name, interface_name: ''}
-					       })
+										return {
+											column_name: column.column_name,
+											interface_name: interfaceName,
+											otherImportItem: interfaceDefault,
+											default_value: column.isArray() ?
+												(IsOn(column.is_nullable) ? 'null' : interfaceDefault ?? '[]') :
+												interfaceDefault
+										}
+									}
+								}
+							}
+							return {column_name: column.column_name, interface_name: ''}
+						})
 				]
 					.filter(enumName => !!enumName.interface_name)
 			)
 		)
 
-		type TTypeBuild = { column_name: string, type_name: string }
+		type TTypeBuild = {column_name: string, type_name: string}
 		const types = this.columns
-		                  .reduce<TTypeBuild[]>((types, column) => {
-			                  const regExp = /{([^}]*)}/
-			                  const results = regExp.exec(column.column_comment)
-			                  if (!!results && !!results[1]) {
-				                  const commaItems = results[1].split(',')
-				                  for (const commaItem of commaItems) {
-					                  const items = commaItem.split(':')
-					                  if ((items[0] ?? '').toLowerCase().trim() === 'type') {
-						                  const typeName = items[1]?.split('.')[0]?.trim()
+			.reduce<TTypeBuild[]>((types, column) => {
+				const regExp = /{([^}]*)}/
+				const results = regExp.exec(column.column_comment)
+				if (!!results && !!results[1]) {
+					const commaItems = results[1].split(',')
+					for (const commaItem of commaItems) {
+						const items = commaItem.split(':')
+						if ((items[0] ?? '').toLowerCase().trim() === 'type') {
+							const typeName = items[1]?.split('.')[0]?.trim()
 
-						                  if (!typeName) {
-							                  throw new Error('Type requested in comment, but not specified  - Format {type: TTest}')
-						                  }
+							if (!typeName) {
+								throw new Error('Type requested in comment, but not specified  - Format {type: TTest}')
+							}
 
-						                  return [...types, {
-							                  column_name: column.column_name,
-							                  type_name: typeName
-						                  }]
-					                  }
-				                  }
-			                  }
-			                  return types
-		                  }, [])
+							return [
+								...types, {
+									column_name: column.column_name,
+									type_name: typeName
+								}
+							]
+						}
+					}
+				}
+				return types
+			}, [])
 
 		enums.map(enumItem => enumItem.enum_name)
-		     .reduce<string[]>((results, enumItem) => {
-				     return results.some(res => res === enumItem) ? results : [...results, ReplaceAll('[]', '', enumItem)]
-			     },
-			     types.reduce<string[]>((results, typ) => {
-				     const possibleEnum = ReplaceAll(']', '', typ.type_name.split('[')[1] ?? '')
-				     if (possibleEnum.startsWith('E')) {
-					     if (!results.some(res => res === possibleEnum)) {
-						     return [...results, possibleEnum]
-					     }
-				     }
-				     return results
-			     }, []))
-		     .reduce<string[]>((results, enumItem) => results.some(result => result === enumItem) ? results : [...results, enumItem], [])
-		     .sort(SortCompare)
-		     .forEach(enumItem => {
-			     text += `import ${(this.importWithTypes &&
-				     !this.columns.some(column => ReplaceAll(' ', '', column.column_comment ?? '').toLowerCase().includes(`{enum:${enumItem.toLowerCase()}`) &&
-					     (ReplaceAll(' ', '', column.column_comment ?? '').toLowerCase().includes(`{enum:${enumItem.toLowerCase()}.`) ||
-						     (!!column.column_default &&
-							     !(column.column_default ?? '').toString().includes('{}') &&
-							     (column.column_default ?? '').toString().toLowerCase() !== 'null')))) ?
-				     'type ' : ''}{${AddSpaceImport(enumItem)}} from ${AddQuote(`../Enums/${enumItem}`)}${TS_EOL}`
-		     })
+			.reduce<string[]>((results, enumItem) => {
+					return results.some(res => res === enumItem) ? results : [...results, ReplaceAll('[]', '', enumItem)]
+				},
+				types.reduce<string[]>((results, typ) => {
+					const possibleEnum = ReplaceAll(']', '', typ.type_name.split('[')[1] ?? '')
+					if (possibleEnum.startsWith('E')) {
+						if (!results.some(res => res === possibleEnum)) {
+							return [...results, possibleEnum]
+						}
+					}
+					return results
+				}, []))
+			.reduce<string[]>((results, enumItem) => results.some(result => result === enumItem) ? results : [...results, enumItem], [])
+			.sort(SortCompare)
+			.forEach(enumItem => {
+				text += `import ${(this.importWithTypes &&
+					!this.columns.some(column => ReplaceAll(' ', '', column.column_comment ?? '').toLowerCase().includes(`{enum:${enumItem.toLowerCase()}`) &&
+						(ReplaceAll(' ', '', column.column_comment ?? '').toLowerCase().includes(`{enum:${enumItem.toLowerCase()}.`) ||
+							(!!column.column_default &&
+								!(column.column_default ?? '').toString().includes('{}') &&
+								(column.column_default ?? '').toString().toLowerCase() !== 'null')))) ?
+					'type ' : ''}{${AddSpaceImport(enumItem)}} from ${AddQuote(`../Enums/${enumItem}`)}${TS_EOL}`
+			})
 
 		interfaces.reduce<TInterfaceBuild[]>((results, interfaceItem) => results.some(result => result.interface_name === interfaceItem.interface_name && (!!result.otherImportItem || !interfaceItem.otherImportItem)) ? results : [...results.filter(result => result.interface_name !== interfaceItem.interface_name), interfaceItem], [])
-		          .sort((a, b) => SortCompare(a.interface_name, b.interface_name))
-		          .forEach(interfaceItem => {
-			          text += `import ${this.importWithTypes ? 'type ' : ''}{${AddSpaceImport([interfaceItem.interface_name, (!interfaceItem.otherImportItem || interfaceItem?.otherImportItem?.toLowerCase() === 'null') ? '' : `, ${interfaceItem.otherImportItem}`])}} from ${AddQuote(`../Interfaces/${interfaceItem.interface_name}`)}${TS_EOL}`
-		          })
+			.sort((a, b) => SortCompare(a.interface_name, b.interface_name))
+			.forEach(interfaceItem => {
+				text += `import ${this.importWithTypes ? 'type ' : ''}{${AddSpaceImport([interfaceItem.interface_name, (!interfaceItem.otherImportItem || interfaceItem?.otherImportItem?.toLowerCase() === 'null') ? '' : `, ${interfaceItem.otherImportItem}`])}} from ${AddQuote(`../Interfaces/${interfaceItem.interface_name}`)}${TS_EOL}`
+			})
 
 		types.reduce<TTypeBuild[]>((results, typeItem) => {
 			const newName = typeItem.type_name.split('[')[0]
@@ -449,10 +450,10 @@ export class PGTable {
 				results :
 				[...results.filter(result => result.type_name !== newName), {...typeItem, type_name: newName}]
 		}, [])
-		     .sort((a, b) => SortCompare(a.type_name, b.type_name))
-		     .forEach(typeItem => {
-			     text += `import ${this.importWithTypes ? 'type ' : ''}{${AddSpaceImport(typeItem.type_name)}} from ${AddQuote(`../Types/${typeItem.type_name}`)}${TS_EOL}`
-		     })
+			.sort((a, b) => SortCompare(a.type_name, b.type_name))
+			.forEach(typeItem => {
+				text += `import ${this.importWithTypes ? 'type ' : ''}{${AddSpaceImport(typeItem.type_name)}} from ${AddQuote(`../Types/${typeItem.type_name}`)}${TS_EOL}`
+			})
 
 		const enumReferences = enums
 			.filter(enumItem => {
@@ -480,10 +481,18 @@ export class PGTable {
 		}
 		text += ` {` + TS_EOL
 
-		function getTSType(pgColumn: PGColumn, eReferences?: typeof enumReferences): string {
-			let tsType = ReplaceAll('[]', '', enums.find(enumItem => enumItem.column_name === pgColumn.column_name)?.enum_name ??
+		function getTSTypeCustom(pgColumn: PGColumn): string | null {
+			const custom = enums.find(enumItem => enumItem.column_name === pgColumn.column_name)?.enum_name ??
 				interfaces.find(interfaceItem => interfaceItem.column_name === pgColumn.column_name)?.interface_name ??
-				types.find(typeItem => typeItem.column_name === pgColumn.column_name)?.type_name ??
+				types.find(typeItem => typeItem.column_name === pgColumn.column_name)?.type_name
+
+			if (!custom) return null
+
+			return ReplaceAll('[]', '', custom).trim()
+		}
+
+		function getTSType(pgColumn: PGColumn, eReferences?: typeof enumReferences): string {
+			let tsType = ReplaceAll('[]', '', getTSTypeCustom(pgColumn) ??
 				pgColumn.jsType()).trim()
 
 			if (eReferences?.length) {
@@ -692,7 +701,7 @@ export class PGTable {
 				constraint[pgColumn.column_name] = fieldConstraint
 			}
 
-			let stringified = JSON.stringify(constraint, undefined, options?.tabsForObjects ? "\t" : 4)
+			let stringified = JSON.stringify(constraint, undefined, options?.tabsForObjects ? '\t' : 4)
 
 			if (options?.noConstraintKeyQuotes) {
 				stringified = stringified.replace(/\"([^(\")"]+)\":/g, '$1:')
@@ -713,21 +722,16 @@ export class PGTable {
 
 				if (pgColumn.isArray()) newText += 'z.array('
 
-				if (pgColumn.booleanType()) {
-					newText += 'z.boolean()'
-				} else if (pgColumn.integerFloatType()) {
-					newText += 'z.number()'
-				} else if (pgColumn.jsonType()) {
-					const customType = getTSType(pgColumn)
-					if (customType) {
-						newText += `z.custom<${ReplaceAllMultiple([[' | null', ''], ['[]', '']], customType)}>(() => true)`
-					} else {
-						newText += 'z.any()'
-					}
+				const customType = getTSTypeCustom(pgColumn)
+				if (customType) {
+					newText += `z.custom<${customType}>(() => true)`
 				} else {
-					const customEnum = enums.find(enumItem => enumItem.column_name === pgColumn.column_name)?.enum_name
-					if (customEnum) {
-						newText += `z.custom<${ReplaceAllMultiple([[' | null', ''], ['[]', '']], customEnum)}>(() => true)`
+					if (pgColumn.booleanType()) {
+						newText += 'z.boolean()'
+					} else if (pgColumn.integerFloatType()) {
+						newText += 'z.number()'
+					} else if (pgColumn.jsonType()) {
+						newText += 'z.any()'
 					} else {
 						newText += 'z.string()'
 					}
@@ -880,7 +884,7 @@ export class PGTable {
 			ddl += `DROP TABLE IF EXISTS ${this.name} CASCADE;` + TS_EOL
 		}
 		ddl += `CREATE TABLE ${this.name}
-		        (` + TS_EOL
+				(` + TS_EOL
 
 		let prevColumn: PGColumn | null = null
 		for (const pgColumn of this.columns) {

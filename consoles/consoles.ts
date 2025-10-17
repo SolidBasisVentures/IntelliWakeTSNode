@@ -16,6 +16,10 @@ console.time('Ended')
 const processScript = async () => {
 	const pgTable = new PGTable({name: 'Test_Table'})
 	pgTable.addColumn(new PGColumn({column_name: 'id', udt_name: PGColumn.TYPE_INTEGER, is_nullable: 'NO'}))
+	pgTable.addColumn(new PGColumn({column_name: 'name', udt_name: PGColumn.TYPE_VARCHAR, numeric_precision: 10, is_nullable: 'NO'}))
+	pgTable.addColumn(new PGColumn({column_name: 'dt', udt_name: PGColumn.TYPE_DATE, is_nullable: 'NO'}))
+	pgTable.addColumn(new PGColumn({column_name: 'dttm', udt_name: PGColumn.TYPE_TIMESTAMPTZ, is_nullable: 'YES'}))
+	pgTable.addColumn(new PGColumn({column_name: 'bl', udt_name: PGColumn.TYPE_BOOLEAN, is_nullable: 'YES'}))
 	pgTable.addColumn(new PGColumn({
 		column_name: 'e_test',
 		udt_name: PGColumn.TYPE_VARCHAR,
