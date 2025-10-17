@@ -7,6 +7,7 @@ import {
 	IsOn,
 	RemoveEnding,
 	ReplaceAll,
+	ReplaceAllMultiple,
 	SortCompare,
 	StringGetSets,
 	ToArray,
@@ -705,77 +706,41 @@ export class PGTable {
 		}
 
 		if (options?.includeZod) {
-			const constraint: TObjectConstraint = {}
+			text += TS_EOL + `export const zod_${this.name} = z.object({` + TS_EOL
 
-			for (const pgColumn of this.columns) {
-				const fieldConstraint: TObjectFieldConstraint = {}
+			text += this.columns.map(pgColumn => {
+				let newText = `\t${pgColumn.column_name}: `
+
+				if (pgColumn.isArray()) newText += 'z.array('
 
 				if (pgColumn.booleanType()) {
-					fieldConstraint.type = 'boolean'
-					if (pgColumn.column_default && !pgColumn.isArray()) {
-						fieldConstraint.default = IsOn(pgColumn.column_default)
-					}
+					newText += 'z.boolean()'
 				} else if (pgColumn.integerFloatType()) {
-					fieldConstraint.type = 'number'
-					if (pgColumn.numeric_precision) {
-						fieldConstraint.length = CleanNumber(pgColumn.numeric_precision)
-					}
-					if (pgColumn.column_default && !pgColumn.isArray()) {
-						fieldConstraint.default = CleanNumber(pgColumn.column_default)
-					}
+					newText += 'z.number()'
 				} else if (pgColumn.jsonType()) {
-					fieldConstraint.type = 'object'
-				} else if (pgColumn.dateOnlyType()) {
-					fieldConstraint.type = 'date'
-					if (pgColumn.column_default && !pgColumn.isArray()) {
-						fieldConstraint.default = 'now'
-					}
-				} else if (pgColumn.dateTimeOnlyType()) {
-					fieldConstraint.type = 'datetime'
-					if (pgColumn.column_default && !pgColumn.isArray()) {
-						fieldConstraint.default = 'now'
-					}
-				} else if (pgColumn.timeOnlyType()) {
-					fieldConstraint.type = 'time'
-					if (pgColumn.column_default && !pgColumn.isArray()) {
-						fieldConstraint.default = 'now'
+					const customType = getTSType(pgColumn)
+					if (customType) {
+						newText += `z.custom<${ReplaceAllMultiple([[' | null', ''], ['[]', '']], customType)}>(() => true)`
+					} else {
+						newText += 'z.any()'
 					}
 				} else {
-					fieldConstraint.type = 'string'
-					if (pgColumn.character_maximum_length) {
-						fieldConstraint.length = pgColumn.character_maximum_length
-					}
-					if (pgColumn.column_default && !pgColumn.isArray()) {
-						fieldConstraint.default = ''
-					}
-				}
-
-				fieldConstraint.nullable = IsOn(pgColumn.is_nullable)
-
-				if (pgColumn.isArray()) {
-					fieldConstraint.isArray = true
-					if (!fieldConstraint.nullable) {
-						fieldConstraint.default = []
+					const customEnum = enums.find(enumItem => enumItem.column_name === pgColumn.column_name)?.enum_name
+					if (customEnum) {
+						newText += `z.custom<${ReplaceAllMultiple([[' | null', ''], ['[]', '']], customEnum)}>(() => true)`
+					} else {
+						newText += 'z.string()'
 					}
 				}
 
-				// if (pgColumn.column_name === 'sysuser_ids' || pgColumn.column_name === 'freshxpert_sysuser_id')
-				// 	console.log(this.name, pgColumn)
+				if (pgColumn.isArray()) newText += ')'
+				if (pgColumn.isNullable()) newText += '.nullable()'
 
-				constraint[pgColumn.column_name] = fieldConstraint
-			}
+				return newText
+			}).join(',' + TS_EOL)
 
-			let stringified = JSON.stringify(constraint, undefined, options?.tabsForObjects ? "\t" : 4)
 
-			if (options?.noConstraintKeyQuotes) {
-				stringified = stringified.replace(/\"([^(\")"]+)\":/g, '$1:')
-			}
-
-			if (options?.singleQuote) {
-				stringified = ReplaceAll('"', '\'', stringified)
-			}
-
-			text += TS_EOL + `export const Constraint_${this.name}: TObjectConstraint<I${this.name}> = ${stringified}` + TS_EOL
+			text += TS_EOL + `})` + TS_EOL
 		}
 
 		return text
@@ -818,6 +783,7 @@ export class PGTable {
 			responseContextName: relativePaths?.responseContextName ?? 'responseContext',
 			responseContextClass: relativePaths?.responseContextClass ?? 'ResponseContext',
 			includeConstraint: !!relativePaths?.includeConstraint,
+			includeZod: !!relativePaths?.includeZod,
 			singleQuote: false,
 			spaceInImports: false,
 			noConstraintKeyQuotes: false,
