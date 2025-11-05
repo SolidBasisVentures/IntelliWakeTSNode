@@ -15,6 +15,7 @@ import {
 	YYYY_MM_DD_HH_mm_ss
 } from '@solidbasisventures/intelliwaketsfoundation'
 import {PGEnum} from './PGEnum'
+import {CleanDefaultRepeatValue} from './Functions'
 
 export const TS_EOL = '\n' // was \r\n
 
@@ -603,14 +604,9 @@ export class PGTable {
 						} else if (pgColumn.integerFloatType() || pgColumn.dateType()) {
 							text += pgColumn.column_default
 						} else if (typeof pgColumn.udt_name !== 'string') {
-							if (!!pgColumn.column_default && pgColumn.column_default?.toString().toLowerCase().includes('repeat(')) {
-								const vals = pgColumn.column_default.toString().match(/REPEAT\('(.)', (\d+)\)/)
-								if (vals && vals[1] && vals[2]) {
-									text += `'${vals[1]}'.repeat(${CleanNumber(vals[2])})`
-								} else {
-									text +=
-										'\'' + (pgColumn.column_default ?? pgColumn.udt_name.defaultValue ?? '') + '\' as ' + pgColumn.jsType()
-								}
+							const repeat = CleanDefaultRepeatValue(pgColumn.column_default)
+							if (repeat) {
+								text += repeat
 							} else {
 								text +=
 									'\'' + (pgColumn.column_default ?? pgColumn.udt_name.defaultValue ?? '') + '\' as ' + pgColumn.jsType()
@@ -623,25 +619,21 @@ export class PGTable {
 								text += colDefault.substring(1, 1 + colDefault.indexOf('::') - 2)
 								// text += ' as '
 								// text += PGEnum.TypeName(pgColumn.udt_name)
-							} else if (!!pgColumn.column_default && pgColumn.column_default?.toString().toLowerCase().includes('repeat(')) {
-								const vals = pgColumn.column_default.toString().match(/REPEAT\('(.)', (\d+)\)/)
-								if (vals && vals[1] && vals[2]) {
-									text += `'${vals[1]}'.repeat(${CleanNumber(vals[2])})`
+							} else {
+								const repeat = CleanDefaultRepeatValue(pgColumn.column_default)
+								if (repeat) {
+									text += repeat
 								} else {
-									text += ''
+									text += '\'' + (pgColumn.column_default ?? '').toString().substring(1, (pgColumn.column_default ?? '').toString().indexOf('::') - 1) + '\''
 								}
-							} else {
-								text += '\'' + (pgColumn.column_default ?? '').toString().substring(1, (pgColumn.column_default ?? '').toString().indexOf('::') - 1) + '\''
-							}
-						} else if (!!pgColumn.column_default && pgColumn.column_default?.toString().toLowerCase().includes('repeat(')) {
-							const vals = pgColumn.column_default.toString().match(/REPEAT\('(.)', (\d+)\)/)
-							if (vals && vals[1] && vals[2]) {
-								text += `'${vals[1]}'.repeat(${CleanNumber(vals[2])})`
-							} else {
-								text += ''
 							}
 						} else {
-							text += '\'' + (pgColumn.column_default ?? '') + '\''
+							const repeat = CleanDefaultRepeatValue(pgColumn.column_default)
+							if (repeat) {
+								text += repeat
+							} else {
+								text += '\'' + (pgColumn.column_default ?? '') + '\''
+							}
 						}
 					} else if (IsOn(pgColumn.is_nullable)) {
 						text += 'null'
