@@ -17,7 +17,7 @@
 		"Install-IntelliWake": "pnpm install && pnpm update @solidbasisventures/intelliwaketsfoundation@latest",
 		"Version-Minor-Advance": "pnpm version minor",
 		"Build": "tsc && vite build",
-		"Publish": "tsc && vite build && pnpm version patch && git push --tags && git push && npm publish"
+		"Publish": "tsc && vite build && pnpm version patch && git push --tags && git push && npm publish && git push --tags && git push"
 	},
 	"files": [
 		"dist"
