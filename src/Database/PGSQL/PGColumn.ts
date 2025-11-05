@@ -79,6 +79,8 @@ export class PGColumn implements IPGColumn {
 	static readonly TYPE_TIMESTAMPTZ = 'timestamptz'
 
 	static readonly TYPE_BYTEA = 'bytea'
+	static readonly TYPE_BIT = 'bit'
+	static readonly TYPE_VARBIT = 'varbit'
 
 	static readonly TYPE_UUID = 'uuid'
 
@@ -95,6 +97,8 @@ export class PGColumn implements IPGColumn {
 		PGColumn.TYPE_JSON,
 		PGColumn.TYPE_JSONB,
 		PGColumn.TYPE_BYTEA,
+		PGColumn.TYPE_BIT,
+		PGColumn.TYPE_VARBIT,
 		PGColumn.TYPE_DATE,
 		PGColumn.TYPE_TIME,
 		PGColumn.TYPE_TIMETZ,

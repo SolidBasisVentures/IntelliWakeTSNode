@@ -603,8 +603,18 @@ export class PGTable {
 						} else if (pgColumn.integerFloatType() || pgColumn.dateType()) {
 							text += pgColumn.column_default
 						} else if (typeof pgColumn.udt_name !== 'string') {
-							text +=
-								'\'' + (pgColumn.column_default ?? pgColumn.udt_name.defaultValue ?? '') + '\' as ' + pgColumn.jsType()
+							if (!!pgColumn.column_default && pgColumn.column_default?.toString().toLowerCase().includes('repeat(')) {
+								const vals = pgColumn.column_default.toString().match(/REPEAT\('(.)', (\d+)\)/)
+								if (vals && vals[1] && vals[2]) {
+									text += `'${vals[1]}'.repeat(${CleanNumber(vals[2])})`
+								} else {
+									text +=
+										'\'' + (pgColumn.column_default ?? pgColumn.udt_name.defaultValue ?? '') + '\' as ' + pgColumn.jsType()
+								}
+							} else {
+								text +=
+									'\'' + (pgColumn.column_default ?? pgColumn.udt_name.defaultValue ?? '') + '\' as ' + pgColumn.jsType()
+							}
 						} else if (!!pgColumn.column_default && pgColumn.column_default.toString().includes('::')) {
 							if (pgColumn.udt_name.startsWith('e_')) {
 								const colDefault = pgColumn.column_default.toString()
@@ -613,7 +623,7 @@ export class PGTable {
 								text += colDefault.substring(1, 1 + colDefault.indexOf('::') - 2)
 								// text += ' as '
 								// text += PGEnum.TypeName(pgColumn.udt_name)
-							} else if (!!pgColumn.column_default && pgColumn.column_default?.toString().toLowerCase().startsWith('repeat')) {
+							} else if (!!pgColumn.column_default && pgColumn.column_default?.toString().toLowerCase().includes('repeat(')) {
 								const vals = pgColumn.column_default.toString().match(/REPEAT\('(.)', (\d+)\)/)
 								if (vals && vals[1] && vals[2]) {
 									text += `'${vals[1]}'.repeat(${CleanNumber(vals[2])})`
@@ -623,7 +633,7 @@ export class PGTable {
 							} else {
 								text += '\'' + (pgColumn.column_default ?? '').toString().substring(1, (pgColumn.column_default ?? '').toString().indexOf('::') - 1) + '\''
 							}
-						} else if (!!pgColumn.column_default && pgColumn.column_default?.toString().toLowerCase().startsWith('repeat')) {
+						} else if (!!pgColumn.column_default && pgColumn.column_default?.toString().toLowerCase().includes('repeat(')) {
 							const vals = pgColumn.column_default.toString().match(/REPEAT\('(.)', (\d+)\)/)
 							if (vals && vals[1] && vals[2]) {
 								text += `'${vals[1]}'.repeat(${CleanNumber(vals[2])})`
