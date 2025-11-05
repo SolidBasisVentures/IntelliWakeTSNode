@@ -117,9 +117,9 @@ const processScript = async () => {
 	}))
 	pgTable.addColumn(new PGColumn({
 		column_name: 'bit_test',
-		udt_name: PGColumn.TYPE_BYTEA,
+		udt_name: PGColumn.TYPE_VARBIT,
 		is_nullable: 'NO',
-		column_default: 'REPEAT(\'0\', 1024)::BIT(1024)',
+		column_default: '(REPEAT(\'0\', 1024)::BIT(1024))',
 		column_comment: 'Test Comment'
 	}))
 	pgTable.addColumn(new PGColumn({
