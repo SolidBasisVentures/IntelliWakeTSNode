@@ -561,7 +561,7 @@ export class PGTable {
 			// 	console.log('Arry Len', pgColumn.array_dimensions.length)
 			// }
 
-			if (pgColumn.column_name.endsWith('_mask')) console.info('Column', this.name, pgColumn.column_name, pgColumn.udt_name, pgColumn.column_default)
+			// if (pgColumn.column_name.endsWith('_mask')) console.info('Column', this.name, pgColumn.column_name, pgColumn.udt_name, pgColumn.column_default)
 
 			if (!!itemDefault) {
 				// console.log('HERE', enums.find(enumItem => enumItem.column_name === pgColumn.column_name))
