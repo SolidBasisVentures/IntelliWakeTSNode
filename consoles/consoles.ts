@@ -116,11 +116,18 @@ const processScript = async () => {
 		column_comment: '{type: TTestType[ETest4]}'
 	}))
 	pgTable.addColumn(new PGColumn({
+		column_name: 'bit_test',
+		udt_name: PGColumn.TYPE_BYTEA,
+		is_nullable: 'NO',
+		column_default: 'REPEAT(\'0\', 1024)::BIT(1024)',
+		column_comment: 'Test Comment'
+	}))
+	pgTable.addColumn(new PGColumn({
 		column_name: 'ysupport_data5',
 		udt_name: PGColumn.TYPE_JSONB,
 		is_nullable: 'YES',
 		column_comment: '{type: TTestType[ETest5]}'
 	}))
-	console.log(pgTable.tsText({includeZod: true}))
+	console.log(pgTable.tsText({includeZod: false}))
 }
 processScript().then(() => console.timeEnd('Ended'))

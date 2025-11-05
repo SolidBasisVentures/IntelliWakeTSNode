@@ -612,7 +612,16 @@ export class PGTable {
 								// text += ' as '
 								// text += PGEnum.TypeName(pgColumn.udt_name)
 							} else {
-								text += '\'' + (pgColumn.column_default ?? '').toString().substring(1, (pgColumn.column_default ?? '').toString().indexOf('::') - 1) + '\''
+								if (!!pgColumn.column_default && pgColumn.column_default?.toString().toLowerCase().startsWith('repeat')) {
+									const vals =pgColumn.column_default.toString().match(/REPEAT\('(.)', (\d+)\)/)
+									if (vals && vals[1] && vals[2]) {
+										text += `'${vals[1]}'.repeat(${CleanNumber(vals[2])})`
+									} else {
+										text += ''
+									}
+								} else {
+									text += '\'' + (pgColumn.column_default ?? '').toString().substring(1, (pgColumn.column_default ?? '').toString().indexOf('::') - 1) + '\''
+								}
 							}
 						} else {
 							text += '\'' + (pgColumn.column_default ?? '') + '\''
