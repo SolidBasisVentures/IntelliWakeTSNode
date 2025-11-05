@@ -611,17 +611,22 @@ export class PGTable {
 								text += colDefault.substring(1, 1 + colDefault.indexOf('::') - 2)
 								// text += ' as '
 								// text += PGEnum.TypeName(pgColumn.udt_name)
-							} else {
-								if (!!pgColumn.column_default && pgColumn.column_default?.toString().toLowerCase().startsWith('repeat')) {
-									const vals =pgColumn.column_default.toString().match(/REPEAT\('(.)', (\d+)\)/)
-									if (vals && vals[1] && vals[2]) {
-										text += `'${vals[1]}'.repeat(${CleanNumber(vals[2])})`
-									} else {
-										text += ''
-									}
+							} else if (!!pgColumn.column_default && pgColumn.column_default?.toString().toLowerCase().startsWith('repeat')) {
+								const vals = pgColumn.column_default.toString().match(/REPEAT\('(.)', (\d+)\)/)
+								if (vals && vals[1] && vals[2]) {
+									text += `'${vals[1]}'.repeat(${CleanNumber(vals[2])})`
 								} else {
-									text += '\'' + (pgColumn.column_default ?? '').toString().substring(1, (pgColumn.column_default ?? '').toString().indexOf('::') - 1) + '\''
+									text += ''
 								}
+							} else {
+								text += '\'' + (pgColumn.column_default ?? '').toString().substring(1, (pgColumn.column_default ?? '').toString().indexOf('::') - 1) + '\''
+							}
+						} else if (!!pgColumn.column_default && pgColumn.column_default?.toString().toLowerCase().startsWith('repeat')) {
+							const vals = pgColumn.column_default.toString().match(/REPEAT\('(.)', (\d+)\)/)
+							if (vals && vals[1] && vals[2]) {
+								text += `'${vals[1]}'.repeat(${CleanNumber(vals[2])})`
+							} else {
+								text += ''
 							}
 						} else {
 							text += '\'' + (pgColumn.column_default ?? '') + '\''
