@@ -1,0 +1,46 @@
+# @solidbasisventures/intelliwaketsnode
+
+Node.js/TypeScript library for backend servers with PostgreSQL ORM, database utilities, and pagination.
+
+## Quick Reference
+
+### CTableBase - PostgreSQL ORM
+Type-safe CRUD operations via inheritance. Create one class per table extending `CTableBase`.
+- Full CRUD with lifecycle hooks (preInsert, postUpdate, etc.)
+- Multiple load methods (loadByID, loadValues, etc.)
+- Change tracking and baseline comparison
+- Read/write connection separation
+- Docs: [docs/CTableBase.md](docs/CTableBase.md)
+
+If Ctable were inherited by CTableBase (which is generated in our database introspection process), a basic use case would be:
+```typescript
+await new Ctable.loadByID(123)
+user.record.name = 'Updated'
+await user.save()
+```
+
+### Database Standards
+PostgreSQL table and function conventions for consistency.
+- Singular table names (user not users)
+- Standard columns: id, is_active, inserted_ts/sysuser_id, updated_ts/sysuser_id
+- Foreign keys: {table}_id or {descriptor}_{table}_id
+- Soft deletes via is_active (rarely hard delete)
+- Docs: [docs/Database Principles/](docs/Database%20Principles/)
+
+### Paginator Utilities
+Server-side pagination with count, sort, search, and filters.
+- Handles out-of-bounds page requests
+- Works with IPaginatorRequest/IPaginatorResponse from @solidbasisventures/intelliwaketsfoundation
+- Docs: [docs/Paginator/](docs/Paginator/)
+
+## Documentation Index
+
+- [Home](docs/Home.md) - Overview and quick links
+- [CTableBase](docs/CTableBase.md) - Complete ORM reference with examples
+- [Typical Table Structure](docs/Database%20Principles/Typical%20Table%20Structure.md) - Table design standards
+- [PostgreSQL Principles](docs/Database%20Principles/PostgreSQL%20Database%20Principles.md) - Database conventions
+- [Function Principles](docs/Database%20Principles/Function%20Principles.md) - PostgreSQL function standards
+- [Paginator Utilities](docs/Paginator/Paginator%20Utilities.md) - Pagination overview
+- [Server Process](docs/Paginator/Server%20Process.md) - Backend pagination implementation
+- [Client Request](docs/Paginator/Client%20Request.md) - Frontend pagination request
+- [Client Display](docs/Paginator/Client%20Display.md) - Frontend pagination display
