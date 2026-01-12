@@ -19,6 +19,24 @@ user.record.name = 'Updated'
 await user.save()
 ```
 
+### PGSQL - Database Utilities
+Low-level PostgreSQL query and CRUD utilities with safe parameter handling.
+- PGParams class for SQL injection prevention
+- Query methods: FetchOne, FetchMany, FetchExists, FetchOneValue
+- CRUD helpers: Save, Delete, InsertAndGetID
+- Transaction management and performance monitoring
+- Docs: [docs/PGSQL.md](docs/PGSQL.md)
+
+Safe parameter usage:
+```typescript
+const params = new PGParams()
+const user = await PGSQL.FetchOne(
+  connection,
+  `SELECT * FROM users WHERE id = ${params.add(123)}`,
+  params.values
+)
+```
+
 ### Database Standards
 PostgreSQL table and function conventions for consistency.
 - Singular table names (user not users)
@@ -36,7 +54,8 @@ Server-side pagination with count, sort, search, and filters.
 ## Documentation Index
 
 - [Home](docs/Home.md) - Overview and quick links
-- [CTableBase](docs/CTableBase.md) - Complete ORM reference with examples
+- [CTableBase](docs/CTableBase.md) - Complete ORM reference for CRUD operations with examples
+- [PGSQL](docs/PGSQL.md) - PostgreSQL utilities for more advanced queries and transactions plus PGParams for SQL parameter management
 - [Typical Table Structure](docs/Database%20Principles/Typical%20Table%20Structure.md) - Table design standards
 - [PostgreSQL Principles](docs/Database%20Principles/PostgreSQL%20Database%20Principles.md) - Database conventions
 - [Function Principles](docs/Database%20Principles/Function%20Principles.md) - PostgreSQL function standards

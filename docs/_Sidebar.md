@@ -2,6 +2,8 @@
 
 [[CTableBase]]
 
+[[PGSQL]]
+
 [[PostgreSQL Database Principles]]
 - [[Typical Table Structure]]
 - [[Function Principles]]

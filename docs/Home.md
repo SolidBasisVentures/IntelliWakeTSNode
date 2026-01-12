@@ -6,6 +6,9 @@ This library is meant to be used on the server side.
 ## Base Table Class
 For providing CRUD/ORM like capabilities to the system. [[CTableBase]]
 
+## PGSQL Database Utilities
+Low-level PostgreSQL utility functions for query execution, CRUD operations, transactions, and parameter management. [[PGSQL]]
+
 ## Database Principles
 For consistency across projects (although some of our older projects deviate slightly), we want the following principles adhered to when managing databases.
 
