@@ -9,8 +9,8 @@ importers:
   .:
     devDependencies:
       '@solidbasisventures/intelliwaketsfoundation':
-        specifier: ^5.13.8
-        version: 5.13.8
+        specifier: ^5.13.66
+        version: 5.13.66
       '@types/node':
         specifier: ^20.17.24
         version: 20.17.24
@@ -329,8 +329,8 @@ packages:
   '@rushstack/ts-command-line@4.23.6':
     resolution: {integrity: sha512-7WepygaF3YPEoToh4MAL/mmHkiIImQq3/uAkQX46kVoKTNOOlCtFGyNnze6OYuWw2o9rxsyrHVfIBKxq/am2RA==}
 
-  '@solidbasisventures/intelliwaketsfoundation@5.13.8':
-    resolution: {integrity: sha512-FAAVLDAdaoNIFBlTPGY8zLrto4qARNv42qOAhIpxfMEjYYaAgQhhL20DoSnHY83d+mJ+3TodRcjcET1gIg88fA==}
+  '@solidbasisventures/intelliwaketsfoundation@5.13.66':
+    resolution: {integrity: sha512-jfz+YjPqNdmZae2PIgNz/y9HkBgAgS/YTmm/XnBP+M2+FK+9WHIDRWNYDmfm2df2CZZntJr5+2Yjw4sdWGU8Ow==}
 
   '@types/argparse@1.0.38':
     resolution: {integrity: sha512-ebDJ9b0e702Yr7pWgB0jzm+CX4Srzz8RcXtLJDJB+BSccqMa36uyH/zUsSYao5+BD1ytv3k3rPYCq4mAE1hsXA==}
@@ -1127,7 +1127,7 @@ snapshots:
     transitivePeerDependencies:
       - '@types/node'
 
-  '@solidbasisventures/intelliwaketsfoundation@5.13.8': {}
+  '@solidbasisventures/intelliwaketsfoundation@5.13.66': {}
 
   '@types/argparse@1.0.38': {}
 
