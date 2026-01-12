@@ -3,6 +3,9 @@ IntelliwakeTSNode, short for the IntelliWake TypeScript Node Library provides mu
 
 This library is meant to be used on the server side.
 
+## Base Table Class
+For providing CRUD/ORM like capabilities to the system. [[CTableBase]]
+
 ## Database Principles
 For consistency across projects (although some of our older projects deviate slightly), we want the following principles adhered to when managing databases.
 

@@ -1,5 +1,7 @@
 [[Home]]
 
+[[CTableBase]]
+
 [[PostgreSQL Database Principles]]
 - [[Typical Table Structure]]
 - [[Function Principles]]
